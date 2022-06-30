@@ -1,3 +1,45 @@
 <resources>
     <string name="app_name">JoinAlong</string>
+    <!--ManageChat Strings-->
+    <string name="create_chat_title">Create Chat</string>
+    <!--ManageEvent Strings-->
+    <string name="create_event_title">Create Event</string>
+    <!--ReportActivity Strings-->
+    <string name="create_report_text">Report</string>
+    <string name="reporting_message">Thanks for looking out for our community! \n Please take some time to enter some additional details!</string>
+    <string name="block_user_option">Block User</string>
+    <string name="block_option">Block </string>
+    <string name="report_dont_block">Don\'t Block</string>
+    <!--Subtitle Strings-->
+    <string name="title_subtitle">Title</string>
+    <string name="location_subtitle">Location</string>
+    <string name="beginning_date_subtitle">Beginning Date</string>
+    <string name="end_date_subtitle">End Date</string>
+    <string name="visibility_subtitle">Visibility</string>
+    <string name="number_of_people_subtitle">Number of People</string>
+    <string name="tags_subtitle">Tags</string>
+    <string name="description_subtitle">Description</string>
+    <string name="add_friends_subtitle">Add Friends</string>
+    <string name="reason_subtitle">Reason</string>
+    <string name="block_user_subtitle">Block User</string>
+    <string name="reporting_subtitle">Reporting</string>
+    <!--General Strings-->
+    <string name="default_empty_string"></string>
+    <string name="default_create_string">Create!</string>
+    <string name="default_cancel_string">Cancel</string>
+    <string name="default_edit_string">Edit!</string>
+    <string name="default_public_string">Public</string>
+    <string name="default_private_string">Private</string>
+    <string name="default_submit_string">Submit!</string>
+    <string-array name="number_of_people_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
 </resources>

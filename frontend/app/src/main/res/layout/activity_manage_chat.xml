@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ManageChatActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/title_subtitleGuideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="171dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/underTitleGuideLine2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="84dp" />
+
+    <ImageButton
+        android:id="@+id/manageChatCancelButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="36dp"
+        android:background="#0000"
+        android:contentDescription="Cancel"
+        android:minHeight="48dp"
+        android:outlineAmbientShadowColor="#0000"
+        app:layout_constraintBottom_toTopOf="@+id/underTitleGuideLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.865"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@android:drawable/ic_delete" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/descriptionGuideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="682dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/aboveTitleGuideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="48dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/leftMarginGuideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="48dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/rightMarginGuideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="362dp" />
+
+    <TextView
+        android:id="@+id/manageChatTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_chat_title"
+        android:textColor="#000000"
+        android:textSize="26dp"
+        app:layout_constraintBottom_toTopOf="@+id/underTitleGuideLine2"
+        app:layout_constraintEnd_toStartOf="@+id/manageChatCancelButton"
+        app:layout_constraintHorizontal_bias="0.007"
+        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
+        app:layout_constraintTop_toTopOf="@+id/aboveTitleGuideline2"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <EditText
+        android:id="@+id/manageChatEditTexttitle_subtitle"
+        android:layout_width="314dp"
+        android:layout_height="50dp"
+        android:ems="10"
+        android:hint="Enter TItle"
+        android:inputType="textPersonName"
+        android:text="@string/default_empty_string"
+        android:textColor="#000000"
+        android:textColorHint="@color/grey"
+        app:layout_constraintBottom_toTopOf="@+id/title_subtitleGuideline2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/underTitleGuideLine2"
+        app:layout_constraintVertical_bias="0.972" />
+
+    <TextView
+        android:id="@+id/manageChatTitleSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:text="@string/title_subtitle"
+        android:textColor="@color/orange"
+        app:layout_constraintBottom_toTopOf="@+id/manageChatEditTexttitle_subtitle"
+        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
+        app:layout_constraintTop_toBottomOf="@+id/manageChatTitle"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/manageChatTagSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:text="@string/tags_subtitle"
+        android:textColor="@color/orange"
+        app:layout_constraintBottom_toTopOf="@+id/manageChatTags"
+        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
+        app:layout_constraintTop_toTopOf="@+id/titleSubtitleGuideline2"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/manageChatAddFriends"
+        android:layout_width="314dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline4"
+        app:layout_constraintVertical_bias="0.854" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="273dp" />
+
+    <TextView
+        android:id="@+id/manageChatAddFriendSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="2dp"
+        android:text="@string/add_friends_subtitle"
+        android:textColor="@color/orange"
+        app:layout_constraintBottom_toTopOf="@+id/manageChatAddFriends"
+        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
+
+    <EditText
+        android:id="@+id/manageChatEditTextDescription"
+        android:layout_width="313dp"
+        android:layout_height="50dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="Enter Description"
+        android:inputType="textMultiLine"
+        android:text="@string/default_empty_string"
+        android:textColor="#000000"
+        android:textColorHint="@color/grey"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline2"
+        app:layout_constraintVertical_bias="0.745" />
+
+    <TextView
+        android:id="@+id/manageChatDescriptionSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
+        android:text="@string/description_subtitle"
+        android:textColor="@color/orange"
+        app:layout_constraintBottom_toTopOf="@+id/manageChatEditTextDescription"
+        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
+        app:layout_constraintTop_toTopOf="@+id/guideline2"
+        app:layout_constraintVertical_bias="2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="480dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="382dp" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/manageChatTags"
+        android:layout_width="314dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/title_subtitleGuideline2"
+        app:layout_constraintVertical_bias="0.807" />
+
+    <Button
+        android:id="@+id/submitManageChatButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/orange"
+        android:text="@string/default_create_string"
+        app:layout_constraintBottom_toTopOf="@+id/descriptionGuideline2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

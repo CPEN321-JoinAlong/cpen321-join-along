@@ -4,9 +4,11 @@
     <string name="create_chat_title">Create Chat</string>
     <!--ManageEvent Strings-->
     <string name="create_event_title">Create Event</string>
+    <string name="date_hint">YY/MM/DD</string>
     <!--ReportActivity Strings-->
     <string name="create_report_text">Report</string>
     <string name="reporting_message">Thanks for looking out for our community! \n Please take some time to enter some additional details!</string>
+    <string name="enter_reason_hint">Enter Reason</string>
     <string name="block_user_option">Block User</string>
     <string name="block_option">Block </string>
     <string name="report_dont_block">Don\'t Block</string>
@@ -31,6 +33,9 @@
     <string name="default_public_string">Public</string>
     <string name="default_private_string">Private</string>
     <string name="default_submit_string">Submit!</string>
+    <string name="default_enter_description">Enter Description</string>
+    <string name="default_enter_title">Enter Title</string>
+    <string name="default_enter_location">Enter Location</string>
     <string-array name="number_of_people_array">
         <item>1</item>
         <item>2</item>

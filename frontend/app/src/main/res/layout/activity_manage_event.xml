@@ -97,8 +97,9 @@
         android:id="@+id/editTextEventManagementLocation"
         android:layout_width="314dp"
         android:layout_height="50dp"
+        android:autofillHints="AUTOFILL_HINT_POSTAL_ADDRESS"
         android:ems="10"
-        android:hint="Enter Location"
+        android:hint="@string/default_enter_location"
         android:inputType="textPostalAddress"
         android:textColor="#000000"
         android:textColorHint="@color/grey"
@@ -132,7 +133,8 @@
         app:layout_constraintHorizontal_bias="0.826"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/visibilityGuideline"
-        app:layout_constraintVertical_bias="0.305" />
+        app:layout_constraintVertical_bias="0.305"
+        tools:ignore="DuplicateSpeakableTextCheck" />
 
     <TextView
         android:id="@+id/numberOfPeople"
@@ -153,7 +155,8 @@
         android:layout_height="50dp"
         android:ems="10"
         android:gravity="start|top"
-        android:hint="Enter Description"
+        android:hint="@string/default_enter_description"
+        android:importantForAutofill="no"
         android:inputType="textMultiLine"
         android:textColor="#000000"
         android:textColorHint="@color/grey"
@@ -183,7 +186,8 @@
         android:layout_width="314dp"
         android:layout_height="48dp"
         android:ems="10"
-        android:hint="Enter Title"
+        android:hint="@string/default_enter_title"
+        android:importantForAutofill="no"
         android:inputType="textPersonName"
         android:text="@string/default_empty_string"
         android:textColor="#000000"
@@ -213,7 +217,7 @@
         android:layout_width="133dp"
         android:layout_height="50dp"
         android:ems="10"
-        android:hint="YY/MM/DD"
+        android:hint="@string/date_hint"
         android:inputType="date"
         android:textColor="#000000"
         android:textColorHint="@color/grey"
@@ -222,7 +226,9 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/locationGuideline"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="DuplicateSpeakableTextCheck"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/visibilityText"
@@ -243,7 +249,7 @@
         android:layout_width="133dp"
         android:layout_height="50dp"
         android:ems="10"
-        android:hint="YY/MM/DD"
+        android:hint="@string/date_hint"
         android:inputType="date"
         android:textColor="#000000"
         android:textColorHint="@color/grey"
@@ -252,7 +258,8 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/locationGuideline"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/endDateText"

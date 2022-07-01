@@ -1,14 +1,15 @@
 package com.joinalongapp.joinalong;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.chip.Chip;
+import com.joinalongapp.viewmodel.UserProfile;
 
 //TODO: make profileLocation be autocomplete
 //TODO: allow upload profile pics
@@ -24,6 +25,7 @@ public class ManageProfileActivity extends AppCompatActivity {
     EditText descriptionEdit;
     Button uploadProfilePic;
     Button confirm;
+    ImageButton close;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,20 +35,35 @@ public class ManageProfileActivity extends AppCompatActivity {
         // a putExtra should be passed from previous screen containing basic user info for an update
         // if the object is null, it must be a create
 
-
-        confirm = findViewById(R.id.profile_manage_confirm);
-        firstNameEdit = findViewById(R.id.profileFirstNameEdit);
-
-        locationEdit = findViewById(R.id.profileLocationEdit);
+        initElements();
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, firstNameEdit.getText().toString());
-                Log.d(TAG, locationEdit.getText().toString());
+                UserProfile profile = new UserProfile();
+                profile.setFirstName(firstNameEdit.getText().toString());
+                profile.setLastName(lastNameEdit.getText().toString());
 
+                //TODO: process location string
+
+                //TODO: process interests
+
+                profile.setDescription(descriptionEdit.getText().toString());
+
+                //TODO: process picture information. This will be returned as an extra bitmap
             }
         });
 
+    }
+
+    private void initElements() {
+        firstNameEdit = findViewById(R.id.profileFirstNameEdit);
+        lastNameEdit = findViewById(R.id.profileLastNameEdit);
+        locationEdit = findViewById(R.id.profileLocationEdit);
+        interestsChip = findViewById(R.id.profileInterestsChip);
+        descriptionEdit = findViewById(R.id.profileDescription);
+        uploadProfilePic = findViewById(R.id.profileUploadPictureButton);
+        confirm = findViewById(R.id.profileManageConfirm);
+        close = findViewById(R.id.profileCloseButton);
     }
 }

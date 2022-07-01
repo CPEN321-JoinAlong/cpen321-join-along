@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,24 +24,34 @@ import java.io.IOException;
 
 public class ManageProfileActivity extends AppCompatActivity {
     final static String TAG ="ManageProfileActivity";
-    EditText firstNameEdit;
-    EditText lastNameEdit;
-    EditText locationEdit;
-    ChipGroup interestsChip;
-    EditText descriptionEdit;
-    Button uploadProfilePic;
-    Button confirm;
-    ImageButton close;
+    private EditText firstNameEdit;
+    private EditText lastNameEdit;
+    private EditText locationEdit;
+    private ChipGroup interestsChip;
+    private EditText descriptionEdit;
+    private Button uploadProfilePic;
+    private Button confirm;
+    private ImageButton close;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manage_profile_activity);
 
-        // a putExtra should be passed from previous screen containing basic user info for an update
-        // if the object is null, it must be a create
-
         initElements();
+
+        if (!isCreatingProfile()) {
+            setUpPageForEdit();
+        } else {
+            setUpPageForCreate();
+        }
+
+        uploadProfilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //go to new activity to select/upload pic from phone and come back here with the pic
+            }
+        });
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,10 +73,33 @@ public class ManageProfileActivity extends AppCompatActivity {
 
                 //TODO: process picture information. This will be returned as an extra bitmap
 
-                //post profile as json and evaluate response, upon a 200, we should continue to next intent
+                //TODO: post profile as json and evaluate response, upon a 200, we should continue to next intent
+                //TODO: maybe can add profile pic preview on side
             }
         });
 
+    }
+
+    private void setUpPageForCreate() {
+        firstNameEdit.setHint(getIntent().getExtras().get("firstName").toString());
+        lastNameEdit.setHint(getIntent().getExtras().get("lastName").toString());
+    }
+
+    private void setUpPageForEdit() {
+        UserProfile existingUserProfile = (UserProfile) getIntent().getExtras().getSerializable("userProfile");
+        firstNameEdit.setHint(existingUserProfile.getFirstName());
+        lastNameEdit.setHint(existingUserProfile.getLastName());
+        locationEdit.setHint(convertAddressToString(existingUserProfile.getLocation()));
+        //TODO: implement the interest chips
+        descriptionEdit.setHint(existingUserProfile.getDescription());
+        //TODO: if add pic preview, need pic here
+
+        TextView titleView = findViewById(R.id.profileTitle);
+        String editTitle = "Edit Profile";
+        titleView.setText(editTitle);
+
+        String editConfirm = "Confirm Edit!";
+        confirm.setText(editConfirm);
     }
 
     private Address getAddressFromString() throws IOException{
@@ -82,5 +116,16 @@ public class ManageProfileActivity extends AppCompatActivity {
         uploadProfilePic = findViewById(R.id.profileUploadPictureButton);
         confirm = findViewById(R.id.profileManageConfirm);
         close = findViewById(R.id.profileCloseButton);
+    }
+
+    private boolean isCreatingProfile() {
+        return getIntent().getExtras().getSerializable("userProfile") == null;
+    }
+
+    private String convertAddressToString(Address address) {
+        return address.getAddressLine(0) +
+                address.getLocality() +
+                address.getAdminArea() +
+                address.getCountryName();
     }
 }

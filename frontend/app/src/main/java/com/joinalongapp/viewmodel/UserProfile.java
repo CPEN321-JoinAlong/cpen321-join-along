@@ -6,9 +6,10 @@ import android.location.Address;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class UserProfile {
+public class UserProfile implements Serializable {
     private String firstName;
     private String lastName;
     private Address location;

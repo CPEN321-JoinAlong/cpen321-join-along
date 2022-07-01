@@ -78,6 +78,13 @@ public class ManageProfileActivity extends AppCompatActivity {
             }
         });
 
+        close.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
 
     private void setUpPageForCreate() {

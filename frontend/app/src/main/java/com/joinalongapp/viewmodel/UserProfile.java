@@ -3,15 +3,18 @@ package com.joinalongapp.viewmodel;
 import android.graphics.Bitmap;
 import android.location.Address;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class UserProfile {
-    String firstName;
-    String lastName;
-    Address location;
-    List<String> interests; //TODO: it might be good to make this have its own datatype, or maybe a list of ENUM's
-    String description;
-    Bitmap profilePicture;
+    private String firstName;
+    private String lastName;
+    private Address location;
+    private List<String> interests; //TODO: it might be good to make this have its own datatype, or maybe a list of ENUM's
+    private String description;
+    private Bitmap profilePicture;
 
     public String getFirstName() {
         return firstName;
@@ -29,8 +32,8 @@ public class UserProfile {
         this.lastName = lastName;
     }
 
-    public String getLocation() {
-        return lastName;
+    public Address getLocation() {
+        return location;
     }
 
     public void setLocation(Address location) {
@@ -59,5 +62,18 @@ public class UserProfile {
 
     public void setProfilePicture(Bitmap profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public String toJsonString() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        json.put("firstName", getFirstName());
+        json.put("lastName", getLastName());
+        json.put("location", getLocation());
+        json.put("interests", getInterests());
+        json.put("description", getDescription());
+        json.put("profilePicture", getProfilePicture());
+
+        return json.toString();
     }
 }

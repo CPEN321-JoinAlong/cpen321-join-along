@@ -1,6 +1,9 @@
 package com.joinalongapp.joinalong;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -8,8 +11,10 @@ import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.viewmodel.UserProfile;
+
+import java.io.IOException;
 
 //TODO: make profileLocation be autocomplete
 //TODO: allow upload profile pics
@@ -21,7 +26,7 @@ public class ManageProfileActivity extends AppCompatActivity {
     EditText firstNameEdit;
     EditText lastNameEdit;
     EditText locationEdit;
-    Chip interestsChip;
+    ChipGroup interestsChip;
     EditText descriptionEdit;
     Button uploadProfilePic;
     Button confirm;
@@ -44,16 +49,28 @@ public class ManageProfileActivity extends AppCompatActivity {
                 profile.setFirstName(firstNameEdit.getText().toString());
                 profile.setLastName(lastNameEdit.getText().toString());
 
-                //TODO: process location string
+                try {
+                    profile.setLocation(getAddressFromString());
+                } catch (IOException e) {
+                    Log.e(TAG, "Failed to set location with error: " + e.getMessage());
+                }
 
-                //TODO: process interests
+                interestsChip.getCheckedChipIds();
+                //TODO: process interests by mapping ids to the string value
 
                 profile.setDescription(descriptionEdit.getText().toString());
 
                 //TODO: process picture information. This will be returned as an extra bitmap
+
+                //post profile as json and evaluate response, upon a 200, we should continue to next intent
             }
         });
 
+    }
+
+    private Address getAddressFromString() throws IOException{
+        Geocoder geocoder = new Geocoder(ManageProfileActivity.this);
+        return geocoder.getFromLocationName(locationEdit.getText().toString(), 1).get(0);
     }
 
     private void initElements() {

@@ -22,6 +22,12 @@ import java.io.IOException;
 //      upload button directs to new activity that asks permission to access photo album
 //      can then select and upload pics
 
+/**
+ * This activity accepts Extras upon starting
+ * Adding a UserProfile object as an Extra will update that existing profile
+ * Adding no UserProfile object will create a new profile; you may also
+ * add a first and last name string for autofill in the Extras.
+ */
 public class ManageProfileActivity extends AppCompatActivity {
     final static String TAG ="ManageProfileActivity";
     private EditText firstNameEdit;
@@ -74,6 +80,7 @@ public class ManageProfileActivity extends AppCompatActivity {
                 //TODO: process picture information. This will be returned as an extra bitmap
 
                 //TODO: post profile as json and evaluate response, upon a 200, we should continue to next intent
+                //      update profile if it was a edit
                 //TODO: maybe can add profile pic preview on side
             }
         });

@@ -65,12 +65,8 @@ public class ManageProfileActivity extends AppCompatActivity {
                 UserProfile profile = new UserProfile();
                 profile.setFirstName(firstNameEdit.getText().toString());
                 profile.setLastName(lastNameEdit.getText().toString());
+                profile.setLocation(getAddressFromString(locationEdit.getText().toString()));
 
-                try {
-                    profile.setLocation(getAddressFromString());
-                } catch (IOException e) {
-                    Log.e(TAG, "Failed to set location with error: " + e.getMessage());
-                }
 
                 interestsChip.getCheckedChipIds();
                 //TODO: process interests by mapping ids to the string value
@@ -116,9 +112,15 @@ public class ManageProfileActivity extends AppCompatActivity {
         confirm.setText(editConfirm);
     }
 
-    private Address getAddressFromString() throws IOException{
+    private Address getAddressFromString(String address) {
         Geocoder geocoder = new Geocoder(ManageProfileActivity.this);
-        return geocoder.getFromLocationName(locationEdit.getText().toString(), 1).get(0);
+        Address retVal = null;
+        try {
+            retVal = geocoder.getFromLocationName(address, 1).get(0);
+        } catch(IOException e) {
+            Log.e(TAG, "Failed to set location with error: " + e.getMessage());
+        }
+        return retVal;
     }
 
     private void initElements() {

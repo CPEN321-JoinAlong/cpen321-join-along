@@ -16,6 +16,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import java.io.IOException;
+import java.util.List;
 
 //TODO: make profileLocation be autocomplete
 //TODO: allow upload profile pics
@@ -91,8 +92,12 @@ public class ManageProfileActivity extends AppCompatActivity {
     }
 
     private void setUpPageForCreate() {
-        firstNameEdit.setHint(getIntent().getExtras().get("firstName").toString());
-        lastNameEdit.setHint(getIntent().getExtras().get("lastName").toString());
+        if (getIntent().getExtras().get("firstName") != null) {
+            firstNameEdit.setText(getIntent().getExtras().get("firstName").toString());
+        }
+        if (getIntent().getExtras().get("lastName") != null) {
+            lastNameEdit.setText(getIntent().getExtras().get("lastName").toString());
+        }
     }
 
     private void setUpPageForEdit() {
@@ -116,7 +121,10 @@ public class ManageProfileActivity extends AppCompatActivity {
         Geocoder geocoder = new Geocoder(ManageProfileActivity.this);
         Address retVal = null;
         try {
-            retVal = geocoder.getFromLocationName(address, 1).get(0);
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses.size() > 0) {
+                retVal = addresses.get(0);
+            }
         } catch(IOException e) {
             Log.e(TAG, "Failed to set location with error: " + e.getMessage());
         }

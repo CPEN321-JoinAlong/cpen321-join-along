@@ -7,8 +7,6 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.joinalongapp.viewmodel.UserProfile;
-
 public class MainActivity extends AppCompatActivity {
     Button button;
 
@@ -23,10 +21,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent createProfile = new Intent(MainActivity.this, ManageProfileActivity.class);
-                UserProfile up = new UserProfile();
-                up.setLastName("last");
-                up.setFirstName("first");
-                createProfile.putExtra("userProfile", up);
+                createProfile.putExtra("firstName", "first");
+                createProfile.putExtra("lastName", "last");
                 startActivity(createProfile);
             }
         });

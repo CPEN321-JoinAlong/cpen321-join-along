@@ -58,6 +58,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rideshareSelectTitle" />
 
+    <com.lyft.lyftbutton.LyftButton
+        android:id="@+id/lyft_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/underTitleGuideLine4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/underTitleGuideLine3" />
+
     <TextView
         android:id="@+id/rideshareSelectTitle"
         android:layout_width="wrap_content"
@@ -70,16 +79,6 @@
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/aboveTitleGuideline2" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Lyft Button todo"
-        app:layout_constraintBottom_toTopOf="@+id/underTitleGuideLine4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/underTitleGuideLine3" />
 
     <ImageButton
         android:id="@+id/selectRideshareCloseButton"

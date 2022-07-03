@@ -263,8 +263,8 @@
 
     <Spinner
         android:id="@+id/rideshareNumberPeopleSpinner"
-        android:layout_width="71dp"
-        android:layout_height="20dp"
+        android:layout_width="80dp"
+        android:layout_height="33dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline12"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
         app:layout_constraintHorizontal_bias="0.65"
@@ -355,5 +355,22 @@
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
         app:layout_constraintTop_toTopOf="@+id/guideline14"
         app:layout_constraintVertical_bias="1.0" />
+
+    <ImageButton
+        android:id="@+id/rideshareManageCloseButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="36dp"
+        android:background="#0000"
+        android:contentDescription="@string/default_cancel_string"
+        android:minHeight="48dp"
+        android:outlineAmbientShadowColor="#0000"
+        app:layout_constraintBottom_toTopOf="@+id/underTitleGuideLine2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.865"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@android:drawable/ic_delete" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

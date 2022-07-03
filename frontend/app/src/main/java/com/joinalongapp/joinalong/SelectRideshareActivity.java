@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +24,7 @@ import java.util.List;
 public class SelectRideshareActivity extends AppCompatActivity {
     private static final String TAG = "SelectRideshareActivity";
     RideRequestButton uberButton;
+    ImageButton close;
 
     //TODO: not sure if it is good practice to store this value on the frontend
     private final String UBER_CLIENT_ID = "MRK54yhjV7gLbg0aV7IKrNnmCr9VGdaE";
@@ -32,6 +35,18 @@ public class SelectRideshareActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_rideshare);
 
         initUberButton();
+
+        close = findViewById(R.id.selectRideshareCloseButton);
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: change MainActivity.class to the activity that calls ManageRideshareActivity
+                Intent intent = new Intent(SelectRideshareActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initUberButton(){

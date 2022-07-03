@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class ManageRideshareActivity extends AppCompatActivity {
     private Button noShareCostButton;
     private EditText descriptionEdit;
     private Button getEstimate;
+    private ImageButton close;
     private String TAG = "ManageRideshareActivity";
 
     @Override
@@ -73,6 +75,7 @@ public class ManageRideshareActivity extends AppCompatActivity {
                 details.setDestination(destinationEdit.getText().toString());
 
                 //TODO: this needs to be changed, the pickupdateedit and pickuptimeedit might not be in the correct format
+                //      this might be useless bc of UBER api limited functionality
 //                LocalDateTime date = LocalDateTime.parse(pickUpDateEdit.getText().toString() + pickUpTimeEdit.getText().toString());
 //                details.setPickUpDate(date);
 
@@ -85,6 +88,13 @@ public class ManageRideshareActivity extends AppCompatActivity {
                 Intent selectRideShare = new Intent(ManageRideshareActivity.this, SelectRideshareActivity.class);
                 selectRideShare.putExtra("rideshareDetails", details);
                 startActivity(selectRideShare);
+            }
+        });
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
@@ -101,6 +111,7 @@ public class ManageRideshareActivity extends AppCompatActivity {
         noShareCostButton = findViewById(R.id.rideshareDontShareCost);
         descriptionEdit = findViewById(R.id.rideshareDescription);
         getEstimate = findViewById(R.id.rideshare_estimate);
+        close = findViewById(R.id.rideshareManageCloseButton);
     }
 
     private void initSpinner() {

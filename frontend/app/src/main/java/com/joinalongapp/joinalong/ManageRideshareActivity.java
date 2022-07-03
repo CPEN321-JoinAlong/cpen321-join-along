@@ -2,10 +2,7 @@ package com.joinalongapp.joinalong;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -16,9 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.joinalongapp.viewmodel.RideshareDetails;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
 
 //TODO: it might be nice to extract common methods between activities such as address and stuff into another utility like interface
 public class ManageRideshareActivity extends AppCompatActivity {
@@ -75,12 +69,12 @@ public class ManageRideshareActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 details.setTitle(titleEdit.getText().toString());
-                details.setPickupLocation(getAddressFromString(pickUpLocationEdit.getText().toString()));
-                details.setDestination(getAddressFromString(destinationEdit.getText().toString()));
+                details.setPickupLocation(pickUpLocationEdit.getText().toString());
+                details.setDestination(destinationEdit.getText().toString());
 
                 //TODO: this needs to be changed, the pickupdateedit and pickuptimeedit might not be in the correct format
-                LocalDateTime date = LocalDateTime.parse(pickUpDateEdit.getText().toString() + pickUpTimeEdit.getText().toString());
-                details.setPickUpDate(date);
+//                LocalDateTime date = LocalDateTime.parse(pickUpDateEdit.getText().toString() + pickUpTimeEdit.getText().toString());
+//                details.setPickUpDate(date);
 
                 details.setNumPeople((Integer) numPeople.getSelectedItem());
                 details.setDescription(descriptionEdit.getText().toString());
@@ -107,17 +101,6 @@ public class ManageRideshareActivity extends AppCompatActivity {
         noShareCostButton = findViewById(R.id.rideshareDontShareCost);
         descriptionEdit = findViewById(R.id.rideshareDescription);
         getEstimate = findViewById(R.id.rideshare_estimate);
-    }
-
-    private Address getAddressFromString(String address) {
-        Geocoder geocoder = new Geocoder(ManageRideshareActivity.this);
-        Address retVal = null;
-        try {
-            retVal = geocoder.getFromLocationName(address, 1).get(0);
-        } catch(IOException e) {
-            Log.e(TAG, "Failed to set location with error: " + e.getMessage());
-        }
-        return retVal;
     }
 
     private void initSpinner() {

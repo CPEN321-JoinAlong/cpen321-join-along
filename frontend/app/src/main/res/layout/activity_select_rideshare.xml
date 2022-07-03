@@ -48,15 +48,15 @@
         android:orientation="vertical"
         app:layout_constraintGuide_begin="362dp" />
 
-<!--    <com.uber.sdk.android.rides.RideRequestButton-->
-<!--        android:id="@+id/rideshareUberBookingButton"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="40dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/underTitleGuideLine3"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/rideshareSelectTitle" />-->
+    <com.uber.sdk.android.rides.RideRequestButton
+        android:id="@+id/rideshareUberBookingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        app:layout_constraintBottom_toTopOf="@+id/underTitleGuideLine3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rideshareSelectTitle" />
 
     <TextView
         android:id="@+id/rideshareSelectTitle"

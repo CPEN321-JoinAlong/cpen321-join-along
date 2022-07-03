@@ -75,15 +75,12 @@ public class ManageRideshareActivity extends AppCompatActivity {
                 details.setDestination(destinationEdit.getText().toString());
 
                 //TODO: this needs to be changed, the pickupdateedit and pickuptimeedit might not be in the correct format
-                //      this might be useless bc of UBER api limited functionality
+                //      tbh this might be useless bc of UBER api limited functionality
 //                LocalDateTime date = LocalDateTime.parse(pickUpDateEdit.getText().toString() + pickUpTimeEdit.getText().toString());
 //                details.setPickUpDate(date);
 
                 details.setNumPeople((Integer) numPeople.getSelectedItem());
                 details.setDescription(descriptionEdit.getText().toString());
-
-                //TODO: start a new intent with Uber and Lyft buttons showing cost
-                //      each button will redirect to corresponding app
 
                 Intent selectRideShare = new Intent(ManageRideshareActivity.this, SelectRideshareActivity.class);
                 selectRideShare.putExtra("rideshareDetails", details);

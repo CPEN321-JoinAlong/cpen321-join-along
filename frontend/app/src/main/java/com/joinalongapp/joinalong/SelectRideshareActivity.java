@@ -34,6 +34,7 @@ public class SelectRideshareActivity extends AppCompatActivity {
 
     //TODO: not sure if it is good practice to store this value on the frontend
     private final String UBER_CLIENT_ID = "MRK54yhjV7gLbg0aV7IKrNnmCr9VGdaE";
+    private final String LYFT_CLIENT_ID = "JK5Js2s2hjn2";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +95,7 @@ public class SelectRideshareActivity extends AppCompatActivity {
 
     private void initLyftButton() {
         ApiConfig config = new ApiConfig.Builder()
-                .setClientId("JK5Js2s2hjn2")
+                .setClientId(LYFT_CLIENT_ID)
                 //TODO: it appears Lyft also removed client token.
                 //      so just like uber, can't send ride parameter data :((
                 .setClientToken("...")

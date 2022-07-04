@@ -47,10 +47,12 @@ public class ManageProfileActivity extends AppCompatActivity {
 
         initElements();
 
-        if (!isCreatingProfile()) {
-            setUpPageForEdit();
-        } else {
-            setUpPageForCreate();
+        if (getIntent().getExtras() != null) {
+            if (!isCreatingProfile()) {
+                setUpPageForEdit();
+            } else {
+                setUpPageForCreate();
+            }
         }
 
         uploadProfilePic.setOnClickListener(new View.OnClickListener() {

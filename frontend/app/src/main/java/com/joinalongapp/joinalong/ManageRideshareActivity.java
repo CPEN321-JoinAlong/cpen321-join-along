@@ -39,19 +39,21 @@ public class ManageRideshareActivity extends AppCompatActivity {
         initElements();
         initSpinner();
 
-        RideshareDetails details = new RideshareDetails();
+        autofillEventDetails();
+
+        RideshareDetails userInputDetails = new RideshareDetails();
 
         shareCostToggle.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
             @Override
             public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
                 if (isChecked) {
                     if (checkedId == R.id.rideshareShareCost) {
-                        details.setShareCost(true);
+                        userInputDetails.setShareCost(true);
                         shareCostButton.setBackgroundColor(Color.parseColor("#F44336"));
                         noShareCostButton.setBackgroundColor(Color.parseColor("#F89790"));
                     } else {
                         if (checkedId == R.id.rideshareDontShareCost) {
-                            details.setShareCost(false);
+                            userInputDetails.setShareCost(false);
                             shareCostButton.setBackgroundColor(Color.parseColor("#F89790"));
                             noShareCostButton.setBackgroundColor(Color.parseColor("#F44336"));
                         }
@@ -59,7 +61,7 @@ public class ManageRideshareActivity extends AppCompatActivity {
                 } else {
                     // This is the default case, which is to share the cost
                     if (group.getCheckedButtonId() == View.NO_ID) {
-                        details.setShareCost(true);
+                        userInputDetails.setShareCost(true);
                         shareCostButton.setBackgroundColor(Color.parseColor("#F44336"));
                         noShareCostButton.setBackgroundColor(Color.parseColor("#F89790"));
                     }
@@ -70,20 +72,20 @@ public class ManageRideshareActivity extends AppCompatActivity {
         getEstimate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                details.setTitle(titleEdit.getText().toString());
-                details.setPickupLocation(pickUpLocationEdit.getText().toString());
-                details.setDestination(destinationEdit.getText().toString());
+                userInputDetails.setTitle(titleEdit.getText().toString());
+                userInputDetails.setPickupLocation(pickUpLocationEdit.getText().toString());
+                userInputDetails.setDestination(destinationEdit.getText().toString());
 
                 //TODO: this needs to be changed, the pickupdateedit and pickuptimeedit might not be in the correct format
                 //      tbh this might be useless bc of UBER api limited functionality
 //                LocalDateTime date = LocalDateTime.parse(pickUpDateEdit.getText().toString() + pickUpTimeEdit.getText().toString());
-//                details.setPickUpDate(date);
+//                userInputDetails.setPickUpDate(date);
 
-                details.setNumPeople((Integer) numPeople.getSelectedItem());
-                details.setDescription(descriptionEdit.getText().toString());
+                userInputDetails.setNumPeople((Integer) numPeople.getSelectedItem());
+                userInputDetails.setDescription(descriptionEdit.getText().toString());
 
                 Intent selectRideShare = new Intent(ManageRideshareActivity.this, SelectRideshareActivity.class);
-                selectRideShare.putExtra("rideshareDetails", details);
+                selectRideShare.putExtra("rideshareDetails", userInputDetails);
                 startActivity(selectRideShare);
             }
         });
@@ -94,6 +96,12 @@ public class ManageRideshareActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void autofillEventDetails() {
+        RideshareDetails givenDetails = (RideshareDetails) getIntent().getExtras().get("rideshareDetails");
+        pickUpLocationEdit.setText(givenDetails.getPickupLocation());
+        destinationEdit.setText(givenDetails.getDestination());
     }
 
     private void initElements() {

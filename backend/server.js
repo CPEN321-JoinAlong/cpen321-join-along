@@ -59,7 +59,147 @@ app.post("/login", async (req, res) => {
 
 app.get("/user/:id", async (req, res) => {
     const { id } = req.params;
-
     let foundUser = await User.findById(id);
-    
 })
+
+class UserStore {
+    constructor() {
+    }
+        
+    async findUserByProfile(userInfo) {
+        return await User.find({name: userInfo.name});    
+    }
+        
+    async findUserByID(userID) {
+        return await User.findById(userID)
+    }
+
+    async updateUserAccount(userID, userInfo) {
+        return await User.findByIdAndUpdate(userID, userInfo)
+    } 
+
+    async createUser(userInfo) {
+        return await new User(userInfo).save()
+    }
+
+    async deleteUser(userID) {
+    return await User.findByIdAndDelete(userID)
+    }
+
+    async findUserForLogin(Token) {
+        return await User.find({token: Token})
+    }
+}
+
+class UserAccount {
+
+    constructor(userInfo) {
+       this.name = userInfo.name;
+       this.interests = userInfo.interestTags;
+       this.events = userInfo.events;
+       this.profileImage = userInfo.profileImage;
+       this.description = userInfo.description;
+       this.friends = userInfo.friends;
+       this.blockedUsers = userInfo.blockedUsers;
+       this.blockedEvents = userInfo.blockedEvents;
+       this.token = userInfo.token;
+    }
+
+    findFriends(User) {
+        return this.friends;
+    }
+
+    sendMessage(userID, message) {
+        //TODO
+    }
+
+    notifyNewMessage(otherUser) {
+        //TODO
+    }
+
+    createUserAccount(userInfo) {
+        
+        //Need to call UserStore's
+    }
+
+    findEvents(EventDetails) {
+
+    }
+
+}
+
+class ChatDetails {
+    constructor(chatInfo) {
+       this.name = chatInfo.name;
+       this.interests = chatInfo.interestTags;
+       this.participants = chatInfo.participants;
+       this.messages = chatInfo.messages;
+       this.maxCapacity = chatInfo.maxCapacity;
+       this.currCapacity = chatInfo.currCapacity;
+       this.description = chatInfo.description;
+    }
+}
+
+class ChatEngine {
+    constructor() {}
+
+    async sendMessage(userID, message) {
+        
+        //see if chat exists with userID, if not, create one
+        //add message  to messages array
+    }
+
+    async sendGroupMessage(eventID, message) {
+        let chatInfo = await Chat.find({event: eventID})
+        if(chatInfo == null)
+            return 
+        chatInfo.messages.push(message)
+        Chat.findByIdAndUpdate(chatInfo._id, chatInfo)
+    }
+
+    async createChat(chatInfo) {
+        return await new Chat(chatInfo).save()
+    }
+
+    async editChat(chatInfo) {
+        return await Chat.findByIdAndUpdate(chatInfo._id, chatInfo)
+    }
+}
+
+class EventDetails {
+    constructor(eventInfo) {
+       this.name = chatInfo.name;
+       this.interests = chatInfo.interestTags;
+       this.participants = chatInfo.participants;
+       this.messages = chatInfo.messages;
+       this.maxCapacity = chatInfo.maxCapacity;
+       this.currCapacity = chatInfo.currCapacity;
+       this.description = chatInfo.description;
+    }
+}
+
+class ChatEngine {
+    constructor() {}
+
+    async sendMessage(userID, message) {
+        
+        //see if chat exists with userID, if not, create one
+        //add message  to messages array
+    }
+
+    async sendGroupMessage(eventID, message) {
+        let chatInfo = await Chat.find({event: eventID})
+        if(chatInfo == null)
+            return 
+        chatInfo.messages.push(message)
+        Chat.findByIdAndUpdate(chatInfo._id, chatInfo)
+    }
+
+    async createChat(chatInfo) {
+        return await new Chat(chatInfo).save()
+    }
+
+    async editChat(chatInfo) {
+        return await Chat.findByIdAndUpdate(chatInfo._id, chatInfo)
+    }
+}

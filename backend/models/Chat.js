@@ -13,6 +13,12 @@ const ChatSchema = new Schema({
             type: String
         }
     ],
+    messages: [
+        {
+            type: String
+        }
+    ],
+    event: String,
     maxCapacity: String,
     currCapacity: String,
     description: String,

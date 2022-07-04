@@ -1,2 +1,0 @@
-add frontend model objects in here
-placeholder file - remove me!

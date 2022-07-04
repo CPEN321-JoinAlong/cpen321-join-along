@@ -79,4 +79,14 @@
     <string name="rideshare_description_default">Description</string>
     <string name="rideshare_estimate">Get Cost Estimates</string>
     <string name="rideshare_date_hint">YYYY/MM/DD</string>
+
+
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_messaging">Messaging</string>
+    <string name="title_events">Events</string>
+    <string name="title_friends">Friends</string>
+    <string name="title_profile">Profile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

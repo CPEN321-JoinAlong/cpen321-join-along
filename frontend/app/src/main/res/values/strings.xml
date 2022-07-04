@@ -47,4 +47,36 @@
         <item>8</item>
     </string-array>
 
+
+    <string name="create_profile">Create Profile</string>
+    <string name="first_name_title">First Name</string>
+    <string name="first_name_default">First Name</string>
+    <string name="last_name_title">Last Name</string>
+    <string name="last_name_default">Last Name</string>
+    <string name="location_title">Location</string>
+    <string name="location_default">123 45th Ave, ABC City</string>
+    <string name="interests_title">Interests</string>
+    <string name="description_title">Description</string>
+    <string name="description_default">Description</string>
+    <string name="upload_profile_picture">Upload Profile Picture</string>
+    <string name="create_profile_confirm">Create!</string>
+
+
+    <string name="manage_rideshare_title">Book Rideshare</string>
+    <string name="title_title">Title</string>
+    <string name="title_default">Title</string>
+    <string name="pickup_location_title">Pick-up Location</string>
+    <string name="pickup_location_default">123 45th Ave, ABC City</string>
+    <string name="destination_title">Destination</string>
+    <string name="destination_default">678 90th Ave, ABC City</string>
+    <string name="pickup_date_title">Pick-up Date</string>
+    <string name="pickup_time_title">Pick-up Time</string>
+    <string name="number_people_title">Number of People</string>
+    <string name="share_cost_title">Share Cost</string>
+    <string name="share_cost">Share</string>
+    <string name="share_cost_no">Don\'t Share</string>
+    <string name="rideshare_description_title">Description</string>
+    <string name="rideshare_description_default">Description</string>
+    <string name="rideshare_estimate">Get Cost Estimates</string>
+    <string name="rideshare_date_hint">YYYY/MM/DD</string>
 </resources>

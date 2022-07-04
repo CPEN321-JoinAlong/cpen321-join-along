@@ -4,13 +4,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Calendar;
 
 public class RideshareDetails implements Serializable {
     private String title;
     private String pickupLocation;
     private String destination;
-    private LocalDateTime pickUpDate;
+    private Calendar pickUpDateTime;
     private int numPeople;
     private boolean shareCost;
     private String description;
@@ -39,12 +39,25 @@ public class RideshareDetails implements Serializable {
         this.destination = destination;
     }
 
-    public LocalDateTime getPickUpDate() {
-        return pickUpDate;
+    public Calendar getPickUpDate() {
+        return pickUpDateTime;
     }
 
-    public void setPickUpDate(LocalDateTime pickUpDate) {
-        this.pickUpDate = pickUpDate;
+    public void setPickUpDate(Calendar pickUpDate) {
+        if (pickUpDateTime == null) {
+            pickUpDateTime = Calendar.getInstance();
+        }
+        pickUpDateTime.set(Calendar.YEAR, pickUpDate.get(Calendar.YEAR));
+        pickUpDateTime.set(Calendar.MONTH, pickUpDate.get(Calendar.MONTH));
+        pickUpDateTime.set(Calendar.DAY_OF_MONTH, pickUpDate.get(Calendar.DAY_OF_MONTH));
+    }
+
+    public void setPickUpTime(Calendar pickUpTime) {
+        if (pickUpDateTime == null) {
+            pickUpDateTime = Calendar.getInstance();
+        }
+        pickUpDateTime.set(Calendar.HOUR_OF_DAY, pickUpTime.get(Calendar.HOUR_OF_DAY));
+        pickUpDateTime.set(Calendar.MINUTE, pickUpTime.get(Calendar.MINUTE));
     }
 
     public int getNumPeople() {

@@ -15,6 +15,5 @@
     <string name="description_title">Description</string>
     <string name="description_default">Description</string>
     <string name="rideshare_estimate">Get Cost Estimates</string>
-
-    <string name="rideshare_select_title">Select a Rideshare Option</string>
+    <string name="date_hint">YYYY/MM/DD</string>
 </resources>

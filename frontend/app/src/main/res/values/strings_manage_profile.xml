@@ -1,0 +1,14 @@
+<resources>
+    <string name="create_profile">Create Profile</string>
+    <string name="first_name_title">First Name</string>
+    <string name="first_name_default">First Name</string>
+    <string name="last_name_title">Last Name</string>
+    <string name="last_name_default">Last Name</string>
+    <string name="location_title">Location</string>
+    <string name="location_default">123 45th Ave, ABC City</string>
+    <string name="interests_title">Interests</string>
+    <string name="description_title">Description</string>
+    <string name="description_default">Description</string>
+    <string name="upload_profile_picture">Upload Profile Picture</string>
+    <string name="create_profile_confirm">Create!</string>
+</resources>

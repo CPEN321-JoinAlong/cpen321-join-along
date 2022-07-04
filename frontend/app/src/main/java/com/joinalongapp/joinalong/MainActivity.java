@@ -1,26 +1,16 @@
 package com.joinalongapp.joinalong;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.MultiAutoCompleteTextView;
 
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.User;
 
-import java.io.Serializable;
-import java.sql.Array;
 import java.util.Date;
 import java.util.UUID;
 

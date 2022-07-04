@@ -80,7 +80,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <EditText
-        android:id="@+id/manageChatEditTexttitle_subtitle"
+        android:id="@+id/manageChatEditTextTitle"
         android:layout_width="314dp"
         android:layout_height="50dp"
         android:ems="10"
@@ -104,7 +104,7 @@
         android:layout_marginTop="17dp"
         android:text="@string/title_subtitle"
         android:textColor="@color/orange"
-        app:layout_constraintBottom_toTopOf="@+id/manageChatEditTexttitle_subtitle"
+        app:layout_constraintBottom_toTopOf="@+id/manageChatEditTextTitle"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"

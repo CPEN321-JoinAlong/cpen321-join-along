@@ -7,6 +7,8 @@
     tools:context=".ManageEventActivity">
 
 
+
+
     <ImageButton
         android:id="@+id/cancelButton"
         android:layout_width="48dp"
@@ -54,7 +56,7 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/reportVisibilitySelection"
         android:layout_width="314dp"
-        android:layout_height="51dp"
+        android:layout_height="37dp"
         app:layout_constraintBottom_toTopOf="@+id/visibilityGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
@@ -125,7 +127,7 @@
 
     <Spinner
         android:id="@+id/eventManagementNumberOfPeopleSpinner"
-        android:layout_width="128dp"
+        android:layout_width="100dp"
         android:layout_height="48dp"
         android:contentDescription="@string/number_of_people_subtitle"
         app:layout_constraintBottom_toTopOf="@+id/peopleGuideline"
@@ -313,42 +315,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="170dp" />
+        app:layout_constraintGuide_begin="166dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/locationGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="260dp" />
+        app:layout_constraintGuide_begin="249dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/dateGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="337dp" />
+        app:layout_constraintGuide_begin="325dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/peopleGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="489dp" />
+        app:layout_constraintGuide_begin="478dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/visibilityGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="435dp" />
+        app:layout_constraintGuide_begin="408dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/tagsGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="580dp" />
+        app:layout_constraintGuide_begin="577dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/aboveTitleGuideline"

@@ -3,10 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_main.xml" value="0.33" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_chat.xml" value="0.67" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_event.xml" value="0.22" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_report.xml" value="0.5" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_chat.xml" value="0.2" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_event.xml" value="0.33" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_report.xml" value="1.25" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/xml/individual_chip.xml" value="0.1" />
       </map>
     </option>
   </component>

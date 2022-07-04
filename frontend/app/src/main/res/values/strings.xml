@@ -7,7 +7,7 @@
     <string name="date_hint">YY/MM/DD</string>
     <!--ReportActivity Strings-->
     <string name="create_report_text">Report</string>
-    <string name="reporting_message">Thanks for looking out for our community! \n Please take some time to enter some additional details!</string>
+    <string name="reporting_message">Thanks for looking out for our community! \nPlease take some time to enter some additional details!</string>
     <string name="enter_reason_hint">Enter Reason</string>
     <string name="block_user_option">Block User</string>
     <string name="block_option">Block </string>

@@ -1,13 +1,16 @@
 package com.joinalongapp.navbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.ReportActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -15,6 +18,7 @@ import com.joinalongapp.joinalong.R;
  * create an instance of this fragment.
  */
 public class MessagingFragment extends Fragment {
+    private Button testButton;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,7 +63,16 @@ public class MessagingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_messaging, container, false);
+        View view = inflater.inflate(R.layout.fragment_messaging, container, false);
+        testButton = view.findViewById(R.id.testButton);
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: change this to test different activity
+                Intent i = new Intent(getActivity(), ReportActivity.class);
+                startActivity(i);
+            }
+        });
+        return view;
     }
 }

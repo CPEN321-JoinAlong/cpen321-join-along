@@ -1,15 +1,12 @@
 package com.joinalongapp.navbar;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 
-import com.joinalongapp.joinalong.ManageProfileActivity;
 import com.joinalongapp.joinalong.R;
 
 /**
@@ -18,7 +15,6 @@ import com.joinalongapp.joinalong.R;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
-    private Button testButton;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -65,15 +61,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        testButton = view.findViewById(R.id.testButton);
-        testButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: change this to test different activity
-                Intent i = new Intent(getActivity(), ManageProfileActivity.class);
-                startActivity(i);
-            }
-        });
+
 
         // Inflate the layout for this fragment
         return view;

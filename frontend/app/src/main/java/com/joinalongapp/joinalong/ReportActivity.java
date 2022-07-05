@@ -32,7 +32,7 @@ public class ReportActivity extends AppCompatActivity {
         TextView reportingSubtitle = findViewById(R.id.reportingSubtitleTextView);
         EditText reportReason = findViewById(R.id.reportReasonEditText);
         EditText reportDescription = findViewById(R.id.reportDescriptionEditText);
-        TabLayout blockSelectionTab = findViewById(R.id.reportVisibilitySelection);
+        TabLayout blockSelectionTab = findViewById(R.id.homeEventDisplayTabLayout);
 
         Button submitButton = findViewById(R.id.submitReportButton);
         ImageButton cancelButton = findViewById(R.id.reportCancelButton);

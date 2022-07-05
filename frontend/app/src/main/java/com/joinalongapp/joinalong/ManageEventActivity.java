@@ -31,7 +31,7 @@ public class ManageEventActivity extends AppCompatActivity {
         EditText location = findViewById(R.id.editTextEventManagementLocation);
         EditText beginningDate = findViewById(R.id.editTextEventManagementBeginningDate);
         EditText endDate = findViewById(R.id.editTextEventManagementEndDate);
-        TabLayout blockSelectionTab = findViewById(R.id.reportVisibilitySelection);
+        TabLayout blockSelectionTab = findViewById(R.id.homeEventDisplayTabLayout);
         Spinner numberOfPeople = findViewById(R.id.eventManagementNumberOfPeopleSpinner);
 
         EditText description = findViewById(R.id.eventManagementEditTextDescription);

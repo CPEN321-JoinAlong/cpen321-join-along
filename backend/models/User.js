@@ -5,32 +5,33 @@ const UserSchema = new Schema({
     name: String,
     interestTags: [
         {
-            type: String
-        }
+            type: String,
+        },
     ],
+    location: String,
     events: [
         {
-            type: String
-        }
+            type: String,
+        },
     ],
     profileImage: String,
     description: String,
     friends: [
         {
-            type: String
-        }
+            type: String,
+        },
     ],
     blockedUsers: [
         {
-            type: String
-        }
+            type: String,
+        },
     ],
     blockedEvents: [
         {
-            type: String
-        }
+            type: String,
+        },
     ],
-    token: String
-})
+    token: String,
+});
 
 module.exports = mongoose.model("User", UserSchema);

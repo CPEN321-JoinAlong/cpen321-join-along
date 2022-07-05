@@ -96,7 +96,7 @@
         android:id="@+id/searchEventsBarInput"
         android:layout_width="314dp"
         android:layout_height="36dp"
-        android:backgroundTint="@color/grey_light"
+        android:backgroundTint="@color/light_grey"
         android:background="@drawable/rectangle_border"
         android:minWidth="100dp"
         app:layout_constraintBottom_toTopOf="@+id/aboveTitleGuideline4"
@@ -113,7 +113,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:background="@android:color/transparent"
-            android:backgroundTint="@color/grey_light"
+            android:backgroundTint="@color/light_grey"
             android:drawableLeft="@drawable/ic_baseline_search_24"
             android:hint="@string/search_events_hint"
             android:minWidth="100dp"
@@ -138,6 +138,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/aboveTitleGuideline6">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
 
 
 

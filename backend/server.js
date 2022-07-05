@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
+
+// import {UserStore} from './modules.js'
+const {UserAccount, UserStore, ChatDetails, ChatEngine, EventDetails, EventStore} = require("./modules") 
 // const methodOverride = require('method-override');
 
 function logRequest(req, res, next) {
@@ -25,6 +28,10 @@ db.once("open", () => {
 const host = "localhost";
 const port = 3000;
 const clientApp = path.join(__dirname, "public");
+
+let userStore = new UserStore()
+let eventStore = new EventStore()
+let chatEngine = new ChatEngine()
 
 // express app
 let app = express();
@@ -62,193 +69,4 @@ app.get("/user/:id", async (req, res) => {
     let foundUser = await User.findById(id);
 });
 
-class UserAccount {
-    constructor(userInfo) {
-        this.name = userInfo.name;
-        this.interests = userInfo.interestTags;
-        this.events = userInfo.events;
-        this.profileImage = userInfo.profileImage;
-        this.description = userInfo.description;
-        this.friends = userInfo.friends;
-        this.blockedUsers = userInfo.blockedUsers;
-        this.blockedEvents = userInfo.blockedEvents;
-        this.token = userInfo.token;
-    }
 
-    findFriends(User) {
-        return this.friends;
-    }
-
-    sendMessage(userID, message) {
-        //TODO
-    }
-
-    notifyNewMessage(otherUser) {
-        //TODO
-    }
-
-    createUserAccount(userInfo) {
-        //TODO
-    }
-
-    findEvents(EventDetails) {
-        //TODO
-    }
-}
-
-class UserStore {
-    constructor() {}
-
-    async findUserByProfile(userInfo) {
-        return await User.find({ name: userInfo.name });
-    }
-
-    async findUserByID(userID) {
-        return await User.findById(userID);
-    }
-
-    async updateUserAccount(userID, userInfo) {
-        return await User.findByIdAndUpdate(userID, userInfo);
-    }
-
-    async createUser(userInfo) {
-        return await new User(userInfo).save();
-    }
-
-    async deleteUser(userID) {
-        return await User.findByIdAndDelete(userID);
-    }
-
-    async findUserForLogin(Token) {
-        return await User.find({ token: Token });
-    }
-}
-
-class ChatDetails {
-    constructor(chatInfo) {
-        this.name = chatInfo.name;
-        this.interests = chatInfo.interestTags;
-        this.participants = chatInfo.participants;
-        this.messages = chatInfo.messages;
-        this.maxCapacity = chatInfo.maxCapacity;
-        this.currCapacity = chatInfo.currCapacity;
-        this.description = chatInfo.description;
-    }
-}
-
-class ChatEngine {
-    constructor() {}
-
-    //Assumes both users exist
-    async sendMessage(fromUserID, toUserID, text) {
-        let chatInfo = await Chat.find({
-            $and: [
-                { event: "null" },
-                { participants: { $all: [fromUserID, toUserID] } },
-            ]
-        });
-        if (chatInfo == null)
-            return await this.createChat({
-                name: "chat",
-                interestTags: [],
-                participants: [fromUserID, toUserID],
-                messages: [{ participantId: fromUserID, text: text }],
-                maxCapacity: 2,
-                currCapacity: 2,
-                description: "Private Chat",
-            });
-        chatInfo.message.push({ participantId: fromUserID, text: text });
-        Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
-        //see if chat exists with userID, if not, create one
-        //add message  to messages array
-    }
-
-    async sendGroupMessage(eventID, message) {
-        let chatInfo = await Chat.find({ event: eventID });
-        if (chatInfo == null) return;
-        chatInfo.messages.push(message);
-        Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
-    }
-
-    async createChat(chatInfo) {
-        return await new Chat(chatInfo).save();
-    }
-
-    async editChat(chatInfo) {
-        return await Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
-    }
-}
-
-class EventDetails {
-    constructor(eventInfo) {
-        this.name = chatInfo.name;
-        this.interests = chatInfo.interestTags;
-        this.participants = chatInfo.participants;
-        this.messages = chatInfo.messages;
-        this.maxCapacity = chatInfo.maxCapacity;
-        this.currCapacity = chatInfo.currCapacity;
-        this.description = chatInfo.description;
-    }
-
-    findEvents(eventInfo) {
-        //TODO
-    }
-
-    notifyNewGroupMessage() {
-        //TODO
-    }
-
-    findEventsByString(searchEvent) {
-        //TODO
-    }
-
-    joinEventByID(eventID, userID) {
-        //TODO
-    }
-
-    filterBlockedEvents(events) {
-        //TODO
-    }
-
-    reportAndBlockEvent(eventID, reason) {
-        //TODO
-    }
-}
-
-class EventStore {
-    constructor() {}
-
-    async findEventByDetails(location, filters) {
-        return await Event.find({ location: location });
-        //TODO: add filters for the events
-    }
-
-    async findEventById(eventID) {
-        return await Event.findById(eventID);
-    }
-
-    async updateEvent(eventID, eventInfo) {
-        return await Event.findByIdAndUpdate(eventID, eventInfo);
-    }
-
-    async createEvent(eventInfo) {
-        return await new Event(eventInfo).save();
-    }
-
-    async deleteEvent(eventID) {
-        return await Event.findByIdAndDelete(eventID);
-    }
-
-    async addUserToEvent(userID, eventID) {
-        let eventInfo = await Event.findById(eventID);
-        if (eventInfo == null) return;
-        eventInfo.participants.push(userID);
-        Event.findByIdAndUpdate(eventID, eventInfo);
-    }
-
-    async findEventInterest(userID) {
-        let user = await User.findById(userID);
-        if (user == null) return;
-        return user.events;
-    }
-}

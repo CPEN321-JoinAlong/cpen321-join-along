@@ -4,7 +4,7 @@
     <string name="create_chat_title">Create Chat</string>
     <!--ManageEvent Strings-->
     <string name="create_event_title">Create Event</string>
-    <string name="date_hint">YY/MM/DD</string>
+    <string name="date_hint">YYYY/MM/DD</string>
     <!--ReportActivity Strings-->
     <string name="create_report_text">Report</string>
     <string name="reporting_message">Thanks for looking out for our community! \nPlease take some time to enter some additional details!</string>
@@ -36,6 +36,8 @@
     <string name="default_enter_description">Enter Description</string>
     <string name="default_enter_title">Enter Title</string>
     <string name="default_enter_location">Enter Location</string>
+    <string name="default_enter_tags">Enter Tags</string>
+    <string name="default_enter_friends">Enter Friends</string>
     <string-array name="number_of_people_array">
         <item>1</item>
         <item>2</item>
@@ -45,6 +47,17 @@
         <item>6</item>
         <item>7</item>
         <item>8</item>
+    </string-array>
+
+    <string-array name="sample_tags">
+        <item>Indoor Activity</item>
+        <item>Outdoor Activity</item>
+        <item>Hiking</item>
+        <item>Music Festival</item>
+        <item>Board Games</item>
+        <item>Swimming</item>
+        <item>Running</item>
+        <item>Dancing</item>
     </string-array>
 
     <!--Profile Management-->

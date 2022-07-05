@@ -54,7 +54,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/homeEventDisplayTabLayout"
+        android:id="@+id/eventVisibilitySelection"
         android:layout_width="314dp"
         android:layout_height="37dp"
         app:layout_constraintBottom_toTopOf="@+id/visibilityGuideline"
@@ -240,7 +240,7 @@
         android:layout_marginBottom="16dp"
         android:text="@string/visibility_subtitle"
         android:textColor="@color/orange"
-        app:layout_constraintBottom_toTopOf="@+id/homeEventDisplayTabLayout"
+        app:layout_constraintBottom_toTopOf="@+id/eventVisibilitySelection"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
         app:layout_constraintHorizontal_bias="0.003"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"

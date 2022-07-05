@@ -115,47 +115,59 @@
         android:id="@+id/manageChatTagSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
         android:text="@string/tags_subtitle"
         android:textColor="@color/orange"
-        app:layout_constraintBottom_toTopOf="@+id/manageChatTags"
+        app:layout_constraintBottom_toTopOf="@+id/autoCompleteTagText"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
-        app:layout_constraintHorizontal_bias="0.003"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
         app:layout_constraintTop_toTopOf="@+id/title_subtitleGuideline2"
         app:layout_constraintVertical_bias="1.0" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/manageChatAddFriends"
-        android:layout_width="314dp"
-        android:layout_height="50dp"
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollViewFriends"
+        android:layout_width="315dp"
+        android:layout_height="38dp"
+        android:contentDescription="@string/default_empty_string"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline4"
-        app:layout_constraintVertical_bias="0.854" />
+        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
+        app:layout_constraintTop_toBottomOf="@+id/autoCompleteFriendText"
+        app:layout_constraintVertical_bias="0.0">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/manageChatAddFriends"
+            android:layout_width="314dp"
+            android:layout_height="38dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline4"
+            app:layout_constraintVertical_bias="0.746" />
+    </HorizontalScrollView>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="273dp" />
+        app:layout_constraintGuide_begin="293dp" />
 
     <TextView
         android:id="@+id/manageChatAddFriendSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginTop="8dp"
         android:text="@string/add_friends_subtitle"
         android:textColor="@color/orange"
-        app:layout_constraintBottom_toTopOf="@+id/manageChatAddFriends"
+        app:layout_constraintBottom_toTopOf="@+id/autoCompleteFriendText"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
-        app:layout_constraintTop_toTopOf="@+id/guideline4" />
+        app:layout_constraintTop_toTopOf="@+id/guideline4"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/manageChatEditTextDescription"
@@ -171,15 +183,16 @@
         android:textColorHint="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline2"
-        app:layout_constraintVertical_bias="0.745" />
+        app:layout_constraintVertical_bias="0.903" />
 
     <TextView
         android:id="@+id/manageChatDescriptionSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
+        android:layout_marginBottom="5dp"
         android:text="@string/description_subtitle"
         android:textColor="@color/orange"
         app:layout_constraintBottom_toTopOf="@+id/manageChatEditTextDescription"
@@ -187,32 +200,45 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
         app:layout_constraintTop_toTopOf="@+id/guideline2"
-        app:layout_constraintVertical_bias="2" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="480dp" />
+        app:layout_constraintGuide_begin="551dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="382dp" />
+        app:layout_constraintGuide_begin="383dp" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/manageChatTags"
-        android:layout_width="314dp"
-        android:layout_height="50dp"
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollViewTags"
+        android:layout_width="315dp"
+        android:layout_height="38dp"
+        android:contentDescription="@string/default_empty_string"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
         app:layout_constraintTop_toTopOf="@+id/title_subtitleGuideline2"
-        app:layout_constraintVertical_bias="0.807" />
+        app:layout_constraintVertical_bias="0.964">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/manageChatTags"
+            android:layout_width="314dp"
+            android:layout_height="38dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/title_subtitleGuideline2"
+            app:layout_constraintVertical_bias="0.973" />
+    </HorizontalScrollView>
 
     <Button
         android:id="@+id/submitManageChatButton"
@@ -224,5 +250,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline3" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTagText"
+        android:layout_width="314dp"
+        android:layout_height="50dp"
+        android:hint="@string/default_enter_tags"
+        android:text="@string/default_empty_string"
+        android:textColorHint="@color/grey"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollViewTags"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.484"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/title_subtitleGuideline2"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteFriendText"
+        android:layout_width="314dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:hint="@string/default_enter_friends"
+        android:text="@string/default_empty_string"
+        android:textColorHint="@color/grey"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
+        app:layout_constraintTop_toBottomOf="@+id/manageChatEditTextDescription"
+        app:layout_constraintVertical_bias="0.141" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

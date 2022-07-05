@@ -4,6 +4,7 @@ import android.location.Location;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class Event implements Serializable {
@@ -11,18 +12,19 @@ public class Event implements Serializable {
     private UUID eventId;
     private UUID eventOwnerId;
     private String title;
-    private transient Location location;
+    private String location;
     private Date beginningDate;
     private Date endDate;
     private Boolean publicVisibility;
     private int numberOfPeople;
-
+    private List<String> tags;
+    private List<String> friends;
     private String description;
 
     public Event() {
     }
 
-    public Event(UUID eventId, UUID eventOwnerId, String title, Location location, Date beginningDate, Date endDate, Boolean publicVisibility, int numberOfPeople, String description) {
+    public Event(UUID eventId, UUID eventOwnerId, String title, String location, Date beginningDate, Date endDate, Boolean publicVisibility, int numberOfPeople, String description) {
         this.eventId = eventId;
         this.eventOwnerId = eventOwnerId;
         this.title = title;
@@ -46,7 +48,7 @@ public class Event implements Serializable {
         return title;
     }
 
-    public Location getLocation() {
+    public String getLocation() {
         return location;
     }
 
@@ -64,6 +66,14 @@ public class Event implements Serializable {
 
     public int getNumberOfPeople() {
         return numberOfPeople;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public List<String> getFriends() {
+        return friends;
     }
 
     public String getDescription() {

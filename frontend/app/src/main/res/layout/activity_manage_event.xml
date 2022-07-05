@@ -54,7 +54,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/reportVisibilitySelection"
+        android:id="@+id/eventVisibilitySelection"
         android:layout_width="314dp"
         android:layout_height="37dp"
         app:layout_constraintBottom_toTopOf="@+id/visibilityGuideline"
@@ -84,16 +84,32 @@
 
     </com.google.android.material.tabs.TabLayout>
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/eventManagementTagChipGroup"
-        android:layout_width="314dp"
-        android:layout_height="50dp"
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="317dp"
+        android:layout_height="38dp"
+        android:contentDescription="@string/default_empty_string"
         app:layout_constraintBottom_toTopOf="@+id/tagsGuideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
-        app:layout_constraintVertical_bias="0.717" />
+        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toStartOf="@id/leftMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@id/autoCompleteChipTextView"
+        app:layout_constraintVertical_bias="0.925">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/eventManagementTagChipGroup"
+            android:layout_width="314dp"
+            android:layout_height="37dp"
+            app:layout_constraintBottom_toTopOf="@+id/tagsGuideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
+            app:layout_constraintVertical_bias="1.0">
+
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
 
     <EditText
         android:id="@+id/editTextEventManagementLocation"
@@ -146,10 +162,10 @@
         android:textColor="@color/orange"
         app:layout_constraintBottom_toTopOf="@+id/peopleGuideline"
         app:layout_constraintEnd_toStartOf="@+id/eventManagementNumberOfPeopleSpinner"
-        app:layout_constraintHorizontal_bias="0.015"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/visibilityGuideline"
-        app:layout_constraintVertical_bias="0.166" />
+        app:layout_constraintVertical_bias="0.058" />
 
     <EditText
         android:id="@+id/eventManagementEditTextDescription"
@@ -223,6 +239,7 @@
         android:inputType="date"
         android:textColor="#000000"
         android:textColorHint="@color/grey"
+        android:focusable="false"
         app:layout_constraintBottom_toTopOf="@+id/dateGuideline"
         app:layout_constraintEnd_toStartOf="@+id/editTextEventManagementEndDate"
         app:layout_constraintHorizontal_bias="0.0"
@@ -240,7 +257,7 @@
         android:layout_marginBottom="16dp"
         android:text="@string/visibility_subtitle"
         android:textColor="@color/orange"
-        app:layout_constraintBottom_toTopOf="@+id/reportVisibilitySelection"
+        app:layout_constraintBottom_toTopOf="@+id/eventVisibilitySelection"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
         app:layout_constraintHorizontal_bias="0.003"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
@@ -252,6 +269,7 @@
         android:layout_height="50dp"
         android:ems="10"
         android:hint="@string/date_hint"
+        android:focusable="false"
         android:inputType="date"
         android:textColor="#000000"
         android:textColorHint="@color/grey"
@@ -282,12 +300,12 @@
         android:layout_height="wrap_content"
         android:text="@string/tags_subtitle"
         android:textColor="@color/orange"
-        app:layout_constraintBottom_toTopOf="@+id/eventManagementTagChipGroup"
+        app:layout_constraintBottom_toTopOf="@+id/autoCompleteChipTextView"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftMarginGuideline"
@@ -336,7 +354,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="478dp" />
+        app:layout_constraintGuide_begin="462dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/visibilityGuideline"
@@ -379,5 +397,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/eventManagementEditTextDescription"
         app:layout_constraintVertical_bias="0.0" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteChipTextView"
+        android:layout_width="314dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="4dp"
+        android:hint="@string/default_enter_tags"
+        android:text="@string/default_empty_string"
+        android:textColorHint="@color/grey"
+        app:layout_constraintBottom_toTopOf="@+id/tagsGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
+        app:layout_constraintVertical_bias="0.245" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

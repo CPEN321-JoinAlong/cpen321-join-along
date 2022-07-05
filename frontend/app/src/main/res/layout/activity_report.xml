@@ -85,7 +85,7 @@
         app:layout_constraintGuide_begin="120dp" />
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/reportVisibilitySelection"
+        android:id="@+id/eventVisibilitySelection"
         android:layout_width="314dp"
         android:layout_height="51dp"
         app:layout_constraintBottom_toTopOf="@+id/submitReportButton"
@@ -214,7 +214,7 @@
         android:layout_marginBottom="4dp"
         android:text="@string/block_option"
         android:textColor="@color/orange"
-        app:layout_constraintBottom_toTopOf="@+id/reportVisibilitySelection"
+        app:layout_constraintBottom_toTopOf="@+id/eventVisibilitySelection"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline3"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline3"

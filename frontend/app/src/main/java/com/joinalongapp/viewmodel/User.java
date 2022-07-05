@@ -26,4 +26,12 @@ public class User implements Serializable {
     public List<User> getFriends() {
         return friends;
     }
+
+    public String[] getFriendsStringArray(){
+        String[] result = new String[friends.size()];
+        for(int i = 0; i < friends.size(); i++){
+            result[i] = friends.get(i).getName();
+        }
+        return result;
+    }
 }

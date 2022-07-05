@@ -16,10 +16,14 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        button = findViewById(R.id.button);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, ManageProfileActivity.class);
+
+                Intent i = new Intent(MainActivity.this, ManageEventActivity.class);
+                i.putExtra("EDIT_OPTION", false);
                 startActivity(i);
             }
         });

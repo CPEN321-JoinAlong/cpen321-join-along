@@ -21,6 +21,7 @@ const EventSchema = new Schema({
     location: String,
     eventImage: String,
     description: String,
+    chat: String
 })
 
 module.exports = mongoose.model("Event", EventSchema);

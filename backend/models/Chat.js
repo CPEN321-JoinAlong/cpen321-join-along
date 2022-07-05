@@ -5,23 +5,24 @@ const ChatSchema = new Schema({
     name: String,
     interestTags: [
         {
-            type: String
-        }
+            type: String,
+        },
     ],
     participants: [
         {
-            type: String
-        }
+            type: String,
+        },
     ],
     messages: [
         {
-            type: String
-        }
+            participantID: String,
+            text: String,
+        },
     ],
     event: String,
     maxCapacity: String,
     currCapacity: String,
     description: String,
-})
+});
 
 module.exports = mongoose.model("Chat", ChatSchema);

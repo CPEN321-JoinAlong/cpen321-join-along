@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
+
+// import {UserStore} from './modules.js'
+const {UserAccount, UserStore, ChatDetails, ChatEngine, EventDetails, EventStore} = require("./modules") 
 // const methodOverride = require('method-override');
 
 function logRequest(req, res, next) {
@@ -25,6 +28,10 @@ db.once("open", () => {
 const host = "localhost";
 const port = 3000;
 const clientApp = path.join(__dirname, "public");
+
+let userStore = new UserStore()
+let eventStore = new EventStore()
+let chatEngine = new ChatEngine()
 
 // express app
 let app = express();
@@ -48,158 +55,18 @@ app.listen(port, () => {
 
 app.post("/login", async (req, res) => {
     const { Token } = req.body;
-    let foundUser = await User.find({token: Token})
+    let foundUser = await User.find({ token: Token });
 
-    if(foundUser) {
-        res.status(200).send({found: "true", id: `${foundUser._id}`});
+    if (foundUser) {
+        res.status(200).send({ found: "true", id: `${foundUser._id}` });
     } else {
-        res.status(404).send({found: "false", id: "null"});
+        res.status(404).send({ found: "false", id: "null" });
     }
-})
+});
 
 app.get("/user/:id", async (req, res) => {
     const { id } = req.params;
     let foundUser = await User.findById(id);
-})
+});
 
-class UserStore {
-    constructor() {
-    }
-        
-    async findUserByProfile(userInfo) {
-        return await User.find({name: userInfo.name});    
-    }
-        
-    async findUserByID(userID) {
-        return await User.findById(userID)
-    }
 
-    async updateUserAccount(userID, userInfo) {
-        return await User.findByIdAndUpdate(userID, userInfo)
-    } 
-
-    async createUser(userInfo) {
-        return await new User(userInfo).save()
-    }
-
-    async deleteUser(userID) {
-    return await User.findByIdAndDelete(userID)
-    }
-
-    async findUserForLogin(Token) {
-        return await User.find({token: Token})
-    }
-}
-
-class UserAccount {
-
-    constructor(userInfo) {
-       this.name = userInfo.name;
-       this.interests = userInfo.interestTags;
-       this.events = userInfo.events;
-       this.profileImage = userInfo.profileImage;
-       this.description = userInfo.description;
-       this.friends = userInfo.friends;
-       this.blockedUsers = userInfo.blockedUsers;
-       this.blockedEvents = userInfo.blockedEvents;
-       this.token = userInfo.token;
-    }
-
-    findFriends(User) {
-        return this.friends;
-    }
-
-    sendMessage(userID, message) {
-        //TODO
-    }
-
-    notifyNewMessage(otherUser) {
-        //TODO
-    }
-
-    createUserAccount(userInfo) {
-        
-        //Need to call UserStore's
-    }
-
-    findEvents(EventDetails) {
-
-    }
-
-}
-
-class ChatDetails {
-    constructor(chatInfo) {
-       this.name = chatInfo.name;
-       this.interests = chatInfo.interestTags;
-       this.participants = chatInfo.participants;
-       this.messages = chatInfo.messages;
-       this.maxCapacity = chatInfo.maxCapacity;
-       this.currCapacity = chatInfo.currCapacity;
-       this.description = chatInfo.description;
-    }
-}
-
-class ChatEngine {
-    constructor() {}
-
-    async sendMessage(userID, message) {
-        
-        //see if chat exists with userID, if not, create one
-        //add message  to messages array
-    }
-
-    async sendGroupMessage(eventID, message) {
-        let chatInfo = await Chat.find({event: eventID})
-        if(chatInfo == null)
-            return 
-        chatInfo.messages.push(message)
-        Chat.findByIdAndUpdate(chatInfo._id, chatInfo)
-    }
-
-    async createChat(chatInfo) {
-        return await new Chat(chatInfo).save()
-    }
-
-    async editChat(chatInfo) {
-        return await Chat.findByIdAndUpdate(chatInfo._id, chatInfo)
-    }
-}
-
-class EventDetails {
-    constructor(eventInfo) {
-       this.name = chatInfo.name;
-       this.interests = chatInfo.interestTags;
-       this.participants = chatInfo.participants;
-       this.messages = chatInfo.messages;
-       this.maxCapacity = chatInfo.maxCapacity;
-       this.currCapacity = chatInfo.currCapacity;
-       this.description = chatInfo.description;
-    }
-}
-
-class ChatEngine {
-    constructor() {}
-
-    async sendMessage(userID, message) {
-        
-        //see if chat exists with userID, if not, create one
-        //add message  to messages array
-    }
-
-    async sendGroupMessage(eventID, message) {
-        let chatInfo = await Chat.find({event: eventID})
-        if(chatInfo == null)
-            return 
-        chatInfo.messages.push(message)
-        Chat.findByIdAndUpdate(chatInfo._id, chatInfo)
-    }
-
-    async createChat(chatInfo) {
-        return await new Chat(chatInfo).save()
-    }
-
-    async editChat(chatInfo) {
-        return await Chat.findByIdAndUpdate(chatInfo._id, chatInfo)
-    }
-}

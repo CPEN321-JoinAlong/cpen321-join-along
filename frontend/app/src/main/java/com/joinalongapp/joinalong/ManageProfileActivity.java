@@ -43,14 +43,16 @@ public class ManageProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.manage_profile_activity);
+        setContentView(R.layout.activity_manage_profile);
 
         initElements();
 
-        if (!isCreatingProfile()) {
-            setUpPageForEdit();
-        } else {
-            setUpPageForCreate();
+        if (getIntent().getExtras() != null) {
+            if (!isCreatingProfile()) {
+                setUpPageForEdit();
+            } else {
+                setUpPageForCreate();
+            }
         }
 
         uploadProfilePic.setOnClickListener(new View.OnClickListener() {

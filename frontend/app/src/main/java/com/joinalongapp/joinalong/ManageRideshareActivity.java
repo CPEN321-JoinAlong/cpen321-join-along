@@ -2,7 +2,6 @@ package com.joinalongapp.joinalong;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -85,7 +84,7 @@ public class ManageRideshareActivity extends AppCompatActivity {
     }
 
     private void initShareCostToggleListener(RideshareDetails userInputDetails) {
-        setShareCostToggleColors(ORANGE, LIGHT_ORANGE);
+        setShareCostToggleColors(R.color.orange_prim, R.color.orange_light);
 
         shareCostToggle.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
             @Override
@@ -93,27 +92,27 @@ public class ManageRideshareActivity extends AppCompatActivity {
                 if (isChecked) {
                     if (checkedId == R.id.rideshareShareCost) {
                         userInputDetails.setShareCost(true);
-                        setShareCostToggleColors(ORANGE, LIGHT_ORANGE);
+                        setShareCostToggleColors(R.color.orange_prim, R.color.orange_light);
                     } else {
                         if (checkedId == R.id.rideshareDontShareCost) {
                             userInputDetails.setShareCost(false);
-                            setShareCostToggleColors(LIGHT_ORANGE, ORANGE);
+                            setShareCostToggleColors(R.color.orange_light, R.color.orange_prim);
                         }
                     }
                 } else {
                     // This is the default case, which is to share the cost
                     if (group.getCheckedButtonId() == View.NO_ID) {
                         userInputDetails.setShareCost(true);
-                        setShareCostToggleColors(ORANGE, LIGHT_ORANGE);
+                        setShareCostToggleColors(R.color.orange_prim, R.color.orange_light);
                     }
                 }
             }
         });
     }
 
-    private void setShareCostToggleColors(String shareColor, String noShareColor) {
-        shareCostButton.setBackgroundColor(Color.parseColor(shareColor));
-        noShareCostButton.setBackgroundColor(Color.parseColor(noShareColor));
+    private void setShareCostToggleColors(int shareColor, int noShareColor) {
+        shareCostButton.setBackgroundColor(shareColor);
+        noShareCostButton.setBackgroundColor(noShareColor);
     }
 
     private void initPickupTimeListener(RideshareDetails userInputDetails) {

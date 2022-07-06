@@ -60,6 +60,7 @@ app.listen(port, () => {
     );
 });
 
+//login - post
 app.post("/login", async (req, res) => {
     const { Token } = req.body;
     let foundUser = await userStore.findUserForLogin(Token);
@@ -67,7 +68,7 @@ app.post("/login", async (req, res) => {
     else res.status(200).send(true); //need to confirm what else to do
 });
 
-//Adds the user object to the database and sends the id back to frontend
+//Adds the user object to the database and sends the id back to frontend - post
 app.post("/user/create", async (req, res) => {
     let userObject = req.body;
     let userInfo = new UserAccount(userObject);
@@ -78,8 +79,24 @@ app.post("/user/create", async (req, res) => {
     res.status(200).send({ id: id });
 });
 
-//Send the user and events for the home screen
+app.put("/user/:id/edit", async (req, res) => {
+    let { id } = req.params;
+    await userStore.updateUserAccount(id, req.body);
+    res.status(200).send("successful")//do we need to send the 
+});
+
+//Sends the user object for the profile page - get
 app.get("/user/:id", async (req, res) => {
+    let { id } = req.params;
+    let foundUser = await userStore.findUserByID(id);
+    if (foundUser == null) res.status(404).send("No User Found");
+    else {
+        res.status(200).send({ user: foundUser });
+    }
+});
+
+//Sends the user object and events the user is a part of for the home screen - get
+app.get("/user/:id/home", async (req, res) => {
     let { id } = req.params;
     let foundUser = await userStore.findUserByID(id);
     if (foundUser == null) res.status(404).send("No User Found");
@@ -90,3 +107,15 @@ app.get("/user/:id", async (req, res) => {
         res.status(200).send({ user: foundUser, events: events });
     }
 });
+
+//Chat list: Sends the list of chats the user is in - get
+app.get("/user/:id/chat", async (req, res) => {});
+
+//Chat: Sends the chat object (which includes all the messages) - get
+app.get("/chat/:id", async (req, res) => {});
+
+//Event list: Sends the list of Events the user is in - get
+app.get("/user/:id/event", async (req, res) => {});
+
+//Event: Sends the event object (for view event details?) - get
+app.get("/event:id", async (req, res) => {});

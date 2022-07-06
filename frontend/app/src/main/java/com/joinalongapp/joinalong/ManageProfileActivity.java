@@ -68,7 +68,7 @@ public class ManageProfileActivity extends AppCompatActivity {
                 UserProfile profile = new UserProfile();
                 profile.setFirstName(firstNameEdit.getText().toString());
                 profile.setLastName(lastNameEdit.getText().toString());
-                profile.setLocation(getAddressFromString(locationEdit.getText().toString()));
+                profile.setLocation(locationEdit.getText().toString());
 
 
                 interestsChip.getCheckedChipIds();
@@ -77,10 +77,13 @@ public class ManageProfileActivity extends AppCompatActivity {
                 profile.setDescription(descriptionEdit.getText().toString());
 
                 //TODO: process picture information. This will be returned as an extra bitmap
-
-                //TODO: post profile as json and evaluate response, upon a 200, we should continue to next intent
-                //      update profile if it was a edit
                 //TODO: maybe can add profile pic preview on side
+
+
+                if (!validateElements(profile)) {
+                    //TODO: post profile as json and evaluate response, upon a 200, we should continue to next intent
+                    //      update profile if it was a edit
+                }
             }
         });
 
@@ -106,7 +109,7 @@ public class ManageProfileActivity extends AppCompatActivity {
         UserProfile existingUserProfile = (UserProfile) getIntent().getExtras().getSerializable("userProfile");
         firstNameEdit.setHint(existingUserProfile.getFirstName());
         lastNameEdit.setHint(existingUserProfile.getLastName());
-        locationEdit.setHint(convertAddressToString(existingUserProfile.getLocation()));
+        locationEdit.setHint(existingUserProfile.getLocation());
         //TODO: implement the interest chips
         descriptionEdit.setHint(existingUserProfile.getDescription());
         //TODO: if add pic preview, need pic here
@@ -153,5 +156,30 @@ public class ManageProfileActivity extends AppCompatActivity {
                 address.getLocality() +
                 address.getAdminArea() +
                 address.getCountryName();
+    }
+
+    private boolean validateElements(UserProfile profile) {
+        boolean isValid = true;
+
+        if (profile.getFirstName().isEmpty()) {
+            firstNameEdit.setError("First name must not be blank.");
+            isValid = false;
+        }
+
+        if (profile.getLastName().isEmpty()) {
+            lastNameEdit.setError("Last name must not be blank.");
+            isValid = false;
+        }
+
+        if (getAddressFromString(profile.getLocation()) == null) {
+            locationEdit.setError("Unable to find address.");
+            isValid = false;
+        }
+
+        if (interestsChip.getCheckedChipIds().isEmpty()) {
+            // TODO
+        }
+
+        return isValid;
     }
 }

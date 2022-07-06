@@ -169,12 +169,7 @@ public class ManageEventActivity extends AppCompatActivity {
     }
 
     private Boolean editTextEmpty(EditText input){
-        if(input.getText().toString().trim().length() == 0){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return input.getText().toString().trim().length() == 0;
     }
 
     private void calendarOperation(EditText editText){

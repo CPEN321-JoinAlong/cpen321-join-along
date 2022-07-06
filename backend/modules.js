@@ -1,6 +1,7 @@
 const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
+const Report = require("./models/Report");
 class UserAccount {
     constructor(userInfo) {
         //fields from userInfo
@@ -14,7 +15,9 @@ class UserAccount {
         this.events = userInfo.events ? userInfo.events : [];
         this.friends = userInfo.friends ? userInfo.friends : [];
         this.blockedUsers = userInfo.blockedUsers ? userInfo.blockedUsers : [];
-        this.blockedEvents = userInfo.blockedEvents ? userInfo.blockedEvents : [];
+        this.blockedEvents = userInfo.blockedEvents
+            ? userInfo.blockedEvents
+            : [];
         this.token = userInfo.token ? userInfo.token : null;
     }
 
@@ -23,8 +26,14 @@ class UserAccount {
     }
 
     //returns list of event objects related to the User
-    async findPersonalEvents(eventStore) {
+    async findAllPersonalEvents(eventStore) {
         return await eventStore.findEventByIDList(this.events);
+    }
+
+    //return list of event objects related to the User which are have the provided Tag
+    async findEventsWithTag(Tag, eventStore) {
+        let eventList = await this.findAllPersonalEvents(eventStore);
+        return eventList.filter((event) => event.interestTags.includes(Tag));
     }
 
     //TODO chat finding method, and add chat the user is in as a field in UserAccount or something
@@ -70,10 +79,8 @@ class UserStore {
         return await User.findByIdAndUpdate(userID, userInfo);
     }
 
-    //Puts the UserAccount into the database and return the ObjectID
     async createUser(userInfo) {
-        let user = await new User(userInfo).save();
-        return user._id.toString();
+        return await new User(userInfo).save();
     }
 
     async deleteUser(userID) {
@@ -252,6 +259,58 @@ class EventStore {
     }
 }
 
+class ReportService {
+    constructor() {}
+
+    async reportUser(userID, reporter, reason, isBlocked, userStore) {
+        if (isBlocked) {
+            let reporterInfo = userStore.findUserByID(reporter);
+            if (reporterInfo == null)
+                return
+            reporterInfo.blockedUsers.push(userID);
+            userStore.updateUserAccount(reporter, reporterInfo);
+        }
+
+        return new Report({
+            reporter: reporter,
+            reason: reason,
+            reportedID: userID,
+        });
+    }
+
+    async reportEvent(eventID, reporter, reason, isBlocked, userStore) {
+        if (isBlocked) {
+            let reporterInfo = userStore.findUserByID(reporter);
+            if (reporterInfo == null)
+                return
+            reporterInfo.blockedEvents.push(eventID);
+            userStore.updateUserAccount(reporter, reporterInfo);
+        }
+
+        return new Report({
+            reporter: reporter,
+            reason: reason,
+            reportedID: eventID,
+        });
+    }
+
+    async viewAllReports() {
+        return await Report.find({});
+    }
+}
+
+class BanService {
+    constructor() {}
+
+    async banUser(userID, userStore) {
+        return await userStore.deleteUser(userID);
+    }
+
+    async banEvent(eventID, eventStore) {
+        return await eventStore.deleteEvent(eventID);
+    }
+}
+
 module.exports = {
     UserAccount,
     UserStore,
@@ -259,4 +318,6 @@ module.exports = {
     ChatEngine,
     EventDetails,
     EventStore,
+    ReportService,
+    BanService,
 };

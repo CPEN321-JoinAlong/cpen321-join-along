@@ -65,6 +65,7 @@ public class EventsFragment extends Fragment {
 
         //TODO: fix nullpointerexception upon starting manageevent
         Intent i = new Intent(getActivity(), ManageEventActivity.class);
+        i.putExtra("EDIT_OPTION", Boolean.valueOf(false));
         startActivity(i);
 
         return inflater.inflate(R.layout.fragment_events, container, false);

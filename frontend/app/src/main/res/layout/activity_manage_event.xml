@@ -380,4 +380,19 @@
         app:layout_constraintTop_toBottomOf="@+id/eventManagementEditTextDescription"
         app:layout_constraintVertical_bias="0.0" />
 
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteChipTextView"
+        android:layout_width="314dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="4dp"
+        android:hint="@string/default_enter_tags"
+        android:text="@string/default_empty_string"
+        android:textColorHint="@color/grey"
+        app:layout_constraintBottom_toTopOf="@+id/tagsGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
+        app:layout_constraintVertical_bias="0.245" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

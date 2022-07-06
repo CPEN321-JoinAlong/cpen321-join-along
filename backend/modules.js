@@ -15,9 +15,9 @@ class UserAccount {
         this.events = userInfo.events ? userInfo.events : [];
         this.friends = userInfo.friends ? userInfo.friends : [];
         this.blockedUsers = userInfo.blockedUsers ? userInfo.blockedUsers : [];
-        this.blockedEvents = userInfo.blockedEvents
-            ? userInfo.blockedEvents
-            : [];
+        this.blockedEvents = userInfo.blockedEvents ?
+            userInfo.blockedEvents :
+            [];
         this.token = userInfo.token ? userInfo.token : null;
     }
 
@@ -68,7 +68,9 @@ class UserStore {
     constructor() {}
 
     async findUserByProfile(userInfo) {
-        return await User.find({ name: userInfo.name });
+        return await User.find({
+            name: userInfo.name
+        });
     }
 
     async findUserByID(userID) {
@@ -88,7 +90,9 @@ class UserStore {
     }
 
     async findUserForLogin(Token) {
-        return await User.find({ token: Token });
+        return await User.find({
+            token: Token
+        });
     }
 }
 
@@ -114,9 +118,14 @@ class ChatEngine {
     //Assumes both users exist
     async sendMessage(fromUserID, toUserID, text) {
         let chatInfo = await Chat.find({
-            $and: [
-                { event: "null" },
-                { participants: { $all: [fromUserID, toUserID] } },
+            $and: [{
+                    event: "null"
+                },
+                {
+                    participants: {
+                        $all: [fromUserID, toUserID]
+                    }
+                },
             ],
         });
         if (chatInfo == null) return;
@@ -131,14 +140,22 @@ class ChatEngine {
         //         description: "A new private chatroom",
         //     });
 
-        chatInfo.message.push({ participantId: fromUserID, text: text });
+        chatInfo.message.push({
+            participantId: fromUserID,
+            text: text
+        });
         Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
     }
 
     async sendGroupMessage(userID, eventID, text) {
-        let chatInfo = await Chat.find({ event: eventID });
+        let chatInfo = await Chat.find({
+            event: eventID
+        });
         if (chatInfo == null) return;
-        chatInfo.messages.push({ participantId: userID, text: text });
+        chatInfo.messages.push({
+            participantId: userID,
+            text: text
+        });
         Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
     }
 
@@ -166,16 +183,18 @@ class EventDetails {
         this.description = eventInfo.description;
     }
 
-    async findEvents(eventInfo) {
-        //TODO: What exactly do you mean by 'similar events'
+    async findEvents(eventInfo, eventStore) {
+        return await eventStore.findEventByDetails(eventInfo)
     }
 
     async notifyNewGroupMessage() {
         //TODO: firebase
     }
 
-    async findEventsByString(searchEvent) {
-        //TODO: what is string
+    async findEventsByName(searchEvent) {
+        return await Event.find({
+            name: searchEvent
+        })
     }
 
     async joinEventByID(eventID, userID, eventStore, chatEngine) {
@@ -197,16 +216,25 @@ class EventDetails {
     }
 
     async reportAndBlockEvent(eventID, reason) {
-        //TODO
+        //TODO: do we need this, coz the report/block button would call the ReportService directly
     }
 }
 
 class EventStore {
     constructor() {}
 
-    async findEventByDetails(location, filters) {
-        return await Event.find({ location: location });
-        //TODO: add filters for the events
+    async findEventByDetails(filters) {
+        return await Event.find({
+            "$or": [{
+                name: filters.name,
+                eventOwnerID: filters.eventOwnerID,
+                interestTags: {
+                    $in: filters.interestTags
+                },
+                location: filters.location,
+                description: filters.description
+            }]
+        });
     }
 
     async findEventByID(eventID) {
@@ -273,7 +301,7 @@ class ReportService {
 
         return new Report({
             reporter: reporter,
-            reason: reason,
+            reason : reason,
             reportedID: userID,
         });
     }

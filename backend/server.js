@@ -65,7 +65,7 @@ app.post("/login", async (req, res) => {
     const { Token } = req.body;
     let foundUser = await userStore.findUserForLogin(Token);
     if (foundUser == null) res.status(404).send(false);
-    else res.status(200).send(true); //need to confirm what else to do
+    else res.status(200).send({ user: foundUser }); //need to confirm what else to do
 });
 
 //Adds the user object to the database and sends the id back to frontend - post
@@ -74,15 +74,43 @@ app.post("/user/create", async (req, res) => {
     let userInfo = new UserAccount(userObject);
     await User.deleteMany({});
     // console.log(await User.find({}))
-    let id = await userInfo.createUserAccount(userStore);
-    console.log(id);
-    res.status(200).send({ id: id });
+    // console.log(id);
+    res.status(200).send(await userInfo.createUserAccount(userStore));
 });
 
+//Creates a chat object and sends it to frontend
+app.post("/chat/create", async (req, res) => {
+    let chatObject = req.body;
+    let chatInfo = new ChatDetails(chatObject);
+    res.status(200).send(await chatEngine.createChat(chatInfo));
+});
+
+//Creates an event object and sends it to frontend
+app.post("/event/create", async (req, res) => {
+    let eventObject = req.body;
+    let eventInfo = new EventDetails(eventObject);
+    res.status(200).send(await eventStore.createEvent(eventInfo));
+});
+
+//Edits User and sends it to frontend
 app.put("/user/:id/edit", async (req, res) => {
     let { id } = req.params;
     await userStore.updateUserAccount(id, req.body);
-    res.status(200).send("successful")//do we need to send the 
+    res.status(200).send(await userStore.findUserByID(id)); //do we need to send the
+});
+
+//Edits Chat and sends it to frontend
+app.put("/chat/:id/edit", async (req, res) => {
+    let { id } = req.params;
+    await chatEngine.editChat(id, req.body);
+    res.status(200).send(await chatEngine.findChatByID(id)); //do we need to send the
+});
+
+//Edits User and sends it to frontend
+app.put("/event/:id/edit", async (req, res) => {
+    let { id } = req.params;
+    await eventStore.updateEvent(id, req.body);
+    res.status(200).send(await eventStore.findEventByID(id)); //do we need to send the
 });
 
 //Sends the user object for the profile page - get
@@ -104,18 +132,34 @@ app.get("/user/:id/home", async (req, res) => {
         let events = await new UserAccount(foundUser).findPersonalEvents(
             eventStore
         );
-        res.status(200).send({ user: foundUser, events: events });
+        res.status(200).send({ events: events }); //need to change this to event id, name and description only
     }
 });
 
 //Chat list: Sends the list of chats the user is in - get
-app.get("/user/:id/chat", async (req, res) => {});
+app.get("/user/:id/chat", async (req, res) => {
+    let { id } = req.params;
+    let chatList = await chatEngine.findChatByUser(id);
+    res.status(200).send({ chatList });
+});
 
 //Chat: Sends the chat object (which includes all the messages) - get
-app.get("/chat/:id", async (req, res) => {});
+app.get("/chat/:id", async (req, res) => {
+    let { id } = req.params;
+    let chat = await chatEngine.findChatByID(id);
+    res.status(200).send({ chat });
+});
 
 //Event list: Sends the list of Events the user is in - get
-app.get("/user/:id/event", async (req, res) => {});
+app.get("/user/:id/event", async (req, res) => {
+    let { id } = req.params;
+    let eventList = await eventStore.findEventByUser(id);
+    res.status(200).send({ eventList });
+});
 
 //Event: Sends the event object (for view event details?) - get
-app.get("/event:id", async (req, res) => {});
+app.get("/event:id", async (req, res) => {
+    let { id } = req.params;
+    let event = await eventStore.findEventByID(id);
+    res.status(200).send({ event });
+});

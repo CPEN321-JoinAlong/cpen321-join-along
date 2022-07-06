@@ -2,10 +2,12 @@ package com.joinalongapp.joinalong;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -16,13 +18,14 @@ import android.widget.TimePicker;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.viewmodel.RideshareDetails;
 
 import org.json.JSONException;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 //TODO: it might be nice to extract common methods between activities such as address and stuff into another utility like interface
@@ -40,8 +43,6 @@ public class ManageRideshareActivity extends AppCompatActivity {
     private Button bookRideshare;
     private ImageButton close;
     private String TAG = "ManageRideshareActivity";
-    private final String ORANGE = "#F44336";
-    private final String LIGHT_ORANGE = "#F89790";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,10 @@ public class ManageRideshareActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                //TODO: post to backend so that backend can call the rideshare api
+
+                if (!validateElements(userInputDetails)) {
+                    //TODO: post to backend so that backend can call the rideshare api
+                }
             }
         });
 
@@ -202,6 +206,36 @@ public class ManageRideshareActivity extends AppCompatActivity {
         Integer[] items = new Integer[]{1,2,3,4,5,6};
         ArrayAdapter<Integer> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
         numPeople.setAdapter(adapter);
+    }
+
+    private Address getAddressFromString(String address) {
+        Geocoder geocoder = new Geocoder(ManageRideshareActivity.this);
+        Address retVal = null;
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses.size() > 0) {
+                retVal = addresses.get(0);
+            }
+        } catch(IOException e) {
+            Log.e(TAG, "Failed to set location with error: " + e.getMessage());
+        }
+        return retVal;
+    }
+
+    private boolean validateElements(RideshareDetails details) {
+        boolean isValid = true;
+
+        if (getAddressFromString(details.getPickupLocation()) == null) {
+            pickUpLocationEdit.setError("Unable to find pick-up address.");
+            isValid = false;
+        }
+
+        if (getAddressFromString(details.getDestination()) == null) {
+            destinationEdit.setError("Unable to find destination address.");
+            isValid = false;
+        }
+
+        return isValid;
     }
 
 }

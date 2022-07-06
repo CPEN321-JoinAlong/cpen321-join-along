@@ -1,7 +1,6 @@
 package com.joinalongapp.viewmodel;
 
 import android.graphics.Bitmap;
-import android.location.Address;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,7 +11,7 @@ import java.util.List;
 public class UserProfile implements Serializable {
     private String firstName;
     private String lastName;
-    private Address location;
+    private String location;
     private List<String> interests; //TODO: it might be good to make this have its own datatype, or maybe a list of ENUM's
     private String description;
     private Bitmap profilePicture;
@@ -33,11 +32,11 @@ public class UserProfile implements Serializable {
         this.lastName = lastName;
     }
 
-    public Address getLocation() {
+    public String getLocation() {
         return location;
     }
 
-    public void setLocation(Address location) {
+    public void setLocation(String location) {
         this.location = location;
     }
 

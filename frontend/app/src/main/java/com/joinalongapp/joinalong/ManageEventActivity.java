@@ -1,7 +1,5 @@
 package com.joinalongapp.joinalong;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +13,8 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -169,12 +169,7 @@ public class ManageEventActivity extends AppCompatActivity {
     }
 
     private Boolean editTextEmpty(EditText input){
-        if(input.getText().toString().trim().length() == 0){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return input.getText().toString().trim().length() == 0;
     }
 
     private void calendarOperation(EditText editText){

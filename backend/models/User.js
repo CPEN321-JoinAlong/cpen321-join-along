@@ -8,7 +8,7 @@ const UserSchema = new Schema({
             type: String,
         },
     ],
-    location: String,
+    location: String,    
     events: [
         {
             type: String,

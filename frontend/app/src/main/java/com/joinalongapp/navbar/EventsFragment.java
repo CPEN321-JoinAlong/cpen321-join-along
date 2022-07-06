@@ -27,6 +27,8 @@ public class EventsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private ViewGroup fragContainer;
+
     public EventsFragment() {
         // Required empty public constructor
     }
@@ -56,17 +58,16 @@ public class EventsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        //TODO debt: should prob not have frag call activity in future because lag
+        Intent i = new Intent(getActivity(), ManageEventActivity.class);
+        startActivity(i);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
-        //TODO: fix nullpointerexception upon starting manageevent
-        Intent i = new Intent(getActivity(), ManageEventActivity.class);
-        i.putExtra("EDIT_OPTION", Boolean.valueOf(false));
-        startActivity(i);
 
         return inflater.inflate(R.layout.fragment_events, container, false);
     }

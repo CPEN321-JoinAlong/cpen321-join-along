@@ -1,6 +1,7 @@
 package com.joinalongapp.joinalong;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -56,7 +57,8 @@ public class ManageEventActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent home = new Intent(ManageEventActivity.this, MainActivity.class);
+                startActivity(home);
             }
         });
 
@@ -78,9 +80,8 @@ public class ManageEventActivity extends AppCompatActivity {
         initAutoCompleteChipGroup(autoCompleteChipTags, chipGroupTags, sampleTags);
 
         Bundle info = getIntent().getExtras();
-        Boolean manageOption = info.getBoolean("EDIT_OPTION");
 
-        if (manageOption) {
+        if (info != null && info.getSerializable("EVENT") != null) {
             // Must append pre-existing text due to editing of Event.
             Event userEvent = (Event) info.getSerializable("EVENT");
             manageEventTitle.setText("Edit Event");
@@ -114,6 +115,12 @@ public class ManageEventActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(ManageEventActivity.this, MainActivity.class);
+        startActivity(i);
     }
 
     private void initElements(){

@@ -6,12 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.Navigation;
 
 import com.joinalongapp.joinalong.databinding.ActivityMainBinding;
 import com.joinalongapp.navbar.EventsFragment;
 import com.joinalongapp.navbar.FriendsFragment;
-import com.joinalongapp.navbar.HomeFragment;
+import com.joinalongapp.navbar.HomeFragmentEventList;
 import com.joinalongapp.navbar.MessagingFragment;
 import com.joinalongapp.navbar.ProfileFragment;
 import com.joinalongapp.viewmodel.User;
@@ -28,7 +27,7 @@ public class MainActivity extends AppCompatActivity{
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        replaceFragment(new HomeFragment());
+        replaceFragment(new HomeFragmentEventList());
 
         User u = new User(UUID.randomUUID(), "Ken");
         Bundle bundle = new Bundle();
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity{
 
             switch (item.getItemId()) {
                 case R.id.home:
-                    replaceFragment(new HomeFragment());
+                    replaceFragment(new HomeFragmentEventList());
                     break;
                 case R.id.message:
                     replaceFragment(new MessagingFragment());

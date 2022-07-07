@@ -80,7 +80,7 @@ public class ManageProfileActivity extends AppCompatActivity {
                 //TODO: maybe can add profile pic preview on side
 
 
-                if (!validateElements(profile)) {
+                if (validateElements(profile)) {
                     //TODO: post profile as json and evaluate response, upon a 200, we should continue to next intent
                     //      update profile if it was a edit
                 }

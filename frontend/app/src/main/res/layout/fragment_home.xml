@@ -54,6 +54,17 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="682dp" />
 
+    <SearchView
+        android:id="@+id/homepageSearch"
+        android:layout_width="314dp"
+        android:layout_height="36dp"
+        android:background="@drawable/border_rectangle"
+        app:layout_constraintBottom_toTopOf="@+id/aboveTitleGuideline4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/aboveTitleGuideline3"
+        tools:queryHint="@string/search_events_hint" />
+
     <com.google.android.material.card.MaterialCardView
         android:layout_width="310dp"
         android:layout_height="28dp"
@@ -66,63 +77,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/aboveTitleGuideline4">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/friendsTabLayout"
+        <androidx.viewpager.widget.ViewPager
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:tabIndicatorColor="@color/orange"
-            app:tabIndicatorHeight="50dp"
-            app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/black">
+            android:layout_height="match_parent" >
 
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/eventListOption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/event_list_title" />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/homeEventDisplayTabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:tabIndicatorColor="@color/orange"
+                app:tabIndicatorHeight="50dp"
+                app:tabSelectedTextColor="@color/white"
+                app:tabTextColor="@color/black">
 
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/eventMapOption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/map_view_title" />
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/eventListOption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/event_list_title" />
 
-        </com.google.android.material.tabs.TabLayout>
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/eventMapOption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/map_view_title" />
+
+            </com.google.android.material.tabs.TabLayout>
+        </androidx.viewpager.widget.ViewPager>
 
     </com.google.android.material.card.MaterialCardView>
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/searchEventsBarInput"
-        android:layout_width="314dp"
-        android:layout_height="36dp"
-        android:backgroundTint="@color/light_grey"
-        android:background="@drawable/rectangle_border"
-        android:minWidth="100dp"
-        app:layout_constraintBottom_toTopOf="@+id/aboveTitleGuideline4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:layout_constraintWidth_min="32dp">
-
-        <AutoCompleteTextView
-            android:id="@+id/searchEventsAutocomplete"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"
-            android:backgroundTint="@color/light_grey"
-            android:drawableLeft="@drawable/ic_baseline_search_24"
-            android:hint="@string/search_events_hint"
-            android:minWidth="100dp"
-            android:textColor="@color/grey" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
     <Spinner
-        android:id="@+id/homepageFilter"
+        android:id="@+id/homepageEventsFilter"
         android:layout_width="154dp"
         android:layout_height="26dp"
         app:layout_constraintBottom_toTopOf="@+id/aboveTitleGuideline6"
@@ -132,18 +119,16 @@
         app:layout_constraintTop_toTopOf="@+id/aboveTitleGuideline5"
         app:layout_constraintVertical_bias="0.0" />
 
-    <ScrollView
-        android:layout_width="409dp"
-        android:layout_height="560dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/eventListRecyclerView"
+        android:layout_width="314dp"
+        android:layout_height="511dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/aboveTitleGuideline6">
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
-
+        app:layout_constraintTop_toTopOf="@+id/aboveTitleGuideline6"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

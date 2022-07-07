@@ -75,7 +75,7 @@ public class ManageRideshareActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                if (!validateElements(userInputDetails)) {
+                if (validateElements(userInputDetails)) {
                     //TODO: post to backend so that backend can call the rideshare api
                 }
             }

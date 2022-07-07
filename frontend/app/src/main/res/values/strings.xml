@@ -107,6 +107,10 @@
     <string name="map_view_title">Event Map</string>
     <string name="search_events_hint">Search Events</string>
 
+    <!--Event Cards-->
+    <string name="card_event_name_default">Event Name</string>
+    <string name="card_event_description_default">Event Description</string>
+
     <!--Messaging Navbar-->
     <string name="messaging_title">Messaging</string>
 

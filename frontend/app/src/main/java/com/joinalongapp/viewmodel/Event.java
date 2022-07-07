@@ -1,7 +1,5 @@
 package com.joinalongapp.viewmodel;
 
-import android.location.Location;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +17,51 @@ public class Event implements Serializable {
     private Boolean publicVisibility;
     private int numberOfPeople;
     private List<String> tags;
+
+    public void setEventId(UUID eventId) {
+        this.eventId = eventId;
+    }
+
+    public void setEventOwnerId(UUID eventOwnerId) {
+        this.eventOwnerId = eventOwnerId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setBeginningDate(Date beginningDate) {
+        this.beginningDate = beginningDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setPublicVisibility(Boolean publicVisibility) {
+        this.publicVisibility = publicVisibility;
+    }
+
+    public void setNumberOfPeople(int numberOfPeople) {
+        this.numberOfPeople = numberOfPeople;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public void setFriends(List<String> friends) {
+        this.friends = friends;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     private List<String> friends;
     private String description;
 

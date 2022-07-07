@@ -15,9 +15,9 @@ class UserAccount {
         this.events = userInfo.events ? userInfo.events : [];
         this.friends = userInfo.friends ? userInfo.friends : [];
         this.blockedUsers = userInfo.blockedUsers ? userInfo.blockedUsers : [];
-        this.blockedEvents = userInfo.blockedEvents ?
-            userInfo.blockedEvents :
-            [];
+        this.blockedEvents = userInfo.blockedEvents
+            ? userInfo.blockedEvents
+            : [];
         this.token = userInfo.token ? userInfo.token : null;
     }
 
@@ -67,9 +67,9 @@ class UserAccount {
 class UserStore {
     constructor() {}
 
-    async findUserByProfile(userInfo) {
+    async findUserByEvent(eventID) {
         return await User.find({
-            name: userInfo.name
+            events: { $in: [eventID] },
         });
     }
 
@@ -85,13 +85,37 @@ class UserStore {
         return await new User(userInfo).save();
     }
 
+    async addEvent(eventID, eventInfo) {
+        await User.updateMany(
+            {
+                $and: [
+                    { _id: { $in: eventInfo.participants } },
+                    { events: { $ne: eventID } },
+                ],
+            },
+            { $push: { events: eventID } }
+        );
+    }
+
+    async removeEvent(eventID, eventInfo) {
+        await User.updateMany(
+            {
+                $and: [
+                    { _id: { $nin: eventInfo.participants } },
+                    { events: eventID },
+                ],
+            },
+            { $pull: { events: eventID } }
+        );
+    }
+
     async deleteUser(userID) {
         return await User.findByIdAndDelete(userID);
     }
 
     async findUserForLogin(Token) {
         return await User.find({
-            token: Token
+            token: Token,
         });
     }
 }
@@ -118,13 +142,14 @@ class ChatEngine {
     //Assumes both users exist
     async sendMessage(fromUserID, toUserID, text) {
         let chatInfo = await Chat.find({
-            $and: [{
-                    event: "null"
+            $and: [
+                {
+                    event: "null",
                 },
                 {
                     participants: {
-                        $all: [fromUserID, toUserID]
-                    }
+                        $all: [fromUserID, toUserID],
+                    },
                 },
             ],
         });
@@ -142,19 +167,19 @@ class ChatEngine {
 
         chatInfo.message.push({
             participantId: fromUserID,
-            text: text
+            text: text,
         });
         Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
     }
 
     async sendGroupMessage(userID, eventID, text) {
         let chatInfo = await Chat.find({
-            event: eventID
+            event: eventID,
         });
         if (chatInfo == null) return;
         chatInfo.messages.push({
             participantId: userID,
-            text: text
+            text: text,
         });
         Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
     }
@@ -184,7 +209,7 @@ class EventDetails {
     }
 
     async findEvents(eventInfo, eventStore) {
-        return await eventStore.findEventByDetails(eventInfo)
+        return await eventStore.findEventByDetails(eventInfo);
     }
 
     async notifyNewGroupMessage() {
@@ -193,8 +218,8 @@ class EventDetails {
 
     async findEventsByName(searchEvent) {
         return await Event.find({
-            name: searchEvent
-        })
+            name: searchEvent,
+        });
     }
 
     async joinEventByID(eventID, userID, eventStore, chatEngine) {
@@ -225,15 +250,17 @@ class EventStore {
 
     async findEventByDetails(filters) {
         return await Event.find({
-            "$or": [{
-                name: filters.name,
-                eventOwnerID: filters.eventOwnerID,
-                interestTags: {
-                    $in: filters.interestTags
+            $or: [
+                {
+                    name: filters.name,
+                    eventOwnerID: filters.eventOwnerID,
+                    interestTags: {
+                        $in: filters.interestTags,
+                    },
+                    location: filters.location,
+                    description: filters.description,
                 },
-                location: filters.location,
-                description: filters.description
-            }]
+            ],
         });
     }
 
@@ -249,27 +276,34 @@ class EventStore {
         });
     }
 
-    async updateEvent(eventID, eventInfo) {
+    //add the event to the database and adds it into users' event list and send event object to frontend
+    async createEvent(eventInfo, chatEngine, userStore) {
+        let eventObject = await new Event(eventInfo).save();
+        eventObject.participants.forEach(async (particpant) => {
+            let user = await userStore.findUserByID(particpant);
+            if (user) {
+                user.participants.push(eventObject._id);
+                await userStore.updateUserAccount(particpant, user);
+            }
+        });
+        return eventObject;
+    }
+
+    //might need to optimize this after mvp
+    async updateEvent(eventID, eventInfo, userStore) {
+        let event = await Event.findById(eventID);
+        if (event) {
+            await userStore.addEvent(eventID, eventInfo);
+            await userStore.removeEvent(eventID, eventInfo);
+        }
         return await Event.findByIdAndUpdate(eventID, eventInfo);
     }
 
-    async createEvent(eventInfo, chatEngine) {
-        let chatInfo = await chatEngine.createChat({
-            name: eventInfo.name,
-            interestTags: eventInfo.interestTags,
-            participants: eventInfo.participants,
-            messages: [],
-            maxCapacity: eventInfo.maxCapacity,
-            currCapacity: eventInfo.currCapacity,
-            description: eventInfo.description,
-        });
-        eventInfo.chat = chatInfo._id;
-        let eventObject = await new Event(eventInfo).save();
-        chatInfo.event = eventObject._id;
-        chatEngine.editChat(chatInfo);
-    }
-
     async deleteEvent(eventID) {
+        let event = await Event.findById(eventID);
+        if (event) {
+            event.participants.forEach(async(Par));
+        }
         return await Event.findByIdAndDelete(eventID);
     }
 
@@ -293,15 +327,14 @@ class ReportService {
     async reportUser(userID, reporter, reason, isBlocked, userStore) {
         if (isBlocked) {
             let reporterInfo = userStore.findUserByID(reporter);
-            if (reporterInfo == null)
-                return
+            if (reporterInfo == null) return;
             reporterInfo.blockedUsers.push(userID);
             userStore.updateUserAccount(reporter, reporterInfo);
         }
 
         return new Report({
             reporter: reporter,
-            reason : reason,
+            reason: reason,
             reportedID: userID,
         });
     }
@@ -309,8 +342,7 @@ class ReportService {
     async reportEvent(eventID, reporter, reason, isBlocked, userStore) {
         if (isBlocked) {
             let reporterInfo = userStore.findUserByID(reporter);
-            if (reporterInfo == null)
-                return
+            if (reporterInfo == null) return;
             reporterInfo.blockedEvents.push(eventID);
             userStore.updateUserAccount(reporter, reporterInfo);
         }
@@ -337,6 +369,14 @@ class BanService {
     async banEvent(eventID, eventStore) {
         return await eventStore.deleteEvent(eventID);
     }
+}
+
+function removeItemOnce(arr, value) {
+    var index = arr.indexOf(value);
+    if (index > -1) {
+        arr.splice(index, 1);
+    }
+    return arr;
 }
 
 module.exports = {

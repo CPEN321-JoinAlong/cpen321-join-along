@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const EventSchema = new Schema({
-    name: String,
+    title: String,
     eventOwnerID: String,
-    interestTags: [
+    tags: [
         {
             type: String
         }
@@ -14,11 +14,11 @@ const EventSchema = new Schema({
             type: String
         }
     ],
-    startDate: Date,
+    beginningDate: Date,
     endDate: Date,
-    isPublic: Boolean,
-    maxCapacity: String,
-    currCapacity: String,
+    publicVisibility: Boolean,
+    numberOfPeople: Number,
+    currCapacity: Number,
     location: String,
     eventImage: String,
     description: String,

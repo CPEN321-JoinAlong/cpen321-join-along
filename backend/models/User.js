@@ -8,7 +8,7 @@ const UserSchema = new Schema({
             type: String,
         },
     ],
-    location: String,    
+    location: String,
     events: [
         {
             type: String,
@@ -16,6 +16,21 @@ const UserSchema = new Schema({
     ],
     profileImage: String,
     description: String,
+    chatInvites: [
+        {
+            type: String,
+        },
+    ],
+    eventInvites: [
+        {
+            type: String,
+        },
+    ],
+    friendRequest: [
+        {
+            type: String,
+        },
+    ],
     friends: [
         {
             type: String,

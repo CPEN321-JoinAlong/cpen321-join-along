@@ -68,14 +68,22 @@ app.post("/login", async (req, res) => {
     else res.status(200).send({ user: foundUser }); //need to confirm what else to do
 });
 
+
+//JUST FOR TESTING
+app.get("/", async (req, res) => {
+    console.log(await User.deleteMany())
+    res.send(await User.find({}))
+})
+
 //Adds the user object to the database and sends the id back to frontend - post
 app.post("/user/create", async (req, res) => {
     let userObject = req.body;
     let userInfo = new UserAccount(userObject);
-    await User.deleteMany({});
-    // console.log(await User.find({}))
+    // await User.deleteMany({});
     // console.log(id);
     res.status(200).send(await userInfo.createUserAccount(userStore));
+    console.log(await User.find({}))
+    // res.status(200).send("hello");
 });
 
 //Creates a chat object and sends it to frontend
@@ -90,6 +98,7 @@ app.post("/event/create", async (req, res) => {
     let eventObject = req.body;
     let eventInfo = new EventDetails(eventObject);
     res.status(200).send(await eventStore.createEvent(eventInfo));
+    console.log()
 });
 
 //Edits User and sends it to frontend

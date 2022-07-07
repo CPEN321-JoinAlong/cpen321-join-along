@@ -2,6 +2,7 @@ const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
 const Report = require("./models/Report");
+
 class UserAccount {
     constructor(userInfo) {
         //fields from userInfo
@@ -12,6 +13,11 @@ class UserAccount {
         this.profileImage = userInfo.profilePicture;
 
         //new and empty fields
+        this.eventInvites = userInfo.eventInvites ? userInfo.eventInvites : [];
+        this.chatInvites = userInfo.chatInvites ? userInfo.chatInvites : [];
+        this.friendRequest = userInfo.friendRequest
+            ? userInfo.friendRequest
+            : [];
         this.events = userInfo.events ? userInfo.events : [];
         this.friends = userInfo.friends ? userInfo.friends : [];
         this.blockedUsers = userInfo.blockedUsers ? userInfo.blockedUsers : [];
@@ -21,7 +27,7 @@ class UserAccount {
         this.token = userInfo.token ? userInfo.token : null;
     }
 
-    findFriends(User) {
+    findFriends() {
         return this.friends;
     }
 
@@ -34,6 +40,11 @@ class UserAccount {
     async findEventsWithTag(Tag, eventStore) {
         let eventList = await this.findAllPersonalEvents(eventStore);
         return eventList.filter((event) => event.interestTags.includes(Tag));
+    }
+
+    //returns list of unblocked events
+    async filterBlockedEvents(userID, userStore, eventStore) {
+        return await eventStore.findUnblockedEvents(userID, userStore);
     }
 
     //TODO chat finding method, and add chat the user is in as a field in UserAccount or something
@@ -55,7 +66,7 @@ class UserAccount {
     }
 
     async createUserAccount(userStore) {
-        console.log(this);
+        // console.log(this);
         return await userStore.createUser(this);
     }
 
@@ -83,6 +94,16 @@ class UserStore {
 
     async createUser(userInfo) {
         return await new User(userInfo).save();
+    }
+
+    async acceptFriendRequest(userID, otherUserID) {
+        await User.findByIdAndUpdate(userID, {
+            $push: { friends: otherUserID },
+            $pull: { friendRequests: otherUserID },
+        });
+        await User.findByIdAndUpdate(otherUserID, {
+            $push: { friends: userID },
+        });
     }
 
     async addEvent(eventID, eventInfo) {
@@ -153,18 +174,8 @@ class ChatEngine {
                 },
             ],
         });
+
         if (chatInfo == null) return;
-
-        //     return await this.createChat({
-        //         name: "New Chat",
-        //         interestTags: [],
-        //         participants: [fromUserID, toUserID],
-        //         messages: [{ participantId: fromUserID, text: text }],
-        //         maxCapacity: 2,
-        //         currCapacity: 2,
-        //         description: "A new private chatroom",
-        //     });
-
         chatInfo.message.push({
             participantId: fromUserID,
             text: text,
@@ -195,17 +206,22 @@ class ChatEngine {
 
 class EventDetails {
     constructor(eventInfo) {
-        this.name = eventInfo.name;
-        this.interests = eventInfo.interestTags;
-        this.participants = eventInfo.participants;
-        this.startDate = eventInfo.startDate;
+        this.title = eventInfo.title;
+        this.eventOwnerID = eventInfo.eventOwnerID;
+        this.tags = eventInfo.tags;
+        this.beginningDate = eventInfo.beginningDate;
         this.endDate = eventInfo.endDate;
-        this.isPublic = eventInfo.isPublic;
-        this.maxCapacity = eventInfo.maxCapacity;
-        this.currCapacity = eventInfo.currCapacity;
+        this.publicVisibility = eventInfo.publicVisibility;
+        this.numberOfPeople = eventInfo.numberOfPeople;
         this.location = eventInfo.location;
-        this.eventImage = eventInfo.eventImage;
         this.description = eventInfo.description;
+
+        this.participants = eventInfo.participants
+            ? eventInfo.participants
+            : [eventOwnerID];
+        this.currCapacity = eventInfo.currCapacity ? eventInfo.currCapacity : 1;
+        this.eventImage = eventInfo.eventImage;
+        this.chat = eventInfo.chat ? eventInfo.chat : null;
     }
 
     async findEvents(eventInfo, eventStore) {
@@ -235,18 +251,23 @@ class EventDetails {
 
         return await eventStore.updateEvent(eventID, eventInfo);
     }
-
-    async filterBlockedEvents(userID, userStore) {
-        //TODO: should be a part of user searching for events (UserAccount), not a seperate function
-    }
-
-    async reportAndBlockEvent(eventID, reason) {
-        //TODO: do we need this, coz the report/block button would call the ReportService directly
-    }
 }
 
 class EventStore {
     constructor() {}
+
+    async findUnblockedEvents(userID, userStore) {
+        let user = await userStore.findUserByID(userID);
+        if (user) {
+            return await Event.find({
+                $and: [
+                    { _id: { $in: user.events } },
+                    { _id: { $nin: user.blockedEvents } },
+                ],
+            });
+        }
+        return null;
+    }
 
     async findEventByDetails(filters) {
         return await Event.find({

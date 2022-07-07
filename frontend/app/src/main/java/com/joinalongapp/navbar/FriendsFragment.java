@@ -1,13 +1,22 @@
 package com.joinalongapp.navbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.tabs.TabLayout;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.SearchUsersActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,12 +30,26 @@ public class FriendsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private static final int FRIENDS_LIST_INDEX = 0;
+    private static final int REQUESTS_LIST_INDEX = 1;
+    private static final int NUMBER_OF_TABS = 2;
+
+    TabLayout tabLayout;
+    FragmentManager fragmentManager;
+    ViewPager2 viewPager2;
+    ImageButton addFriends;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     public FriendsFragment() {
         // Required empty public constructor
+    }
+
+    private enum LayoutManagerType {
+        GRID_LAYOUT_MANAGER,
+        LINEAR_LAYOUT_MANAGER
     }
 
     /**
@@ -54,12 +77,88 @@ public class FriendsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friends, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
+
+        fragmentManager = getActivity().getSupportFragmentManager();
+
+        ViewStateAdapter viewStateAdapter = new ViewStateAdapter(fragmentManager, getLifecycle());
+        viewPager2 = (ViewPager2) rootView.findViewById(R.id.friendsViewPager);
+        viewPager2.setAdapter(viewStateAdapter);
+
+        tabLayout = rootView.findViewById(R.id.friendsTabLayout);
+        addFriends = rootView.findViewById(R.id.addButton);
+
+        addFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchUsers = new Intent(getActivity(), SearchUsersActivity.class);
+                startActivity(searchUsers);
+            }
+        });
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager2.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                tabLayout.selectTab(tabLayout.getTabAt(position));
+                //super.onPageSelected(position);
+            }
+        });
+
+
+
+
+        return rootView;
     }
+
+    private class ViewStateAdapter extends FragmentStateAdapter {
+
+        public ViewStateAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+            super(fragmentManager, lifecycle);
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            if(position == FRIENDS_LIST_INDEX){
+                return new FriendsListFragment();
+            }
+            else{
+                return new FriendsRequestFragment();
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return NUMBER_OF_TABS;
+        }
+    }
+
+
 }

@@ -9,6 +9,8 @@ public class ReportDetails {
     private String reason;
     private String description;
     private Boolean blockStatus;
+    private Boolean reportPerson;
+    private Event reportingEvent;
 
     public ReportDetails() {
     }
@@ -36,6 +38,14 @@ public class ReportDetails {
         return blockStatus;
     }
 
+    public Boolean getReportPerson() {
+        return reportPerson;
+    }
+
+    public Event getReportingEvent() {
+        return reportingEvent;
+    }
+
     public void setReportingName(String reportingName) {
         this.reportingName = reportingName;
     }
@@ -50,6 +60,14 @@ public class ReportDetails {
 
     public void setBlockStatus(Boolean blockStatus) {
         this.blockStatus = blockStatus;
+    }
+
+    public void setReportPerson(Boolean reportPerson) {
+        this.reportPerson = reportPerson;
+    }
+
+    public void setReportingEvent(Event reportingEvent) {
+        this.reportingEvent = reportingEvent;
     }
 
     public String toJsonString() throws JSONException {

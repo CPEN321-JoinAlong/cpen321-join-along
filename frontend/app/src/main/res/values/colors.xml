@@ -12,4 +12,8 @@
     <color name="light_grey">#EAEAEA</color>
     <color name="orange_prim">#F44336</color>
     <color name="orange_light">#F89790</color>
+    <color name="red">#cf3119</color>
+    <color name="green">#40de1d</color>
+
+
 </resources>

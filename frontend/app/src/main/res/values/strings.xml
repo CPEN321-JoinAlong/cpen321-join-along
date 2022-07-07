@@ -38,6 +38,11 @@
     <string name="default_enter_location">Enter Location</string>
     <string name="default_enter_tags">Enter Tags</string>
     <string name="default_enter_friends">Enter Friends</string>
+    <string name="default_interests">Interests</string>
+    <string name="default_events">Events</string>
+    <string name="default_friends">Friends</string>
+    <string name="default_requests">Requests</string>
+    <string name="default_search_people">Search People</string>
     <string-array name="number_of_people_array">
         <item>1</item>
         <item>2</item>

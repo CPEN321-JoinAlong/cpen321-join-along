@@ -67,7 +67,7 @@
         app:layout_constraintTop_toTopOf="@+id/aboveTitleGuideline4">
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/homeEventDisplayTabLayout"
+            android:id="@+id/friendsTabLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:tabIndicatorColor="@color/orange"

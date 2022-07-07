@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
+import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.ReportDetails;
 import com.joinalongapp.viewmodel.User;
 
@@ -25,6 +26,7 @@ public class ReportActivity extends AppCompatActivity {
     private TabLayout blockSelectionTab;
     private Button submitButton;
     private ImageButton cancelButton;
+    private TextView reportBlockSubtitle;
     private int BLOCK_INDEX = 0;
 
     @Override
@@ -35,12 +37,29 @@ public class ReportActivity extends AppCompatActivity {
         initElements();
 
         Bundle info = getIntent().getExtras();
-        User reportingPerson = (User) info.getSerializable("REPORTING_PERSON");
-
-        String reportingName = " " + reportingPerson.getName();
-        reportingSubtitle.append(reportingName);
+        Boolean reportType = info.getBoolean("REPORT_PERSON");
 
         ReportDetails reportDetails = new ReportDetails();
+        String reportEntityName;
+        if(reportType){
+            User reportingPerson = (User) info.getSerializable("REPORTING_USER");
+            String reportingName = " " + reportingPerson.getName();
+            reportEntityName = reportingPerson.getName();
+            reportingSubtitle.append(reportingName);
+            reportDetails.setReportPerson(true);
+        }
+        else{
+            Event reportingEvent = (Event) info.getSerializable("REPORTING_EVENT");
+            String reportingEventName = " " + reportingEvent.getTitle();
+            reportEntityName = reportingEvent.getTitle();
+            reportingSubtitle.append(reportingEventName);
+            reportBlockSubtitle.append(" " + reportingEvent.getOwnerName());
+            reportDetails.setReportPerson(false);
+        }
+
+
+
+
 
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -53,7 +72,7 @@ public class ReportActivity extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                reportDetails.setReportingName(reportingName.trim());
+                reportDetails.setReportingName(reportEntityName);
                 reportDetails.setReason(reportReason.getText().toString());
                 reportDetails.setDescription(reportDescription.getText().toString());
                 reportDetails.setBlockStatus(blockSelectionTab.getSelectedTabPosition() == BLOCK_INDEX);
@@ -78,5 +97,6 @@ public class ReportActivity extends AppCompatActivity {
         blockSelectionTab = findViewById(R.id.eventVisibilitySelection);
         submitButton = findViewById(R.id.submitReportButton);
         cancelButton = findViewById(R.id.reportCancelButton);
+        reportBlockSubtitle = findViewById(R.id.reportBlockSubtitle);
     }
 }

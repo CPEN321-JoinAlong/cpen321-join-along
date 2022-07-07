@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.Navigation;
 
 import com.joinalongapp.joinalong.databinding.ActivityMainBinding;
 import com.joinalongapp.navbar.EventsFragment;
@@ -13,6 +14,9 @@ import com.joinalongapp.navbar.FriendsFragment;
 import com.joinalongapp.navbar.HomeFragment;
 import com.joinalongapp.navbar.MessagingFragment;
 import com.joinalongapp.navbar.ProfileFragment;
+import com.joinalongapp.viewmodel.User;
+
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity{
     ActivityMainBinding binding;
@@ -25,6 +29,11 @@ public class MainActivity extends AppCompatActivity{
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         replaceFragment(new HomeFragment());
+
+        User u = new User(UUID.randomUUID(), "Ken");
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("USER", u);
+
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
 
@@ -42,7 +51,9 @@ public class MainActivity extends AppCompatActivity{
                     replaceFragment(new FriendsFragment());
                     break;
                 case R.id.profile:
-                    replaceFragment(new ProfileFragment());
+                    ProfileFragment pf = new ProfileFragment();
+                    pf.setArguments(bundle);
+                    replaceFragment(pf);
                     break;
             }
 

@@ -11,6 +11,7 @@ public class Event implements Serializable {
 
     private UUID eventId;
     private UUID eventOwnerId;
+    private String ownerName;
     private String title;
     private String location;
     private Date beginningDate;
@@ -42,6 +43,10 @@ public class Event implements Serializable {
 
     public UUID getEventOwnerId() {
         return eventOwnerId;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
     }
 
     public String getTitle() {

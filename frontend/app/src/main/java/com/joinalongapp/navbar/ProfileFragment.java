@@ -2,13 +2,19 @@
 package com.joinalongapp.navbar;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.viewmodel.User;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +27,11 @@ public class ProfileFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private TextView profileName;
+    private ImageView profilePicture;
+    private ImageButton editButton;
+    private ChipGroup interestsChipGroup;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -61,6 +72,24 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        initElements(view);
+        User user = (User) getArguments().getSerializable("USER");
+        Log.d("ProfileFragment", user.getName());
+        Log.d("ProfileFragment", user.getId().toString());
+        String userName = user.getName();
+
+
+        profileName.setText(userName);
+
+
+        return view;
+    }
+
+    private void initElements(View view){
+        profileName = view.findViewById(R.id.profileName);
+        profilePicture = view.findViewById(R.id.profilePicture);
+        editButton = view.findViewById(R.id.editButton);
+        interestsChipGroup = view.findViewById(R.id.interestsChipGroup);
     }
 }

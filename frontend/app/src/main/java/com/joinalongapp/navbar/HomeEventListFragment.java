@@ -4,9 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -22,18 +19,15 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragmentEventList#newInstance} factory method to
+ * Use the {@link HomeEventListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragmentEventList extends Fragment implements EventAdapter.ItemClickListener {
+public class HomeEventListFragment extends Fragment implements EventAdapter.ItemClickListener {
     private RecyclerView eventRecycler;
     private List<Event> eventList = new ArrayList<>();
     private EventAdapter eventAdapter;
 
-    private Spinner eventFilterSpinner;
-    private List<String> eventFilterList = new ArrayList<>();
-
-    public HomeFragmentEventList() {
+    public HomeEventListFragment() {
         // Required empty public constructor
     }
 
@@ -46,8 +40,8 @@ public class HomeFragmentEventList extends Fragment implements EventAdapter.Item
      * @return A new instance of fragment HomeFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static HomeFragmentEventList newInstance(String param1, String param2) {
-        HomeFragmentEventList fragment = new HomeFragmentEventList();
+    public static HomeEventListFragment newInstance(String param1, String param2) {
+        HomeEventListFragment fragment = new HomeEventListFragment();
         return fragment;
     }
 
@@ -100,32 +94,11 @@ public class HomeFragmentEventList extends Fragment implements EventAdapter.Item
         View view = inflater.inflate(R.layout.fragment_home_event_list, container, false);
 
         initElements(view);
-        initSpinner();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         eventRecycler.setLayoutManager(linearLayoutManager);
 
         setEventCards();
-
-        eventFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedFilter = eventFilterList.get(position);
-
-                //TODO: this should be a search for events with given filter instead
-                //      it should then update the event list, and recall setEventCards
-                Toast.makeText(getActivity(), selectedFilter, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                String selectedFilter = eventFilterList.get(0);
-
-                //TODO: this should be a search for events with given filter instead
-                //      it should then update the event list, and recall setEventCards
-                Toast.makeText(getActivity(), selectedFilter, Toast.LENGTH_SHORT).show();
-            }
-        });
 
         return view;
     }
@@ -136,22 +109,8 @@ public class HomeFragmentEventList extends Fragment implements EventAdapter.Item
         eventRecycler.setAdapter(eventAdapter);
     }
 
-    private void initSpinner() {
-        eventFilterList.add("Recommended");
-        eventFilterList.add("My Events");
-
-        //TODO: change this to a post request for user interests?
-        //      either that or a user was passed in through bundle/arguments
-        List<String> userInterests = new ArrayList<>();
-
-        eventFilterList.addAll(userInterests);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, eventFilterList);
-        eventFilterSpinner.setAdapter(adapter);
-    }
-
     private void initElements(View view) {
         eventRecycler = view.findViewById(R.id.eventListRecyclerView);
-        eventFilterSpinner = view.findViewById(R.id.homepageEventsFilter);
     }
 
     @Override

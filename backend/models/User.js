@@ -9,6 +9,11 @@ const UserSchema = new Schema({
         },
     ],
     location: String,
+    chats: [
+        {
+            type: String,
+        },
+    ],
     events: [
         {
             type: String,

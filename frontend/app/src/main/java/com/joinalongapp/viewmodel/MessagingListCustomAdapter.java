@@ -19,11 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCustomAdapter.ViewHolder>{
-
+public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingListCustomAdapter.ViewHolder>{
     private List<User> users;
 
-    public FriendsListCustomAdapter(List<User> inputDataSet){
+    public MessagingListCustomAdapter(List<User> inputDataSet){
         users = inputDataSet;
     }
 
@@ -62,13 +61,13 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MessagingListCustomAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent,false);
-        return new ViewHolder(view);
+        return new MessagingListCustomAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MessagingListCustomAdapter.ViewHolder holder, int position) {
         holder.getName().setText(users.get(position).getName());
         holder.getSettings().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,8 +119,4 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         notifyDataSetChanged();
 
     }
-
-
-
-
 }

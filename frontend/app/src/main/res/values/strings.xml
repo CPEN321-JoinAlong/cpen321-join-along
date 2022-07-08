@@ -42,6 +42,9 @@
     <string name="default_events">Events</string>
     <string name="default_friends">Friends</string>
     <string name="default_requests">Requests</string>
+    <string name="default_search_people">Search People</string>
+    <string name="default_messaging">Messaging</string>
+    <string name="default_messages">Messages</string>
     <string name="default_search">Search</string>
     <string-array name="number_of_people_array">
         <item>1</item>
@@ -106,10 +109,6 @@
     <string name="event_list_title">Event List</string>
     <string name="map_view_title">Event Map</string>
     <string name="search_events_hint">Search Events</string>
-
-    <!--Event Cards-->
-    <string name="card_event_name_default">Event Name</string>
-    <string name="card_event_description_default">Event Description</string>
 
     <!--Messaging Navbar-->
     <string name="messaging_title">Messaging</string>

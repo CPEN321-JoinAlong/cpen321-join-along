@@ -17,10 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsRequestCustomAdapter.ViewHolder>{
+public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<MessagingRequestCustomAdapter.ViewHolder>{
     private List<User> users;
 
-    public FriendsRequestCustomAdapter(List<User> inputDataSet){
+    public MessagingRequestCustomAdapter(List<User> inputDataSet){
         users = inputDataSet;
     }
 
@@ -37,7 +37,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                 @Override
                 public void onClick(View v) {
                     // Go to their profile
-                    Log.d("FragmentFriend", name.getText().toString());
+                    Log.d("Fragment", name.getText().toString());
                 }
             });
 
@@ -66,13 +66,13 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
 
     @NonNull
     @Override
-    public FriendsRequestCustomAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MessagingRequestCustomAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.request_item, parent,false);
-        return new FriendsRequestCustomAdapter.ViewHolder(view);
+        return new MessagingRequestCustomAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FriendsRequestCustomAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MessagingRequestCustomAdapter.ViewHolder holder, int position) {
         holder.getName().setText(users.get(position).getName());
         holder.getAccept().setOnClickListener(new View.OnClickListener() {
             @Override

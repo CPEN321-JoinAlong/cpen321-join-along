@@ -68,6 +68,7 @@ public class HomeEventMapFragment extends Fragment {
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
                 //TODO: implement map search
+                //TODO: might need map API key
 
                 googleMaps = googleMap;
 

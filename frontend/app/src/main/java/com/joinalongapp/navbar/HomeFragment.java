@@ -78,6 +78,7 @@ public class HomeFragment extends Fragment {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         EventViewAdapter viewStateAdapter = new EventViewAdapter(fragmentManager, getLifecycle());
         eventViewPager.setAdapter(viewStateAdapter);
+        eventViewPager.setUserInputEnabled(false);
 
         eventViewTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

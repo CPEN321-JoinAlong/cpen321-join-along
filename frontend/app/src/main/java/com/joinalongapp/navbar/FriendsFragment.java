@@ -16,7 +16,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.joinalongapp.joinalong.R;
-import com.joinalongapp.joinalong.SearchUsersActivity;
+import com.joinalongapp.joinalong.SearchScreenActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -101,7 +101,7 @@ public class FriendsFragment extends Fragment {
         addFriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent searchUsers = new Intent(getActivity(), SearchUsersActivity.class);
+                Intent searchUsers = new Intent(getActivity(), SearchScreenActivity.class);
                 startActivity(searchUsers);
             }
         });

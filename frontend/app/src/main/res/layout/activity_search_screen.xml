@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchUsersActivity">
+    tools:context=".SearchScreenActivity">
 
     <SearchView
-        android:id="@+id/searchPeopleView"
+        android:id="@+id/search"
         android:layout_width="350dp"
         android:layout_height="49dp"
         android:iconifiedByDefault="false"
-        android:queryHint="@string/default_search_people"
+        android:queryHint="@string/default_search"
         app:layout_constraintBottom_toTopOf="@+id/guideline23"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.819"
@@ -29,7 +29,7 @@
         app:layout_constraintGuide_begin="65dp" />
 
     <ImageButton
-        android:id="@+id/backButton"
+        android:id="@+id/searchBackButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
@@ -49,6 +49,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchPeopleView"
+        app:layout_constraintTop_toBottomOf="@+id/search"
         app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

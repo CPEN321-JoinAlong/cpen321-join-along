@@ -17,7 +17,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="API_KEY_HERE" />
         <activity
-            android:name=".SearchUsersActivity"
+            android:name=".SearchScreenActivity"
             android:exported="false" />
         <activity
             android:name=".ManageChatActivity"

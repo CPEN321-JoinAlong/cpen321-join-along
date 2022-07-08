@@ -2,13 +2,7 @@ package com.joinalongapp.joinalong;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.Spannable;
-import android.text.Spanned;
-import android.text.style.DrawableMarginSpan;
-import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.Event;

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -38,6 +39,10 @@ public class HomeFragment extends Fragment {
     private Spinner eventFilterSpinner;
     private List<String> eventFilterList = new ArrayList<>();
 
+    private SearchView homepageSearchBar;
+
+    protected List<String> thingy = new ArrayList<>();
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -66,8 +71,6 @@ public class HomeFragment extends Fragment {
 
 
         //TODO: refactor and implement search
-        //TODO: remove the viewGroup because map moving is impossible with it there
-        //      it just keeps swiping between tabs instead of moving the map!!
 
 
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
@@ -78,6 +81,8 @@ public class HomeFragment extends Fragment {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         EventViewAdapter viewStateAdapter = new EventViewAdapter(fragmentManager, getLifecycle());
         eventViewPager.setAdapter(viewStateAdapter);
+
+        //without this, moving map is seen as swipe between tabs
         eventViewPager.setUserInputEnabled(false);
 
         eventViewTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -124,6 +129,14 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        homepageSearchBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+            }
+        });
+
         return rootView;
     }
 
@@ -131,6 +144,7 @@ public class HomeFragment extends Fragment {
         eventViewPager = view.findViewById(R.id.eventViewSelectViewPager);
         eventViewTabs = view.findViewById(R.id.homeEventDisplayTabLayout);
         eventFilterSpinner = view.findViewById(R.id.homepageEventsFilter);
+        homepageSearchBar = view.findViewById(R.id.homepageSearch);
     }
 
     private void initSpinner() {

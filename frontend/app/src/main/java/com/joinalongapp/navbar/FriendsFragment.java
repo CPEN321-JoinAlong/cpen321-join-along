@@ -102,6 +102,7 @@ public class FriendsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent searchUsers = new Intent(getActivity(), SearchScreenActivity.class);
+                searchUsers.putExtra("mode", "user");
                 startActivity(searchUsers);
             }
         });

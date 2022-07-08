@@ -108,7 +108,8 @@
     <string name="home_title">Home</string>
     <string name="event_list_title">Event List</string>
     <string name="map_view_title">Event Map</string>
-    <string name="search_events_hint">Search Events</string>
+    <string name="card_event_name_default">Event Title</string>
+    <string name="card_event_description_default">Event Description</string>
 
     <!--Messaging Navbar-->
     <string name="messaging_title">Messaging</string>
@@ -121,6 +122,7 @@
 
     <!--Profile Navbar-->
     <string name="profile_title">Profile</string>
+    <string name="search_events_hint" />
 
 
 </resources>

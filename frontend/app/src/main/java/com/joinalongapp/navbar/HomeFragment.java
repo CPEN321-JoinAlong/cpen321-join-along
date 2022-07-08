@@ -1,12 +1,13 @@
 package com.joinalongapp.navbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.SearchView;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.SearchScreenActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +41,7 @@ public class HomeFragment extends Fragment {
     private Spinner eventFilterSpinner;
     private List<String> eventFilterList = new ArrayList<>();
 
-    private SearchView homepageSearchBar;
+    private ImageButton homepageSearchBar;
 
     protected List<String> thingy = new ArrayList<>();
 
@@ -132,8 +134,9 @@ public class HomeFragment extends Fragment {
         homepageSearchBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
+                Intent i = new Intent(getActivity(), SearchScreenActivity.class);
+                i.putExtra("mode", "event");
+                startActivity(i);
             }
         });
 
@@ -144,7 +147,7 @@ public class HomeFragment extends Fragment {
         eventViewPager = view.findViewById(R.id.eventViewSelectViewPager);
         eventViewTabs = view.findViewById(R.id.homeEventDisplayTabLayout);
         eventFilterSpinner = view.findViewById(R.id.homepageEventsFilter);
-        homepageSearchBar = view.findViewById(R.id.homepageSearch);
+        homepageSearchBar = view.findViewById(R.id.homeSearchButton);
     }
 
     private void initSpinner() {

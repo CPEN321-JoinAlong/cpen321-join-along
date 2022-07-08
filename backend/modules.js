@@ -200,6 +200,27 @@ class UserStore {
         return await User.findByIdAndDelete(userID);
     }
 
+    async removeFriend(userID, otherUserID) {
+        await User.updateMany(
+            { _id: { $in: [userID, otherUserID] } },
+            { $pull: { friends: { $in: [userID, otherUserID] } } }
+        );
+    }
+
+    async leaveEvent(userID, eventID, eventStore) {
+        await User.findByIdAndUpdate(userID, {
+            $pull: { $events: eventID },
+        });
+        await eventStore.removeUser(userID);
+    }
+
+    async leaveChat(userID, chatID, chatEngine) {
+        await User.findByIdAndUpdate(userID, {
+            $pull: { $chat: chatID },
+        });
+        await chatEngine.removeUser(userID);
+    }
+
     async findUserForLogin(Token) {
         return await User.find({
             token: Token,
@@ -236,10 +257,10 @@ class ChatEngine {
 
     //Assumes both users exist
     async sendMessage(fromUserID, toUserID, text) {
-        let chatInfo = await Chat.find({
+        let chatInfo = await Chat.findOne({
             $and: [
                 {
-                    event: "null",
+                    event: null,
                 },
                 {
                     participants: {
@@ -250,7 +271,7 @@ class ChatEngine {
         });
 
         if (chatInfo == null) return;
-        chatInfo.message.push({
+        chatInfo.messages.push({
             participantId: fromUserID,
             text: text,
         });
@@ -271,8 +292,8 @@ class ChatEngine {
 
     async createChat(chatInfo, userStore) {
         let chatObject = await new Chat(chatInfo).save();
-        chatObject.participants.forEach(async (particpant) => {
-            let user = await userStore.findUserByID(particpant);
+        chatObject.participants.forEach(async (participant) => {
+            let user = await userStore.findUserByID(participant);
             if (user) {
                 user.chats.push(chatObject._id);
                 await userStore.updateUserAccount(participant, user);
@@ -281,8 +302,14 @@ class ChatEngine {
         return chatObject;
     }
 
-    async editChat(chatInfo) {
-        return await Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
+    async removeUser(chatID, userID) {
+        await this.editChat(chatID, {
+            $pull: { participants: userID },
+        });
+    }
+
+    async editChat(chatID, chatInfo) {
+        return await Chat.findByIdAndUpdate(chatID, chatInfo);
     }
 }
 
@@ -335,6 +362,12 @@ class EventStore {
             });
         }
         return null;
+    }
+
+    async removeUser(eventID, userID) {
+        await this.updateEvent(eventID, {
+            $pull: { participants: userID },
+        });
     }
 
     async findEventByUser(userID) {

@@ -9,7 +9,7 @@ const UserSchema = new Schema({
         },
     ],
     location: String,
-    chat: [
+    chats: [
         {
             type: String,
         },

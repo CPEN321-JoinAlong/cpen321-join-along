@@ -39,6 +39,8 @@ const clientApp = path.join(__dirname, "public");
 let userStore = new UserStore();
 let eventStore = new EventStore();
 let chatEngine = new ChatEngine();
+let reportService = new ReportService();
+let banService = new BanService();
 
 // express app
 let app = express();
@@ -60,6 +62,12 @@ app.listen(port, () => {
     );
 });
 
+//JUST FOR TESTING
+app.get("/", async (req, res) => {
+    console.log(await User.deleteMany());
+    res.send(await User.find({}));
+});
+
 //login - post
 app.post("/login", async (req, res) => {
     const { Token } = req.body;
@@ -68,12 +76,7 @@ app.post("/login", async (req, res) => {
     else res.status(200).send({ user: foundUser }); //need to confirm what else to do
 });
 
-
-//JUST FOR TESTING
-app.get("/", async (req, res) => {
-    console.log(await User.deleteMany())
-    res.send(await User.find({}))
-})
+//* All the create paths for the main modules
 
 //Adds the user object to the database and sends the id back to frontend - post
 app.post("/user/create", async (req, res) => {
@@ -82,7 +85,7 @@ app.post("/user/create", async (req, res) => {
     // await User.deleteMany({});
     // console.log(id);
     res.status(200).send(await userInfo.createUserAccount(userStore));
-    console.log(await User.find({}))
+    console.log(await User.find({}));
     // res.status(200).send("hello");
 });
 
@@ -93,13 +96,25 @@ app.post("/chat/create", async (req, res) => {
     res.status(200).send(await chatEngine.createChat(chatInfo));
 });
 
-//Creates an event object and sends it to frontend
+//Creates an event object (and a related chat object) and sends it to frontend
 app.post("/event/create", async (req, res) => {
     let eventObject = req.body;
     let eventInfo = new EventDetails(eventObject);
-    res.status(200).send(await eventStore.createEvent(eventInfo));
-    console.log()
+    let event = await eventStore.createEvent(eventInfo);
+    let chat = await chatEngine.createChat({
+        title: eventObject.title,
+        tags: eventObject.tags,
+        numberOfPeople: eventObject.numberOfPeople,
+        description: eventObject.description,
+        event: event._id,
+    });
+    event.chat = chat._id;
+    await eventStore.updateEvent(event._id, event);
+    res.status(200).send({ event });
+    console.log();
 });
+
+//* All the edit paths for the main modules
 
 //Edits User and sends it to frontend
 app.put("/user/:id/edit", async (req, res) => {
@@ -122,15 +137,7 @@ app.put("/event/:id/edit", async (req, res) => {
     res.status(200).send(await eventStore.findEventByID(id)); //do we need to send the
 });
 
-//Sends the user object for the profile page - get
-app.get("/user/:id", async (req, res) => {
-    let { id } = req.params;
-    let foundUser = await userStore.findUserByID(id);
-    if (foundUser == null) res.status(404).send("No User Found");
-    else {
-        res.status(200).send({ user: foundUser });
-    }
-});
+//* Home Screen
 
 //Sends the user object and events the user is a part of for the home screen - get
 app.get("/user/:id/home", async (req, res) => {
@@ -141,9 +148,21 @@ app.get("/user/:id/home", async (req, res) => {
         let events = await new UserAccount(foundUser).findPersonalEvents(
             eventStore
         );
-        res.status(200).send({ events: events }); //need to change this to event id, name and description only
+        res.status(200).send({ events }); //need to change this to event id, name and description only
     }
 });
+
+//Sends the user object for the profile page - get
+app.get("/user/:id", async (req, res) => {
+    let { id } = req.params;
+    let foundUser = await userStore.findUserByID(id);
+    if (foundUser == null) res.status(404).send("No User Found");
+    else {
+        res.status(200).send({ user: foundUser });
+    }
+});
+
+//* Chat info
 
 //Chat list: Sends the list of chats the user is in - get
 app.get("/user/:id/chat", async (req, res) => {
@@ -159,10 +178,18 @@ app.get("/chat/:id", async (req, res) => {
     res.status(200).send({ chat });
 });
 
+//* Event info
+
 //Event list: Sends the list of Events the user is in - get
 app.get("/user/:id/event", async (req, res) => {
     let { id } = req.params;
     let eventList = await eventStore.findEventByUser(id);
+    res.status(200).send({ eventList });
+});
+
+//Event list: Send list of Event
+app.post("/event/filter", async (req, res) => {
+    let eventList = await eventStore(req.body);
     res.status(200).send({ eventList });
 });
 
@@ -171,4 +198,75 @@ app.get("/event:id", async (req, res) => {
     let { id } = req.params;
     let event = await eventStore.findEventByID(id);
     res.status(200).send({ event });
+});
+
+//* Accept or Reject requests and invites
+
+app.put("/user/:userID/:chatID/accept", async (req, res) => {
+    let { userID, chatID } = req.params;
+    await userStore.acceptChatInvite(userID, chatID, chatEngine);
+    res.status(200).send("Sucessful");
+});
+
+app.put("/user/:userID/:eventID/accet=pt", async (req, res) => {
+    let { userID, eventID } = req.params;
+    await userStore.acceptEventInvite(userID, eventID, eventStore);
+    res.status(200).send("Sucessful");
+});
+
+app.put("/user/:userID/:otherUserID/accept", async (req, res) => {
+    let { userID, otherUserID } = req.params;
+    await userStore.acceptFriendRequest(userID, otherUserID);
+    res.status(200).send("Sucessful");
+});
+
+app.put("/user/:userID/:chatID/reject", async (req, res) => {
+    let { userID, chatID } = req.params;
+    await userStore.rejectChatInvite(userID, chatID);
+    res.status(200).send("Sucessful");
+});
+
+app.put("/user/:userID/:eventID/reject", async (req, res) => {
+    let { userID, eventID } = req.params;
+    await userStore.rejectEventInvite(userID, eventID);
+    res.status(200).send("Sucessful");
+});
+
+app.put("/user/:userID/:otherUserID/reject", async (req, res) => {
+    let { userID, otherUserID } = req.params;
+    await userStore.rejectFriendRequest(userID, otherUserID);
+    res.status(200).send("Sucessful");
+});
+
+//* Report and Ban paths
+
+app.post("/user/:reporterID/reportUser/:reportedID", async (req, res) => {
+    let { reporterID, reportedID } = req.params;
+    let { reason, isBlocked } = req.body;
+    await reportService.reportUser(reportedID, reporterID, reason, isBlocked, userStore);
+    res.status(200).send("Successful");
+});
+
+app.post("/user/:reporterID/reportEvent/:reportedID", async (req, res) => {
+    let { reporterID, reportedID } = req.params;
+    let { reason, isBlocked } = req.body;
+    await reportService.reportEvent(reportedID, reporterID, reason, isBlocked, userStore);
+    res.status(200).send("Successful");
+});
+
+app.get("/reports", async (req, res) => {
+    let reports = await reportService.viewAllReports();
+    res.status(200).send({ reports });
+})
+
+app.post("/user/:id/ban", async (req, res) => {
+    let { id } = req.params;
+    await banService.banUser(id, userStore);
+    res.status(200).send("Successful");
+});
+
+app.post("/event/:id/ban", async (req, res) => {
+    let { id } = req.params;
+    await banService.banEvent(id, eventStore);
+    res.status(200).send("Successful");
 });

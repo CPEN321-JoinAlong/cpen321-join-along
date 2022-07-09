@@ -79,7 +79,7 @@ class UserStore {
     }
 
     async findUserByID(userID) {
-        console.log(userID)
+        console.log(userID);
         return await User.findById(userID);
     }
 
@@ -253,37 +253,50 @@ class ChatEngine {
 
     //Assumes both users exist
     async sendMessage(fromUserID, toUserID, text) {
-        let chatInfo = await Chat.findOne({
-            $and: [
-                {
-                    event: null,
-                },
-                {
-                    participants: {
-                        $all: [fromUserID, toUserID],
+        await Chat.findOneAndUpdate(
+            {
+                $and: [
+                    {
+                        event: null,
+                    },
+                    {
+                        participants: {
+                            $all: [fromUserID, toUserID],
+                        },
+                    },
+                ],
+            },
+            {
+                $push: {
+                    messages: {
+                        participantID: fromUserID,
+                        text: text,
                     },
                 },
-            ],
-        });
-
-        if (chatInfo == null) return;
-        chatInfo.messages.push({
-            participantId: fromUserID,
-            text: text,
-        });
-        Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
+            }
+        );
     }
 
     async sendGroupMessage(userID, eventID, text) {
-        let chatInfo = await Chat.findOne({
-            event: eventID,
-        });
-        if (chatInfo == null) return;
-        chatInfo.messages.push({
-            participantId: userID,
-            text: text,
-        });
-        Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
+        await Chat.findOneAndUpdate(
+            {
+                event: eventID,
+            },
+            {
+                $push: {
+                    messages: {
+                        participantID: userID,
+                        text: text,
+                    },
+                },
+            }
+        );
+        // if (chatInfo == null) return;
+        // chatInfo.messages.push({
+        //     participantId: userID,
+        //     text: text,
+        // });
+        // Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
     }
 
     async createChat(chatInfo, userStore) {
@@ -404,7 +417,7 @@ class EventStore {
     async createEvent(eventInfo, userStore) {
         let eventObject = await new Event(eventInfo).save();
         eventObject.participants.forEach(async (participant) => {
-            console.log(participant)
+            console.log(participant);
             let user = await userStore.findUserByID(participant);
             if (user) {
                 user.events.push(eventObject._id);

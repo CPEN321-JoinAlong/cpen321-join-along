@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
+// const ReportService =
 
 // import {UserStore} from './modules.js'
 const {
@@ -13,6 +14,8 @@ const {
     ChatEngine,
     EventDetails,
     EventStore,
+    ReportService,
+    BanService
 } = require("./modules");
 // const methodOverride = require('method-override');
 
@@ -64,8 +67,15 @@ app.listen(port, () => {
 
 //JUST FOR TESTING
 app.get("/", async (req, res) => {
-    console.log(await User.deleteMany());
-    res.send(await User.find({}));
+    // console.log(await User.deleteMany());
+    let a = {}
+    // await Chat.deleteMany({})   
+    // await Event.deleteMany({})
+    // await User.deleteOne({name: "Zoeb Gaurani"})
+    a['user'] = await User.find({})
+    a['chat'] = await Chat.find({})
+    a['event'] = await Event.find({})
+    res.send(a);
 });
 
 //login - post
@@ -100,18 +110,20 @@ app.post("/chat/create", async (req, res) => {
 app.post("/event/create", async (req, res) => {
     let eventObject = req.body;
     let eventInfo = new EventDetails(eventObject);
-    let event = await eventStore.createEvent(eventInfo);
+    console.log(eventInfo)
+    let event = await eventStore.createEvent(eventInfo, userStore);
     let chat = await chatEngine.createChat({
-        title: eventObject.title,
-        tags: eventObject.tags,
-        numberOfPeople: eventObject.numberOfPeople,
-        description: eventObject.description,
+        title: event.title,
+        tags: event.tags,
+        numberOfPeople: event.numberOfPeople,
+        participants: event.participants,
+        description: event.description,
         event: event._id,
-    });
+    }, userStore);
     event.chat = chat._id;
-    await eventStore.updateEvent(event._id, event);
+    await eventStore.updateEvent(event._id, event, userStore);
     res.status(200).send({ event });
-    console.log();
+    // console.log();
 });
 
 //* All the edit paths for the main modules
@@ -205,12 +217,12 @@ app.get("/user/:id/event", async (req, res) => {
 
 //Event list: Send list of Event
 app.post("/event/filter", async (req, res) => {
-    let eventList = await eventStore(req.body);
+    let eventList = await eventStore.findEventByDetails(req.body);
     res.status(200).send({ eventList });
 });
 
 //Event: Sends the event object (for view event details?) - get
-app.get("/event:id", async (req, res) => {
+app.get("/event/:id", async (req, res) => {
     let { id } = req.params;
     let event = await eventStore.findEventByID(id);
     res.status(200).send({ event });

@@ -84,6 +84,7 @@ class UserStore {
     }
 
     async findUserByID(userID) {
+        console.log(userID)
         return await User.findById(userID);
     }
 
@@ -235,9 +236,9 @@ class ChatDetails {
         this.numberOfPeople = chatInfo.numberOfPeople;
         this.description = chatInfo.description;
 
-        this.currCapacity = chatInfo.currCapacity ? chatInfo.currCapacity : 1;
-        this.messages = chatInfo.messages ? chatInfo.message : [];
+        this.currCapacity = chatInfo.currCapacity ? chatInfo.currCapacity : 0;
         this.participants = chatInfo.participants ? chatInfo.participants : [];
+        this.messages = chatInfo.messages ? chatInfo.message : [];
         this.event = chatInfo.event ? chatInfo.event : null;
     }
 }
@@ -327,7 +328,7 @@ class EventDetails {
 
         this.participants = eventInfo.participants
             ? eventInfo.participants
-            : [eventOwnerID];
+            : [this.eventOwnerID];
         this.currCapacity = eventInfo.currCapacity ? eventInfo.currCapacity : 1;
         this.eventImage = eventInfo.eventImage;
         this.chat = eventInfo.chat ? eventInfo.chat : null;
@@ -407,11 +408,12 @@ class EventStore {
     //add the event to the database and adds it into users' event list and send event object to frontend
     async createEvent(eventInfo, userStore) {
         let eventObject = await new Event(eventInfo).save();
-        eventObject.participants.forEach(async (particpant) => {
-            let user = await userStore.findUserByID(particpant);
+        eventObject.participants.forEach(async (participant) => {
+            console.log(participant)
+            let user = await userStore.findUserByID(participant);
             if (user) {
                 user.events.push(eventObject._id);
-                await userStore.updateUserAccount(particpant, user);
+                await userStore.updateUserAccount(participant, user);
             }
         });
         return eventObject;

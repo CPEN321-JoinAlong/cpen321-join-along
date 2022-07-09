@@ -1,6 +1,7 @@
 const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
+const { initializeApp } = require('firebase-admin/app');
 const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
@@ -42,6 +43,13 @@ let eventStore = new EventStore();
 let chatEngine = new ChatEngine();
 let reportService = new ReportService();
 let banService = new BanService();
+
+// firebase admin SDK
+let serviceAccount = require("/home/join-along/serviceAccountKey.json") // need to generate and download service key on server
+initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+
 
 // express app
 let app = express();
@@ -180,6 +188,16 @@ app.put("/chat/sendSingle/:fromUserID/:toUserID", async (req, res) => {
     let { fromUserID, toUserID } = req.params;
     let { text } = req.body;
     await chatEngine.sendMessage(fromUserID, toUserID, text);
+    fromUserName = await userStore.findUserByID(fromUserID).name
+
+    getMessaging().send({
+        data: {
+            name: fromUserName,
+            text: text
+        },
+        topic: fromUserID + "_" + toUserID
+    }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
+
     res.status(200).send("Successful");
 });
 
@@ -188,6 +206,18 @@ app.put("/chat/sendGroup/:userID/:eventID", async (req, res) => {
     let { userID, eventID } = req.params;
     let { text } = req.body;
     await chatEngine.sendGroupMessage(userID, eventID, text);
+
+    fromUserName = await userStore.findUserByID(fromUserID).name
+    eventName = await eventStore.findEventByID(eventID).title
+
+    getMessaging().send({
+        data: {
+            name: fromUserName,
+            text: text
+        },
+        topic: eventName
+    }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
+    
     res.status(200).send("Successful");
 });
 

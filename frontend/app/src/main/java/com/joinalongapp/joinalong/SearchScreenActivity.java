@@ -20,6 +20,7 @@ public class SearchScreenActivity extends AppCompatActivity {
     private static SearchView searchView;
     private ImageView returnButton;
     private static final int SEARCH_QUERY_THRESHOLD = 1;
+    private static String theBaseUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,9 @@ public class SearchScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_screen);
 
         initElements();
+
+        setUpPageForMode();
+
         searchView.requestFocus();
         searchView.setSuggestionsAdapter(new SimpleCursorAdapter(
                 SearchScreenActivity.this, android.R.layout.simple_list_item_1, null,
@@ -65,8 +69,8 @@ public class SearchScreenActivity extends AppCompatActivity {
     public static class FetchSearchTermSuggestionsTask extends AsyncTask<String, Void, Cursor> {
 
         private static final String[] sAutocompleteColNames = new String[] {
-                BaseColumns._ID,                         // necessary for adapter
-                SearchManager.SUGGEST_COLUMN_TEXT_1      // the full search term
+                BaseColumns._ID,
+                SearchManager.SUGGEST_COLUMN_TEXT_1
         };
 
         @Override
@@ -84,7 +88,12 @@ public class SearchScreenActivity extends AppCompatActivity {
                 String term = terms.get(index);
 
                 Object[] row = new Object[] { index, term };
-                cursor.addRow(row);
+
+                //TODO: remove this if statement and move cursor.add out, just testing search
+                if (terms.get(index).startsWith(params[0])) {
+                    cursor.addRow(row);
+                }
+
             }
 
             return cursor;
@@ -97,8 +106,31 @@ public class SearchScreenActivity extends AppCompatActivity {
 
     }
 
-    public void initElements() {
+    private void initElements() {
         searchView = findViewById(R.id.searchBar);
         returnButton = findViewById(R.id.searchBackButton);
+    }
+
+    public enum SearchMode {
+        EVENT_MODE,
+        USER_MODE
+    }
+
+    private void setUpPageForMode() {
+        SearchMode theMode = getSearchMode();
+
+        if (theMode == SearchMode.EVENT_MODE) {
+            searchView.setQueryHint("Search Events");
+            theBaseUrl = "EVENT URL CHANGE ME";
+        }
+        if (theMode == SearchMode.USER_MODE) {
+            searchView.setQueryHint("Search Users");
+            theBaseUrl = "USER URL CHANGE ME";
+        }
+    }
+
+    private SearchMode getSearchMode() {
+        assert(getIntent().getExtras() != null);
+        return (SearchMode) getIntent().getExtras().get("mode");
     }
 }

@@ -95,12 +95,12 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
+                //DO NOTHING
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
+                //DO NOTHING
             }
         });
 
@@ -135,7 +135,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), SearchScreenActivity.class);
-                i.putExtra("mode", "event");
+                i.putExtra("mode", SearchScreenActivity.SearchMode.EVENT_MODE);
                 startActivity(i);
             }
         });

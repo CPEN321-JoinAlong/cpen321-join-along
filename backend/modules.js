@@ -32,11 +32,6 @@ class UserAccount {
         return this.friends;
     }
 
-    //returns list of event objects related to the User
-    async findAllPersonalEvents(eventStore) {
-        return await eventStore.findEventByIDList(this.events);
-    }
-
     //return list of event objects related to the User which are have the provided Tag
     async findEventsWithTag(Tag, eventStore) {
         let eventList = await this.findAllPersonalEvents(eventStore);
@@ -280,7 +275,7 @@ class ChatEngine {
     }
 
     async sendGroupMessage(userID, eventID, text) {
-        let chatInfo = await Chat.find({
+        let chatInfo = await Chat.findOne({
             event: eventID,
         });
         if (chatInfo == null) return;

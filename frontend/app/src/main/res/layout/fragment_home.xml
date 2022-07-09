@@ -124,6 +124,9 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
+    <!-- TODO: I will likely replace this with a filter menu in the future -->
+    <!-- That way, you can filter for events by location, interests, date, etc easier -->
+    <!-- this also allows room for a title :) -->
     <Spinner
         android:id="@+id/homepageEventsFilter"
         android:layout_width="163dp"

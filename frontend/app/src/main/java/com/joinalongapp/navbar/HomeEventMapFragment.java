@@ -13,6 +13,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.joinalongapp.joinalong.R;
@@ -24,7 +25,7 @@ import com.joinalongapp.joinalong.R;
  */
 public class HomeEventMapFragment extends Fragment {
     private MapView mapView;
-    private GoogleMap googleMaps;
+    private GoogleMap map;
 
     public HomeEventMapFragment() {
         // Required empty public constructor
@@ -70,27 +71,23 @@ public class HomeEventMapFragment extends Fragment {
                 //TODO: implement map search
                 //TODO: might need map API key
 
-                googleMaps = googleMap;
+                map = googleMap;
+                CameraPosition position = map.getCameraPosition();
+
+                double latitude = map.getCameraPosition().target.latitude;
+                double longitude = map.getCameraPosition().target.longitude;
+
+
 
                 // Add a marker in Sydney and move the camera
                 LatLng sydney = new LatLng(-34, 151);
-                googleMaps.addMarker(new MarkerOptions()
+                map.addMarker(new MarkerOptions()
                         .position(sydney)
                         .title("Marker in Sydney"));
-                googleMaps.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
             }
         });
 
-        sendViewToBack(view);
-
         return view;
-    }
-
-    public static void sendViewToBack(final View child) {
-        final ViewGroup parent = (ViewGroup)child.getParent();
-        if (null != parent) {
-            parent.removeView(child);
-            parent.addView(child, 0);
-        }
     }
 }

@@ -84,6 +84,7 @@ class UserStore {
     }
 
     async findUserByID(userID) {
+        console.log(userID)
         return await User.findById(userID);
     }
 
@@ -200,6 +201,27 @@ class UserStore {
         return await User.findByIdAndDelete(userID);
     }
 
+    async removeFriend(userID, otherUserID) {
+        await User.updateMany(
+            { _id: { $in: [userID, otherUserID] } },
+            { $pull: { friends: { $in: [userID, otherUserID] } } }
+        );
+    }
+
+    async leaveEvent(userID, eventID, eventStore) {
+        await User.findByIdAndUpdate(userID, {
+            $pull: { $events: eventID },
+        });
+        await eventStore.removeUser(userID);
+    }
+
+    async leaveChat(userID, chatID, chatEngine) {
+        await User.findByIdAndUpdate(userID, {
+            $pull: { $chat: chatID },
+        });
+        await chatEngine.removeUser(userID);
+    }
+
     async findUserForLogin(Token) {
         return await User.find({
             token: Token,
@@ -214,9 +236,9 @@ class ChatDetails {
         this.numberOfPeople = chatInfo.numberOfPeople;
         this.description = chatInfo.description;
 
-        this.currCapacity = chatInfo.currCapacity ? chatInfo.currCapacity : 1;
-        this.messages = chatInfo.messages ? chatInfo.message : [];
+        this.currCapacity = chatInfo.currCapacity ? chatInfo.currCapacity : 0;
         this.participants = chatInfo.participants ? chatInfo.participants : [];
+        this.messages = chatInfo.messages ? chatInfo.message : [];
         this.event = chatInfo.event ? chatInfo.event : null;
     }
 }
@@ -236,10 +258,10 @@ class ChatEngine {
 
     //Assumes both users exist
     async sendMessage(fromUserID, toUserID, text) {
-        let chatInfo = await Chat.find({
+        let chatInfo = await Chat.findOne({
             $and: [
                 {
-                    event: "null",
+                    event: null,
                 },
                 {
                     participants: {
@@ -250,7 +272,7 @@ class ChatEngine {
         });
 
         if (chatInfo == null) return;
-        chatInfo.message.push({
+        chatInfo.messages.push({
             participantId: fromUserID,
             text: text,
         });
@@ -271,8 +293,8 @@ class ChatEngine {
 
     async createChat(chatInfo, userStore) {
         let chatObject = await new Chat(chatInfo).save();
-        chatObject.participants.forEach(async (particpant) => {
-            let user = await userStore.findUserByID(particpant);
+        chatObject.participants.forEach(async (participant) => {
+            let user = await userStore.findUserByID(participant);
             if (user) {
                 user.chats.push(chatObject._id);
                 await userStore.updateUserAccount(participant, user);
@@ -281,8 +303,14 @@ class ChatEngine {
         return chatObject;
     }
 
-    async editChat(chatInfo) {
-        return await Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
+    async removeUser(chatID, userID) {
+        await this.editChat(chatID, {
+            $pull: { participants: userID },
+        });
+    }
+
+    async editChat(chatID, chatInfo) {
+        return await Chat.findByIdAndUpdate(chatID, chatInfo);
     }
 }
 
@@ -300,7 +328,7 @@ class EventDetails {
 
         this.participants = eventInfo.participants
             ? eventInfo.participants
-            : [eventOwnerID];
+            : [this.eventOwnerID];
         this.currCapacity = eventInfo.currCapacity ? eventInfo.currCapacity : 1;
         this.eventImage = eventInfo.eventImage;
         this.chat = eventInfo.chat ? eventInfo.chat : null;
@@ -335,6 +363,12 @@ class EventStore {
             });
         }
         return null;
+    }
+
+    async removeUser(eventID, userID) {
+        await this.updateEvent(eventID, {
+            $pull: { participants: userID },
+        });
     }
 
     async findEventByUser(userID) {
@@ -374,11 +408,12 @@ class EventStore {
     //add the event to the database and adds it into users' event list and send event object to frontend
     async createEvent(eventInfo, userStore) {
         let eventObject = await new Event(eventInfo).save();
-        eventObject.participants.forEach(async (particpant) => {
-            let user = await userStore.findUserByID(particpant);
+        eventObject.participants.forEach(async (participant) => {
+            console.log(participant)
+            let user = await userStore.findUserByID(participant);
             if (user) {
                 user.events.push(eventObject._id);
-                await userStore.updateUserAccount(particpant, user);
+                await userStore.updateUserAccount(participant, user);
             }
         });
         return eventObject;

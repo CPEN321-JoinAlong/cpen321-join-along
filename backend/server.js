@@ -69,7 +69,7 @@ app.listen(port, () => {
 app.get("/", async (req, res) => {
     // console.log(await User.deleteMany());
     let a = {}
-    // await Chat.deleteMany({})   
+    // await Chat.deleteOne({_id: mongoose.Types.ObjectId("62c90d33cb1c71816a131fd9")})   
     // await Event.deleteMany({})
     // await User.deleteOne({name: "Zoeb Gaurani"})
     a['user'] = await User.find({})
@@ -103,7 +103,7 @@ app.post("/user/create", async (req, res) => {
 app.post("/chat/create", async (req, res) => {
     let chatObject = req.body;
     let chatInfo = new ChatDetails(chatObject);
-    res.status(200).send(await chatEngine.createChat(chatInfo));
+    res.status(200).send(await chatEngine.createChat(chatInfo, userStore));
 });
 
 //Creates an event object (and a related chat object) and sends it to frontend

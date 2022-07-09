@@ -4,11 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_main.xml" value="0.33" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_chat.xml" value="0.67" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_chat.xml" value="0.33" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_event.xml" value="0.22" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_profile.xml" value="0.17074275362318841" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_report.xml" value="0.5" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_search_users.xml" value="0.25" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_chat.xml" value="0.1" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_friends.xml" value="0.3192090395480226" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_friends_list.xml" value="0.18" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_friends_request.xml" value="0.21240942028985507" />

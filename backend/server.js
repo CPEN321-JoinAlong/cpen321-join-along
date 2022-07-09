@@ -4,9 +4,7 @@ const mongoose = require("mongoose");
 const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
-// const ReportService =
 
-// import {UserStore} from './modules.js'
 const {
     UserAccount,
     UserStore,
@@ -92,11 +90,7 @@ app.post("/login", async (req, res) => {
 app.post("/user/create", async (req, res) => {
     let userObject = req.body;
     let userInfo = new UserAccount(userObject);
-    // await User.deleteMany({});
-    // console.log(id);
     res.status(200).send(await userInfo.createUserAccount(userStore));
-    console.log(await User.find({}));
-    // res.status(200).send("hello");
 });
 
 //Creates a chat object and sends it to frontend
@@ -123,7 +117,6 @@ app.post("/event/create", async (req, res) => {
     event.chat = chat._id;
     await eventStore.updateEvent(event._id, event, userStore);
     res.status(200).send({ event });
-    // console.log();
 });
 
 //* All the edit paths for the main modules

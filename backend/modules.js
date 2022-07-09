@@ -291,12 +291,6 @@ class ChatEngine {
                 },
             }
         );
-        // if (chatInfo == null) return;
-        // chatInfo.messages.push({
-        //     participantId: userID,
-        //     text: text,
-        // });
-        // Chat.findByIdAndUpdate(chatInfo._id, chatInfo);
     }
 
     async createChat(chatInfo, userStore) {

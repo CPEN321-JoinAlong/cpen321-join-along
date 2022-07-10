@@ -1,7 +1,7 @@
 const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
-const { initializeApp } = require('firebase-admin/app');
+const { initializeApp } = require("firebase-admin/app");
 const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
@@ -14,7 +14,7 @@ const {
     EventDetails,
     EventStore,
     ReportService,
-    BanService
+    BanService,
 } = require("./modules");
 // const methodOverride = require('method-override');
 
@@ -50,7 +50,6 @@ initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
-
 // express app
 let app = express();
 
@@ -73,14 +72,10 @@ app.listen(port, () => {
 
 //JUST FOR TESTING
 app.get("/", async (req, res) => {
-    // console.log(await User.deleteMany());
     let a = {}
-    // await Chat.deleteOne({_id: mongoose.Types.ObjectId("62c90d33cb1c71816a131fd9")})   
-    // await Event.deleteMany({})
-    // await User.deleteOne({name: "Zoeb Gaurani"})
-    a['user'] = await User.find({})
-    a['chat'] = await Chat.find({})
-    a['event'] = await Event.find({})
+    a["user"] = await User.find({});
+    a["chat"] = await Chat.find({});
+    a["event"] = await Event.find({});
     res.send(a);
 });
 
@@ -89,7 +84,7 @@ app.post("/login", async (req, res) => {
     const { Token } = req.body;
     let foundUser = await userStore.findUserForLogin(Token);
     if (foundUser == null) res.status(404).send(false);
-    else res.status(200).send({ user: foundUser }); //need to confirm what else to do
+    else res.status(200).send({ user: foundUser });
 });
 
 //* All the create paths for the main modules
@@ -112,16 +107,19 @@ app.post("/chat/create", async (req, res) => {
 app.post("/event/create", async (req, res) => {
     let eventObject = req.body;
     let eventInfo = new EventDetails(eventObject);
-    console.log(eventInfo)
+    console.log(eventInfo);
     let event = await eventStore.createEvent(eventInfo, userStore);
-    let chat = await chatEngine.createChat({
-        title: event.title,
-        tags: event.tags,
-        numberOfPeople: event.numberOfPeople,
-        participants: event.participants,
-        description: event.description,
-        event: event._id,
-    }, userStore);
+    let chat = await chatEngine.createChat(
+        new ChatDetails({
+            title: event.title,
+            tags: event.tags,
+            numberOfPeople: event.numberOfPeople,
+            participants: event.participants,
+            description: event.description,
+            event: event._id,
+        }),
+        userStore
+    );
     event.chat = chat._id;
     await eventStore.updateEvent(event._id, event, userStore);
     res.status(200).send({ event });
@@ -139,14 +137,14 @@ app.put("/user/:id/edit", async (req, res) => {
 //Edits Chat and sends it to frontend
 app.put("/chat/:id/edit", async (req, res) => {
     let { id } = req.params;
-    await chatEngine.editChat(id, req.body);
+    await chatEngine.editChat(id, req.body, userStore);
     res.status(200).send(await chatEngine.findChatByID(id)); //do we need to send the
 });
 
 //Edits User and sends it to frontend
 app.put("/event/:id/edit", async (req, res) => {
     let { id } = req.params;
-    await eventStore.updateEvent(id, req.body);
+    await eventStore.updateEvent(id, req.body, userStore);
     res.status(200).send(await eventStore.findEventByID(id)); //do we need to send the
 });
 
@@ -158,7 +156,7 @@ app.get("/user/:id/home", async (req, res) => {
     let foundUser = await userStore.findUserByID(id);
     if (foundUser == null) res.status(404).send("No User Found");
     else {
-        let events = await eventStore.findEventByIDList(foundUser.events)
+        let events = await eventStore.findEventByIDList(foundUser.events);
         res.status(200).send({ events }); //need to change this to event id, name and description only
     }
 });
@@ -184,11 +182,11 @@ app.get("/user/:id/chat", async (req, res) => {
 
 //Chat: send message to a single user
 app.put("/chat/sendSingle/:fromUserID/:toUserID", async (req, res) => {
-    console.log("hello")
+    console.log("hello");
     let { fromUserID, toUserID } = req.params;
     let { text } = req.body;
     await chatEngine.sendMessage(fromUserID, toUserID, text);
-    fromUserName = await userStore.findUserByID(fromUserID).name
+    fromUserName = await userStore.findUserByID(fromUserID).name;
 
     getMessaging().send({
         data: {
@@ -207,8 +205,8 @@ app.put("/chat/sendGroup/:userID/:eventID", async (req, res) => {
     let { text } = req.body;
     await chatEngine.sendGroupMessage(userID, eventID, text);
 
-    fromUserName = await userStore.findUserByID(fromUserID).name
-    eventName = await eventStore.findEventByID(eventID).title
+    fromUserName = await userStore.findUserByID(fromUserID).name;
+    eventName = await eventStore.findEventByID(eventID).title;
 
     getMessaging().send({
         data: {
@@ -217,7 +215,7 @@ app.put("/chat/sendGroup/:userID/:eventID", async (req, res) => {
         },
         topic: eventName
     }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
-    
+
     res.status(200).send("Successful");
 });
 
@@ -252,7 +250,7 @@ app.get("/event/:id", async (req, res) => {
 
 //* Accept or Reject requests (can be used for join as well) and invites
 
-app.put("/user/acceptUser/:userID/:chatID", async (req, res) => {
+app.put("/user/acceptChat/:userID/:chatID", async (req, res) => {
     let { userID, chatID } = req.params;
     await userStore.acceptChatInvite(userID, chatID, chatEngine);
     res.status(200).send("Sucessful");
@@ -260,7 +258,7 @@ app.put("/user/acceptUser/:userID/:chatID", async (req, res) => {
 
 app.put("/user/acceptEvent/:userID/:eventID", async (req, res) => {
     let { userID, eventID } = req.params;
-    await userStore.acceptEventInvite(userID, eventID, eventStore);
+    await userStore.acceptEventInvite(userID, eventID, eventStore, chatEngine);
     res.status(200).send("Sucessful");
 });
 
@@ -300,7 +298,7 @@ app.put("/user/leaveEvent/:userID/:eventID", async (req, res) => {
     let { userID, eventID } = req.params;
     let event = eventStore.findEventByID(eventID);
     await userStore.leaveEvent(userID, eventID);
-    await userStore.leaveChat(userID, event.chat);  
+    await userStore.leaveChat(userID, event.chat);
     res.status(200).send("Sucessful");
 });
 

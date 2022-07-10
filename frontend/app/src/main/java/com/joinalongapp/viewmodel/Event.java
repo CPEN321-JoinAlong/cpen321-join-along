@@ -130,7 +130,7 @@ public class Event implements Serializable {
         return description;
     }
 
-    public List<String> getStringOfTags(){
+    public List<String> getStringListOfTags(){
         List<String> result = new ArrayList<>();
         for(Tag tag : tags){
             result.add(tag.getName());

@@ -15,6 +15,8 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Event;
+import com.joinalongapp.viewmodel.Tag;
+import com.joinalongapp.viewmodel.UserProfile;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -102,14 +104,19 @@ public class ViewEventFragment extends Fragment {
         event.setLocation("2366 Main Mall, Vancouver BC");
         event.setBeginningDate(new Date());
         event.setEndDate(new Date());
-        List<String> tags = new ArrayList<>();
-        tags.add("tag1");
-        tags.add("tag2");
+        List<Tag> tags = new ArrayList<>();
+        tags.add(new Tag("tag1"));
+        tags.add(new Tag("tag2"));
         event.setTags(tags);
         event.setNumberOfPeople(500);
-        List<String> members = new ArrayList<>();
-        tags.add("person1");
-        tags.add("person2");
+        List<UserProfile> members = new ArrayList<>();
+        UserProfile profile = new UserProfile();
+        profile.setFirstName("first1");
+        profile.setLastName("last1");
+        members.add(profile);
+        profile.setFirstName("first2");
+        profile.setLastName("last2");
+        members.add(profile);
         event.setFriends(members);
         return event;
     }
@@ -131,7 +138,7 @@ public class ViewEventFragment extends Fragment {
         title.setText(event.getTitle());
         description.setText(event.getDescription());
 
-        for (String tag : event.getTags()) {
+        for (String tag : event.getStringListOfTags()) {
             Chip chip = new Chip(getActivity());
             chip.setText(tag);
             tags.addView(chip);
@@ -148,13 +155,14 @@ public class ViewEventFragment extends Fragment {
         ownerChip.setText("owner"/*event.getOwnerName()*/);
         organizer.addView(ownerChip);
 
-        for (String member : event.getFriends()) {
-            Chip chip = new Chip(getActivity());
-            chip.setText(member);
+        for (UserProfile member : event.getFriends()) {
+            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, members, false);
+            String personName = member.getFirstName() + " " + member.getLastName();
+            chip.setText(personName);
             members.addView(chip);
         }
 
-        String membersTitleString = "(" + String.valueOf(event.getNumberOfPeople()) + ")";
+        String membersTitleString = "(" + event.getNumberOfPeople() + ")";
         numPeople.setText(membersTitleString);
 
 

@@ -123,7 +123,15 @@
 
     <!--Profile Navbar-->
     <string name="profile_title">Profile</string>
-    <string name="search_events_hint" />
+
+    <!--View Events-->
+    <string name="view_events_default_title">Event Title</string>
+    <string name="view_events_organizers_title">Organizers</string>
+    <string name="view_events_members_title">Members</string>
+    <string name="view_events_location_title">Location</string>
+    <string name="view_events_begin_date_title">Begin Date</string>
+    <string name="view_events_end_date_title">End Date</string>
+
 
 
 </resources>

@@ -88,6 +88,7 @@ public class Event implements Serializable {
         return eventOwnerId;
     }
 
+    //TODO: this is a get request with owner id
     public String getOwnerName() {
         return ownerName;
     }

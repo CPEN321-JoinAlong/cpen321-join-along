@@ -4,9 +4,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -115,8 +116,17 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
 
     @Override
     public void onItemClick(View view, int position) {
-        //TODO: this should be changed to going to view event activity
-        Toast.makeText(getActivity(), "Num people in event you clicked on: " + eventList.get(position).getNumberOfPeople(), Toast.LENGTH_SHORT).show();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("event", eventList.get(position));
+
+        ViewEventFragment fragment = new ViewEventFragment();
+        fragment.setArguments(bundle);
+
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout, new ViewEventFragment());
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
 }

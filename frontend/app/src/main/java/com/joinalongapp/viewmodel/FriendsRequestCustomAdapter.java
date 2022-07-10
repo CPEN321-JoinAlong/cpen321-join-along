@@ -1,5 +1,6 @@
 package com.joinalongapp.viewmodel;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,6 +94,22 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
             @Override
             public void onClick(View v) {
                 deleteRequest(users.get(holder.getAdapterPosition()).getId());
+            }
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewProfileFragment viewProfileFragment = new ViewProfileFragment();
+                Bundle info = new Bundle();
+                info.putSerializable("USER_INFO", users.get(holder.getBindingAdapterPosition()));
+                viewProfileFragment.setArguments(info);
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
+                fragmentTransaction.add(R.id.frame_layout, viewProfileFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
         //holder.getProfilePicture().set

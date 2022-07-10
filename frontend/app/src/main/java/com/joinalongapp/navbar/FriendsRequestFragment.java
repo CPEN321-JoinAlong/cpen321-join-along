@@ -100,6 +100,7 @@ public class FriendsRequestFragment extends Fragment {
     private void initDataset(){
         // TODO: GET LIST OF USERS
         UserProfile a = new UserProfile(UUID.randomUUID(), "Ken", "");
+        a.setInterests(new ArrayList<>());
         UserProfile b = new UserProfile(UUID.randomUUID(), "Justin", "");
         UserProfile c = new UserProfile(UUID.randomUUID(), "Kamran", "");
         UserProfile d = new UserProfile(UUID.randomUUID(), "Zoeb", "");

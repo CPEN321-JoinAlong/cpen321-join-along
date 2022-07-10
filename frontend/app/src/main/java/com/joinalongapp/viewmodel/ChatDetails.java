@@ -1,23 +1,33 @@
 package com.joinalongapp.viewmodel;
 
+import android.graphics.Bitmap;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class ChatDetails {
+public class ChatDetails implements Serializable {
+    private UUID id;
     private String title;
-    private List<String> tags;
+    private List<Tag> tags;
     private String description;
     private List<UserProfile> people;
+    private Bitmap groupPhoto;
 
     public ChatDetails(){
 
+    }
+
+    public UUID getId(){
+        return id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public List<String> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
@@ -33,7 +43,7 @@ public class ChatDetails {
         this.title = title;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 
@@ -45,10 +55,18 @@ public class ChatDetails {
         this.people = people;
     }
 
-    public List<String> getListPeople(){
+    public List<String> getStringListOfPeople(){
         List<String> result = new ArrayList<>();
         for(UserProfile user : people){
             result.add(user.getFullName());
+        }
+        return result;
+    }
+
+    public List<String> getStringListOfTags(){
+        List<String> result = new ArrayList<>();
+        for(Tag tag : tags){
+            result.add(tag.getName());
         }
         return result;
     }

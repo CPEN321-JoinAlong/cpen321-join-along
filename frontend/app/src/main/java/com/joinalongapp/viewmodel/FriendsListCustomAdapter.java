@@ -1,5 +1,6 @@
 package com.joinalongapp.viewmodel;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -39,19 +40,6 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ViewProfileFragment viewProfileFragment = new ViewProfileFragment();
-                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                    FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
-                    fragmentTransaction.add(R.id.frame_layout, viewProfileFragment);
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                    Log.d("FragmentFriend", name.getText().toString());
-                }
-            });
 
             name = (TextView) itemView.findViewById(R.id.individualUserName);
             profilePicture = (ImageView) itemView.findViewById(R.id.individualProfilePicture);
@@ -109,6 +97,21 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                     }
                 });
                 popup.show();
+            }
+        });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewProfileFragment viewProfileFragment = new ViewProfileFragment();
+                Bundle info = new Bundle();
+                info.putSerializable("USER_INFO", users.get(holder.getBindingAdapterPosition()));
+                viewProfileFragment.setArguments(info);
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
+                fragmentTransaction.add(R.id.frame_layout, viewProfileFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
         //holder.getProfilePicture().set

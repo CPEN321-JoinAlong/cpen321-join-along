@@ -4,9 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -33,6 +36,7 @@ public class ViewEventFragment extends Fragment {
     private ChipGroup organizer;
     private ChipGroup members;
     private TextView numPeople;
+    private ImageButton backButton;
 
     public ViewEventFragment() {
         // Required empty public constructor
@@ -76,6 +80,18 @@ public class ViewEventFragment extends Fragment {
         Event event = removeMeInitEvent();
         initEventDetails(event);
 
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: this needs fixing to use the native back button
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
+
         return view;
     }
 
@@ -108,6 +124,7 @@ public class ViewEventFragment extends Fragment {
         organizer = view.findViewById(R.id.viewEventOrganizers);
         members = view.findViewById(R.id.viewEventMembers);
         numPeople = view.findViewById(R.id.eventViewNumPeople);
+        backButton = view.findViewById(R.id.viewEventBackButton);
     }
 
     private void initEventDetails(Event event) {

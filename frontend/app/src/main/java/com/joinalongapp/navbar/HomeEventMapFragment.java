@@ -17,22 +17,18 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
-import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.joinalong.R;
+import com.joinalongapp.CustomInfoViewAdapter;
 import com.joinalongapp.MapClusterItem;
+import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,12 +73,6 @@ public class HomeEventMapFragment extends Fragment {
         mapView = view.findViewById(R.id.eventMap);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
-//
-//        try {
-//            MapsInitializer.initialize(getActivity().getApplicationContext());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -92,45 +82,14 @@ public class HomeEventMapFragment extends Fragment {
 
                 map = googleMap;
                 initMapCamera();
+                initClusterManager();
+
+                //TODO: should be a GET
                 removeMe_PopulateEventList();
-                clusterManager = new ClusterManager<>(getActivity(), map);
-                //TODO: search for all events
 
-
-//                addEventsToMap();
-
-//                thought searching and loading dynamically as map moves would be possible but a click on a marker count as map being not idle
-//                so the message window on marker gets destroyed upon clicking
-//                map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-//                    @Override
-//                    public void onCameraIdle() {
-//                        getEventsInMapBounds();
-//                        map.clear();
-//                        addEventsToMap();
-//                    }
-//                });
-
-//                map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-//                    @Override
-//                    public void onCameraIdle() {
-//                        clusterManager.cluster();
-//                    }
-//                });
-                map.setOnCameraIdleListener(clusterManager);
-                map.setOnMarkerClickListener(clusterManager);
-                ((DefaultClusterRenderer<MapClusterItem>) clusterManager.getRenderer()).setMinClusterSize(2);
-                //addItems();
                 addEventsToMap();
 
-
-
-
-//                map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-//                    @Override
-//                    public void onInfoWindowClick(@NonNull Marker marker) {
-//                        Toast.makeText(getActivity(), "uwu", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+                //TODO zoom in on cluster click
 
                 clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MapClusterItem>() {
                     @Override
@@ -145,26 +104,22 @@ public class HomeEventMapFragment extends Fragment {
                         return false;
                     }
                 });
+
+                clusterManager.getMarkerCollection().setInfoWindowAdapter(new CustomInfoViewAdapter(inflater));
+                map.setInfoWindowAdapter(clusterManager.getMarkerManager());
+
+
             }
         });
 
         return view;
     }
 
-    private void addItems() {
-
-        // Set some lat/lng coordinates to start with.
-        double lat = 51.5145160;
-        double lng = -0.1270060;
-
-        // Add ten cluster items in close proximity, for purposes of this example.
-        for (int i = 0; i < 4; i++) {
-            double offset = i / 60d;
-            lat = lat + offset;
-            lng = lng + offset;
-            MapClusterItem offsetItem = new MapClusterItem(lat, lng, "Title " + i, "Snippet " + i);
-            clusterManager.addItem(offsetItem);
-        }
+    private void initClusterManager() {
+        clusterManager = new ClusterManager<>(getActivity(), map);
+        map.setOnCameraIdleListener(clusterManager);
+        map.setOnMarkerClickListener(clusterManager);
+        ((DefaultClusterRenderer<MapClusterItem>) clusterManager.getRenderer()).setMinClusterSize(2);
     }
 
     private void addEventsToMap() {
@@ -175,19 +130,6 @@ public class HomeEventMapFragment extends Fragment {
                 LatLng eventLatLng = new LatLng(address.getLatitude(), address.getLongitude());
                 MapClusterItem item = new MapClusterItem(eventLatLng.latitude, eventLatLng.longitude, event.getTitle(), event.getDescription());
                 clusterManager.addItem(item);
-            }
-        }
-    }
-
-    private void addEventsToMap2() {
-        for (Event event : eventList) {
-            String eventLocation = event.getLocation();
-            Address address = getAddressFromString(eventLocation);
-            if (address != null) {
-                LatLng eventLatLng = new LatLng(address.getLatitude(), address.getLongitude());
-                map.addMarker(new MarkerOptions()
-                        .position(eventLatLng)
-                        .title(event.getTitle()));
             }
         }
     }
@@ -212,16 +154,6 @@ public class HomeEventMapFragment extends Fragment {
         map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
-    private void getEventsInMapBounds() {
-        LatLngBounds bounds = getLatLngBounds();
-        Map<String, String> params = buildSearchParams(bounds);
-
-        eventList.clear();
-
-        //TODO: GET REQ, using test method instead
-        removeMe_PopulateEventList();
-    }
-
     private void removeMe_PopulateEventList() {
         Event e1 = new Event();
         e1.setTitle("UBC");
@@ -241,27 +173,6 @@ public class HomeEventMapFragment extends Fragment {
         e3.setNumberOfPeople(3);
         e3.setLocation("8888 University Dr, Burnaby BC");
         eventList.add(e3);
-    }
-
-    private Map<String,String> buildSearchParams(LatLngBounds bounds) {
-        String neLat = String.valueOf(bounds.northeast.latitude);
-        String neLng = String.valueOf(bounds.northeast.longitude);
-        String swLat = String.valueOf(bounds.southwest.latitude);
-        String swLng = String.valueOf(bounds.southwest.longitude);
-
-        String latParam = RequestManager.Range.GREATER_THAN + swLat + RequestManager.Range.LESS_THAN + neLat;
-        String lngParam = RequestManager.Range.GREATER_THAN + swLng + RequestManager.Range.LESS_THAN + neLng;
-
-        Map<String, String> params = new HashMap<>();
-        params.put("latitude", latParam);
-        params.put("longitude", lngParam);
-
-        return params;
-    }
-
-    @NonNull
-    private LatLngBounds getLatLngBounds() {
-        return map.getProjection().getVisibleRegion().latLngBounds;
     }
 
     private Address getAddressFromString(String address) {

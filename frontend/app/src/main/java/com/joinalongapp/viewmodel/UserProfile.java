@@ -26,6 +26,9 @@ public class UserProfile implements Serializable {
         this.lastName = lastName;
     }
 
+    public UserProfile() {
+    }
+
     public UUID getId() {
         return id;
     }
@@ -89,7 +92,7 @@ public class UserProfile implements Serializable {
     public String[] getFriendsStringArray(){
         String[] result = new String[friends.size()];
         for(int i = 0; i < friends.size(); i++){
-            result[i] = friends.get(i).getName();
+            result[i] = friends.get(i).getFullName();
         }
         return result;
     }

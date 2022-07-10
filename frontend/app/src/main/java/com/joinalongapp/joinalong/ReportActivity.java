@@ -42,8 +42,8 @@ public class ReportActivity extends AppCompatActivity {
         String reportEntityName;
         if(reportType){
             UserProfile reportingPerson = (UserProfile) info.getSerializable("REPORTING_USER");
-            String reportingName = " " + reportingPerson.getName();
-            reportEntityName = reportingPerson.getName();
+            String reportingName = " " + reportingPerson.getFullName();
+            reportEntityName = reportingPerson.getFullName();
             reportingSubtitle.append(reportingName);
             reportDetails.setReportPerson(true);
         }

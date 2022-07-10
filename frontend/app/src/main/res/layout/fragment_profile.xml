@@ -127,4 +127,26 @@
 
     </com.google.android.material.chip.ChipGroup>
 
+
+    <ImageButton
+        android:id="@+id/logoutButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+
+        android:src="@drawable/ic_baseline_exit_to_app_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/logoutCaption"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="33dp"
+        android:text="@string/logout_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/logoutButton" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

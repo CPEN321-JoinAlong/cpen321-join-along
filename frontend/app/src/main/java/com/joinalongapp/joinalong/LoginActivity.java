@@ -3,6 +3,7 @@ package com.joinalongapp.joinalong;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -20,6 +22,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     GoogleSignInClient mGoogleSignInClient;
     private int RC_SIGN_IN = 1;
+    private SignInButton signInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,15 +35,20 @@ public class LoginActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
+        signInButton = findViewById(R.id.sign_in_button);
 
-        //TODO: this will always sign out before sign in
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(LoginActivity.this);
         if (account != null) {
-            signOut();
+            startMainActivity();
         }
-        signIn();
+
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn();
+            }
+        });
+
     }
 
 
@@ -90,7 +98,12 @@ public class LoginActivity extends AppCompatActivity {
         if (account == null) {
             Log.d(TAG, "There is no user signed in!");
         } else {
-            //start main activity
+            startMainActivity();
         }
+    }
+
+    private void startMainActivity() {
+        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(i);
     }
 }

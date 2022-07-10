@@ -123,6 +123,7 @@
 
     <!--Profile Navbar-->
     <string name="profile_title">Profile</string>
+    <string name="logout_title">Logout</string>
 
     <!--View Events-->
     <string name="view_events_default_title">Event Title</string>

@@ -20,7 +20,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
-import com.joinalongapp.CustomInfoViewAdapter;
 import com.joinalongapp.MapClusterItem;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Event;
@@ -77,9 +76,6 @@ public class HomeEventMapFragment extends Fragment {
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
-                //TODO: implement map search
-                //TODO: might need map API key
-
                 map = googleMap;
                 initMapCamera();
                 initClusterManager();
@@ -105,8 +101,9 @@ public class HomeEventMapFragment extends Fragment {
                     }
                 });
 
-                clusterManager.getMarkerCollection().setInfoWindowAdapter(new CustomInfoViewAdapter(inflater));
-                map.setInfoWindowAdapter(clusterManager.getMarkerManager());
+                //TODO: edit this later after MVP (customize the info window)
+//                clusterManager.getMarkerCollection().setInfoWindowAdapter(new CustomInfoViewAdapter(inflater));
+//                map.setInfoWindowAdapter(clusterManager.getMarkerManager());
 
 
             }

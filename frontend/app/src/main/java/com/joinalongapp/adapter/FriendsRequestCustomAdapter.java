@@ -1,14 +1,12 @@
-package com.joinalongapp.viewmodel;
+package com.joinalongapp.adapter;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,33 +15,47 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.joinalong.R;
-import com.joinalongapp.navbar.ViewChatFragment;
 import com.joinalongapp.navbar.ViewProfileFragment;
+import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCustomAdapter.ViewHolder>{
-
+public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsRequestCustomAdapter.ViewHolder>{
     private List<UserProfile> users;
 
-    public FriendsListCustomAdapter(List<UserProfile> inputDataSet){
+    public FriendsRequestCustomAdapter(List<UserProfile> inputDataSet){
         users = inputDataSet;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView name;
         private ImageView profilePicture;
-        private Button options;
+        private Button accept;
+        private Button reject;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ViewProfileFragment viewProfileFragment = new ViewProfileFragment();
+                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                    FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
+                    fragmentTransaction.add(R.id.frame_layout, viewProfileFragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                    Log.d("FragmentFriend", name.getText().toString());
+                }
+            });
 
             name = (TextView) itemView.findViewById(R.id.individualUserName);
             profilePicture = (ImageView) itemView.findViewById(R.id.individualProfilePicture);
-            options = (Button) itemView.findViewById(R.id.friendOptions);
+            accept = (Button) itemView.findViewById(R.id.acceptButton);
+            reject = (Button) itemView.findViewById(R.id.rejectButton);
         }
 
         public TextView getName() {
@@ -54,51 +66,38 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
             return profilePicture;
         }
 
-        public Button getSettings(){ return options;}
+        public Button getAccept() {
+            return accept;
+        }
 
+        public Button getReject() {
+            return reject;
+        }
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent,false);
-        return new ViewHolder(view);
+    public FriendsRequestCustomAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.request_item, parent,false);
+        return new FriendsRequestCustomAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FriendsRequestCustomAdapter.ViewHolder holder, int position) {
         holder.getName().setText(users.get(position).getFullName());
-        holder.getSettings().setOnClickListener(new View.OnClickListener() {
+        holder.getAccept().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(v.getContext(), holder.getSettings());
-                popup.inflate(R.menu.friends_options_menu);
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch(item.getItemId()){
-                            case R.id.menu1:
-                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getFullName());
-
-                                Log.d("FriendsAdapter", "MENU1");
-                                deleteFriend(users.get(holder.getAdapterPosition()).getId());
-                                return true;
-
-                            case R.id.menu2:
-                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getFullName());
-                                Log.d("FriendsAdapter", "MENU2");
-                                return true;
-
-
-                            default:
-                                return false;
-                        }
-
-                    }
-                });
-                popup.show();
+                deleteRequest(users.get(holder.getAdapterPosition()).getId());
             }
         });
+        holder.getReject().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteRequest(users.get(holder.getAdapterPosition()).getId());
+            }
+        });
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,7 +121,7 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         return users.size();
     }
 
-    private void deleteFriend(UUID uuid){
+    private void deleteRequest(UUID uuid){
         for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
             UserProfile value = iterator.next();
             if (value.getId() == uuid) {
@@ -133,8 +132,4 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         notifyDataSetChanged();
 
     }
-
-
-
-
 }

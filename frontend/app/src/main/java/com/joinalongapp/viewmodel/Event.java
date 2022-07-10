@@ -1,12 +1,14 @@
 package com.joinalongapp.viewmodel;
 
+import org.json.JSONException;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class Event implements Serializable {
+public class Event implements Serializable, IDetailsModel {
 
     private UUID eventId;
     private UUID eventOwnerId;
@@ -136,5 +138,11 @@ public class Event implements Serializable {
             result.add(tag.getName());
         }
         return result;
+    }
+
+    @Override
+    public String toJsonString() throws JSONException {
+        //TODO
+        return null;
     }
 }

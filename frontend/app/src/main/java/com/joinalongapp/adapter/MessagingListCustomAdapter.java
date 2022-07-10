@@ -1,4 +1,4 @@
-package com.joinalongapp.viewmodel;
+package com.joinalongapp.adapter;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.Iterator;
 import java.util.List;

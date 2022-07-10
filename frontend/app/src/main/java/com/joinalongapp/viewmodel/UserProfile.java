@@ -10,15 +10,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class UserProfile implements Serializable {
+public class UserProfile implements Serializable, IDetailsModel {
     private UUID id;
     private String firstName;
     private String lastName;
     private String location;
-    private List<Tag> tags; //TODO: it might be good to make this have its own datatype, or maybe a list of ENUM's
+    private List<Tag> tags = new ArrayList<>(); //TODO: it might be good to make this have its own datatype, or maybe a list of ENUM's
     private String description;
     private Bitmap profilePicture;
-    private List<UserProfile> friends;
+    private List<UserProfile> friends = new ArrayList<>();
+
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags.addAll(tags);
+    }
+
+    public void setFriends(List<UserProfile> friends) {
+        this.friends.addAll(friends);
+    }
 
     public UserProfile(UUID id, String firstName, String lastName) {
         this.id = id;
@@ -107,7 +124,7 @@ public class UserProfile implements Serializable {
         json.put("firstName", getFirstName());
         json.put("lastName", getLastName());
         json.put("location", getLocation());
-        json.put("interests", getInterests());
+        json.put("interests", getStringListOfTags());
         json.put("description", getDescription());
         json.put("profilePicture", getProfilePicture());
         json.put("friends", friendId);

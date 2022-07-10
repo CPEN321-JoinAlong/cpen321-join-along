@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.ChatDetails;
-import com.joinalongapp.viewmodel.MessagingRequestCustomAdapter;
+import com.joinalongapp.adapter.MessagingRequestCustomAdapter;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 

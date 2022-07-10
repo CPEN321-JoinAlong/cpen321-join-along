@@ -2,12 +2,14 @@ package com.joinalongapp.viewmodel;
 
 import android.graphics.Bitmap;
 
+import org.json.JSONException;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ChatDetails implements Serializable {
+public class ChatDetails implements Serializable, IDetailsModel {
     private UUID id;
     private String title;
     private List<Tag> tags;
@@ -69,5 +71,11 @@ public class ChatDetails implements Serializable {
             result.add(tag.getName());
         }
         return result;
+    }
+
+    @Override
+    public String toJsonString() throws JSONException {
+        //TODO
+        return null;
     }
 }

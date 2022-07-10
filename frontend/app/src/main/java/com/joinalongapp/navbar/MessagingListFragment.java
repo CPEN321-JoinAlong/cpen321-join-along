@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.joinalongapp.joinalong.R;
-import com.joinalongapp.viewmodel.MessagingListCustomAdapter;
+import com.joinalongapp.adapter.MessagingListCustomAdapter;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.ArrayList;

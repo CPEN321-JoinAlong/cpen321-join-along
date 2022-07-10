@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.Calendar;
 
-public class RideshareDetails implements Serializable {
+public class RideshareDetails implements Serializable, IDetailsModel {
     private String title;
     private String pickupLocation;
     private String destination;

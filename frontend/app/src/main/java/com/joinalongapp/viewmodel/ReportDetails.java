@@ -3,7 +3,9 @@ package com.joinalongapp.viewmodel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ReportDetails {
+import java.io.Serializable;
+
+public class ReportDetails implements Serializable, IDetailsModel {
 
     private String reportingName;
     private String reason;

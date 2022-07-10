@@ -1,4 +1,4 @@
-package com.joinalongapp.viewmodel;
+package com.joinalongapp.adapter;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.navbar.ViewChatFragment;
+import com.joinalongapp.viewmodel.ChatDetails;
 
 import java.util.Iterator;
 import java.util.List;

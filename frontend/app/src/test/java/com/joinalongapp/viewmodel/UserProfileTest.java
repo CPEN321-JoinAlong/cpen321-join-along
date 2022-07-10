@@ -17,16 +17,16 @@ public class UserProfileTest {
         userProfile.setFirstName("First");
         userProfile.setLastName("Last");
 
-        List<String> interests = new ArrayList<>();
-        interests.add("hiking");
-        interests.add("food");
+        List<Tag> interests = new ArrayList<>();
+        interests.add(new Tag("hiking"));
+        interests.add(new Tag("food"));
         userProfile.setInterests(interests);
 
         userProfile.setDescription("i'm interesting :)");
 
         String jsonResult = userProfile.toJsonString();
         String expected = "{\"firstName\":\"First\",\"lastName\":\"Last\",\"description\":\"i'm interesting :)\"," +
-                "\"interests\":[\"hiking\",\"food\"]}";
+                "\"interests\":[\"hiking\",\"food\"],\"friends\":[]}";
         assertEquals(expected, jsonResult);
     }
 }

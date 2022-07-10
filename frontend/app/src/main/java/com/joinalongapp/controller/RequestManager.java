@@ -1,6 +1,7 @@
 package com.joinalongapp.controller;
 
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
@@ -134,5 +135,22 @@ public class RequestManager {
         }
 
         return urlBuilder.build();
+    }
+
+    public enum Range {
+        GREATER_THAN {
+            @NonNull
+            @Override
+            public String toString() {
+                return "gt";
+            }
+        },
+        LESS_THAN {
+            @NonNull
+            @Override
+            public String toString() {
+                return "lt";
+            }
+        }
     }
 }

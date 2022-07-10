@@ -2,7 +2,10 @@ package com.joinalongapp.joinalong;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,8 +25,10 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.tabs.TabLayout;
 import com.joinalongapp.viewmodel.Event;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class ManageEventActivity extends AppCompatActivity {
@@ -41,6 +46,7 @@ public class ManageEventActivity extends AppCompatActivity {
     private ImageButton cancelButton;
     private ChipGroup chipGroupTags;
     private AutoCompleteTextView autoCompleteChipTags;
+    private String TAG = "ManageEventActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,33 +149,31 @@ public class ManageEventActivity extends AppCompatActivity {
 
         if(editTextEmpty(title)){
             flag = false;
-            Toast toast = Toast.makeText(this, "Empty Title field", Toast.LENGTH_SHORT);
-            toast.show();
+            title.setError("Empty Title field");
         }
-        else if(editTextEmpty(location)){
+        if(editTextEmpty(location)){
             flag = false;
-            Toast toast = Toast.makeText(this, "Empty Location field", Toast.LENGTH_SHORT);
-            toast.show();
-        }
-        else if(editTextEmpty(beginningDate)){
+            location.setError("Empty Location field");
+        }else if(getAddressFromString(location.getText().toString()) == null){
             flag = false;
-            Toast toast = Toast.makeText(this, "Empty Beginning Date field", Toast.LENGTH_SHORT);
-            toast.show();
+            location.setError("Invalid Address");
         }
-        else if(editTextEmpty(endDate)){
+        if(editTextEmpty(beginningDate)){
             flag = false;
-            Toast toast = Toast.makeText(this, "Empty End Date field", Toast.LENGTH_SHORT);
-            toast.show();
+            beginningDate.setError("Empty Beginning Date field");
         }
-        else if(chipGroupTags.getChildCount() == 0){
+        if(editTextEmpty(endDate)){
+            flag = false;
+            endDate.setError("Empty End Date field");
+        }
+        if(chipGroupTags.getChildCount() == 0){
             flag = false;
             Toast toast = Toast.makeText(this, "Empty Tag field", Toast.LENGTH_SHORT);
             toast.show();
         }
-        else if(editTextEmpty(description)){
+        if(editTextEmpty(description)){
             flag = false;
-            Toast toast = Toast.makeText(this, "Empty Description field", Toast.LENGTH_SHORT);
-            toast.show();
+            description.setError("Empty Description field");
         }
 
         return flag;
@@ -223,5 +227,20 @@ public class ManageEventActivity extends AppCompatActivity {
                 chipGroup.addView(chip);
             }
         });
+    }
+
+
+    private Address getAddressFromString(String address) {
+        Geocoder geocoder = new Geocoder(ManageEventActivity.this);
+        Address retVal = null;
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses.size() > 0) {
+                retVal = addresses.get(0);
+            }
+        } catch(IOException e) {
+            Log.e(TAG, "Failed to set location with error: " + e.getMessage());
+        }
+        return retVal;
     }
 }

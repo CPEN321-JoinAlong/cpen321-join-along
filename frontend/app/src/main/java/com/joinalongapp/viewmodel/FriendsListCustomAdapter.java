@@ -25,9 +25,9 @@ import java.util.UUID;
 
 public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCustomAdapter.ViewHolder>{
 
-    private List<User> users;
+    private List<UserProfile> users;
 
-    public FriendsListCustomAdapter(List<User> inputDataSet){
+    public FriendsListCustomAdapter(List<UserProfile> inputDataSet){
         users = inputDataSet;
     }
 
@@ -79,7 +79,7 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.getName().setText(users.get(position).getName());
+        holder.getName().setText(users.get(position).getFullName());
         holder.getSettings().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,14 +90,14 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                     public boolean onMenuItemClick(MenuItem item) {
                         switch(item.getItemId()){
                             case R.id.menu1:
-                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getName());
+                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getFullName());
 
                                 Log.d("FriendsAdapter", "MENU1");
                                 deleteFriend(users.get(holder.getAdapterPosition()).getId());
                                 return true;
 
                             case R.id.menu2:
-                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getName());
+                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getFullName());
                                 Log.d("FriendsAdapter", "MENU2");
                                 return true;
 
@@ -120,8 +120,8 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
     }
 
     private void deleteFriend(UUID uuid){
-        for (Iterator<User> iterator = users.iterator(); iterator.hasNext(); ) {
-            User value = iterator.next();
+        for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
+            UserProfile value = iterator.next();
             if (value.getId() == uuid) {
                 iterator.remove();
             }

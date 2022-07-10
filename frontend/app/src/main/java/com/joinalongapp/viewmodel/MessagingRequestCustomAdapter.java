@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<MessagingRequestCustomAdapter.ViewHolder> {
-    private List<User> users;
+    private List<UserProfile> users;
 
-    public MessagingRequestCustomAdapter(List<User> inputDataSet){
+    public MessagingRequestCustomAdapter(List<UserProfile> inputDataSet){
         users = inputDataSet;
     }
 
@@ -80,7 +80,7 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
 
     @Override
     public void onBindViewHolder(@NonNull MessagingRequestCustomAdapter.ViewHolder holder, int position) {
-        holder.getName().setText(users.get(position).getName());
+        holder.getName().setText(users.get(position).getFullName());
         holder.getAccept().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,8 +102,8 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
     }
 
     private void deleteRequest(UUID uuid){
-        for (Iterator<User> iterator = users.iterator(); iterator.hasNext(); ) {
-            User value = iterator.next();
+        for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
+            UserProfile value = iterator.next();
             if (value.getId() == uuid) {
                 iterator.remove();
             }

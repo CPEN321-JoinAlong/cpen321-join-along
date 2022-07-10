@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsRequestCustomAdapter.ViewHolder>{
-    private List<User> users;
+    private List<UserProfile> users;
 
-    public FriendsRequestCustomAdapter(List<User> inputDataSet){
+    public FriendsRequestCustomAdapter(List<UserProfile> inputDataSet){
         users = inputDataSet;
     }
 
@@ -82,7 +82,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
 
     @Override
     public void onBindViewHolder(@NonNull FriendsRequestCustomAdapter.ViewHolder holder, int position) {
-        holder.getName().setText(users.get(position).getName());
+        holder.getName().setText(users.get(position).getFullName());
         holder.getAccept().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,8 +104,8 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
     }
 
     private void deleteRequest(UUID uuid){
-        for (Iterator<User> iterator = users.iterator(); iterator.hasNext(); ) {
-            User value = iterator.next();
+        for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
+            UserProfile value = iterator.next();
             if (value.getId() == uuid) {
                 iterator.remove();
             }

@@ -16,8 +16,7 @@ import android.widget.Toast;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.viewmodel.ChatDetails;
-import com.joinalongapp.viewmodel.Event;
-import com.joinalongapp.viewmodel.User;
+import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +43,7 @@ public class ManageChatActivity extends AppCompatActivity {
 
         Bundle info = getIntent().getExtras();
         Boolean manageOption = info.getBoolean("EDIT_OPTION");
-        User user = (User) info.getSerializable("USER");
+        UserProfile user = (UserProfile) info.getSerializable("USER");
 
         if(manageOption){
             ChatDetails chatDetails = (ChatDetails) info.getSerializable("CHAT_DETAILS");

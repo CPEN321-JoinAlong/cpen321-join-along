@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingListCustomAdapter.ViewHolder>{
-    private List<User> users;
+    private List<UserProfile> users;
 
-    public MessagingListCustomAdapter(List<User> inputDataSet){
+    public MessagingListCustomAdapter(List<UserProfile> inputDataSet){
         users = inputDataSet;
     }
 
@@ -68,7 +68,7 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
 
     @Override
     public void onBindViewHolder(@NonNull MessagingListCustomAdapter.ViewHolder holder, int position) {
-        holder.getName().setText(users.get(position).getName());
+        holder.getName().setText(users.get(position).getFullName());
         holder.getSettings().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,14 +79,14 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
                     public boolean onMenuItemClick(MenuItem item) {
                         switch(item.getItemId()){
                             case R.id.menu1:
-                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getName());
+                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getFullName());
 
                                 Log.d("FriendsAdapter", "MENU1");
                                 deleteFriend(users.get(holder.getAdapterPosition()).getId());
                                 return true;
 
                             case R.id.menu2:
-                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getName());
+                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getFullName());
                                 Log.d("FriendsAdapter", "MENU2");
                                 return true;
 
@@ -109,8 +109,8 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
     }
 
     private void deleteFriend(UUID uuid){
-        for (Iterator<User> iterator = users.iterator(); iterator.hasNext(); ) {
-            User value = iterator.next();
+        for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
+            UserProfile value = iterator.next();
             if (value.getId() == uuid) {
                 iterator.remove();
             }

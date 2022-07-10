@@ -13,7 +13,7 @@ import com.joinalongapp.navbar.FriendsFragment;
 import com.joinalongapp.navbar.HomeFragment;
 import com.joinalongapp.navbar.MessagingFragment;
 import com.joinalongapp.navbar.ProfileFragment;
-import com.joinalongapp.viewmodel.User;
+import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.UUID;
 
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity{
         setContentView(binding.getRoot());
         replaceFragment(new HomeFragment());
 
-        User u = new User(UUID.randomUUID(), "Ken");
+        UserProfile u = new UserProfile(UUID.randomUUID(), "Ken", "Liang");
         Bundle bundle = new Bundle();
         bundle.putSerializable("USER", u);
 

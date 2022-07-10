@@ -13,10 +13,9 @@ import android.widget.TextView;
 import com.google.android.material.tabs.TabLayout;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.ReportDetails;
-import com.joinalongapp.viewmodel.User;
+import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class ReportActivity extends AppCompatActivity {
 
@@ -42,7 +41,7 @@ public class ReportActivity extends AppCompatActivity {
         ReportDetails reportDetails = new ReportDetails();
         String reportEntityName;
         if(reportType){
-            User reportingPerson = (User) info.getSerializable("REPORTING_USER");
+            UserProfile reportingPerson = (UserProfile) info.getSerializable("REPORTING_USER");
             String reportingName = " " + reportingPerson.getName();
             reportEntityName = reportingPerson.getName();
             reportingSubtitle.append(reportingName);

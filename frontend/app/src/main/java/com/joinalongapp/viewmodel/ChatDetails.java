@@ -7,7 +7,7 @@ public class ChatDetails {
     private String title;
     private List<String> tags;
     private String description;
-    private List<User> people;
+    private List<UserProfile> people;
 
     public ChatDetails(){
 
@@ -25,7 +25,7 @@ public class ChatDetails {
         return description;
     }
 
-    public List<User> getPeople() {
+    public List<UserProfile> getPeople() {
         return people;
     }
 
@@ -41,14 +41,14 @@ public class ChatDetails {
         this.description = description;
     }
 
-    public void setPeople(List<User> people) {
+    public void setPeople(List<UserProfile> people) {
         this.people = people;
     }
 
     public List<String> getListPeople(){
         List<String> result = new ArrayList<>();
-        for(User user : people){
-            result.add(user.getName());
+        for(UserProfile user : people){
+            result.add(user.getFullName());
         }
         return result;
     }

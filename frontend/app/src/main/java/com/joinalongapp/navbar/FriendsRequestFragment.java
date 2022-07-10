@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.FriendsRequestCustomAdapter;
-import com.joinalongapp.viewmodel.User;
+import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class FriendsRequestFragment extends Fragment {
     private FriendsRequestFragment.LayoutManagerType layoutManagerType;
     private FriendsRequestCustomAdapter friendsRequestCustomAdapter;
 
-    protected List<User> dataset;
+    protected List<UserProfile> dataset;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -99,17 +99,17 @@ public class FriendsRequestFragment extends Fragment {
     }
     private void initDataset(){
         // TODO: GET LIST OF USERS
-        User a = new User(UUID.randomUUID(), "Ken");
-        User b = new User(UUID.randomUUID(), "Justin");
-        User c = new User(UUID.randomUUID(), "Kamran");
-        User d = new User(UUID.randomUUID(), "Zoeb");
-        User e = new User(UUID.randomUUID(), "Ken");
-        User f = new User(UUID.randomUUID(), "Justin");
-        User g = new User(UUID.randomUUID(), "Kamran");
-        User h = new User(UUID.randomUUID(), "Zoeb");
-        User i = new User(UUID.randomUUID(), "Zoeb");
+        UserProfile a = new UserProfile(UUID.randomUUID(), "Ken", "");
+        UserProfile b = new UserProfile(UUID.randomUUID(), "Justin", "");
+        UserProfile c = new UserProfile(UUID.randomUUID(), "Kamran", "");
+        UserProfile d = new UserProfile(UUID.randomUUID(), "Zoeb", "");
+        UserProfile e = new UserProfile(UUID.randomUUID(), "Ken", "");
+        UserProfile f = new UserProfile(UUID.randomUUID(), "Justin", "");
+        UserProfile g = new UserProfile(UUID.randomUUID(), "Kamran", "");
+        UserProfile h = new UserProfile(UUID.randomUUID(), "Zoeb", "");
+        UserProfile i = new UserProfile(UUID.randomUUID(), "Zoeb", "");
 
-        List<User> result = new ArrayList<>();
+        List<UserProfile> result = new ArrayList<>();
         result.add(a);
         result.add(b);
         result.add(c);

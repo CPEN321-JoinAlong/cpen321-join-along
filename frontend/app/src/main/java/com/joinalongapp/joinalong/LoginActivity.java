@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,17 +31,26 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("693671271113-s7u6caoamjhu5a7lbm9fnvgoldoupn88.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        signInButton = findViewById(R.id.sign_in_button);
+        mGoogleSignInClient.silentSignIn()
+                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<GoogleSignInAccount>() {
+                    @Override
+                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                        handleSignInResult(task);
+                    }
+                });
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(LoginActivity.this);
         if (account != null) {
             startMainActivity();
         }
+
+        signInButton = findViewById(R.id.sign_in_button);
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,13 +93,17 @@ public class LoginActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            String idToken = account.getIdToken();
+
+            //TODO: post id to back and validate
+            Toast.makeText(this, idToken, Toast.LENGTH_SHORT).show();
 
             // Signed in successfully, show authenticated UI.
             updateUI(account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode() + " Message: " + e.getMessage());
             updateUI(null);
         }
     }

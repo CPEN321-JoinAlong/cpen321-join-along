@@ -132,6 +132,7 @@
     <string name="view_events_location_title">Location</string>
     <string name="view_events_begin_date_title">Begin Date</string>
     <string name="view_events_end_date_title">End Date</string>
+    <string name="server_client_id">113487911713-bs4dp5e9gcr24hv2d7d5r0go1u0joq8s.apps.googleusercontent.com</string>
 
 
 </resources>

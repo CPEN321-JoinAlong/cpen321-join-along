@@ -1,6 +1,5 @@
 package com.joinalongapp.viewmodel;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +9,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.joinalong.R;
-import com.joinalongapp.navbar.ChatFragment;
+import com.joinalongapp.navbar.ViewChatFragment;
 
 import java.util.Iterator;
 import java.util.List;
@@ -41,11 +38,11 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ChatFragment chatFragment = new ChatFragment();
+                    ViewChatFragment viewChatFragment = new ViewChatFragment();
                     AppCompatActivity activity = (AppCompatActivity) v.getContext();
                     FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
-                    fragmentTransaction.add(R.id.frame_layout, chatFragment);
+                    fragmentTransaction.add(R.id.frame_layout, viewChatFragment);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 }

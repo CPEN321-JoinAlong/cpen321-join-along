@@ -11,9 +11,13 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.navbar.ViewChatFragment;
+import com.joinalongapp.navbar.ViewProfileFragment;
 
 import java.util.Iterator;
 import java.util.List;
@@ -38,7 +42,13 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Go to their profile
+                    ViewProfileFragment viewProfileFragment = new ViewProfileFragment();
+                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                    FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
+                    fragmentTransaction.add(R.id.frame_layout, viewProfileFragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
                     Log.d("FragmentFriend", name.getText().toString());
                 }
             });

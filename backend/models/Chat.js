@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const ChatSchema = new Schema({
-    name: String,
-    interestTags: [
+    title: String,
+    tags: [
         {
             type: String,
         },
@@ -20,8 +20,8 @@ const ChatSchema = new Schema({
         },
     ],
     event: String,
-    maxCapacity: String,
-    currCapacity: String,
+    numberOfPeople: Number,
+    currCapacity: Number,
     description: String,
 });
 

@@ -46,6 +46,7 @@
     <string name="default_messaging">Messaging</string>
     <string name="default_messages">Messages</string>
     <string name="default_search">Search</string>
+    <string name="default_description">Description</string>
     <string-array name="number_of_people_array">
         <item>1</item>
         <item>2</item>

@@ -1,6 +1,5 @@
 package com.joinalongapp.viewmodel;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,15 +8,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.navbar.ViewChatFragment;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<MessagingRequestCustomAdapter.ViewHolder>{
+public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<MessagingRequestCustomAdapter.ViewHolder> {
     private List<User> users;
 
     public MessagingRequestCustomAdapter(List<User> inputDataSet){
@@ -36,8 +38,13 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Go to their profile
-                    Log.d("Fragment", name.getText().toString());
+                    ViewChatFragment viewChatFragment = new ViewChatFragment();
+                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                    FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
+                    fragmentTransaction.add(R.id.frame_layout, viewChatFragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
                 }
             });
 

@@ -41,6 +41,30 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollViewFriends"
+        android:layout_width="315dp"
+        android:layout_height="38dp"
+        android:contentDescription="@string/default_empty_string"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
+        app:layout_constraintTop_toBottomOf="@+id/autoCompleteFriendText"
+        app:layout_constraintVertical_bias="0.0">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/manageChatAddFriends"
+            android:layout_width="314dp"
+            android:layout_height="38dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline4"
+            app:layout_constraintVertical_bias="0.746" />
+    </HorizontalScrollView>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/peopleRecyclerView"
         android:layout_width="match_parent"

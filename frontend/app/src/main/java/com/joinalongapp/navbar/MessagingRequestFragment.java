@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.MessagingRequestCustomAdapter;
+import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ public class MessagingRequestFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    protected List<UserProfile> dataset;
+    protected List<ChatDetails> dataset;
 
     public MessagingRequestFragment() {
         // Required empty public constructor
@@ -100,26 +102,30 @@ public class MessagingRequestFragment extends Fragment {
 
     private void initDataset(){
         // TODO: GET LIST OF USERS
-        UserProfile a = new UserProfile(UUID.randomUUID(), "Ken", "");
-        UserProfile b = new UserProfile(UUID.randomUUID(), "Justin", "");
-        UserProfile c = new UserProfile(UUID.randomUUID(), "Kamran", "");
-        UserProfile d = new UserProfile(UUID.randomUUID(), "Zoeb", "");
-        UserProfile e = new UserProfile(UUID.randomUUID(), "Ken", "");
-        UserProfile f = new UserProfile(UUID.randomUUID(), "Justin", "");
-        UserProfile g = new UserProfile(UUID.randomUUID(), "Kamran", "");
-        UserProfile h = new UserProfile(UUID.randomUUID(), "Zoeb", "");
-        UserProfile i = new UserProfile(UUID.randomUUID(), "Zoeb", "");
+        ChatDetails a = new ChatDetails();
+        a.setTitle("CHAT 1");
+        a.setDescription("SAMPLE DESCRIPTION");
+        Tag t = new Tag("hike");
+        UserProfile u = new UserProfile(UUID.randomUUID(), "Ken", "Liang");
+        List<Tag> lt = new ArrayList<>();
+        List<UserProfile> lu = new ArrayList<>();
+        lt.add(t);
+        lu.add(u);
 
-        List<UserProfile> result = new ArrayList<>();
+        a.setTags(lt);
+        a.setPeople(lu);
+
+        ChatDetails b = new ChatDetails();
+        ChatDetails c = new ChatDetails();
+        ChatDetails d = new ChatDetails();
+
+
+        List<ChatDetails> result = new ArrayList<>();
         result.add(a);
         result.add(b);
         result.add(c);
         result.add(d);
-        result.add(e);
-        result.add(f);
-        result.add(g);
-        result.add(h);
-        result.add(i);
+
         dataset = result;
     }
 }

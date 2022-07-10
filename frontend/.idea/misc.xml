@@ -22,6 +22,8 @@
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/friend_list_item.xml" value="0.22" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/friend_request_item.xml" value="0.22" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/individual_chip.xml" value="0.23505434782608695" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/individual_choice_chip.xml" value="0.2726449275362319" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/individual_entry_chip.xml" value="0.2726449275362319" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/list_item.xml" value="0.1" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/messaging_list_item.xml" value="0.12487335359675786" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/messaging_request_item.xml" value="0.12537993920972645" />
@@ -50,7 +52,6 @@
         <entry key="..\:/Users/jdara/AndroidStudioProjects/cpen321-join-along/frontend/app/src/main/res/layout/fragment_profile.xml" value="0.358695652173913" />
         <entry key="..\:/Users/jdara/AndroidStudioProjects/cpen321-join-along/frontend/app/src/main/res/layout/fragment_test.xml" value="0.358695652173913" />
         <entry key="..\:/Users/jdara/AndroidStudioProjects/cpen321-join-along/frontend/app/src/main/res/layout/manage_profile_activity.xml" value="0.5" />
-        <entry key="..\:/Users/jdara/AndroidStudioProjects/cpen321-join-along/frontend/app/src/main/res/layout/map_info_window_layout.xml" value="0.358695652173913" />
         <entry key="..\:/Users/jdara/AndroidStudioProjects/cpen321-join-along/frontend/app/src/main/res/menu/bottom_nav_menu.xml" value="0.36666666666666664" />
       </map>
     </option>

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.FriendsListCustomAdapter;
+import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.ArrayList;
@@ -102,10 +103,17 @@ public class FriendsListFragment extends Fragment {
 
     private void initDataset(){
         // TODO: GET LIST OF USERS
-        UserProfile a = new UserProfile(UUID.randomUUID(), "Ken", "");
-        UserProfile b = new UserProfile(UUID.randomUUID(), "Justin", "");
-        UserProfile c = new UserProfile(UUID.randomUUID(), "Kamran", "");
-        UserProfile d = new UserProfile(UUID.randomUUID(), "Zoeb", "");
+        UserProfile a = new UserProfile(UUID.randomUUID(), "Ken", "L");
+        Tag t = new Tag("Hiking");
+        Tag ta = new Tag("swimming");
+        List<Tag> lt = new ArrayList<>();
+        lt.add(t);
+        lt.add(ta);
+        a.setInterests(lt);
+        a.setDescription("PLEASE WORK");
+        UserProfile b = new UserProfile(UUID.randomUUID(), "Justin", "D");
+        UserProfile c = new UserProfile(UUID.randomUUID(), "Kamran", "A");
+        UserProfile d = new UserProfile(UUID.randomUUID(), "Zoeb", "G");
         UserProfile e = new UserProfile(UUID.randomUUID(), "Ken", "");
         UserProfile f = new UserProfile(UUID.randomUUID(), "Justin", "");
         UserProfile g = new UserProfile(UUID.randomUUID(), "Kamran", "");

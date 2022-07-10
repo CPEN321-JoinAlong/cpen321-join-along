@@ -1,5 +1,6 @@
 package com.joinalongapp.viewmodel;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +21,10 @@ import java.util.List;
 import java.util.UUID;
 
 public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<MessagingRequestCustomAdapter.ViewHolder> {
-    private List<UserProfile> users;
+    private List<ChatDetails> chatDetails;
 
-    public MessagingRequestCustomAdapter(List<UserProfile> inputDataSet){
-        users = inputDataSet;
+    public MessagingRequestCustomAdapter(List<ChatDetails> inputDataSet){
+        chatDetails = inputDataSet;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -34,19 +35,6 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ViewChatFragment viewChatFragment = new ViewChatFragment();
-                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                    FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
-                    fragmentTransaction.add(R.id.frame_layout, viewChatFragment);
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                }
-            });
 
             name = (TextView) itemView.findViewById(R.id.individualUserName);
             profilePicture = (ImageView) itemView.findViewById(R.id.individualProfilePicture);
@@ -80,17 +68,32 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
 
     @Override
     public void onBindViewHolder(@NonNull MessagingRequestCustomAdapter.ViewHolder holder, int position) {
-        holder.getName().setText(users.get(position).getFullName());
+        holder.getName().setText(chatDetails.get(position).getTitle());
         holder.getAccept().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteRequest(users.get(holder.getAdapterPosition()).getId());
+                deleteRequest(chatDetails.get(holder.getAdapterPosition()).getId());
             }
         });
         holder.getReject().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteRequest(users.get(holder.getAdapterPosition()).getId());
+                deleteRequest(chatDetails.get(holder.getAdapterPosition()).getId());
+            }
+        });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewChatFragment viewChatFragment = new ViewChatFragment();
+                Bundle info = new Bundle();
+                info.putSerializable("CHAT_INFO", chatDetails.get(holder.getBindingAdapterPosition()));
+                viewChatFragment.setArguments(info);
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
+                fragmentTransaction.add(R.id.frame_layout, viewChatFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
         //holder.getProfilePicture().set
@@ -98,12 +101,12 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
 
     @Override
     public int getItemCount() {
-        return users.size();
+        return chatDetails.size();
     }
 
     private void deleteRequest(UUID uuid){
-        for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
-            UserProfile value = iterator.next();
+        for (Iterator<ChatDetails> iterator = chatDetails.iterator(); iterator.hasNext(); ) {
+            ChatDetails value = iterator.next();
             if (value.getId() == uuid) {
                 iterator.remove();
             }

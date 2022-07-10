@@ -15,7 +15,7 @@ public class UserProfile implements Serializable {
     private String firstName;
     private String lastName;
     private String location;
-    private List<String> interests; //TODO: it might be good to make this have its own datatype, or maybe a list of ENUM's
+    private List<Tag> tags; //TODO: it might be good to make this have its own datatype, or maybe a list of ENUM's
     private String description;
     private Bitmap profilePicture;
     private List<UserProfile> friends;
@@ -61,12 +61,12 @@ public class UserProfile implements Serializable {
         this.location = location;
     }
 
-    public List<String> getInterests() {
-        return interests;
+    public List<Tag> getInterests() {
+        return tags;
     }
 
-    public void setInterests(List<String> interests) {
-        this.interests = interests;
+    public void setInterests(List<Tag> interests) {
+        this.tags = interests;
     }
 
     public String getDescription() {
@@ -113,5 +113,13 @@ public class UserProfile implements Serializable {
         json.put("friends", friendId);
 
         return json.toString();
+    }
+
+    public List<String> getStringListOfTags(){
+        List<String> result = new ArrayList<>();
+        for(Tag tag : tags){
+            result.add(tag.getName());
+        }
+        return result;
     }
 }

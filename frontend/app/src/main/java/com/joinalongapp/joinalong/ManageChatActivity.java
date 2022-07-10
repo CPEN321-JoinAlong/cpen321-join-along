@@ -72,7 +72,7 @@ public class ManageChatActivity extends AppCompatActivity {
                     ChatDetails resultChat = new ChatDetails();
 
                     resultChat.setDescription(chatDescription.getText().toString());
-                    resultChat.setTags(chipGroupToList(tagChipGroup));
+                    //resultChat.setTags(chipGroupToList(tagChipGroup));
                     resultChat.setTitle(chatTitle.getText().toString());
                     // TODO: need to backwards associate string names to User object (maybe mapping between chips and user?)
                     //resultChat.setPeople(chipGroupToList(friendChipGroup));
@@ -90,7 +90,7 @@ public class ManageChatActivity extends AppCompatActivity {
         tagChipGroup = findViewById(R.id.manageChatTags);
         chatDescription = findViewById(R.id.manageChatEditTextDescription);
         friendAutoComplete = findViewById(R.id.autoCompleteFriendText);
-        friendChipGroup = findViewById(R.id.manageChatAddFriends);
+        friendChipGroup = findViewById(R.id.manageTags);
         cancelButton = findViewById(R.id.cancelButton);
         submitButton = findViewById(R.id.submitManageChatButton);
     }
@@ -99,11 +99,11 @@ public class ManageChatActivity extends AppCompatActivity {
         chatTitle.setText(chatDetails.getTitle());
         chatDescription.setText(chatDetails.getDescription());
 
-        List<String> tags = chatDetails.getTags();
-        List<String> people = chatDetails.getListPeople();
+        List<String> tags = chatDetails.getStringListOfTags();
+        List<String> people = chatDetails.getStringListOfPeople();
 
         for(String tag : tags){
-            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_chip, tagChipGroup, false);
+            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, tagChipGroup, false);
             chip.setText(tag);
             chip.setOnCloseIconClickListener(new View.OnClickListener() {
                 @Override
@@ -115,7 +115,7 @@ public class ManageChatActivity extends AppCompatActivity {
         }
 
         for(String person : people){
-            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_chip, friendChipGroup, false);
+            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, friendChipGroup, false);
             chip.setText(person);
             chip.setOnCloseIconClickListener(new View.OnClickListener() {
                 @Override
@@ -182,7 +182,7 @@ public class ManageChatActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 autoCompleteTextView.setText("");
 
-                Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_chip, chipGroup, false);
+                Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, chipGroup, false);
                 chip.setText((String) parent.getItemAtPosition(position));
                 chip.setOnCloseIconClickListener(new View.OnClickListener() {
                     @Override

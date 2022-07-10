@@ -8,8 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.viewmodel.UserProfile;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +33,11 @@ public class ViewProfileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private UserProfile userProfile;
+    private TextView profileName;
+    private ImageView profilePicture;
+    private ChipGroup manageTags;
+    private TextView description;
 
     public ViewProfileFragment() {
         // Required empty public constructor
@@ -57,6 +67,7 @@ public class ViewProfileFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            userProfile = (UserProfile) getArguments().getSerializable("USER_INFO");
         }
     }
 
@@ -66,6 +77,14 @@ public class ViewProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_profile, container, false);
         initDataset(view);
+        if(userProfile.getInterests() != null){
+            addTagsToChipGroup();
+        }
+
+
+        profileName.setText(userProfile.getFullName());
+        description.setText(userProfile.getDescription());
+
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,5 +98,19 @@ public class ViewProfileFragment extends Fragment {
 
     private void initDataset(View view){
         backButton = view.findViewById(R.id.backButton);
+        profileName = view.findViewById(R.id.profileName);
+        profilePicture = view.findViewById(R.id.profilePicture);
+        manageTags  = view.findViewById(R.id.manageTags);
+        description = view.findViewById(R.id.description);
     }
+
+    private void addTagsToChipGroup(){
+        for(String tag : userProfile.getStringListOfTags()){
+            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, manageTags, false);
+            chip.setText(tag);
+            manageTags.addView(chip);
+        }
+    }
+
+
 }

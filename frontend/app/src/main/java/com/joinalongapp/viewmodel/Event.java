@@ -1,6 +1,7 @@
 package com.joinalongapp.viewmodel;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +17,7 @@ public class Event implements Serializable {
     private Date endDate;
     private Boolean publicVisibility;
     private int numberOfPeople;
-    private List<String> tags;
+    private List<Tag> tags;
 
     public void setEventId(UUID eventId) {
         this.eventId = eventId;
@@ -50,11 +51,11 @@ public class Event implements Serializable {
         this.numberOfPeople = numberOfPeople;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 
-    public void setFriends(List<String> friends) {
+    public void setFriends(List<UserProfile> friends) {
         this.friends = friends;
     }
 
@@ -62,7 +63,7 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    private List<String> friends;
+    private List<UserProfile> friends;
     private String description;
 
     public Event() {
@@ -116,15 +117,23 @@ public class Event implements Serializable {
         return numberOfPeople;
     }
 
-    public List<String> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public List<String> getFriends() {
+    public List<UserProfile> getFriends() {
         return friends;
     }
 
     public String getDescription() {
         return description;
+    }
+
+    public List<String> getStringOfTags(){
+        List<String> result = new ArrayList<>();
+        for(Tag tag : tags){
+            result.add(tag.getName());
+        }
+        return result;
     }
 }

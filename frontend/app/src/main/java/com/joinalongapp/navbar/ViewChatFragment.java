@@ -10,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.viewmodel.ChatDetails;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +32,7 @@ public class ViewChatFragment extends Fragment {
     private String mParam2;
 
     ImageButton backButton;
+    ChatDetails chatDetails;
     TextView title;
     TextView description;
     ChipGroup tags;
@@ -63,6 +66,7 @@ public class ViewChatFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            chatDetails = (ChatDetails) getArguments().getSerializable("CHAT_INFO");
         }
     }
 
@@ -72,6 +76,12 @@ public class ViewChatFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_chat, container, false);
         initDataset(view);
+
+        title.setText(chatDetails.getTitle());
+        description.setText(chatDetails.getDescription());
+        //add check
+        addTagsFriendsToChipGroup();
+
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,5 +98,19 @@ public class ViewChatFragment extends Fragment {
         description = view.findViewById(R.id.viewChatDescription);
         tags = view.findViewById(R.id.viewChatAddTags);
         friends = view.findViewById(R.id.viewChatAddFriends);
+    }
+
+    private void addTagsFriendsToChipGroup(){
+        for(String tag : chatDetails.getStringListOfTags()){
+            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, tags, false);
+            chip.setText(tag);
+            tags.addView(chip);
+        }
+
+        for(String friend : chatDetails.getStringListOfPeople()){
+            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, friends, false);
+            chip.setText(friend);
+            friends.addView(chip);
+        }
     }
 }

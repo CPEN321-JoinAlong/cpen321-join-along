@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const UserSchema = new Schema({
     name: String,
-    interestTags: [
+    interests: [
         {
             type: String,
         },
@@ -19,7 +19,7 @@ const UserSchema = new Schema({
             type: String,
         },
     ],
-    profileImage: String,
+    profilePicture: String,
     description: String,
     chatInvites: [
         {

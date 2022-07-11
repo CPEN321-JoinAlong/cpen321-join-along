@@ -10,7 +10,7 @@ class UserAccount {
         this.interests = userInfo.interests;
         this.location = userInfo.location;
         this.description = userInfo.description;
-        this.profileImage = userInfo.profilePicture;
+        this.profilePicture = userInfo.profilePicture;
 
         //fields which will be created automatically
         this.eventInvites = userInfo.eventInvites ? userInfo.eventInvites : [];
@@ -163,6 +163,12 @@ class UserStore {
         );
     }
 
+    async findUserByName(userName) {
+        return await Event.find({
+            name: userName
+        });
+    }
+
     async removeChat(chatID, chatInfo) {
         await User.updateMany(
             {
@@ -225,9 +231,10 @@ class UserStore {
     }
 
     async findUserForLogin(Token) {
-        return await User.findOne({
-            token: Token,
+        let user = await User.findOne({
+            token: Token, 
         });
+        return user;
     }
 }
 

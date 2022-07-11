@@ -122,6 +122,7 @@ public class LoginActivity extends AppCompatActivity {
                             i.putExtra("userToken", idToken);
                             i.putExtra("lastName", account.getFamilyName());
                             i.putExtra("profilePic", account.getPhotoUrl().toString());
+                            i.putExtra("MODE", ManageProfileActivity.ManageProfileMode.PROFILE_CREATE);
                             startActivity(i);
                         } else {
                             if (response.code() == 200) {

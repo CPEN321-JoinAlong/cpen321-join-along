@@ -47,7 +47,7 @@ import okhttp3.Response;
  * add a first and last name string for autofill in the Extras.
  */
 public class ManageProfileActivity extends AppCompatActivity {
-    final static String TAG ="ManageProfileActivity";
+    private final static String TAG ="ManageProfileActivity";
     private EditText firstNameEdit;
     private EditText lastNameEdit;
     private EditText locationEdit;
@@ -55,7 +55,7 @@ public class ManageProfileActivity extends AppCompatActivity {
     private EditText descriptionEdit;
     private MaterialButtonToggleGroup useProfilePicToggle;
     private Button useProfilePic;
-    private Button dontUserProfilePic;
+    private Button dontUseProfilePic;
     private Button confirm;
     private ImageButton close;
     private AutoCompleteTextView autoCompleteInterests;
@@ -101,46 +101,91 @@ public class ManageProfileActivity extends AppCompatActivity {
 
                 profile.setDescription(descriptionEdit.getText().toString());
 
-                UserApplicationInfo input = new UserApplicationInfo();
+                UserApplicationInfo userInput = new UserApplicationInfo();
 
                 if (isCreatingProfile()) {
-                    input.setUserToken(getIntent().getExtras().getString("userToken"));
+                    userInput.setUserToken(getIntent().getExtras().getString("userToken"));
                 } else {
-                    input.setUserToken(((UserApplicationInfo) getApplication()).getUserToken());
+                    userInput.setUserToken(((UserApplicationInfo) getApplication()).getUserToken());
                 }
 
                 if (validateElements(profile)) {
-                    input.setProfile(profile);
+                    userInput.setProfile(profile);
 
-                    try {
-                        String jsonBody = input.toJsonString();
-                        RequestManager requestManager = new RequestManager();
-                        requestManager.post("user/create", jsonBody, new RequestManager.OnRequestCompleteListener() {
-                            @Override
-                            public void onSuccess(Call call, Response response) {
-                                UserApplicationInfo newUserInfo = new UserApplicationInfo();
-                                try {
-                                    newUserInfo.populateUserInfoFromJson(response.body().string());
-                                    ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(newUserInfo);
-                                    startMainActivity();
+                    if (isCreatingProfile()) {
+                        try {
+                            String jsonBody = userInput.toJsonString();
+                            RequestManager requestManager = new RequestManager();
+                            requestManager.post("user/create", jsonBody, new RequestManager.OnRequestCompleteListener() {
+                                @Override
+                                public void onSuccess(Call call, Response response) {
+                                    UserApplicationInfo newUserInfo = new UserApplicationInfo();
+                                    try {
+                                        newUserInfo.populateUserInfoFromJson(response.body().string());
+                                        ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(newUserInfo);
+                                        startMainActivity();
 
-                                } catch (IOException | JSONException e) {
-                                    Log.e(TAG, "Unable to load user profile");
+                                    } catch (IOException | JSONException e) {
+                                        Log.e(TAG, "Unable to load user profile");
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onError(Call call, IOException e) {
-                                Log.e(TAG, "Unable to create profile");
-                                Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
-                            }
-                        });
-                    } catch (JSONException | IOException e) {
-                        Log.e(TAG, "Failed to create user profile");
-                        Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
+                                @Override
+                                public void onError(Call call, IOException e) {
+                                    Log.e(TAG, "Unable to create profile");
+                                    Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        } catch (JSONException | IOException e) {
+                            Log.e(TAG, "Failed to create user profile");
+                            Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
+                        }
+                    }else {
+                        try {
+                            String jsonBody = userInput.toJsonString();
+                            RequestManager requestManager = new RequestManager();
+
+                            String userId = ((UserApplicationInfo) getApplication()).getProfile().getId();
+                            String path = "user/" + userId + "/edit";
+
+                            requestManager.put(path, jsonBody, new RequestManager.OnRequestCompleteListener() {
+                                @Override
+                                public void onSuccess(Call call, Response response) {
+                                    System.out.println(response.code());
+                                    UserApplicationInfo newUserInfo = new UserApplicationInfo();
+                                    try {
+                                        //TODO: change this to call profile fragment
+                                        //      currently there is no body in response, so can't call update
+                                        newUserInfo.populateUserInfoFromJson(response.body().string());
+                                        ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(newUserInfo);
+
+                                        startMainActivity();
+
+                                    } catch (IOException | JSONException e) {
+                                        Log.e(TAG, "Unable to update user profile");
+                                    }
+                                }
+
+                                @Override
+                                public void onError(Call call, IOException e) {
+                                    Log.e(TAG, "Unable to update profile");
+                                    Toast.makeText(ManageProfileActivity.this, "Unable to update profile. Please try again later.", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        } catch (JSONException | IOException e) {
+                            Log.e(TAG, "Failed to update user profile");
+                            Toast.makeText(ManageProfileActivity.this, "Unable to update profile. Please try again later.", Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
 
+            }
+        });
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 
@@ -180,7 +225,7 @@ public class ManageProfileActivity extends AppCompatActivity {
     private void initUseGoogleProfilePicToggle(UserProfile userProfile) throws IOException {
         useProfilePicToggle.setVisibility(View.GONE);
         useProfilePic.setVisibility(View.GONE);
-        dontUserProfilePic.setVisibility(View.GONE);
+        dontUseProfilePic.setVisibility(View.GONE);
         findViewById(R.id.useGoogleProfilePicTitle).setVisibility(View.GONE);
         //TODO: this might be future functionality
         //      for now, always uses the user google account profile pic
@@ -222,7 +267,7 @@ public class ManageProfileActivity extends AppCompatActivity {
 
     private void setProfilePicToggleColors(int usePicColor, int dontUsePicColor) {
         useProfilePic.setBackgroundColor(usePicColor);
-        dontUserProfilePic.setBackgroundColor(dontUsePicColor);
+        dontUseProfilePic.setBackgroundColor(dontUsePicColor);
     }
 
 
@@ -232,6 +277,7 @@ public class ManageProfileActivity extends AppCompatActivity {
     }
 
     private void setUpPageForCreate() {
+        close.setVisibility(View.GONE);
         if (getIntent().getExtras().get("firstName") != null) {
             firstNameEdit.setText(getIntent().getExtras().getString("firstName"));
         }
@@ -245,13 +291,26 @@ public class ManageProfileActivity extends AppCompatActivity {
     }
 
     private void setUpPageForEdit() {
-        UserProfile existingUserProfile = (UserProfile) getIntent().getExtras().getSerializable("userProfile");
-        firstNameEdit.setHint(existingUserProfile.getFirstName());
-        lastNameEdit.setHint(existingUserProfile.getLastName());
-        locationEdit.setHint(existingUserProfile.getLocation());
-        //TODO: implement the interest chips
-        descriptionEdit.setHint(existingUserProfile.getDescription());
-        //TODO: if add pic preview, need pic here
+        UserProfile existingUserProfile = ((UserApplicationInfo) getApplication()).getProfile();
+        firstNameEdit.setText(existingUserProfile.getFirstName());
+        lastNameEdit.setText(existingUserProfile.getLastName());
+        locationEdit.setText(existingUserProfile.getLocation());
+
+        List<String> existingInterests = existingUserProfile.getStringListOfTags();
+        for (String interest : existingInterests) {
+            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, interestsChip, false);
+            chip.setText(interest);
+            chip.setOnCloseIconClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    interestsChip.removeView(chip);
+                }
+            });
+            interestsChip.addView(chip);
+        }
+
+        descriptionEdit.setText(existingUserProfile.getDescription());
+        Picasso.get().load(existingUserProfile.getProfilePicture()).into(profilePicPreview);
 
         TextView titleView = findViewById(R.id.profileTitle);
         String editTitle = "Edit Profile";
@@ -284,15 +343,19 @@ public class ManageProfileActivity extends AppCompatActivity {
         descriptionEdit = findViewById(R.id.profileDescription);
         useProfilePicToggle = findViewById(R.id.useGoogleProfilePicToggle);
         useProfilePic = findViewById(R.id.useGoogleProfilePic);
-        dontUserProfilePic = findViewById(R.id.dontUseGoogleProfilePic);
+        dontUseProfilePic = findViewById(R.id.dontUseGoogleProfilePic);
         confirm = findViewById(R.id.profileManageConfirm);
         close = findViewById(R.id.profileCloseButton);
-        close.setVisibility(View.GONE);
         profilePicPreview = findViewById(R.id.profilePicPreview);
     }
 
     private boolean isCreatingProfile() {
-        return getIntent().getExtras().getSerializable("userProfile") == null;
+        return getIntent().getExtras().get("MODE") == ManageProfileMode.PROFILE_CREATE;
+    }
+
+    public enum ManageProfileMode {
+        PROFILE_EDIT,
+        PROFILE_CREATE
     }
 
     private String convertAddressToString(Address address) {
@@ -320,8 +383,9 @@ public class ManageProfileActivity extends AppCompatActivity {
             isValid = false;
         }
 
-        if (interestsChip.getCheckedChipIds().isEmpty()) {
-            // TODO
+        if (interestsChip.getChildCount() == 0) {
+            autoCompleteInterests.setError("Please add at least one interest");
+            isValid = false;
         }
 
         return isValid;

@@ -2,9 +2,7 @@
 package com.joinalongapp.navbar;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,7 +90,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent editProfile = new Intent(getActivity(), ManageProfileActivity.class);
-                editProfile.putExtra("userProfile", user);
+                editProfile.putExtra("MODE", ManageProfileActivity.ManageProfileMode.PROFILE_EDIT);
                 startActivity(editProfile);
             }
         });

@@ -73,13 +73,13 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
         holder.getAccept().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteRequest(chatDetails.get(holder.getAdapterPosition()).getId());
+                deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());
             }
         });
         holder.getReject().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteRequest(chatDetails.get(holder.getAdapterPosition()).getId());
+                deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());
             }
         });
         holder.itemView.setOnClickListener(new View.OnClickListener() {

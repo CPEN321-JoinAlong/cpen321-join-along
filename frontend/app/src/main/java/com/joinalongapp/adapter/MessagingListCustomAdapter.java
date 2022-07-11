@@ -1,5 +1,6 @@
 package com.joinalongapp.adapter;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.joinalong.MessageActivity;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.UserProfile;
 
@@ -35,13 +37,7 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Go to their profile
-                    Log.d("FragmentFriend", name.getText().toString());
-                }
-            });
+
 
             name = (TextView) itemView.findViewById(R.id.individualUserName);
             profilePicture = (ImageView) itemView.findViewById(R.id.individualProfilePicture);
@@ -99,6 +95,13 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
                     }
                 });
                 popup.show();
+            }
+        });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), MessageActivity.class);
+                v.getContext().startActivity(i);
             }
         });
         //holder.getProfilePicture().set

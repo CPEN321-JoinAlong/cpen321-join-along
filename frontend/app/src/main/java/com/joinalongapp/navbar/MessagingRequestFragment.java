@@ -103,19 +103,25 @@ public class MessagingRequestFragment extends Fragment {
     private void initDataset(){
         // TODO: GET LIST OF USERS
         ChatDetails a = new ChatDetails();
+        a.setId(UUID.randomUUID());
         a.setTitle("CHAT 1");
         a.setDescription("SAMPLE DESCRIPTION");
         Tag t = new Tag("hike");
         UserProfile u = new UserProfile(UUID.randomUUID(), "Ken", "Liang");
+        UserProfile ub = new UserProfile(UUID.randomUUID(), "Justin", "D");
         List<Tag> lt = new ArrayList<>();
         List<UserProfile> lu = new ArrayList<>();
+        List<UserProfile> lb = new ArrayList<>();
         lt.add(t);
         lu.add(u);
 
         a.setTags(lt);
         a.setPeople(lu);
-
+        lb.add(ub);
         ChatDetails b = new ChatDetails();
+        b.setId(UUID.randomUUID());
+        b.setTitle("yes");
+        b.setPeople(lb);
         ChatDetails c = new ChatDetails();
         ChatDetails d = new ChatDetails();
 

@@ -12,6 +12,7 @@ import java.util.UUID;
 
 public class Event implements Serializable, IDetailsModel {
 
+    //TODO; capacity and number of people confusion
     private UUID eventId;
     private UUID eventOwnerId;
     private String ownerName;

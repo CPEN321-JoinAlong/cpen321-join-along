@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -39,6 +40,7 @@ public class ViewEventFragment extends Fragment {
     private ChipGroup members;
     private TextView numPeople;
     private ImageButton backButton;
+    private Button joinButton;
 
     public ViewEventFragment() {
         // Required empty public constructor
@@ -94,6 +96,14 @@ public class ViewEventFragment extends Fragment {
             }
         });
 
+        joinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo call the back
+
+            }
+        });
+
         return view;
     }
 
@@ -132,6 +142,7 @@ public class ViewEventFragment extends Fragment {
         members = view.findViewById(R.id.viewEventMembers);
         numPeople = view.findViewById(R.id.eventViewNumPeople);
         backButton = view.findViewById(R.id.viewEventBackButton);
+        joinButton = view.findViewById(R.id.joinEventButton);
     }
 
     private void initEventDetails(Event event) {
@@ -162,8 +173,9 @@ public class ViewEventFragment extends Fragment {
             members.addView(chip);
         }
 
-        String membersTitleString = "(" + event.getNumberOfPeople() + ")";
-        numPeople.setText(membersTitleString);
+        //TODO: update with numPeople/capacity
+        String numPeopleInEventString = "(" + event.getNumberOfPeople() + ")";
+        numPeople.setText(numPeopleInEventString);
 
 
     }

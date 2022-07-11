@@ -134,7 +134,11 @@
     <string name="view_events_location_title">Location</string>
     <string name="view_events_begin_date_title">Begin Date</string>
     <string name="view_events_end_date_title">End Date</string>
+    <string name="join_event">Join!</string>
+
+    <!--LOGIN-->
     <string name="server_client_id">693671271113-s7u6caoamjhu5a7lbm9fnvgoldoupn88.apps.googleusercontent.com</string>
+
 
 
 </resources>

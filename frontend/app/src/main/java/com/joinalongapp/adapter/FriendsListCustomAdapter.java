@@ -151,8 +151,8 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         UserProfile user = ((UserApplicationInfo) context.getApplicationContext()).getProfile();
         String token = ((UserApplicationInfo) context.getApplicationContext()).getUserToken();
         RequestManager requestManager = new RequestManager();
-        String otherUserId = uuid.toString();
-        String userId = user.getId().toString();
+        String otherUserId = uuid;
+        String userId = user.getId();
         JSONObject json = new JSONObject();
         json.put("token", token);
         requestManager.put("/user/removeFriend/" + userId + "/" + otherUserId, json.toString(), new RequestManager.OnRequestCompleteListener() {

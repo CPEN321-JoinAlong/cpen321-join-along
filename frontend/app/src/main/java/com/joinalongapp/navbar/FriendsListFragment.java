@@ -83,7 +83,11 @@ public class FriendsListFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        initDataset();
+        try {
+            initDataset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -109,14 +113,14 @@ public class FriendsListFragment extends Fragment {
         return rootView;
     }
 
-    private void initDataset(){
+    private void initDataset() throws IOException {
         // TODO: GET LIST OF USERS
         UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
         String id = user.getId();
         RequestManager requestManager = new RequestManager();
 
-        /**
-        requestManager.get("/user/" + id.toString(), new RequestManager.OnRequestCompleteListener() {
+
+        requestManager.get("/user/" + id + "/friends", new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
 
@@ -128,6 +132,8 @@ public class FriendsListFragment extends Fragment {
 
             }
         });
+
+        /**
 
 
         UserProfile a = new UserProfile(UUID.randomUUID(), "Ken", "L");

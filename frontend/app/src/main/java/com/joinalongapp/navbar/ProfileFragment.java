@@ -27,6 +27,7 @@ import com.joinalongapp.joinalong.ManageProfileActivity;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.UserProfile;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -79,14 +80,12 @@ public class ProfileFragment extends Fragment {
         initElements(view);
         UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
         String userName = user.getFullName();
-        Bitmap userProfilePicture = user.getProfilePicture();
         String description = user.getDescription();
         List<String> tags = user.getStringListOfTags();
 
-
         profileName.setText(userName);
         addTagsToChipGroup(tags);
-        profilePicture.setImageBitmap(userProfilePicture);
+        Picasso.get().load(user.getProfilePicture()).into(profilePicture);
         profileDescription.setText(description);
 
         editButton.setOnClickListener(new View.OnClickListener() {

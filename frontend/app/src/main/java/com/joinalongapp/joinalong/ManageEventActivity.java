@@ -97,11 +97,13 @@ public class ManageEventActivity extends AppCompatActivity {
         initAutoCompleteChipGroup(autoCompleteChipTags, chipGroupTags, sampleTags);
 
         Bundle info = getIntent().getExtras();
+        String path = "create";
 
         if (info != null && info.getSerializable("EVENT") != null) {
             // Must append pre-existing text due to editing of Event.
             Event userEvent = (Event) info.getSerializable("EVENT");
             manageEventTitle.setText("Edit Event");
+            path = "edit";
 
             title.setText(userEvent.getTitle());
             location.setText(userEvent.getLocation());
@@ -121,6 +123,7 @@ public class ManageEventActivity extends AppCompatActivity {
         }
 
 
+        String finalPath = path;
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,7 +152,7 @@ public class ManageEventActivity extends AppCompatActivity {
                         json.put("token", ((UserApplicationInfo) getApplication()).getUserToken());
                         System.out.println(json.toString());
 
-                        requestManager.post("event/create", json.toString(), new RequestManager.OnRequestCompleteListener() {
+                        requestManager.post("event/" + finalPath, json.toString(), new RequestManager.OnRequestCompleteListener() {
                             @Override
                             public void onSuccess(Call call, Response response) {
                                 Intent i = new Intent(v.getContext(), MainActivity.class);

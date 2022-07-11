@@ -15,7 +15,7 @@ public class UserProfile implements Serializable, IDetailsModel {
     private String firstName;
     private String lastName;
     private String location;
-    private List<Tag> tags = new ArrayList<>(); //TODO: it might be good to make this have its own datatype, or maybe a list of ENUM's
+    private List<Tag> tags = new ArrayList<>();
     private String description;
     private Bitmap profilePicture;
     private List<UserProfile> friends = new ArrayList<>();

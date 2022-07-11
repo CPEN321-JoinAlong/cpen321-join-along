@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +16,14 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.joinalongapp.controller.RequestManager;
+
+import org.json.JSONException;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -24,6 +31,10 @@ public class LoginActivity extends AppCompatActivity {
     GoogleSignInClient mGoogleSignInClient;
     private int RC_SIGN_IN = 1;
     private SignInButton signInButton;
+
+    private final String SCHEME = "http";
+    private final String BASE_URL = "20.9.17.127";
+    private final int PORT = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,8 +106,33 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
 
-            //TODO: post id to back and validate
-            Toast.makeText(this, idToken, Toast.LENGTH_SHORT).show();
+            UserApplicationInfo applicationInfo = new UserApplicationInfo();
+            applicationInfo.setUserToken(idToken);
+
+            try {
+                String jsonBody = applicationInfo.tokenToJsonString();
+
+                RequestManager requestManager = new RequestManager();
+                requestManager.post("login", jsonBody, new RequestManager.OnRequestCompleteListener() {
+                    @Override
+                    public void onSuccess(Call call, Response response) {
+                        if (response.code() == 404) {
+                            Intent i = new Intent(LoginActivity.this, ManageProfileActivity.class);
+                            i.putExtra("firstName", account.getGivenName());
+                            i.putExtra("lastName", account.getFamilyName());
+                            startActivity(i);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Call call, IOException e) {
+                        Log.e(TAG, "Failed to authenticate with backend server: " + e.getMessage());
+                    }
+                });
+
+            } catch (JSONException | IOException e) {
+                Log.e(TAG, "Failed to authenticate with backend server");
+            }
 
             // Signed in successfully, show authenticated UI.
             updateUI(account);

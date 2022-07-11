@@ -7,6 +7,8 @@ import androidx.annotation.Nullable;
 import java.io.IOException;
 import java.util.Map;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -14,12 +16,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class RequestManager {
+public class RequestManager implements Callback {
     private final String SCHEME = "http";
-    private final String BASE_URL;
+    private final String BASE_URL = "20.9.17.127";
+    private final int PORT = 3000;
+    private OnRequestCompleteListener onRequestCompleteListener;
 
-    public RequestManager(String baseUrl) {
-        BASE_URL = baseUrl;
+    public RequestManager() {
+        super();
     }
 
     /**
@@ -28,17 +32,18 @@ public class RequestManager {
      * @return result/response of reading at url
      * @throws IOException
      */
-    public Response get(String path) throws IOException {
+    public void get(String path, OnRequestCompleteListener callback) throws IOException {
+        onRequestCompleteListener = callback;
         OkHttpClient client = new OkHttpClient();
 
-        HttpUrl url = buildUrl(path, null);
+        String url = buildUrl(path, null);
 
         Request request = new Request.Builder()
                 .url(url)
                 .get()
                 .build();
 
-        return client.newCall(request).execute();
+        client.newCall(request).enqueue(this);
     }
 
     /**
@@ -48,17 +53,18 @@ public class RequestManager {
      * @return result/response of reading at url
      * @throws IOException
      */
-    public Response get(String path, Map<String, String> parameters) throws IOException {
+    public void get(String path, Map<String, String> parameters, OnRequestCompleteListener callback) throws IOException {
+        onRequestCompleteListener = callback;
         OkHttpClient client = new OkHttpClient();
 
-        HttpUrl url = buildUrl(path, parameters);
+        String url = buildUrl(path, parameters);
 
         Request request = new Request.Builder()
                 .url(url)
                 .get()
                 .build();
 
-        return client.newCall(request).execute();
+        client.newCall(request).enqueue(this);
     }
 
     /**
@@ -68,10 +74,11 @@ public class RequestManager {
      * @return response/result of creating
      * @throws IOException
      */
-    public Response post(String path, String jsonBody) throws IOException {
+    public void post(String path, String jsonBody, OnRequestCompleteListener callback) throws IOException {
+        onRequestCompleteListener = callback;
         OkHttpClient client = new OkHttpClient();
 
-        HttpUrl url = buildUrl(path, null);
+        String url = buildUrl(path, null);
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
 
         Request request = new Request.Builder()
@@ -79,7 +86,7 @@ public class RequestManager {
                 .post(body)
                 .build();
 
-        return client.newCall(request).execute();
+        client.newCall(request).enqueue(this);
     }
 
     /**
@@ -88,17 +95,18 @@ public class RequestManager {
      * @return response of delete
      * @throws IOException
      */
-    public Response delete(String path) throws IOException {
+    public void delete(String path, OnRequestCompleteListener callback) throws IOException {
+        onRequestCompleteListener = callback;
         OkHttpClient client = new OkHttpClient();
 
-        HttpUrl url = buildUrl(path, null);
+        String url = buildUrl(path, null);
 
         Request request = new Request.Builder()
                 .url(url)
                 .delete()
                 .build();
 
-        return client.newCall(request).execute();
+        client.newCall(request).enqueue(this);
     }
 
     /**
@@ -108,10 +116,11 @@ public class RequestManager {
      * @return response from update
      * @throws IOException
      */
-    public Response put(String path, String jsonBody) throws IOException {
+    public void put(String path, String jsonBody, OnRequestCompleteListener callback) throws IOException {
+        onRequestCompleteListener = callback;
         OkHttpClient client = new OkHttpClient();
 
-        HttpUrl url = buildUrl(path, null);
+        String url = buildUrl(path, null);
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
 
         Request request = new Request.Builder()
@@ -119,13 +128,14 @@ public class RequestManager {
                 .put(body)
                 .build();
 
-        return client.newCall(request).execute();
+        client.newCall(request).enqueue(this);
     }
 
-    private HttpUrl buildUrl(String path, @Nullable Map<String, String> parameters) {
+    private String buildUrl(String path, @Nullable Map<String, String> parameters) {
         HttpUrl.Builder urlBuilder = new HttpUrl.Builder()
                 .scheme(SCHEME)
                 .host(BASE_URL)
+                .port(PORT)
                 .addPathSegments(path);
 
         if (parameters != null) {
@@ -134,7 +144,17 @@ public class RequestManager {
             }
         }
 
-        return urlBuilder.build();
+        return urlBuilder.build().toString();
+    }
+
+    @Override
+    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+        onRequestCompleteListener.onError(call, e);
+    }
+
+    @Override
+    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+        onRequestCompleteListener.onSuccess(call, response);
     }
 
     public enum Range {
@@ -152,5 +172,10 @@ public class RequestManager {
                 return "lt";
             }
         }
+    }
+
+    public interface OnRequestCompleteListener {
+        void onSuccess(Call call, Response response);
+        void onError(Call call, IOException e);
     }
 }

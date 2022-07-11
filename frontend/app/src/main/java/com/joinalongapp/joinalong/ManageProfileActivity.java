@@ -1,5 +1,6 @@
 package com.joinalongapp.joinalong;
 
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -84,16 +85,17 @@ public class ManageProfileActivity extends AppCompatActivity {
                     //TODO: post profile as json and evaluate response, upon a 200, we should continue to next intent
                     //      update profile if it was a edit
                 }
+
+                startMainActivity();
+
             }
         });
 
-        close.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+    }
 
+    private void startMainActivity() {
+        Intent i = new Intent(ManageProfileActivity.this, MainActivity.class);
+        startActivity(i);
     }
 
     private void setUpPageForCreate() {
@@ -145,6 +147,7 @@ public class ManageProfileActivity extends AppCompatActivity {
         uploadProfilePic = findViewById(R.id.profileUploadPictureButton);
         confirm = findViewById(R.id.profileManageConfirm);
         close = findViewById(R.id.profileCloseButton);
+        close.setVisibility(View.GONE);
     }
 
     private boolean isCreatingProfile() {

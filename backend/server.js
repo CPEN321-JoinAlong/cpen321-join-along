@@ -1,7 +1,8 @@
 const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
-const { initializeApp } = require("firebase-admin/app");
+const admin = require("firebase-admin");
+const serviceAccount = require("/home/azureuser/serviceAccountKey.json");
 const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
@@ -16,7 +17,6 @@ const {
     ReportService,
     BanService,
 } = require("./modules");
-// const methodOverride = require('method-override');
 
 function logRequest(req, res, next) {
     console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
@@ -45,8 +45,7 @@ let reportService = new ReportService();
 let banService = new BanService();
 
 // firebase admin SDK
-let serviceAccount = require("/home/join-along/serviceAccountKey.json") // need to generate and download service key on server
-initializeApp({
+admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
@@ -70,6 +69,15 @@ app.listen(port, () => {
     );
 });
 
+app.use(async(req, res, next) => {
+    const { Token } = req.body;
+    if(await userStore.findUserForLogin(Token) || req.path.includes("/user/create")) {
+        next();
+    } else {
+        res.status(404).send("Unsuccessfull")
+    }
+})
+
 //JUST FOR TESTING
 app.get("/", async (req, res) => {
     let a = {}
@@ -83,7 +91,7 @@ app.get("/", async (req, res) => {
 app.post("/login", async (req, res) => {
     const { Token } = req.body;
     let foundUser = await userStore.findUserForLogin(Token);
-    if (foundUser == null) res.status(404).send(false);
+    if (foundUser == null) res.status(404).send("Unsuccessfull");
     else res.status(200).send({ user: foundUser });
 });
 

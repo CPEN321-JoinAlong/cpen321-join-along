@@ -253,7 +253,7 @@ class UserStore {
     }
 
     async findUserForLogin(Token) {
-        return await User.find({
+        return await User.findOne({
             token: Token,
         });
     }
@@ -287,7 +287,7 @@ class ChatEngine {
     }
 
     //Assumes both users exist
-    async sendMessage(fromUserID, toUserID, text) {
+    async sendMessage(fromUserID, toUserID, text, name, date) {
         await Chat.findOneAndUpdate(
             {
                 $and: [
@@ -305,6 +305,8 @@ class ChatEngine {
                 $push: {
                     messages: {
                         participantID: fromUserID,
+						participantName: name,
+						timeStamp: date,
                         text: text,
                     },
                 },
@@ -312,7 +314,7 @@ class ChatEngine {
         );
     }
 
-    async sendGroupMessage(userID, eventID, text) {
+    async sendGroupMessage(userID, eventID, text, name, date) {
         await Chat.findOneAndUpdate(
             {
                 event: eventID,
@@ -321,6 +323,8 @@ class ChatEngine {
                 $push: {
                     messages: {
                         participantID: userID,
+						participantName: name,
+						timeStamp: date,
                         text: text,
                     },
                 },

@@ -16,6 +16,8 @@ const ChatSchema = new Schema({
     messages: [
         {
             participantID: String,
+			participantName: String,
+			timeStamp: String,
             text: String,
         },
     ],

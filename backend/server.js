@@ -71,7 +71,9 @@ app.listen(port, () => {
 
 app.use(async(req, res, next) => {
     const { Token } = req.body;
-    if(await userStore.findUserForLogin(Token) || req.path.includes("/user/create")) {
+    let user = await userStore.findUserForLogin(Token)	
+	console.log(user)
+    if( user != null || req.path.includes("/user/create")) {
         next();
     } else {
         res.status(404).send("Unsuccessfull")
@@ -192,9 +194,9 @@ app.get("/user/:id/chat", async (req, res) => {
 app.put("/chat/sendSingle/:fromUserID/:toUserID", async (req, res) => {
     console.log("hello");
     let { fromUserID, toUserID } = req.params;
-    let { text } = req.body;
-    await chatEngine.sendMessage(fromUserID, toUserID, text);
+    let { timeStamp, text } = req.body;
     fromUserName = await userStore.findUserByID(fromUserID).name;
+    await chatEngine.sendMessage(fromUserID, toUserID, text, fromUserName, timeStamp);
 
     getMessaging().send({
         data: {
@@ -210,11 +212,11 @@ app.put("/chat/sendSingle/:fromUserID/:toUserID", async (req, res) => {
 //Chat: send message to a group
 app.put("/chat/sendGroup/:userID/:eventID", async (req, res) => {
     let { userID, eventID } = req.params;
-    let { text } = req.body;
-    await chatEngine.sendGroupMessage(userID, eventID, text);
+    let { timeStamp, text } = req.body;
 
     fromUserName = await userStore.findUserByID(fromUserID).name;
     eventName = await eventStore.findEventByID(eventID).title;
+    await chatEngine.sendGroupMessage(userID, eventID, text, fromUserName, timeStamp);
 
     getMessaging().send({
         data: {

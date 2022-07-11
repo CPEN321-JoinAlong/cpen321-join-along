@@ -2,6 +2,7 @@
 package com.joinalongapp.navbar;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,10 +20,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.joinalong.LoginActivity;
+import com.joinalongapp.joinalong.ManageProfileActivity;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.UserProfile;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,6 +42,7 @@ public class ProfileFragment extends Fragment {
     private ImageButton editButton;
     private ChipGroup interestsChipGroup;
     private ImageButton logoutButton;
+    private TextView profileDescription;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -70,13 +77,26 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         initElements(view);
-        UserProfile user = (UserProfile) getArguments().getSerializable("USER");
-        Log.d("ProfileFragment", user.getFullName());
-        Log.d("ProfileFragment", user.getId().toString());
+        UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
         String userName = user.getFullName();
+        Bitmap userProfilePicture = user.getProfilePicture();
+        String description = user.getDescription();
+        List<String> tags = user.getStringListOfTags();
 
 
         profileName.setText(userName);
+        addTagsToChipGroup(tags);
+        profilePicture.setImageBitmap(userProfilePicture);
+        profileDescription.setText(description);
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent editProfile = new Intent(getActivity(), ManageProfileActivity.class);
+                editProfile.putExtra("userProfile", user);
+                startActivity(editProfile);
+            }
+        });
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,12 +108,21 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    private void addTagsToChipGroup(List<String> tags){
+        for(String tag : tags){
+            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, interestsChipGroup, false);
+            chip.setText(tag);
+            interestsChipGroup.addView(chip);
+        }
+    }
+
     private void initElements(View view){
         profileName = view.findViewById(R.id.profileName);
         profilePicture = view.findViewById(R.id.profilePicture);
         editButton = view.findViewById(R.id.editButton);
         interestsChipGroup = view.findViewById(R.id.interestsChipGroup);
         logoutButton = view.findViewById(R.id.logoutButton);
+        profileDescription = view.findViewById(R.id.userDescription);
     }
 
     private void signOut() {

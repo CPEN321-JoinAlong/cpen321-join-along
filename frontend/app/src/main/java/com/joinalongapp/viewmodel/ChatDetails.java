@@ -43,6 +43,10 @@ public class ChatDetails implements Serializable, IDetailsModel {
         return people;
     }
 
+    public void setId(UUID id){
+        this.id = id;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }

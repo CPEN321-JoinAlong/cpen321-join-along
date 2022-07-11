@@ -23,13 +23,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.tabs.TabLayout;
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.Event;
+import com.joinalongapp.viewmodel.Tag;
+
+import org.json.JSONException;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class ManageEventActivity extends AppCompatActivity {
     private int PRIVATE_VISIBILITY_INDEX = 0;
@@ -93,7 +103,7 @@ public class ManageEventActivity extends AppCompatActivity {
             manageEventTitle.setText("Edit Event");
 
             title.setText(userEvent.getTitle());
-            //location.setText(userEvent.getLocation().toString());
+            location.setText(userEvent.getLocation());
             beginningDate.setText(userEvent.getBeginningDate().toString());
             endDate.setText(userEvent.getEndDate().toString());
             boolean publicVisibility = userEvent.getPublicVisibility();
@@ -114,7 +124,43 @@ public class ManageEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(checkInvalidFields()){
-                    // Build req, send to server
+                    Event event = new Event();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
+                    Date bDate = null;
+                    Date eDate = null;
+                    try {
+                        bDate = sdf.parse(beginningDate.getText().toString());
+                        eDate = sdf.parse(endDate.getText().toString());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    event.setTitle(title.getText().toString());
+                    event.setTags(getTagsFromChipGroup());
+                    event.setLocation(location.getText().toString());
+                    event.setNumberOfPeople(Integer.valueOf(numberOfPeople.getSelectedItem().toString()));
+                    event.setDescription(description.getText().toString());
+                    event.setBeginningDate(bDate);
+                    event.setEndDate(eDate);
+                    event.setPublicVisibility(eventVisibilityTab.getSelectedTabPosition() == PUBLIC_VISIBILITY_INDEX);
+                    RequestManager requestManager = new RequestManager();
+                    try {
+                        requestManager.post("event/create", event.toJsonString(), new RequestManager.OnRequestCompleteListener() {
+                            @Override
+                            public void onSuccess(Call call, Response response) {
+                                Intent i = new Intent(v.getContext(), MainActivity.class);
+                                startActivity(i);
+                            }
+
+                            @Override
+                            public void onError(Call call, IOException e) {
+                                Toast.makeText(v.getContext(), "ERROR OCCURRED", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
 
             }
@@ -127,6 +173,15 @@ public class ManageEventActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent i = new Intent(ManageEventActivity.this, MainActivity.class);
         startActivity(i);
+    }
+
+    private List<Tag> getTagsFromChipGroup(){
+        List<Tag> result = new ArrayList<>();
+        for(int i = 0; i < chipGroupTags.getChildCount(); i++){
+            Chip chip = (Chip) chipGroupTags.getChildAt(i);
+            result.add(new Tag(chip.getText().toString()));
+        }
+        return result;
     }
 
     private void initElements(){

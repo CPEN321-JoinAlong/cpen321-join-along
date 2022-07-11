@@ -110,7 +110,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="@string/default_events"
+        android:text="@string/default_description"
         android:textColor="@color/orange"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
@@ -153,5 +153,14 @@
         android:text="@string/logout_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/logoutButton" />
+
+    <TextView
+        android:id="@+id/userDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/guideline16"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

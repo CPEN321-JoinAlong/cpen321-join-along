@@ -112,8 +112,8 @@ public class MessagingRequestFragment extends Fragment {
         a.setTitle("CHAT 1");
         a.setDescription("SAMPLE DESCRIPTION");
         Tag t = new Tag("hike");
-        UserProfile u = new UserProfile(UUID.randomUUID(), "Ken", "Liang");
-        UserProfile ub = new UserProfile(UUID.randomUUID(), "Justin", "D");
+        UserProfile u = new UserProfile(UUID.randomUUID().toString(), "Ken", "Liang");
+        UserProfile ub = new UserProfile(UUID.randomUUID().toString(), "Justin", "D");
         List<Tag> lt = new ArrayList<>();
         List<UserProfile> lu = new ArrayList<>();
         List<UserProfile> lb = new ArrayList<>();

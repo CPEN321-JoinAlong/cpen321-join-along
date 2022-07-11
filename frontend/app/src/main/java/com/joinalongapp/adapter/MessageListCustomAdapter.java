@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Message;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class MessageListCustomAdapter extends RecyclerView.Adapter {
@@ -28,12 +30,14 @@ public class MessageListCustomAdapter extends RecyclerView.Adapter {
         TextView receivedMessage;
         TextView receivedMessageName;
         TextView receivedMessageTime;
+        TextView overallDate;
 
         public ReceivedMessageHolder(@NonNull View itemView) {
             super(itemView);
             receivedMessage = itemView.findViewById(R.id.receivedMessage);
             receivedMessageName = itemView.findViewById(R.id.nameReceivedMessage);
             receivedMessageTime = itemView.findViewById(R.id.timeReceivedMessage);
+            overallDate = itemView.findViewById(R.id.overallDateReceived);
             System.out.println("received");
         }
 
@@ -48,16 +52,23 @@ public class MessageListCustomAdapter extends RecyclerView.Adapter {
         public TextView getReceivedMessageDate() {
             return receivedMessageTime;
         }
+
+        public TextView getOverallDate() {
+            return overallDate;
+        }
     }
 
     private class SentMessageHolder extends RecyclerView.ViewHolder{
         TextView sentMessage;
         TextView sentMessageTime;
+        TextView overallDate;
 
         public SentMessageHolder(@NonNull View itemView) {
             super(itemView);
             sentMessage = itemView.findViewById(R.id.sentMessage);
             sentMessageTime = itemView.findViewById(R.id.timeSentMessage);
+            overallDate = itemView.findViewById(R.id.overallDate);
+
             System.out.println("sent");
         }
 
@@ -67,6 +78,10 @@ public class MessageListCustomAdapter extends RecyclerView.Adapter {
 
         public TextView getSentMessageTime() {
             return sentMessageTime;
+        }
+
+        public TextView getOverallDate() {
+            return overallDate;
         }
     }
 
@@ -109,11 +124,13 @@ public class MessageListCustomAdapter extends RecyclerView.Adapter {
         if(holder.getItemViewType() == MESSAGE_SENT){
             ((SentMessageHolder) holder).getSentMessage().setText(message.getMessage());
             ((SentMessageHolder) holder).getSentMessageTime().setText(String.valueOf(message.getCreatedAt()));
+            ((SentMessageHolder) holder).getOverallDate().setVisibility(View.INVISIBLE);
         }
         else{
             ((ReceivedMessageHolder) holder).getReceivedMessage().setText(message.getMessage());
             ((ReceivedMessageHolder) holder).getReceivedMessageDate().setText(String.valueOf(message.getCreatedAt()));
             ((ReceivedMessageHolder) holder).getReceivedMessageName().setText(message.getName());
+            ((ReceivedMessageHolder) holder).getOverallDate().setVisibility(View.INVISIBLE);
         }
 
 

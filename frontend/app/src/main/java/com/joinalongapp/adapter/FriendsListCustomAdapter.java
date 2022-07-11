@@ -1,5 +1,6 @@
 package com.joinalongapp.adapter;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,19 +11,32 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.joinalong.MainActivity;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.UserApplicationInfo;
+import com.joinalongapp.navbar.FriendsFragment;
+import com.joinalongapp.navbar.FriendsListFragment;
 import com.joinalongapp.navbar.ViewProfileFragment;
 import com.joinalongapp.viewmodel.UserProfile;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCustomAdapter.ViewHolder>{
 
@@ -81,7 +95,12 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                                 Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getFullName());
 
                                 Log.d("FriendsAdapter", "MENU1");
-                                deleteFriend(users.get(holder.getAdapterPosition()).getId());
+                                try {
+                                    deleteFriend(users.get(holder.getAdapterPosition()).getId(), v.getContext());
+                                } catch (JSONException | IOException e) {
+                                    e.printStackTrace();
+                                }
+
                                 return true;
 
                             case R.id.menu2:
@@ -122,14 +141,31 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         return users.size();
     }
 
-    private void deleteFriend(String uuid){
+    private void deleteFriend(String uuid, Context context) throws JSONException, IOException {
         for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
             UserProfile value = iterator.next();
             if (value.getId() == uuid) {
                 iterator.remove();
             }
         }
-        // TODO: SEND BACKEND
+        UserProfile user = ((UserApplicationInfo) context.getApplicationContext()).getProfile();
+        String token = ((UserApplicationInfo) context.getApplicationContext()).getUserToken();
+        RequestManager requestManager = new RequestManager();
+        String otherUserId = uuid.toString();
+        String userId = user.getId().toString();
+        JSONObject json = new JSONObject();
+        json.put("token", token);
+        requestManager.put("/user/removeFriend/" + userId + "/" + otherUserId, json.toString(), new RequestManager.OnRequestCompleteListener() {
+            @Override
+            public void onSuccess(Call call, Response response) {
+                Toast.makeText(context, "Deleted Friend!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Call call, IOException e) {
+                Toast.makeText(context, "Error Occured", Toast.LENGTH_SHORT).show();
+            }
+        });
         notifyDataSetChanged();
 
     }

@@ -10,13 +10,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.adapter.FriendsListCustomAdapter;
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -102,7 +111,26 @@ public class FriendsListFragment extends Fragment {
 
     private void initDataset(){
         // TODO: GET LIST OF USERS
-        UserProfile a = new UserProfile(UUID.randomUUID().toString(), "Ken", "L");
+        UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
+        String id = user.getId();
+        RequestManager requestManager = new RequestManager();
+
+        /**
+        requestManager.get("/user/" + id.toString(), new RequestManager.OnRequestCompleteListener() {
+            @Override
+            public void onSuccess(Call call, Response response) {
+
+
+            }
+
+            @Override
+            public void onError(Call call, IOException e) {
+
+            }
+        });
+
+
+        UserProfile a = new UserProfile(UUID.randomUUID(), "Ken", "L");
         Tag t = new Tag("Hiking");
         Tag ta = new Tag("swimming");
         List<Tag> lt = new ArrayList<>();
@@ -110,14 +138,14 @@ public class FriendsListFragment extends Fragment {
         lt.add(ta);
         a.setInterests(lt);
         a.setDescription("PLEASE WORK");
-        UserProfile b = new UserProfile(UUID.randomUUID().toString(), "Justin", "D");
-        UserProfile c = new UserProfile(UUID.randomUUID().toString(), "Kamran", "A");
-        UserProfile d = new UserProfile(UUID.randomUUID().toString(), "Zoeb", "G");
-        UserProfile e = new UserProfile(UUID.randomUUID().toString(), "Ken", "");
-        UserProfile f = new UserProfile(UUID.randomUUID().toString(), "Justin", "");
-        UserProfile g = new UserProfile(UUID.randomUUID().toString(), "Kamran", "");
-        UserProfile h = new UserProfile(UUID.randomUUID().toString(), "Zoeb", "");
-        UserProfile i = new UserProfile(UUID.randomUUID().toString(), "Zoeb", "");
+        UserProfile b = new UserProfile(UUID.randomUUID(), "Justin", "D");
+        UserProfile c = new UserProfile(UUID.randomUUID(), "Kamran", "A");
+        UserProfile d = new UserProfile(UUID.randomUUID(), "Zoeb", "G");
+        UserProfile e = new UserProfile(UUID.randomUUID(), "Ken", "");
+        UserProfile f = new UserProfile(UUID.randomUUID(), "Justin", "");
+        UserProfile g = new UserProfile(UUID.randomUUID(), "Kamran", "");
+        UserProfile h = new UserProfile(UUID.randomUUID(), "Zoeb", "");
+        UserProfile i = new UserProfile(UUID.randomUUID(), "Zoeb", "");
 
         List<UserProfile> result = new ArrayList<>();
         result.add(a);
@@ -130,5 +158,6 @@ public class FriendsListFragment extends Fragment {
         result.add(h);
         result.add(i);
         dataset = result;
+         **/
     }
 }

@@ -35,7 +35,7 @@ class UserAccount {
     //return list of event objects related to the User which are have the provided Tag
     async findEventsWithTag(Tag, eventStore) {
         let eventList = await this.findAllPersonalEvents(eventStore);
-        return eventList.filter((event) => event.interestTags.includes(Tag));
+        return eventList.filter((event) => event.tags.includes(Tag));
     }
 
     //returns list of unblocked events
@@ -53,10 +53,6 @@ class UserAccount {
         let eventInfo = await eventStore.findEventById(eventID);
         if (eventID == null) return;
         await chatEngine.sendGroupMessage(userID, eventID, text);
-    }
-
-    async notifyNewMessage(otherUser) {
-        //TODO: firebase
     }
 
     async createUserAccount(userStore) {
@@ -391,13 +387,9 @@ class EventDetails {
         return await eventStore.findEventByDetails(eventInfo);
     }
 
-    async notifyNewGroupMessage() {
-        //TODO: firebase
-    }
-
     async findEventsByName(searchEvent) {
         return await Event.find({
-            name: searchEvent,
+            title: searchEvent,
         });
     }
 }
@@ -435,10 +427,10 @@ class EventStore {
         return await Event.find({
             $or: [
                 {
-                    name: filters.name,
+                    title: filters.title,
                     eventOwnerID: filters.eventOwnerID,
-                    interestTags: {
-                        $in: filters.interestTags,
+                    tags: {
+                        $in: filters.tags,
                     },
                     location: filters.location,
                     description: filters.description,

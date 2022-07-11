@@ -28,40 +28,8 @@ class UserAccount {
         this.token = userInfo.token ? userInfo.token : null;
     }
 
-    findFriends() {
-        return this.friends;
-    }
-
-    //return list of event objects related to the User which are have the provided Tag
-    async findEventsWithTag(Tag, eventStore) {
-        let eventList = await this.findAllPersonalEvents(eventStore);
-        return eventList.filter((event) => event.tags.includes(Tag));
-    }
-
-    //returns list of unblocked events
-    async filterBlockedEvents(userID, userStore, eventStore) {
-        return await eventStore.findUnblockedEvents(userID, userStore);
-    }
-
-    async sendMessage(fromUserID, toUserID, userStore, chatEngine, text) {
-        let userInfo = await userStore.findUserByID(toUserID);
-        if (userInfo == null) return;
-        await chatEngine.sendMessage(fromUserID, toUserID, text);
-    }
-
-    async sendGroupMessage(userID, eventID, eventStore, chatEngine, text) {
-        let eventInfo = await eventStore.findEventById(eventID);
-        if (eventID == null) return;
-        await chatEngine.sendGroupMessage(userID, eventID, text);
-    }
-
     async createUserAccount(userStore) {
-        // console.log(this);
         return await userStore.createUser(this);
-    }
-
-    async findEvents(EventDetails) {
-        //TODO
     }
 }
 
@@ -85,6 +53,14 @@ class UserStore {
 
     async createUser(userInfo) {
         return await new User(userInfo).save();
+    }
+
+    async findFriendByIDList(friendIDList) {
+        return await User.find({
+            _id: {
+                $in: friendIDList,
+            },
+        });
     }
 
     async acceptChatInvite(userID, chatID, chatEngine) {
@@ -165,7 +141,7 @@ class UserStore {
         });
     }
 
-    async findUblockedUsers(userID) {
+    async findUnblockedUsers(userID) {
         let user = await this.findUserByID(userID);
         if (user) {
             return await User.find({

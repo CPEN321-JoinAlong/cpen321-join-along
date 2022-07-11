@@ -3,8 +3,10 @@ package com.joinalongapp.joinalong;
 import android.app.Application;
 
 import com.joinalongapp.viewmodel.IDetailsModel;
+import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,7 +15,18 @@ import java.util.List;
 
 public class UserApplicationInfo extends Application implements IDetailsModel {
     private String userToken;
-    private UserProfile profile;
+    private UserProfile profile = new UserProfile();
+
+    // Default constructor
+    public UserApplicationInfo() {
+        super();
+    }
+
+
+    public UserApplicationInfo(UserProfile profile) {
+        this.profile = profile;
+    }
+
 
     public String getUserToken() {
         return userToken;
@@ -44,16 +57,67 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
             friendId.add(friend.getId().toString());
         }
         JSONObject json = new JSONObject();
-        json.put("Token", getUserToken());
+        json.put("token", getUserToken());
         json.put("id", profile.getId());
-        json.put("firstName", profile.getFirstName());
-        json.put("lastName", profile.getLastName());
+        json.put("name", profile.getFirstName() + " " + profile.getLastName());
         json.put("location", profile.getLocation());
-        json.put("interests", profile.getStringListOfTags());
+        json.put("interestTags", profile.getStringListOfTags());
         json.put("description", profile.getDescription());
         json.put("profilePicture", profile.getProfilePicture());
-        json.put("friends", friendId);
+        if (!friendId.isEmpty()) {
+            json.put("friends", friendId);
+        }
 
         return json.toString();
+    }
+
+    String string = "{\"interests\":[]," +
+            "\"location\":\"2336 Main Mall Vancouver BC\"," +
+            "\"chats\":[]," +
+            "\"events\":[]," +
+            "\"profilePicture\":\"https://lh3.googleusercontent.com/a/AItbvmnLZR2PnBwNbO6OnjVppOvReOM0Yp9WQPLnuZB0=s96-c\"," +
+            "\"description\":\"Yes\"," +
+            "\"chatInvites\":[]," +
+            "\"eventInvites\":[]," +
+            "\"friendRequest\":[]," +
+            "\"friends\":[]," +
+            "\"blockedUsers\":[]," +
+            "\"blockedEvents\":[]," +
+            "\"token\":\"shortToken\"," +
+            "\"_id\":\"62cbc9fcdd72460310e15459\"," +
+            "\"__v\":0}";
+
+    public UserApplicationInfo populateUserInfoFromJson(String jsonBody) throws JSONException {
+        JSONObject json = new JSONObject(jsonBody);
+
+        profile.setId(json.getString("_id"));
+        profile.setFirstName(getFirstNameFromFull(json.getString("name")));
+        profile.setLastName(getLastNameFromFull(json.getString("name")));
+        profile.setLocation(json.getString("location"));
+
+        JSONArray tags = json.getJSONArray("interests");
+        for (int i = 0; i < tags.length(); i++) {
+            profile.addTagToInterests(new Tag(tags.getString(i)));
+        }
+
+        profile.setDescription(json.getString("description"));
+        profile.setProfilePicture(json.getString("profilePicture"));
+
+        JSONArray friends = json.getJSONArray("friends");
+        for (int i = 0; i < friends.length(); i++) {
+            profile.addFriendsToList((UserProfile) friends.get(i));
+        }
+
+        setUserToken(json.getString("token"));
+
+        return this;
+    }
+
+    private String getFirstNameFromFull(String fullName) {
+        return fullName.substring(0, fullName.indexOf(" "));
+    }
+
+    private String getLastNameFromFull(String fullName) {
+        return fullName.substring(fullName.indexOf(" ") + 1);
     }
 }

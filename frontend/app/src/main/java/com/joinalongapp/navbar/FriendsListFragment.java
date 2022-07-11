@@ -102,7 +102,7 @@ public class FriendsListFragment extends Fragment {
 
     private void initDataset(){
         // TODO: GET LIST OF USERS
-        UserProfile a = new UserProfile(UUID.randomUUID(), "Ken", "L");
+        UserProfile a = new UserProfile(UUID.randomUUID().toString(), "Ken", "L");
         Tag t = new Tag("Hiking");
         Tag ta = new Tag("swimming");
         List<Tag> lt = new ArrayList<>();
@@ -110,14 +110,14 @@ public class FriendsListFragment extends Fragment {
         lt.add(ta);
         a.setInterests(lt);
         a.setDescription("PLEASE WORK");
-        UserProfile b = new UserProfile(UUID.randomUUID(), "Justin", "D");
-        UserProfile c = new UserProfile(UUID.randomUUID(), "Kamran", "A");
-        UserProfile d = new UserProfile(UUID.randomUUID(), "Zoeb", "G");
-        UserProfile e = new UserProfile(UUID.randomUUID(), "Ken", "");
-        UserProfile f = new UserProfile(UUID.randomUUID(), "Justin", "");
-        UserProfile g = new UserProfile(UUID.randomUUID(), "Kamran", "");
-        UserProfile h = new UserProfile(UUID.randomUUID(), "Zoeb", "");
-        UserProfile i = new UserProfile(UUID.randomUUID(), "Zoeb", "");
+        UserProfile b = new UserProfile(UUID.randomUUID().toString(), "Justin", "D");
+        UserProfile c = new UserProfile(UUID.randomUUID().toString(), "Kamran", "A");
+        UserProfile d = new UserProfile(UUID.randomUUID().toString(), "Zoeb", "G");
+        UserProfile e = new UserProfile(UUID.randomUUID().toString(), "Ken", "");
+        UserProfile f = new UserProfile(UUID.randomUUID().toString(), "Justin", "");
+        UserProfile g = new UserProfile(UUID.randomUUID().toString(), "Kamran", "");
+        UserProfile h = new UserProfile(UUID.randomUUID().toString(), "Zoeb", "");
+        UserProfile i = new UserProfile(UUID.randomUUID().toString(), "Zoeb", "");
 
         List<UserProfile> result = new ArrayList<>();
         result.add(a);

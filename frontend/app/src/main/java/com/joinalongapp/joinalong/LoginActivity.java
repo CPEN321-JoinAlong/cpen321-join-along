@@ -119,7 +119,9 @@ public class LoginActivity extends AppCompatActivity {
                         if (response.code() == 404) {
                             Intent i = new Intent(LoginActivity.this, ManageProfileActivity.class);
                             i.putExtra("firstName", account.getGivenName());
+                            i.putExtra("userToken", idToken);
                             i.putExtra("lastName", account.getFamilyName());
+                            i.putExtra("profilePic", account.getPhotoUrl().toString());
                             startActivity(i);
                         }
                     }

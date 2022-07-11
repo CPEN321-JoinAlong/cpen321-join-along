@@ -20,7 +20,6 @@ import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingListCustomAdapter.ViewHolder>{
     private List<UserProfile> users;
@@ -112,7 +111,7 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
         return users.size();
     }
 
-    private void deleteFriend(UUID uuid){
+    private void deleteFriend(String uuid){
         for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
             UserProfile value = iterator.next();
             if (value.getId() == uuid) {

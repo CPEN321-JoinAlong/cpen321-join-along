@@ -1,17 +1,16 @@
 package com.joinalongapp.navbar;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.joinalongapp.joinalong.R;
 import com.joinalongapp.adapter.MessagingListCustomAdapter;
+import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.ArrayList;
@@ -100,15 +99,15 @@ public class MessagingListFragment extends Fragment {
 
     private void initDataset(){
         // TODO: GET LIST OF USERS
-        UserProfile a = new UserProfile(UUID.randomUUID(), "Ken", "");
-        UserProfile b = new UserProfile(UUID.randomUUID(), "Justin", "");
-        UserProfile c = new UserProfile(UUID.randomUUID(), "Kamran", "");
-        UserProfile d = new UserProfile(UUID.randomUUID(), "Zoeb", "");
-        UserProfile e = new UserProfile(UUID.randomUUID(), "Ken", "");
-        UserProfile f = new UserProfile(UUID.randomUUID(), "Justin", "");
-        UserProfile g = new UserProfile(UUID.randomUUID(), "Kamran", "");
-        UserProfile h = new UserProfile(UUID.randomUUID(), "Zoeb", "");
-        UserProfile i = new UserProfile(UUID.randomUUID(), "Zoeb", "");
+        UserProfile a = new UserProfile(UUID.randomUUID().toString(), "Ken", "");
+        UserProfile b = new UserProfile(UUID.randomUUID().toString(), "Justin", "");
+        UserProfile c = new UserProfile(UUID.randomUUID().toString(), "Kamran", "");
+        UserProfile d = new UserProfile(UUID.randomUUID().toString(), "Zoeb", "");
+        UserProfile e = new UserProfile(UUID.randomUUID().toString(), "Ken", "");
+        UserProfile f = new UserProfile(UUID.randomUUID().toString(), "Justin", "");
+        UserProfile g = new UserProfile(UUID.randomUUID().toString(), "Kamran", "");
+        UserProfile h = new UserProfile(UUID.randomUUID().toString(), "Zoeb", "");
+        UserProfile i = new UserProfile(UUID.randomUUID().toString(), "Zoeb", "");
 
         List<UserProfile> result = new ArrayList<>();
         result.add(a);

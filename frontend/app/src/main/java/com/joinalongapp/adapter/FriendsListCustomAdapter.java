@@ -122,7 +122,7 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         return users.size();
     }
 
-    private void deleteFriend(UUID uuid){
+    private void deleteFriend(String uuid){
         for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
             UserProfile value = iterator.next();
             if (value.getId() == uuid) {

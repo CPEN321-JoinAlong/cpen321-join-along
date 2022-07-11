@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class ChatDetails implements Serializable, IDetailsModel {
+
+    //TODO: change to String (including for all other models)
     private UUID id;
     private String title;
     private List<Tag> tags;

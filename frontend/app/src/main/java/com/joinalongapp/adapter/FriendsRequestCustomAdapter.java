@@ -109,7 +109,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
         return users.size();
     }
 
-    private void deleteRequest(UUID uuid){
+    private void deleteRequest(String uuid){
         for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
             UserProfile value = iterator.next();
             if (value.getId() == uuid) {

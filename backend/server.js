@@ -70,8 +70,8 @@ app.listen(port, () => {
 });
 
 app.use(async(req, res, next) => {
-    const { Token } = req.body;
-    let user = await userStore.findUserForLogin(Token)	
+    const { token } = req.body;
+    let user = await userStore.findUserForLogin(token)	
 	console.log(user)
     if( user != null || req.path.includes("/user/create")) {
         next();
@@ -91,8 +91,8 @@ app.get("/", async (req, res) => {
 
 //login - post
 app.post("/login", async (req, res) => {
-    const { Token } = req.body;
-    let foundUser = await userStore.findUserForLogin(Token);
+    const { token } = req.body;
+    let foundUser = await userStore.findUserForLogin(token);
     if (foundUser == null) res.status(404).send("Unsuccessfull");
     else res.status(200).send({ user: foundUser });
 });
@@ -178,6 +178,17 @@ app.get("/user/:id", async (req, res) => {
     if (foundUser == null) res.status(404).send("No User Found");
     else {
         res.status(200).send({ user: foundUser });
+    }
+});
+
+//Sends the list of friends of user - get
+app.get("/user/:id/friends", async (req, res) => {
+    let { id } = req.params;
+    let foundUser = await userStore.findUserByID(id);
+    if (foundUser == null) res.status(404).send("No User Found");
+    else {
+        let friendsList = await userStore.findFriendByIDList(foundUser.friends)
+        res.status(200).send(friendsList);
     }
 });
 

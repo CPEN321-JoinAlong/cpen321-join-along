@@ -51,49 +51,6 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        String filter = getArguments() == null ? "empty" : getArguments().getString("filter");
-        Toast.makeText(getActivity(), filter, Toast.LENGTH_LONG).show();
-
-        if (filter.equals("Recommended")) {
-            removeMe_PopulateEventList_ForRecommended();
-        } else {
-            removeMe_PopulateEventList_ForMyEvents();
-        }
-
-        //TODO: backend being fixed, commenting out for now
-//        RequestManager requestManager = new RequestManager();
-//        String userId = ((UserApplicationInfo) getActivity().getApplication()).getProfile().getId();
-        //TODO: change the path based on filter
-//        String path = "user/" + userId + "/event";
-//        try {
-//            requestManager.get(path, new RequestManager.OnRequestCompleteListener() {
-//                @Override
-//                public void onSuccess(Call call, Response response) {
-//                    try {
-//                        if (response.code() == Constants.STATUS_HTTP_200) {
-//                            JSONObject jsonResponse = new JSONObject(response.body().string());
-//                            JSONArray jsonEvents = jsonResponse.getJSONArray("events");
-//
-//                            eventList.clear();
-//                            for (int i = 0; i < jsonEvents.length(); i++) {
-//                                eventList.add((Event) jsonEvents.get(i));
-//                            }
-//                        }
-//
-//                    } catch (IOException | JSONException e) {
-//                        Log.e(TAG, "Unable to parse events from server.");
-//                    }
-//                }
-//                @Override
-//                public void onError(Call call, IOException e) {
-//                    Log.e(TAG, "Unable to get events from server.");
-//                }
-//            });
-//        } catch (IOException e) {
-//            Log.e(TAG, "Unable to get events from server.");
-//        }
-
     }
 
     private void removeMe_PopulateEventList_ForRecommended() {
@@ -154,6 +111,51 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         eventRecycler.setLayoutManager(linearLayoutManager);
 
         setEventCards();
+
+
+        //below we get the filters and search based on them
+
+        String filter = getArguments() == null ? "empty" : getArguments().getString("filter");
+        Toast.makeText(getActivity(), filter, Toast.LENGTH_LONG).show();
+
+        if (filter.equals("Recommended")) {
+            removeMe_PopulateEventList_ForRecommended();
+        } else {
+            removeMe_PopulateEventList_ForMyEvents();
+        }
+
+        //TODO: backend being fixed, commenting out for now
+//        RequestManager requestManager = new RequestManager();
+//        String userId = ((UserApplicationInfo) getActivity().getApplication()).getProfile().getId();
+        //TODO: change the path based on filter
+//        String path = "user/" + userId + "/event";
+//        try {
+//            requestManager.get(path, new RequestManager.OnRequestCompleteListener() {
+//                @Override
+//                public void onSuccess(Call call, Response response) {
+//                    try {
+//                        if (response.code() == Constants.STATUS_HTTP_200) {
+//                            JSONObject jsonResponse = new JSONObject(response.body().string());
+//                            JSONArray jsonEvents = jsonResponse.getJSONArray("events");
+//
+//                            eventList.clear();
+//                            for (int i = 0; i < jsonEvents.length(); i++) {
+//                                eventList.add((Event) jsonEvents.get(i));
+//                            }
+//                        }
+//
+//                    } catch (IOException | JSONException e) {
+//                        Log.e(TAG, "Unable to parse events from server.");
+//                    }
+//                }
+//                @Override
+//                public void onError(Call call, IOException e) {
+//                    Log.e(TAG, "Unable to get events from server.");
+//                }
+//            });
+//        } catch (IOException e) {
+//            Log.e(TAG, "Unable to get events from server.");
+//        }
 
         return view;
     }

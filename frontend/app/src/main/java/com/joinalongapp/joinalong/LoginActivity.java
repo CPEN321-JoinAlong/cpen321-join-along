@@ -20,6 +20,7 @@ import com.joinalongapp.Constants;
 import com.joinalongapp.controller.RequestManager;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -117,16 +118,11 @@ public class LoginActivity extends AppCompatActivity {
                 requestManager.post("login", jsonBody, new RequestManager.OnRequestCompleteListener() {
                     @Override
                     public void onSuccess(Call call, Response response) {
-                        if (response.code() == Constants.STATUS_HTTP_404) {
-                            Intent i = new Intent(LoginActivity.this, ManageProfileActivity.class);
-                            i.putExtra("firstName", account.getGivenName());
-                            i.putExtra("userToken", idToken);
-                            i.putExtra("lastName", account.getFamilyName());
-                            i.putExtra("profilePic", account.getPhotoUrl().toString());
-                            i.putExtra("MODE", ManageProfileActivity.ManageProfileMode.PROFILE_CREATE);
-                            startActivity(i);
-                        } else {
-                            if (response.code() == Constants.STATUS_HTTP_200) {
+                        final int responseCode = response.code();
+
+                        switch (responseCode) {
+                            // Successful login, loading user data
+                            case Constants.STATUS_HTTP_200:
                                 try {
                                     UserApplicationInfo profileOnLogin = new UserApplicationInfo();
                                     profileOnLogin.populateDetailsFromJson(response.body().string());
@@ -134,8 +130,35 @@ public class LoginActivity extends AppCompatActivity {
                                 } catch (IOException | JSONException e) {
                                     Log.e(TAG, "Failed to load user details from backend server: " + e.getMessage());
                                 }
-                            }
+                                break;
+
+                            // User not found, must be a new user
+                            case Constants.STATUS_HTTP_404:
+                                Intent i = new Intent(LoginActivity.this, ManageProfileActivity.class);
+                                i.putExtra("firstName", account.getGivenName());
+
+                                try {
+                                    JSONObject responseBody = new JSONObject(response.body().string());
+                                    i.putExtra("userToken", responseBody.getString("token"));
+                                } catch (IOException | JSONException e) {
+                                    Log.e(TAG, "Failed to load user details from backend server: " + e.getMessage());
+                                }
+
+                                i.putExtra("lastName", account.getFamilyName());
+                                i.putExtra("profilePic", account.getPhotoUrl().toString());
+                                i.putExtra("MODE", ManageProfileActivity.ManageProfileMode.PROFILE_CREATE);
+                                startActivity(i);
+                                break;
+
+                            // User token was invalid
+                            case Constants.STATUS_HTTP_406:
+                            default:
+                                //TODO make a warning message
+                                break;
+
+
                         }
+
                     }
 
                     @Override

@@ -50,7 +50,7 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
 
     public String tokenToJsonString() throws JSONException {
         JSONObject json = new JSONObject();
-        json.put("token", getUserToken());
+        json.put("Token", getUserToken());
         return json.toString();
     }
 

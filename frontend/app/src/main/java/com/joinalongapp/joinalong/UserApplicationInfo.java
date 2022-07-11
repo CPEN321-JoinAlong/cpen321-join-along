@@ -22,6 +22,10 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
         super();
     }
 
+    public void updateApplicaitonInfo(UserApplicationInfo userApplicationInfo) {
+        this.userToken = userApplicationInfo.getUserToken();
+        this.profile = userApplicationInfo.getProfile();
+    }
 
     public UserApplicationInfo(UserProfile profile) {
         this.profile = profile;
@@ -61,11 +65,14 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
         json.put("id", profile.getId());
         json.put("name", profile.getFirstName() + " " + profile.getLastName());
         json.put("location", profile.getLocation());
-        json.put("interestTags", profile.getStringListOfTags());
+
+        JSONArray interests = new JSONArray(profile.getStringListOfTags());
+
+        json.put("interests", interests);
         json.put("description", profile.getDescription());
         json.put("profilePicture", profile.getProfilePicture());
         if (!friendId.isEmpty()) {
-            json.put("friends", friendId);
+            json.put("friends", new JSONArray(friendId));
         }
 
         return json.toString();

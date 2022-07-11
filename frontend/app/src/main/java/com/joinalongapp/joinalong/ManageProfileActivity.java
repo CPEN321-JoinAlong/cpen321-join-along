@@ -29,6 +29,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
@@ -93,10 +94,9 @@ public class ManageProfileActivity extends AppCompatActivity {
                 profile.setLocation(locationEdit.getText().toString());
 
 
-                List<Integer> interestIds = interestsChip.getCheckedChipIds();
-                for (Integer id : interestIds) {
-                    Chip chip = interestsChip.findViewById(id);
-                    profile.addTagToInterests(new Tag(chip.getText().toString()));
+                List<Tag> tags = getTagsFromChipGroup();
+                for (Tag tag : tags) {
+                    profile.addTagToInterests(tag);
                 }
 
                 profile.setDescription(descriptionEdit.getText().toString());
@@ -122,12 +122,12 @@ public class ManageProfileActivity extends AppCompatActivity {
                                 UserApplicationInfo newUserInfo = new UserApplicationInfo();
                                 try {
                                     newUserInfo.populateUserInfoFromJson(response.body().string());
+                                    ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(newUserInfo);
+                                    startMainActivity();
+
                                 } catch (IOException | JSONException e) {
                                     Log.e(TAG, "Unable to load user profile");
                                 }
-
-                                //((UserApplicationInfo) getApplication()).setProfile();
-                                startMainActivity();
                             }
 
                             @Override
@@ -145,6 +145,15 @@ public class ManageProfileActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private List<Tag> getTagsFromChipGroup(){
+        List<Tag> result = new ArrayList<>();
+        for(int i = 0; i < interestsChip.getChildCount(); i++){
+            Chip chip = (Chip) interestsChip.getChildAt(i);
+            result.add(new Tag(chip.getText().toString()));
+        }
+        return result;
     }
 
     private void initAutoCompleteChipGroup(AutoCompleteTextView autoCompleteTextView, ChipGroup chipGroup, String[] fillArray){

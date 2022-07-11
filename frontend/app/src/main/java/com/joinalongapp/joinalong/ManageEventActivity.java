@@ -28,6 +28,7 @@ import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.Tag;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -144,7 +145,10 @@ public class ManageEventActivity extends AppCompatActivity {
                     event.setPublicVisibility(eventVisibilityTab.getSelectedTabPosition() == PUBLIC_VISIBILITY_INDEX);
                     RequestManager requestManager = new RequestManager();
                     try {
-                        requestManager.post("event/create", event.toJsonString(), new RequestManager.OnRequestCompleteListener() {
+                        JSONObject json = event.toJson();
+                        json.put("token", ((UserApplicationInfo) getApplication()).getUserToken());
+
+                        requestManager.post("event/create", json.toString(), new RequestManager.OnRequestCompleteListener() {
                             @Override
                             public void onSuccess(Call call, Response response) {
                                 Intent i = new Intent(v.getContext(), MainActivity.class);

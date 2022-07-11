@@ -145,7 +145,7 @@ public class Event implements Serializable, IDetailsModel {
     public String toJsonString() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("title", getTitle());
-        json.put("tags", getStringListOfTags());
+        json.put("tags", getStringListOfTags()); //TODO fix array in request use jsonarray
         json.put("location", getLocation());
         json.put("numberOfPeople", getNumberOfPeople());
         json.put("description", getDescription());
@@ -153,5 +153,18 @@ public class Event implements Serializable, IDetailsModel {
         json.put("endDate", getEndDate());
         json.put("publicVisibility", getPublicVisibility());
         return json.toString();
+    }
+
+    public JSONObject toJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("title", getTitle());
+        json.put("tags", getStringListOfTags());
+        json.put("location", getLocation());
+        json.put("numberOfPeople", getNumberOfPeople());
+        json.put("description", getDescription());
+        json.put("beginningDate", getBeginningDate());
+        json.put("endDate", getEndDate());
+        json.put("publicVisibility", getPublicVisibility());
+        return json;
     }
 }

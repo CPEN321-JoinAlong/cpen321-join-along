@@ -2,10 +2,11 @@ const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 const admin = require("firebase-admin");
-const serviceAccount = require("/home/azureuser/serviceAccountKey.json");
+// const serviceAccount = require("/home/azureuser/serviceAccountKey.json");
 const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
+const axios = require("axios");
 
 const {
     UserAccount,
@@ -17,6 +18,7 @@ const {
     ReportService,
     BanService,
 } = require("./modules");
+const { response } = require("express");
 
 function logRequest(req, res, next) {
     console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
@@ -44,10 +46,10 @@ let chatEngine = new ChatEngine();
 let reportService = new ReportService();
 let banService = new BanService();
 
-// firebase admin SDK
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-});
+// // firebase admin SDK
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount)
+// });
 
 // express app
 let app = express();
@@ -69,23 +71,23 @@ app.listen(port, () => {
     );
 });
 
-app.use(async(req, res, next) => {
+app.use(async (req, res, next) => {
     const { token } = req.body;
-    let user = await userStore.findUserForLogin(token)
-    //console.log(a)
-    if( user != null || req.path.includes("/user/create")) {
+    let user = await userStore.findUserForLogin(token);
+    if (user != null || req.path.includes("/user/create") || req.path.includes("/login")) {
         next();
     } else {
-        res.status(404).send("Unsuccessfull")
+        res.status(404).send("Unsuccessfull");
     }
-})
+});
 
 //JUST FOR TESTING
 app.get("/", async (req, res) => {
-    let a = {}
-    //await User.deleteMany({});
-    //await Event.deleteMany({});
-    //await Chat.deleteMany({});
+    let a = {};
+    // await User.deleteMany({});
+    // await Event.deleteMany({});
+    // await Chat.deleteMany({});
+    console.log(req.headers)
     a["user"] = await User.find({});
     a["chat"] = await Chat.find({});
     a["event"] = await Event.find({});
@@ -94,12 +96,29 @@ app.get("/", async (req, res) => {
 
 //login - post
 app.post("/login", async (req, res) => {
-    const { token } = req.body;
-    console.log("LOGIN")
-    console.log(req.body)
-    let foundUser = await userStore.findUserForLogin(token);
-    if (foundUser == null) res.status(404).send("Unsuccessfull");
-    else res.status(200).send(foundUser);
+    const { Token } = req.body;
+    console.log(req.body);
+    try {
+        let response = await axios(
+            `https://oauth2.googleapis.com/tokeninfo?id_token=${Token}`
+        );
+        console.log("HUHHH");
+        console.log(response.data);
+        if (response.status == 200) {
+            let foundUser = await userStore.findUserForLogin(response.data.sub);
+            if (foundUser == null)
+                res.status(404).send({ token: response.data.sub });
+            else res.status(200).send(foundUser);
+        } else {
+            res.status(406).send(
+                "Token not valid, try signing in again or use another account"
+            );
+        }
+    } catch (e) {
+        res.status(406).send(
+            "Token not valid, try signing in again or use another account"
+        );
+    }
 });
 
 //* All the create paths for the main modules
@@ -108,8 +127,8 @@ app.post("/login", async (req, res) => {
 app.post("/user/create", async (req, res) => {
     let userObject = req.body;
     let userInfo = new UserAccount(userObject);
-    let user = await userInfo.createUserAccount(userStore)
-    console.log(user)
+    let user = await userInfo.createUserAccount(userStore);
+    console.log(user);
     res.status(200).send(user);
 });
 
@@ -190,14 +209,14 @@ app.get("/user/:id", async (req, res) => {
 
 //Get user list by name
 app.get("/user/name/:userName", async (req, res) => {
-    let {userName} = req.params;
+    let { userName } = req.params;
     let foundUserList = await findUserByName(userName);
     if (foundUserList.length != 0) {
-        res.status(200).send(foundUserList)
+        res.status(200).send(foundUserList);
     } else {
         res.status(404).send("Unsuccessfull");
     }
-})
+});
 
 //Sends the list of friend requests of user - get
 app.get("/user/:id/friendRequest", async (req, res) => {
@@ -205,7 +224,9 @@ app.get("/user/:id/friendRequest", async (req, res) => {
     let foundUser = await userStore.findUserByID(id);
     if (foundUser == null) res.status(404).send("No User Found");
     else {
-        let friendsReqList = await userStore.findFriendByIDList(foundUser.friendRequest)
+        let friendsReqList = await userStore.findFriendByIDList(
+            foundUser.friendRequest
+        );
         res.status(200).send(friendsReqList);
     }
 });
@@ -216,7 +237,7 @@ app.get("/user/:id/friends", async (req, res) => {
     let foundUser = await userStore.findUserByID(id);
     if (foundUser == null) res.status(404).send("No User Found");
     else {
-        let friendsList = await userStore.findFriendByIDList(foundUser.friends)
+        let friendsList = await userStore.findFriendByIDList(foundUser.friends);
         res.status(200).send(friendsList);
     }
 });
@@ -236,15 +257,21 @@ app.put("/chat/sendSingle/:fromUserID/:toUserID", async (req, res) => {
     let { fromUserID, toUserID } = req.params;
     let { timeStamp, text } = req.body;
     fromUserName = await userStore.findUserByID(fromUserID).name;
-    await chatEngine.sendMessage(fromUserID, toUserID, text, fromUserName, timeStamp);
+    await chatEngine.sendMessage(
+        fromUserID,
+        toUserID,
+        text,
+        fromUserName,
+        timeStamp
+    );
 
-    getMessaging().send({
-        data: {
-            name: fromUserName,
-            text: text
-        },
-        topic: fromUserID + "_" + toUserID
-    }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
+    // getMessaging().send({
+    //     data: {
+    //         name: fromUserName,
+    //         text: text
+    //     },
+    //     topic: fromUserID + "_" + toUserID
+    // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
 
     res.status(200).send("Successful");
 });
@@ -256,15 +283,21 @@ app.put("/chat/sendGroup/:userID/:eventID", async (req, res) => {
 
     fromUserName = await userStore.findUserByID(userID).name;
     eventName = await eventStore.findEventByID(eventID).title;
-    await chatEngine.sendGroupMessage(userID, eventID, text, fromUserName, timeStamp);
+    await chatEngine.sendGroupMessage(
+        userID,
+        eventID,
+        text,
+        fromUserName,
+        timeStamp
+    );
 
-    getMessaging().send({
-        data: {
-            name: fromUserName,
-            text: text
-        },
-        topic: eventName
-    }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
+    // getMessaging().send({
+    //     data: {
+    //         name: fromUserName,
+    //         text: text
+    //     },
+    //     topic: eventName
+    // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
 
     res.status(200).send("Successful");
 });
@@ -273,7 +306,7 @@ app.put("/chat/sendGroup/:userID/:eventID", async (req, res) => {
 app.get("/chat/:id", async (req, res) => {
     let { id } = req.params;
     let chat = await chatEngine.findChatByID(id);
-    res.status(200).send( chat );
+    res.status(200).send(chat);
 });
 
 //* Event info
@@ -282,20 +315,20 @@ app.get("/chat/:id", async (req, res) => {
 app.get("/user/:id/event", async (req, res) => {
     let { id } = req.params;
     let eventList = await eventStore.findEventByUser(id);
-    res.status(200).send( eventList );
+    res.status(200).send(eventList);
 });
 
 //Event list: Send list of Event
 app.post("/event/filter", async (req, res) => {
     let eventList = await eventStore.findEventByDetails(req.body);
-    res.status(200).send( eventList );
+    res.status(200).send(eventList);
 });
 
 //Event: Sends the event object (for view event details?) - get
 app.get("/event/:id", async (req, res) => {
     let { id } = req.params;
     let event = await eventStore.findEventByID(id);
-    res.status(200).send( event );
+    res.status(200).send(event);
 });
 
 //* Accept or Reject requests (can be used for join as well) and invites

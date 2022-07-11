@@ -28,11 +28,15 @@ public class UserProfile implements Serializable, IDetailsModel {
     }
 
     public void setTags(List<Tag> tags) {
-        this.tags.addAll(tags);
+        this.tags = tags;
     }
 
     public void addTagToInterests(Tag tag) {
         tags.add(tag);
+    }
+
+    public void addAllTagsToInterests(List<Tag> tags) {
+        this.tags.addAll(tags);
     }
 
     public void setFriends(List<UserProfile> friends) {

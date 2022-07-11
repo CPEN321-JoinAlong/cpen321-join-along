@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.Constants;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
@@ -66,7 +67,7 @@ public class ManageProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_profile);
 
-        UserProfile profile = new UserProfile();
+        UserProfile profile = ((UserApplicationInfo) getApplication()).getProfile();
 
         initElements();
         String[] sampleTags = getResources().getStringArray(R.array.sample_tags);
@@ -95,13 +96,11 @@ public class ManageProfileActivity extends AppCompatActivity {
 
 
                 List<Tag> tags = getTagsFromChipGroup();
-                for (Tag tag : tags) {
-                    profile.addTagToInterests(tag);
-                }
+                profile.setTags(tags);
 
                 profile.setDescription(descriptionEdit.getText().toString());
 
-                UserApplicationInfo userInput = new UserApplicationInfo();
+                UserApplicationInfo userInput = (UserApplicationInfo) getApplication();
 
                 if (isCreatingProfile()) {
                     userInput.setUserToken(getIntent().getExtras().getString("userToken"));
@@ -140,7 +139,7 @@ public class ManageProfileActivity extends AppCompatActivity {
                             Log.e(TAG, "Failed to create user profile");
                             Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
                         }
-                    }else {
+                    } else {
                         try {
                             String jsonBody = userInput.toJsonString();
                             RequestManager requestManager = new RequestManager();
@@ -151,24 +150,20 @@ public class ManageProfileActivity extends AppCompatActivity {
                             requestManager.put(path, jsonBody, new RequestManager.OnRequestCompleteListener() {
                                 @Override
                                 public void onSuccess(Call call, Response response) {
-                                    System.out.println(response.code());
-                                    UserApplicationInfo newUserInfo = new UserApplicationInfo();
-                                    try {
-                                        //TODO: change this to call profile fragment
-                                        //      currently there is no body in response, so can't call update
-                                        newUserInfo.populateDetailsFromJson(response.body().string());
-                                        ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(newUserInfo);
 
-                                        startMainActivity();
-
-                                    } catch (IOException | JSONException e) {
+                                    if (response.code() == Constants.STATUS_HTTP_200) {
+                                        ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(userInput);
+                                    } else {
                                         Log.e(TAG, "Unable to update user profile");
                                     }
+
+                                    //todo: should go to profile?
+                                    startMainActivity();
                                 }
 
                                 @Override
                                 public void onError(Call call, IOException e) {
-                                    Log.e(TAG, "Unable to update profile");
+                                    Log.e(TAG, "Unable to update profile" + e.getMessage());
                                     Toast.makeText(ManageProfileActivity.this, "Unable to update profile. Please try again later.", Toast.LENGTH_LONG).show();
                                 }
                             });
@@ -230,8 +225,14 @@ public class ManageProfileActivity extends AppCompatActivity {
         //TODO: this might be future functionality
         //      for now, always uses the user google account profile pic
 
-        userProfile.setProfilePicture(getProfilePicUrl());
-        Picasso.get().load(getProfilePicUrl()).into(profilePicPreview);
+        if (isCreatingProfile()) {
+            userProfile.setProfilePicture(getProfilePicUrl());
+            Picasso.get().load(getProfilePicUrl()).into(profilePicPreview);
+        } else {
+            String profilePicUrl = ((UserApplicationInfo) getApplication()).getProfile().getProfilePicture();
+            Picasso.get().load(profilePicUrl).into(profilePicPreview);
+        }
+
 
 //        setProfilePicToggleColors(R.color.orange_light, R.color.orange_prim);
 //        profilePicPreview.setVisibility(View.GONE);

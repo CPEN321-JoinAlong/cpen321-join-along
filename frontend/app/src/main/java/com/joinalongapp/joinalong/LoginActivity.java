@@ -16,6 +16,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.joinalongapp.Constants;
 import com.joinalongapp.controller.RequestManager;
 
 import org.json.JSONException;
@@ -116,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                 requestManager.post("login", jsonBody, new RequestManager.OnRequestCompleteListener() {
                     @Override
                     public void onSuccess(Call call, Response response) {
-                        if (response.code() == 404) {
+                        if (response.code() == Constants.STATUS_HTTP_404) {
                             Intent i = new Intent(LoginActivity.this, ManageProfileActivity.class);
                             i.putExtra("firstName", account.getGivenName());
                             i.putExtra("userToken", idToken);
@@ -125,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                             i.putExtra("MODE", ManageProfileActivity.ManageProfileMode.PROFILE_CREATE);
                             startActivity(i);
                         } else {
-                            if (response.code() == 200) {
+                            if (response.code() == Constants.STATUS_HTTP_200) {
                                 try {
                                     UserApplicationInfo profileOnLogin = new UserApplicationInfo();
                                     profileOnLogin.populateDetailsFromJson(response.body().string());

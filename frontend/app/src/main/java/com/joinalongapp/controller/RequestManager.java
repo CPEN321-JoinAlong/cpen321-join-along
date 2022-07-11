@@ -32,7 +32,7 @@ public class RequestManager implements Callback {
      * @return result/response of reading at url
      * @throws IOException
      */
-    public void get(String path, OnRequestCompleteListener callback) throws IOException {
+    public void get(String path, String tokenHeader, OnRequestCompleteListener callback) throws IOException {
         onRequestCompleteListener = callback;
         OkHttpClient client = new OkHttpClient();
 
@@ -40,6 +40,7 @@ public class RequestManager implements Callback {
 
         Request request = new Request.Builder()
                 .url(url)
+                .header("token", tokenHeader)
                 .get()
                 .build();
 

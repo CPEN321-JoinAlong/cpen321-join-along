@@ -13,16 +13,10 @@ import com.joinalongapp.adapter.FriendsListCustomAdapter;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
-import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -116,11 +110,12 @@ public class FriendsListFragment extends Fragment {
     private void initDataset() throws IOException {
         // TODO: GET LIST OF USERS
         UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
+        String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         String id = user.getId();
         RequestManager requestManager = new RequestManager();
 
 
-        requestManager.get("/user/" + id + "/friends", new RequestManager.OnRequestCompleteListener() {
+        requestManager.get("/user/" + id + "/friends", userToken, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
 

@@ -1,6 +1,7 @@
 package com.joinalongapp.navbar;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,23 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.Constants;
 import com.joinalongapp.adapter.EventAdapter;
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -125,37 +137,38 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         }
 
         //TODO: backend being fixed, commenting out for now
-//        RequestManager requestManager = new RequestManager();
-//        String userId = ((UserApplicationInfo) getActivity().getApplication()).getProfile().getId();
+        RequestManager requestManager = new RequestManager();
+        String userId = ((UserApplicationInfo) getActivity().getApplication()).getProfile().getId();
+        String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         //TODO: change the path based on filter
-//        String path = "user/" + userId + "/event";
-//        try {
-//            requestManager.get(path, new RequestManager.OnRequestCompleteListener() {
-//                @Override
-//                public void onSuccess(Call call, Response response) {
-//                    try {
-//                        if (response.code() == Constants.STATUS_HTTP_200) {
-//                            JSONObject jsonResponse = new JSONObject(response.body().string());
-//                            JSONArray jsonEvents = jsonResponse.getJSONArray("events");
-//
-//                            eventList.clear();
-//                            for (int i = 0; i < jsonEvents.length(); i++) {
-//                                eventList.add((Event) jsonEvents.get(i));
-//                            }
-//                        }
-//
-//                    } catch (IOException | JSONException e) {
-//                        Log.e(TAG, "Unable to parse events from server.");
-//                    }
-//                }
-//                @Override
-//                public void onError(Call call, IOException e) {
-//                    Log.e(TAG, "Unable to get events from server.");
-//                }
-//            });
-//        } catch (IOException e) {
-//            Log.e(TAG, "Unable to get events from server.");
-//        }
+        String path = "user/" + userId + "/event";
+        try {
+            requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
+                @Override
+                public void onSuccess(Call call, Response response) {
+                    try {
+                        if (response.code() == Constants.STATUS_HTTP_200) {
+                            JSONObject jsonResponse = new JSONObject(response.body().string());
+                            JSONArray jsonEvents = jsonResponse.getJSONArray("events");
+
+                            eventList.clear();
+                            for (int i = 0; i < jsonEvents.length(); i++) {
+                                eventList.add((Event) jsonEvents.get(i));
+                            }
+                        }
+
+                    } catch (IOException | JSONException e) {
+                        Log.e(TAG, "Unable to parse events from server.");
+                    }
+                }
+                @Override
+                public void onError(Call call, IOException e) {
+                    Log.e(TAG, "Unable to get events from server.");
+                }
+            });
+        } catch (IOException e) {
+            Log.e(TAG, "Unable to get events from server.");
+        }
 
         return view;
     }

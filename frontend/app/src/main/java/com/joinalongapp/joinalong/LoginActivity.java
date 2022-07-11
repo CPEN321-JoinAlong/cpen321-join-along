@@ -59,9 +59,9 @@ public class LoginActivity extends AppCompatActivity {
                 });
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(LoginActivity.this);
-        if (account != null) {
-            startMainActivity();
-        }
+//        if (account != null) {
+//            //startMainActivity();
+//        }
 
         signInButton = findViewById(R.id.sign_in_button);
 
@@ -125,8 +125,10 @@ public class LoginActivity extends AppCompatActivity {
                             case Constants.STATUS_HTTP_200:
                                 try {
                                     UserApplicationInfo profileOnLogin = new UserApplicationInfo();
-                                    profileOnLogin.populateDetailsFromJson(response.body().string());
+                                    String jsonBody = response.body().string();
+                                    profileOnLogin.populateDetailsFromJson(jsonBody);
                                     ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(profileOnLogin);
+                                    startMainActivity();
                                 } catch (IOException | JSONException e) {
                                     Log.e(TAG, "Failed to load user details from backend server: " + e.getMessage());
                                 }
@@ -185,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
         if (account == null) {
             Log.d(TAG, "There is no user signed in!");
         } else {
-            startMainActivity();
+            Log.d(TAG, "Successful sign in");
         }
     }
 

@@ -8,13 +8,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class Event implements Serializable, IDetailsModel {
 
     //TODO; capacity and number of people confusion
-    private UUID eventId;
-    private UUID eventOwnerId;
+    private String eventId;
+    private String eventOwnerId;
     private String ownerName;
     private String title;
     private String location;
@@ -24,11 +23,11 @@ public class Event implements Serializable, IDetailsModel {
     private int numberOfPeople;
     private List<Tag> tags;
 
-    public void setEventId(UUID eventId) {
+    public void setEventId(String eventId) {
         this.eventId = eventId;
     }
 
-    public void setEventOwnerId(UUID eventOwnerId) {
+    public void setEventOwnerId(String eventOwnerId) {
         this.eventOwnerId = eventOwnerId;
     }
 
@@ -60,6 +59,10 @@ public class Event implements Serializable, IDetailsModel {
         this.tags = tags;
     }
 
+    private void addTagToInterests(Tag tag) {
+        tags.add(tag);
+    }
+
     public void setFriends(List<UserProfile> friends) {
         this.friends = friends;
     }
@@ -74,7 +77,7 @@ public class Event implements Serializable, IDetailsModel {
     public Event() {
     }
 
-    public Event(UUID eventId, UUID eventOwnerId, String title, String location, Date beginningDate, Date endDate, Boolean publicVisibility, int numberOfPeople, String description) {
+    public Event(String eventId, String eventOwnerId, String title, String location, Date beginningDate, Date endDate, Boolean publicVisibility, int numberOfPeople, String description) {
         this.eventId = eventId;
         this.eventOwnerId = eventOwnerId;
         this.title = title;
@@ -86,11 +89,11 @@ public class Event implements Serializable, IDetailsModel {
         this.description = description;
     }
 
-    public UUID getEventId() {
+    public String getEventId() {
         return eventId;
     }
 
-    public UUID getEventOwnerId() {
+    public String getEventOwnerId() {
         return eventOwnerId;
     }
 
@@ -173,6 +176,34 @@ public class Event implements Serializable, IDetailsModel {
         return json;
     }
 
+    public Event populateDetailsFromJson(String jsonBody) throws JSONException {
+        JSONObject json = new JSONObject(jsonBody);
 
+        setTitle(json.getString("title"));
+        setEventOwnerId(json.getString("eventOwnerID"));
+
+        JSONArray tags = json.getJSONArray("tags");
+        for (int i = 0; i < tags.length(); i++) {
+            addTagToInterests(new Tag(tags.getString(i)));
+        }
+
+        String beginDateString = json.getString("beginningDate");
+        //todo: convert to date object, need to know the storage format first
+        //setBeginningDate();
+
+        String endDateString = json.getString("endDate");
+        //todo: convert to date object, need to know the storage format first
+        //setEndDate();
+
+        setPublicVisibility(json.getBoolean("publicVisibility"));
+        setNumberOfPeople(json.getInt("numberOfPeople"));
+        setLocation(json.getString("location"));
+        setDescription(json.getString("description"));
+
+        //todo?: participant list, capacity, event image, event chat
+
+
+        return this;
+    }
 
 }

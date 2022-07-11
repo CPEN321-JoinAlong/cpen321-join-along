@@ -1,7 +1,8 @@
 const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
-const { initializeApp } = require("firebase-admin/app");
+const admin = require("firebase-admin");
+const serviceAccount = require("/home/azureuser/serviceAccountKey.json");
 const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
@@ -16,7 +17,6 @@ const {
     ReportService,
     BanService,
 } = require("./modules");
-// const methodOverride = require('method-override');
 
 function logRequest(req, res, next) {
     console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
@@ -45,8 +45,7 @@ let reportService = new ReportService();
 let banService = new BanService();
 
 // firebase admin SDK
-let serviceAccount = require("/home/join-along/serviceAccountKey.json") // need to generate and download service key on server
-initializeApp({
+admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
@@ -70,6 +69,17 @@ app.listen(port, () => {
     );
 });
 
+app.use(async(req, res, next) => {
+    const { Token } = req.body;
+    let user = await userStore.findUserForLogin(Token)	
+	console.log(user)
+    if( user != null || req.path.includes("/user/create")) {
+        next();
+    } else {
+        res.status(404).send("Unsuccessfull")
+    }
+})
+
 //JUST FOR TESTING
 app.get("/", async (req, res) => {
     let a = {}
@@ -83,7 +93,7 @@ app.get("/", async (req, res) => {
 app.post("/login", async (req, res) => {
     const { Token } = req.body;
     let foundUser = await userStore.findUserForLogin(Token);
-    if (foundUser == null) res.status(404).send(false);
+    if (foundUser == null) res.status(404).send("Unsuccessfull");
     else res.status(200).send({ user: foundUser });
 });
 
@@ -184,9 +194,9 @@ app.get("/user/:id/chat", async (req, res) => {
 app.put("/chat/sendSingle/:fromUserID/:toUserID", async (req, res) => {
     console.log("hello");
     let { fromUserID, toUserID } = req.params;
-    let { text } = req.body;
-    await chatEngine.sendMessage(fromUserID, toUserID, text);
+    let { timeStamp, text } = req.body;
     fromUserName = await userStore.findUserByID(fromUserID).name;
+    await chatEngine.sendMessage(fromUserID, toUserID, text, fromUserName, timeStamp);
 
     getMessaging().send({
         data: {
@@ -202,11 +212,11 @@ app.put("/chat/sendSingle/:fromUserID/:toUserID", async (req, res) => {
 //Chat: send message to a group
 app.put("/chat/sendGroup/:userID/:eventID", async (req, res) => {
     let { userID, eventID } = req.params;
-    let { text } = req.body;
-    await chatEngine.sendGroupMessage(userID, eventID, text);
+    let { timeStamp, text } = req.body;
 
-    fromUserName = await userStore.findUserByID(fromUserID).name;
+    fromUserName = await userStore.findUserByID(userID).name;
     eventName = await eventStore.findEventByID(eventID).title;
+    await chatEngine.sendGroupMessage(userID, eventID, text, fromUserName, timeStamp);
 
     getMessaging().send({
         data: {

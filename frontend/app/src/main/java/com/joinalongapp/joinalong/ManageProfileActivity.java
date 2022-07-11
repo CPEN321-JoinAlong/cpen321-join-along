@@ -118,7 +118,6 @@ public class ManageProfileActivity extends AppCompatActivity {
                         requestManager.post("user/create", jsonBody, new RequestManager.OnRequestCompleteListener() {
                             @Override
                             public void onSuccess(Call call, Response response) {
-                                Intent i = new Intent(ManageProfileActivity.this, MainActivity.class);
                                 UserApplicationInfo newUserInfo = new UserApplicationInfo();
                                 try {
                                     newUserInfo.populateUserInfoFromJson(response.body().string());

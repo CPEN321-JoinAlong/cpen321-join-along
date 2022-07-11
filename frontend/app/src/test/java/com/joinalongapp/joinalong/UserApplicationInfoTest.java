@@ -32,7 +32,7 @@ public class UserApplicationInfoTest {
         UserApplicationInfo userApplicationInfo = new UserApplicationInfo();
 
         try {
-            userApplicationInfo.populateUserInfoFromJson(input);
+            userApplicationInfo.populateDetailsFromJson(input);
         } catch (JSONException e) {
             fail();
         }

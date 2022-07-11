@@ -94,7 +94,7 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
             "\"_id\":\"62cbc9fcdd72460310e15459\"," +
             "\"__v\":0}";
 
-    public UserApplicationInfo populateUserInfoFromJson(String jsonBody) throws JSONException {
+    public UserApplicationInfo populateDetailsFromJson(String jsonBody) throws JSONException {
         JSONObject json = new JSONObject(jsonBody);
 
         profile.setId(json.getString("_id"));

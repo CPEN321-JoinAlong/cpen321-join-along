@@ -1,8 +1,6 @@
 package com.joinalongapp.viewmodel;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -146,5 +144,37 @@ public class UserProfile implements Serializable, IDetailsModel {
             result.add(tag.getName());
         }
         return result;
+    }
+
+    public UserProfile populateDetailsFromJson(String jsonBody) throws JSONException {
+        JSONObject json = new JSONObject(jsonBody);
+
+        setId(json.getString("_id"));
+        setFirstName(getFirstNameFromFull(json.getString("name")));
+        setLastName(getLastNameFromFull(json.getString("name")));
+        setLocation(json.getString("location"));
+
+        JSONArray tags = json.getJSONArray("interests");
+        for (int i = 0; i < tags.length(); i++) {
+            addTagToInterests(new Tag(tags.getString(i)));
+        }
+
+        setDescription(json.getString("description"));
+        setProfilePicture(json.getString("profilePicture"));
+
+        JSONArray friends = json.getJSONArray("friends");
+        for (int i = 0; i < friends.length(); i++) {
+            addFriendsToList((UserProfile) friends.get(i));
+        }
+
+        return this;
+    }
+
+    private String getFirstNameFromFull(String fullName) {
+        return fullName.substring(0, fullName.indexOf(" "));
+    }
+
+    private String getLastNameFromFull(String fullName) {
+        return fullName.substring(fullName.indexOf(" ") + 1);
     }
 }

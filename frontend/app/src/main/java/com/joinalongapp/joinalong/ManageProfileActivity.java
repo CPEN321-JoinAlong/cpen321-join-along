@@ -121,7 +121,7 @@ public class ManageProfileActivity extends AppCompatActivity {
                                 public void onSuccess(Call call, Response response) {
                                     UserApplicationInfo newUserInfo = new UserApplicationInfo();
                                     try {
-                                        newUserInfo.populateUserInfoFromJson(response.body().string());
+                                        newUserInfo.populateDetailsFromJson(response.body().string());
                                         ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(newUserInfo);
                                         startMainActivity();
 
@@ -156,7 +156,7 @@ public class ManageProfileActivity extends AppCompatActivity {
                                     try {
                                         //TODO: change this to call profile fragment
                                         //      currently there is no body in response, so can't call update
-                                        newUserInfo.populateUserInfoFromJson(response.body().string());
+                                        newUserInfo.populateDetailsFromJson(response.body().string());
                                         ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(newUserInfo);
 
                                         startMainActivity();

@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (response.code() == 200) {
                                 try {
                                     UserApplicationInfo profileOnLogin = new UserApplicationInfo();
-                                    profileOnLogin.populateUserInfoFromJson(response.body().string());
+                                    profileOnLogin.populateDetailsFromJson(response.body().string());
                                     ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(profileOnLogin);
                                 } catch (IOException | JSONException e) {
                                     Log.e(TAG, "Failed to load user details from backend server: " + e.getMessage());

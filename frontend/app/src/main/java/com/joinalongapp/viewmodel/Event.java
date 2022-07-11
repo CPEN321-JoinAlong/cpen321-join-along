@@ -149,7 +149,7 @@ public class Event implements Serializable, IDetailsModel {
         json.put("title", getTitle());
 
         JSONArray tags = new JSONArray(getStringListOfTags());
-        json.put("tags", tags); //TODO fix array in request use jsonarray
+        json.put("tags", tags);
 
         json.put("location", getLocation());
         json.put("numberOfPeople", getNumberOfPeople());
@@ -172,4 +172,7 @@ public class Event implements Serializable, IDetailsModel {
         json.put("publicVisibility", getPublicVisibility());
         return json;
     }
+
+
+
 }

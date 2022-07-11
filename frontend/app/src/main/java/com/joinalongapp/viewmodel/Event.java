@@ -1,5 +1,6 @@
 package com.joinalongapp.viewmodel;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -145,7 +146,10 @@ public class Event implements Serializable, IDetailsModel {
     public String toJsonString() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("title", getTitle());
-        json.put("tags", getStringListOfTags()); //TODO fix array in request use jsonarray
+
+        JSONArray tags = new JSONArray(getStringListOfTags());
+        json.put("tags", tags); //TODO fix array in request use jsonarray
+
         json.put("location", getLocation());
         json.put("numberOfPeople", getNumberOfPeople());
         json.put("description", getDescription());

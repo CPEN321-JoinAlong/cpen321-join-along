@@ -123,6 +123,16 @@ public class LoginActivity extends AppCompatActivity {
                             i.putExtra("lastName", account.getFamilyName());
                             i.putExtra("profilePic", account.getPhotoUrl().toString());
                             startActivity(i);
+                        } else {
+                            if (response.code() == 200) {
+                                try {
+                                    UserApplicationInfo profileOnLogin = new UserApplicationInfo();
+                                    profileOnLogin.populateUserInfoFromJson(response.body().string());
+                                    ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(profileOnLogin);
+                                } catch (IOException | JSONException e) {
+                                    Log.e(TAG, "Failed to load user details from backend server: " + e.getMessage());
+                                }
+                            }
                         }
                     }
 

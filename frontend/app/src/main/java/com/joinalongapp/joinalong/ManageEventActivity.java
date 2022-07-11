@@ -147,6 +147,7 @@ public class ManageEventActivity extends AppCompatActivity {
                     try {
                         JSONObject json = event.toJson();
                         json.put("token", ((UserApplicationInfo) getApplication()).getUserToken());
+                        System.out.println(json.toString());
 
                         requestManager.post("event/create", json.toString(), new RequestManager.OnRequestCompleteListener() {
                             @Override

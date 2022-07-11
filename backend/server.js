@@ -214,7 +214,7 @@ app.put("/chat/sendGroup/:userID/:eventID", async (req, res) => {
     let { userID, eventID } = req.params;
     let { timeStamp, text } = req.body;
 
-    fromUserName = await userStore.findUserByID(fromUserID).name;
+    fromUserName = await userStore.findUserByID(userID).name;
     eventName = await eventStore.findEventByID(eventID).title;
     await chatEngine.sendGroupMessage(userID, eventID, text, fromUserName, timeStamp);
 

@@ -148,25 +148,16 @@ public class Event implements Serializable, IDetailsModel {
 
     @Override
     public String toJsonString() throws JSONException {
+        return toJson().toString();
+    }
+
+    public JSONObject toJson() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("title", getTitle());
 
         JSONArray tags = new JSONArray(getStringListOfTags());
         json.put("tags", tags);
 
-        json.put("location", getLocation());
-        json.put("numberOfPeople", getNumberOfPeople());
-        json.put("description", getDescription());
-        json.put("beginningDate", getBeginningDate());
-        json.put("endDate", getEndDate());
-        json.put("publicVisibility", getPublicVisibility());
-        return json.toString();
-    }
-
-    public JSONObject toJson() throws JSONException {
-        JSONObject json = new JSONObject();
-        json.put("title", getTitle());
-        json.put("tags", getStringListOfTags());
         json.put("location", getLocation());
         json.put("numberOfPeople", getNumberOfPeople());
         json.put("description", getDescription());

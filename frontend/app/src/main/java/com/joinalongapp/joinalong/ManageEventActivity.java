@@ -150,12 +150,17 @@ public class ManageEventActivity extends AppCompatActivity {
                     try {
                         JSONObject json = event.toJson();
                         json.put("token", ((UserApplicationInfo) getApplication()).getUserToken());
-                        System.out.println(json.toString());
 
                         requestManager.post("event/" + finalPath, json.toString(), new RequestManager.OnRequestCompleteListener() {
                             @Override
                             public void onSuccess(Call call, Response response) {
                                 Intent i = new Intent(v.getContext(), MainActivity.class);
+                                try {
+                                    Log.d(TAG, response.body().string());
+                                } catch (IOException e) {
+                                    Log.e(TAG, "error printing log");
+                                }
+
                                 startActivity(i);
                             }
 

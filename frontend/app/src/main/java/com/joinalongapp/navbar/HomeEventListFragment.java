@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -27,6 +28,7 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
     private RecyclerView eventRecycler;
     private List<Event> eventList = new ArrayList<>();
     private EventAdapter eventAdapter;
+    private static final String TAG = "HomeEventListFragment";
 
     public HomeEventListFragment() {
         // Required empty public constructor
@@ -50,12 +52,64 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //TODO: change this later, this is for testing
-        //      this should be a post request for events that match the filter
-        removeMe_PopulateEventList();
+        String filter = getArguments() == null ? "empty" : getArguments().getString("filter");
+        Toast.makeText(getActivity(), filter, Toast.LENGTH_LONG).show();
+
+        if (filter.equals("Recommended")) {
+            removeMe_PopulateEventList_ForRecommended();
+        } else {
+            removeMe_PopulateEventList_ForMyEvents();
+        }
+
+        //TODO: backend being fixed, commenting out for now
+//        RequestManager requestManager = new RequestManager();
+//        String userId = ((UserApplicationInfo) getActivity().getApplication()).getProfile().getId();
+        //TODO: change the path based on filter
+//        String path = "user/" + userId + "/event";
+//        try {
+//            requestManager.get(path, new RequestManager.OnRequestCompleteListener() {
+//                @Override
+//                public void onSuccess(Call call, Response response) {
+//                    try {
+//                        if (response.code() == Constants.STATUS_HTTP_200) {
+//                            JSONObject jsonResponse = new JSONObject(response.body().string());
+//                            JSONArray jsonEvents = jsonResponse.getJSONArray("events");
+//
+//                            eventList.clear();
+//                            for (int i = 0; i < jsonEvents.length(); i++) {
+//                                eventList.add((Event) jsonEvents.get(i));
+//                            }
+//                        }
+//
+//                    } catch (IOException | JSONException e) {
+//                        Log.e(TAG, "Unable to parse events from server.");
+//                    }
+//                }
+//                @Override
+//                public void onError(Call call, IOException e) {
+//                    Log.e(TAG, "Unable to get events from server.");
+//                }
+//            });
+//        } catch (IOException e) {
+//            Log.e(TAG, "Unable to get events from server.");
+//        }
+
     }
 
-    private void removeMe_PopulateEventList() {
+    private void removeMe_PopulateEventList_ForRecommended() {
+        Event e1 = new Event();
+        e1.setTitle("Test1");
+        e1.setDescription("description1");
+        e1.setNumberOfPeople(1);
+        eventList.add(e1);
+        Event e2 = new Event();
+        e2.setTitle("Test2");
+        e2.setDescription("description2");
+        e2.setNumberOfPeople(2);
+        eventList.add(e2);
+    }
+
+    private void removeMe_PopulateEventList_ForMyEvents() {
         Event e1 = new Event();
         e1.setTitle("Test1");
         e1.setDescription("description1");

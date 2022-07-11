@@ -43,7 +43,7 @@ public class UserProfile implements Serializable, IDetailsModel {
         this.friends.addAll(friends);
     }
 
-    public void addFriendsToList(UserProfile friend) {
+    public void addFriendToList(UserProfile friend) {
         friends.add(friend);
     }
 
@@ -168,7 +168,7 @@ public class UserProfile implements Serializable, IDetailsModel {
 
         JSONArray friends = json.getJSONArray("friends");
         for (int i = 0; i < friends.length(); i++) {
-            addFriendsToList((UserProfile) friends.get(i));
+            addFriendToList((UserProfile) friends.get(i));
         }
 
         return this;

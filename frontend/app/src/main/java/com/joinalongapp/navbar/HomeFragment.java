@@ -9,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -116,18 +115,13 @@ public class HomeFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedFilter = eventFilterList.get(position);
 
-                //TODO: this should be a search for events with given filter instead
-                //      it should then update the event list, and recall setEventCards
-                Toast.makeText(getActivity(), selectedFilter, Toast.LENGTH_SHORT).show();
+                viewStateAdapter.setFilter(selectedFilter);
+                eventViewPager.setAdapter(viewStateAdapter);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                String selectedFilter = eventFilterList.get(0);
-
-                //TODO: this should be a search for events with given filter instead
-                //      it should then update the event list, and recall setEventCards
-                Toast.makeText(getActivity(), selectedFilter, Toast.LENGTH_SHORT).show();
+                //default is already taken care of
             }
         });
 
@@ -152,10 +146,10 @@ public class HomeFragment extends Fragment {
 
     private void initSpinner() {
         eventFilterList.add("Recommended");
+        //TODO: only my events for now
         eventFilterList.add("My Events");
 
-        //TODO: change this to a post request for user interests?
-        //      either that or a user was passed in through bundle/arguments
+        //TODO: change this to get user interests from global
         List<String> userInterests = new ArrayList<>();
 
         eventFilterList.addAll(userInterests);
@@ -164,9 +158,15 @@ public class HomeFragment extends Fragment {
     }
 
     private static class EventViewAdapter extends FragmentStateAdapter {
+        //TODO change this default later
+        String filter = "MyEvents";
 
         public EventViewAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
             super(fragmentManager, lifecycle);
+        }
+
+        public void setFilter(String filter) {
+            this.filter = filter;
         }
 
         @NonNull
@@ -175,7 +175,12 @@ public class HomeFragment extends Fragment {
             if (position == MAP_VIEW_TAB){
                 return new HomeEventMapFragment();
             } else {
-                return new HomeEventListFragment();
+                //TODO add event list udpate
+                Bundle bundle = new Bundle();
+                bundle.putString("filter", filter);
+                HomeEventListFragment fragment = new HomeEventListFragment();
+                fragment.setArguments(bundle);
+                return fragment;
             }
         }
 

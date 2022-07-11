@@ -5,6 +5,7 @@ import java.util.UUID;
 public class Message {
     private String message;
     private String name;
+    //todo: change to string
     private UUID id;
     private long createdAt;
     private boolean isOwner;

@@ -71,8 +71,8 @@ app.listen(port, () => {
 
 app.use(async(req, res, next) => {
     const { token } = req.body;
-    let user = await userStore.findUserForLogin(token)	
-	console.log(user)
+    let user = await userStore.findUserForLogin(token)
+    //console.log(a)
     if( user != null || req.path.includes("/user/create")) {
         next();
     } else {
@@ -83,6 +83,9 @@ app.use(async(req, res, next) => {
 //JUST FOR TESTING
 app.get("/", async (req, res) => {
     let a = {}
+    //await User.deleteMany({});
+    //await Event.deleteMany({});
+    //await Chat.deleteMany({});
     a["user"] = await User.find({});
     a["chat"] = await Chat.find({});
     a["event"] = await Event.find({});
@@ -92,9 +95,11 @@ app.get("/", async (req, res) => {
 //login - post
 app.post("/login", async (req, res) => {
     const { token } = req.body;
+    console.log("LOGIN")
+    console.log(req.body)
     let foundUser = await userStore.findUserForLogin(token);
     if (foundUser == null) res.status(404).send("Unsuccessfull");
-    else res.status(200).send({ user: foundUser });
+    else res.status(200).send(foundUser);
 });
 
 //* All the create paths for the main modules
@@ -103,7 +108,9 @@ app.post("/login", async (req, res) => {
 app.post("/user/create", async (req, res) => {
     let userObject = req.body;
     let userInfo = new UserAccount(userObject);
-    res.status(200).send(await userInfo.createUserAccount(userStore));
+    let user = await userInfo.createUserAccount(userStore)
+    console.log(user)
+    res.status(200).send(user);
 });
 
 //Creates a chat object and sends it to frontend
@@ -132,7 +139,7 @@ app.post("/event/create", async (req, res) => {
     );
     event.chat = chat._id;
     await eventStore.updateEvent(event._id, event, userStore);
-    res.status(200).send({ event });
+    res.status(200).send(event);
 });
 
 //* All the edit paths for the main modules
@@ -140,7 +147,7 @@ app.post("/event/create", async (req, res) => {
 //Edits User and sends it to frontend
 app.put("/user/:id/edit", async (req, res) => {
     let { id } = req.params;
-    await userStore.updateUserAccount(id, req.body);
+    console.log(await userStore.updateUserAccount(id, req.body));
     res.status(200).send(await userStore.findUserByID(id)); //do we need to send the
 });
 
@@ -167,7 +174,7 @@ app.get("/user/:id/home", async (req, res) => {
     if (foundUser == null) res.status(404).send("No User Found");
     else {
         let events = await eventStore.findEventByIDList(foundUser.events);
-        res.status(200).send({ events }); //need to change this to event id, name and description only
+        res.status(200).send(events); //need to change this to event id, name and description only
     }
 });
 
@@ -177,7 +184,29 @@ app.get("/user/:id", async (req, res) => {
     let foundUser = await userStore.findUserByID(id);
     if (foundUser == null) res.status(404).send("No User Found");
     else {
-        res.status(200).send({ user: foundUser });
+        res.status(200).send(foundUser);
+    }
+});
+
+//Get user list by name
+app.get("/user/name/:userName", async (req, res) => {
+    let {userName} = req.params;
+    let foundUserList = await findUserByName(userName);
+    if (foundUserList.length != 0) {
+        res.status(200).send(foundUserList)
+    } else {
+        res.status(404).send("Unsuccessfull");
+    }
+})
+
+//Sends the list of friend requests of user - get
+app.get("/user/:id/friendRequest", async (req, res) => {
+    let { id } = req.params;
+    let foundUser = await userStore.findUserByID(id);
+    if (foundUser == null) res.status(404).send("No User Found");
+    else {
+        let friendsReqList = await userStore.findFriendByIDList(foundUser.friendRequest)
+        res.status(200).send(friendsReqList);
     }
 });
 
@@ -198,7 +227,7 @@ app.get("/user/:id/friends", async (req, res) => {
 app.get("/user/:id/chat", async (req, res) => {
     let { id } = req.params;
     let chatList = await chatEngine.findChatByUser(id);
-    res.status(200).send({ chatList });
+    res.status(200).send(chatList);
 });
 
 //Chat: send message to a single user
@@ -244,7 +273,7 @@ app.put("/chat/sendGroup/:userID/:eventID", async (req, res) => {
 app.get("/chat/:id", async (req, res) => {
     let { id } = req.params;
     let chat = await chatEngine.findChatByID(id);
-    res.status(200).send({ chat });
+    res.status(200).send( chat );
 });
 
 //* Event info
@@ -253,20 +282,20 @@ app.get("/chat/:id", async (req, res) => {
 app.get("/user/:id/event", async (req, res) => {
     let { id } = req.params;
     let eventList = await eventStore.findEventByUser(id);
-    res.status(200).send({ eventList });
+    res.status(200).send( eventList );
 });
 
 //Event list: Send list of Event
 app.post("/event/filter", async (req, res) => {
     let eventList = await eventStore.findEventByDetails(req.body);
-    res.status(200).send({ eventList });
+    res.status(200).send( eventList );
 });
 
 //Event: Sends the event object (for view event details?) - get
 app.get("/event/:id", async (req, res) => {
     let { id } = req.params;
     let event = await eventStore.findEventByID(id);
-    res.status(200).send({ event });
+    res.status(200).send( event );
 });
 
 //* Accept or Reject requests (can be used for join as well) and invites
@@ -359,7 +388,7 @@ app.post("/user/:reporterID/reportEvent/:reportedID", async (req, res) => {
 
 app.get("/reports", async (req, res) => {
     let reports = await reportService.viewAllReports();
-    res.status(200).send({ reports });
+    res.status(200).send(reports);
 });
 
 app.post("/user/:id/ban", async (req, res) => {

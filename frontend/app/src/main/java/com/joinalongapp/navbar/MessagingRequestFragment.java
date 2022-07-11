@@ -1,18 +1,17 @@
 package com.joinalongapp.navbar;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
+import com.joinalongapp.adapter.MessagingRequestCustomAdapter;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.ChatDetails;
-import com.joinalongapp.adapter.MessagingRequestCustomAdapter;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 
@@ -106,7 +105,7 @@ public class MessagingRequestFragment extends Fragment {
         a.setTitle("CHAT 1");
         a.setDescription("SAMPLE DESCRIPTION");
         Tag t = new Tag("hike");
-        UserProfile u = new UserProfile(UUID.randomUUID(), "Ken", "Liang");
+        UserProfile u = new UserProfile(UUID.randomUUID().toString(), "Ken", "Liang");
         List<Tag> lt = new ArrayList<>();
         List<UserProfile> lu = new ArrayList<>();
         lt.add(t);

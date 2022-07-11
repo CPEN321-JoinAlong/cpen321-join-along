@@ -1,27 +1,24 @@
 package com.joinalongapp.viewmodel;
 
-import android.graphics.Bitmap;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class UserProfile implements Serializable, IDetailsModel {
-    private UUID id;
+    private String id;
     private String firstName;
     private String lastName;
     private String location;
     private List<Tag> tags = new ArrayList<>();
     private String description;
-    private Bitmap profilePicture;
+    private String profilePictureUrl;
     private List<UserProfile> friends = new ArrayList<>();
 
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -33,11 +30,19 @@ public class UserProfile implements Serializable, IDetailsModel {
         this.tags.addAll(tags);
     }
 
+    public void addTagToInterests(Tag tag) {
+        tags.add(tag);
+    }
+
     public void setFriends(List<UserProfile> friends) {
         this.friends.addAll(friends);
     }
 
-    public UserProfile(UUID id, String firstName, String lastName) {
+    public void addFriendsToList(UserProfile friend) {
+        friends.add(friend);
+    }
+
+    public UserProfile(String id, String firstName, String lastName) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -46,7 +51,7 @@ public class UserProfile implements Serializable, IDetailsModel {
     public UserProfile() {
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
@@ -94,13 +99,14 @@ public class UserProfile implements Serializable, IDetailsModel {
         this.description = description;
     }
 
-    public Bitmap getProfilePicture() {
-        return profilePicture;
+    public String getProfilePicture() {
+        return profilePictureUrl;
     }
 
-    public void setProfilePicture(Bitmap profilePicture) {
-        this.profilePicture = profilePicture;
+    public void setProfilePicture(String profilePicture) {
+        this.profilePictureUrl = profilePicture;
     }
+
 
     public String getFullName(){
         return firstName + " " + lastName;
@@ -121,8 +127,7 @@ public class UserProfile implements Serializable, IDetailsModel {
         }
         JSONObject json = new JSONObject();
         json.put("id", getId());
-        json.put("firstName", getFirstName());
-        json.put("lastName", getLastName());
+        json.put("name", getFullName());
         json.put("location", getLocation());
         json.put("interests", getStringListOfTags());
         json.put("description", getDescription());

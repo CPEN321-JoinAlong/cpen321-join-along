@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity{
         setContentView(binding.getRoot());
         replaceFragment(new HomeFragment());
 
-        UserProfile u = new UserProfile(UUID.randomUUID(), "Ken", "Liang");
+        UserProfile u = new UserProfile(UUID.randomUUID().toString(), "Ken", "Liang");
         Bundle bundle = new Bundle();
         bundle.putSerializable("USER", u);
 

@@ -80,7 +80,9 @@
     <string name="interests_title">Interests</string>
     <string name="description_title">Description</string>
     <string name="description_default">Description</string>
-    <string name="upload_profile_picture">Upload Profile Picture</string>
+    <string name="upload_profile_picture">Use Google Profile Picture</string>
+    <string name="use_pic">Use</string>
+    <string name="no_use_pic">Don\'t Use</string>
     <string name="create_profile_confirm">Create!</string>
 
     <!--Rideshare Management-->

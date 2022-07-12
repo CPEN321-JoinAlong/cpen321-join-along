@@ -124,7 +124,6 @@ public class FriendsListFragment extends Fragment {
             @Override
             public void onSuccess(Call call, Response response) {
 
-
                 List<UserProfile> outputFriends = new ArrayList<>();
                 try{
                     System.out.println(response);
@@ -140,7 +139,7 @@ public class FriendsListFragment extends Fragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    dataset = outputFriends;
+                                    friendsListCustomAdapter.changeDataset(outputFriends);
                                 }
                             });
                         }

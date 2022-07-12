@@ -1,5 +1,6 @@
 package com.joinalongapp.navbar;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,8 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import okhttp3.Call;
@@ -82,7 +85,7 @@ public class FriendsRequestFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         try {
-            initDataset();
+            initDataset(getActivity());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,7 +112,7 @@ public class FriendsRequestFragment extends Fragment {
 
         return rootView;
     }
-    private void initDataset() throws IOException {
+    private void initDataset(Activity activity) throws IOException {
         // TODO: GET LIST OF USERS
 
         UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
@@ -121,20 +124,34 @@ public class FriendsRequestFragment extends Fragment {
         requestManager.get("user/" + id + "/friendRequest", userToken, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
-                System.out.println(response.toString());
-                System.out.println(response.body().toString());
+
                 List<UserProfile> outputFriends = new ArrayList<>();
                 try{
+                    //System.out.println(response.body().string());
                     JSONArray jsonArray = new JSONArray(response.body().string());
                     for(int i = 0; i < jsonArray.length(); i++){
                         UserProfile userProfile = new UserProfile();
                         userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
                         outputFriends.add(userProfile);
                     }
+
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    friendsRequestCustomAdapter.changeDataset(outputFriends);
+                                }
+                            });
+                        }
+                    }, 0, 1000);
+
+
                 } catch(JSONException | IOException e){
                     e.printStackTrace();
                 }
-                dataset = outputFriends;
+
 
             }
 

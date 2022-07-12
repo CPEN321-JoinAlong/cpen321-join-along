@@ -2,6 +2,7 @@ package com.joinalongapp.joinalong;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.AsyncTask;
@@ -25,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -37,7 +39,8 @@ public class SearchScreenActivity extends AppCompatActivity {
     private static SearchView searchView;
     private ImageView returnButton;
     private static final int SEARCH_QUERY_THRESHOLD = 1;
-    private static String theBaseUrl;
+    private static String myOnSearchButtonUrlPath;
+    private static String mySuggestionUrlPath;
     private SearchScreenActivity.LayoutManagerType layoutManagerType;
     private SearchPeopleCustomAdapter searchPeopleCustomAdapter;
     private RecyclerView recyclerView;
@@ -53,12 +56,11 @@ public class SearchScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
 
-        String token = ((UserApplicationInfo) getApplication()).getUserToken();
+        String userToken = ((UserApplicationInfo) getApplication()).getUserToken();
         UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
 
         Activity activity = this;
         initElements();
-        initDataset(activity, token);
 
         setUpPageForMode();
 
@@ -85,11 +87,10 @@ public class SearchScreenActivity extends AppCompatActivity {
 
 
 
-
-
         searchPeopleCustomAdapter = new SearchPeopleCustomAdapter(dataset);
-
         recyclerView.setAdapter(searchPeopleCustomAdapter);
+
+
 
 
 
@@ -100,7 +101,7 @@ public class SearchScreenActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
+                onSearchButtonPressed(activity, userToken, query);
                 return false;
 
             }
@@ -108,7 +109,7 @@ public class SearchScreenActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.length() >= SEARCH_QUERY_THRESHOLD) {
-                    new FetchSearchTermSuggestionsTask().execute(newText);
+                    new FetchSearchTermSuggestionsTask(userToken, activity).execute(newText);
                 } else {
                     searchView.getSuggestionsAdapter().changeCursor(null);
                 }
@@ -132,6 +133,14 @@ public class SearchScreenActivity extends AppCompatActivity {
     //https://stackoverflow.com/questions/37657161/how-to-implement-search-view-autocomplete-in-actionbar-using-http-request/37660805#37660805
     public static class FetchSearchTermSuggestionsTask extends AsyncTask<String, Void, Cursor> {
 
+        private String userToken;
+        private WeakReference<Context> activity;
+
+        FetchSearchTermSuggestionsTask(String userToken, Context activity){
+            this.userToken = userToken;
+            this.activity = new WeakReference<>(activity);
+        }
+
         private static final String[] sAutocompleteColNames = new String[] {
                 BaseColumns._ID,
                 SearchManager.SUGGEST_COLUMN_TEXT_1
@@ -141,6 +150,49 @@ public class SearchScreenActivity extends AppCompatActivity {
         protected Cursor doInBackground(String... params) {
 
             MatrixCursor cursor = new MatrixCursor(sAutocompleteColNames);
+
+            RequestManager requestManager = new RequestManager();
+
+            try {
+
+                requestManager.get(myOnSearchButtonUrlPath + params[0], userToken, new RequestManager.OnRequestCompleteListener() {
+                    @Override
+                    public void onSuccess(Call call, Response response) {
+                        List<UserProfile> outputFriends = new ArrayList<>();
+                        try{
+                            JSONArray jsonArray = new JSONArray(response.body().string());
+                            for(int i = 0; i < jsonArray.length(); i++){
+                                UserProfile userProfile = new UserProfile();
+                                userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                                outputFriends.add(userProfile);
+                            }
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    ((Activity) activity.get()).runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //TODO: get list of names in user profile and display it here
+
+                                        }
+                                    });
+                                }
+                            }, 0);
+                            System.out.println("efwa");
+                        } catch(JSONException | IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Call call, IOException e) {
+                        System.out.println(call.toString());
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
 
             //TODO: DO A GET
             //TODO: remove me for testing only
@@ -186,11 +238,14 @@ public class SearchScreenActivity extends AppCompatActivity {
 
         if (theMode == SearchMode.EVENT_MODE) {
             searchView.setQueryHint("Search Events");
-            theBaseUrl = "EVENT URL CHANGE ME";
+            myOnSearchButtonUrlPath = "";
+            mySuggestionUrlPath = "";
+
         }
         if (theMode == SearchMode.USER_MODE) {
             searchView.setQueryHint("Search Users");
-            theBaseUrl = "USER URL CHANGE ME";
+            myOnSearchButtonUrlPath = "user/name/";
+            mySuggestionUrlPath = "";
         }
     }
 
@@ -199,12 +254,12 @@ public class SearchScreenActivity extends AppCompatActivity {
         return (SearchMode) getIntent().getExtras().get("mode");
     }
 
-    private void initDataset(Activity activity, String token){
+    private void onSearchButtonPressed(Activity activity, String token, String query){
         RequestManager requestManager = new RequestManager();
 
         try {
 
-            requestManager.get("user/" , token, new RequestManager.OnRequestCompleteListener() {
+            requestManager.get(myOnSearchButtonUrlPath + query, token, new RequestManager.OnRequestCompleteListener() {
                 @Override
                 public void onSuccess(Call call, Response response) {
                     List<UserProfile> outputFriends = new ArrayList<>();
@@ -225,7 +280,7 @@ public class SearchScreenActivity extends AppCompatActivity {
                                     }
                                 });
                             }
-                        }, 0, 1000);
+                        }, 0);
                         System.out.println("efwa");
                     } catch(JSONException | IOException e){
                         e.printStackTrace();

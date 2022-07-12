@@ -1,9 +1,7 @@
 package com.joinalongapp.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,6 @@ import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.navbar.ViewProfileFragment;
-import com.joinalongapp.viewmodel.Message;
 import com.joinalongapp.viewmodel.UserProfile;
 import com.squareup.picasso.Picasso;
 
@@ -32,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -124,7 +120,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                                 }
                             });
                         }
-                    }, 0, 1000);
+                    }, 0);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -169,7 +165,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                                 }
                             });
                         }
-                    }, 0, 1000);
+                    }, 0);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

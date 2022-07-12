@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -145,7 +144,7 @@ public class FriendsRequestFragment extends Fragment {
                                 }
                             });
                         }
-                    }, 0, 1000);
+                    }, 0);
 
 
                 } catch(JSONException | IOException e){

@@ -1,7 +1,6 @@
 package com.joinalongapp.navbar;
 
 import android.os.Bundle;
-import android.util.JsonReader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -143,7 +141,7 @@ public class FriendsListFragment extends Fragment {
                                 }
                             });
                         }
-                    }, 0, 1000);
+                    }, 0);
                     System.out.println("efwa");
 
                 } catch(JSONException | IOException e){

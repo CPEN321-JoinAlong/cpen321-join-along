@@ -93,4 +93,9 @@ public class ReportDetails implements Serializable, IDetailsModel {
 
         return json.toString();
     }
+
+    @Override
+    public IDetailsModel populateDetailsFromJson(String jsonString) throws JSONException {
+        return null;
+    }
 }

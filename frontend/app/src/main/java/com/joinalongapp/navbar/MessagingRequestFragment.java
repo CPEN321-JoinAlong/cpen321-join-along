@@ -1,11 +1,6 @@
 package com.joinalongapp.navbar;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.joinalongapp.adapter.MessagingRequestCustomAdapter;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.ChatDetails;
-import com.joinalongapp.adapter.MessagingRequestCustomAdapter;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -108,23 +101,23 @@ public class MessagingRequestFragment extends Fragment {
     private void initDataset(){
         // TODO: GET LIST OF USERS
         ChatDetails a = new ChatDetails();
-        a.setId(UUID.randomUUID());
+        a.setId("123");
         a.setTitle("CHAT 1");
         a.setDescription("SAMPLE DESCRIPTION");
         Tag t = new Tag("hike");
-        UserProfile u = new UserProfile(UUID.randomUUID().toString(), "Ken", "Liang");
-        UserProfile ub = new UserProfile(UUID.randomUUID().toString(), "Justin", "D");
+        UserProfile u = new UserProfile("123", "Ken", "Liang");
+        UserProfile ub = new UserProfile("456", "Justin", "D");
         List<Tag> lt = new ArrayList<>();
-        List<UserProfile> lu = new ArrayList<>();
-        List<UserProfile> lb = new ArrayList<>();
+        List<String> lu = new ArrayList<>();
+        List<String> lb = new ArrayList<>();
         lt.add(t);
-        lu.add(u);
+        lu.add("123");
 
         a.setTags(lt);
         a.setPeople(lu);
-        lb.add(ub);
+        lb.add("456");
         ChatDetails b = new ChatDetails();
-        b.setId(UUID.randomUUID());
+        b.setId("456");
         b.setTitle("yes");
         b.setPeople(lb);
         ChatDetails c = new ChatDetails();

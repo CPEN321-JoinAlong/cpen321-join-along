@@ -105,7 +105,7 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
         return chatDetails.size();
     }
 
-    private void deleteRequest(UUID uuid){
+    private void deleteRequest(String uuid){
         for (Iterator<ChatDetails> iterator = chatDetails.iterator(); iterator.hasNext(); ) {
             ChatDetails value = iterator.next();
             if (value.getId() == uuid) {

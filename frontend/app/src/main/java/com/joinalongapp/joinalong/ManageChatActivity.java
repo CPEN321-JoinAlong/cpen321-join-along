@@ -140,7 +140,34 @@ public class ManageChatActivity extends AppCompatActivity {
         chatDescription.setText(chatDetails.getDescription());
 
         List<String> tags = chatDetails.getStringListOfTags();
-        List<String> people = chatDetails.getStringListOfPeople();
+
+        List<String> peopleIds = chatDetails.getPeople();
+        List<String> people = new ArrayList<>();
+        RequestManager requestManager = new RequestManager();
+        String userToken = ((UserApplicationInfo) getApplication()).getUserToken();
+        for (String friendId : peopleIds) {
+            try {
+                requestManager.get("user/" + friendId, userToken, new RequestManager.OnRequestCompleteListener() {
+                    @Override
+                    public void onSuccess(Call call, Response response) {
+                        try {
+                            JSONObject userJson = new JSONObject(response.body().string());
+                            people.add(userJson.getString("name"));
+                        } catch (IOException | JSONException e) {
+                            //todo
+                        }
+                    }
+
+                    @Override
+                    public void onError(Call call, IOException e) {
+                        //todo
+                    }
+                });
+            } catch (IOException e) {
+                //todo
+            }
+
+        }
 
         for(String tag : tags){
             Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, tagChipGroup, false);

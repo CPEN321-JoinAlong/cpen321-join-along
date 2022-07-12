@@ -1,19 +1,30 @@
 package com.joinalongapp.navbar;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.ChatDetails;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -107,7 +118,35 @@ public class ViewChatFragment extends Fragment {
             tags.addView(chip);
         }
 
-        for(String friend : chatDetails.getStringListOfPeople()){
+        List<String> peopleIds = chatDetails.getPeople();
+        List<String> friendNames = new ArrayList<>();
+        RequestManager requestManager = new RequestManager();
+        String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
+        for (String friendId : peopleIds) {
+            try {
+                requestManager.get("user/" + friendId, userToken, new RequestManager.OnRequestCompleteListener() {
+                    @Override
+                    public void onSuccess(Call call, Response response) {
+                        try {
+                            JSONObject userJson = new JSONObject(response.body().string());
+                            friendNames.add(userJson.getString("name"));
+                        } catch (IOException | JSONException e) {
+                            //todo
+                        }
+                    }
+
+                    @Override
+                    public void onError(Call call, IOException e) {
+                        //todo
+                    }
+                });
+            } catch (IOException e) {
+                //todo
+            }
+
+        }
+
+        for(String friend : friendNames){
             Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, friends, false);
             chip.setText(friend);
             friends.addView(chip);

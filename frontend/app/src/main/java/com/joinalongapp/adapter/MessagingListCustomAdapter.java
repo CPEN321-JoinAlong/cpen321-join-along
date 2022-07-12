@@ -16,16 +16,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.joinalong.MessageActivity;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.Iterator;
 import java.util.List;
 
 public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingListCustomAdapter.ViewHolder>{
-    private List<UserProfile> users;
+    private List<ChatDetails> chatDetailsList;
 
-    public MessagingListCustomAdapter(List<UserProfile> inputDataSet){
-        users = inputDataSet;
+    public MessagingListCustomAdapter(List<ChatDetails> inputDataSet){
+        chatDetailsList = inputDataSet;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -64,7 +65,7 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
 
     @Override
     public void onBindViewHolder(@NonNull MessagingListCustomAdapter.ViewHolder holder, int position) {
-        holder.getName().setText(users.get(position).getFullName());
+        holder.getName().setText(chatDetailsList.get(position).getTitle());
         holder.getSettings().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,14 +76,14 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
                     public boolean onMenuItemClick(MenuItem item) {
                         switch(item.getItemId()){
                             case R.id.menu1:
-                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getFullName());
+                                Log.d("FriendsAdapter", chatDetailsList.get(holder.getBindingAdapterPosition()).getTitle());
 
                                 Log.d("FriendsAdapter", "MENU1");
-                                deleteFriend(users.get(holder.getAdapterPosition()).getId());
+                                //deleteFriend(chatDetailsList.get(holder.getAdapterPosition()).getId());
                                 return true;
 
                             case R.id.menu2:
-                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getFullName());
+                                Log.d("FriendsAdapter", chatDetailsList.get(holder.getBindingAdapterPosition()).getTitle());
                                 Log.d("FriendsAdapter", "MENU2");
                                 return true;
 
@@ -108,13 +109,18 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
 
     @Override
     public int getItemCount() {
-        return users.size();
+        if(chatDetailsList == null){
+            return 0;
+        }
+        else{
+            return chatDetailsList.size();
+        }
     }
 
     private void deleteFriend(String uuid){
-        for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
-            UserProfile value = iterator.next();
-            if (value.getId() == uuid) {
+        for (Iterator<ChatDetails> iterator = chatDetailsList.iterator(); iterator.hasNext(); ) {
+            ChatDetails value = iterator.next();
+            if (value.getId().toString() == uuid) {
                 iterator.remove();
             }
         }

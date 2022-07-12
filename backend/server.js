@@ -76,6 +76,9 @@ app.use(async (req, res, next) => {
     let token;
     if (Object.keys(req.body).length !== 0) token = req.body.token;
     else token = req.headers.token;
+    console.log(req.body)
+    console.log(req.headers)
+    console.log(token)
     let user = await userStore.findUserForLogin(token);
     if (
         user != null ||
@@ -216,11 +219,11 @@ app.get("/user/:id", async (req, res) => {
 //Get user list by name
 app.get("/user/name/:userName", async (req, res) => {
     let { userName } = req.params;
-    let foundUserList = await findUserByName(userName);
+    let foundUserList = await userStore.findUserByName(userName);
     if (foundUserList.length != 0) {
         res.status(200).send(foundUserList);
     } else {
-        res.status(404).send("Unsuccessfull");
+        res.status(404).send(foundUserList);
     }
 });
 

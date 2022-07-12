@@ -1,5 +1,6 @@
 package com.joinalongapp.joinalong;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -12,6 +13,7 @@ import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,10 +21,21 @@ import com.joinalongapp.adapter.FriendsRequestCustomAdapter;
 import com.joinalongapp.adapter.SearchPeopleCustomAdapter;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.navbar.FriendsRequestFragment;
+import com.joinalongapp.navbar.ViewProfileFragment;
 import com.joinalongapp.viewmodel.UserProfile;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class SearchScreenActivity extends AppCompatActivity {
     private static SearchView searchView;
@@ -31,6 +44,7 @@ public class SearchScreenActivity extends AppCompatActivity {
     private static String theBaseUrl;
     private SearchScreenActivity.LayoutManagerType layoutManagerType;
     private SearchPeopleCustomAdapter searchPeopleCustomAdapter;
+    private RecyclerView recyclerView;
     private List<UserProfile> dataset;
 
 
@@ -48,6 +62,9 @@ public class SearchScreenActivity extends AppCompatActivity {
 
         setUpPageForMode();
 
+        String token = ((UserApplicationInfo) getApplication()).getUserToken();
+        UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
+
         searchView.requestFocus();
         searchView.setSuggestionsAdapter(new SimpleCursorAdapter(
                 SearchScreenActivity.this, android.R.layout.simple_list_item_1, null,
@@ -55,7 +72,7 @@ public class SearchScreenActivity extends AppCompatActivity {
                 new int[] { android.R.id.text1 }));
 
         layoutManagerType = SearchScreenActivity.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-        RecyclerView recyclerView = findViewById(R.id.searchPeopleRecyclerView);
+
 
         if(savedInstanceState != null){
             layoutManagerType = (SearchScreenActivity.LayoutManagerType) savedInstanceState.getSerializable("layoutManager");
@@ -63,30 +80,64 @@ public class SearchScreenActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        searchPeopleCustomAdapter = new SearchPeopleCustomAdapter(dataset);
+
+
+        FragmentTransaction fragmentTransaction = this.getSupportFragmentManager().beginTransaction();
+
+
+
+
+
+        searchPeopleCustomAdapter = new SearchPeopleCustomAdapter(dataset, fragmentTransaction);
+
         recyclerView.setAdapter(searchPeopleCustomAdapter);
+
+
+
+        Activity activity = this;
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 RequestManager requestManager = new RequestManager();
-                /**
-                requestManager.get("user/name/" + query, new RequestManager.OnRequestCompleteListener() {
-                    @Override
-                    public void onSuccess(Call call, Response response) {
 
-                    }
+                try {
+                    requestManager.get("user/name/" + query, token, new RequestManager.OnRequestCompleteListener() {
+                        @Override
+                        public void onSuccess(Call call, Response response) {
+                            List<UserProfile> outputFriends = new ArrayList<>();
+                            try{
+                                JSONArray jsonArray = new JSONArray(response.body().string());
+                                for(int i = 0; i < jsonArray.length(); i++){
+                                    UserProfile userProfile = new UserProfile();
+                                    userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                                    outputFriends.add(userProfile);
+                                }
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                searchPeopleCustomAdapter.changeDataset(outputFriends);
+                                            }
+                                        });
+                                    }
+                                }, 0, 1000);
+                                System.out.println("efwa");
+                            } catch(JSONException | IOException e){
+                                e.printStackTrace();
+                            }
+                        }
 
-                    @Override
-                    public void onError(Call call, IOException e) {
-
-                    }
-                })
-                return true;
-                 **/
-
-
-
+                        @Override
+                        public void onError(Call call, IOException e) {
+                            System.out.println(call.toString());
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return false;
 
             }
@@ -159,6 +210,8 @@ public class SearchScreenActivity extends AppCompatActivity {
     private void initElements() {
         searchView = findViewById(R.id.searchBar);
         returnButton = findViewById(R.id.searchBackButton);
+        recyclerView = findViewById(R.id.searchPeopleRecyclerView);
+
     }
 
     public enum SearchMode {
@@ -185,12 +238,7 @@ public class SearchScreenActivity extends AppCompatActivity {
     }
 
     private void initDataset(){
-        UserProfile a = new UserProfile();
-        UserProfile b = new UserProfile();
-        a.setFirstName("Ken");
-        a.setLastName("Liang");
-        b.setFirstName("a");
-        b.setLastName("b");
+
         
     }
 }

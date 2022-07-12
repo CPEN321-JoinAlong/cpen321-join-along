@@ -6,6 +6,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Message implements IDetailsModel {
+    public Message() {
+    }
+
     public String getMessage() {
         return message;
     }

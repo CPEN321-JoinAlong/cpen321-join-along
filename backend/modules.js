@@ -171,8 +171,11 @@ class UserStore {
     }
 
     async findUserByName(userName) {
-        return await Event.find({
-            name: userName,
+        let capName = titleCase(userName)
+        console.log(capName)
+        return await User.find({
+           // name: `/${capName}*/`,
+            name: {$regex: capName} 
         });
     }
 
@@ -562,6 +565,14 @@ function removeItemOnce(arr, value) {
         arr.splice(index, 1);
     }
     return arr;
+}
+
+function titleCase(str) {
+    var splitStr = str.toLowerCase().split(' ');
+    for (var i = 0; i < splitStr.length; i++) {
+         splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);                       
+    }
+     return splitStr.join(' ');     
 }
 
 module.exports = {

@@ -25,6 +25,7 @@ public class Event implements Serializable, IDetailsModel {
     private Date endDate;
     private Boolean publicVisibility;
     private int numberOfPeopleAllowed;
+    //TODO: probably should make constructor instantiate these, or modify the existing setters to null check them
     private List<Tag> tags = new ArrayList<>();
     private List<String> members = new ArrayList<>();
     private String description;

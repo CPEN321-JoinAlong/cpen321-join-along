@@ -136,10 +136,14 @@
     <string name="view_events_begin_date_title">Begin Date</string>
     <string name="view_events_end_date_title">End Date</string>
     <string name="join_event">Join!</string>
+    <string name="book_rideshare">Book Rideshare</string>
 
+    <!--TODO: idk if this is best place for id-->
     <!--LOGIN-->
     <string name="server_client_id">693671271113-s7u6caoamjhu5a7lbm9fnvgoldoupn88.apps.googleusercontent.com</string>
 
+    <!--Rideshare Select-->
+    <string name="rideshare_select_title">Select Rideshare</string>
 
 
 </resources>

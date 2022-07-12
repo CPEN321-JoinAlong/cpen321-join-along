@@ -6,6 +6,10 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.Calendar;
 
+/**
+ * May be changed a lot in future. Marking deprecated for now
+ */
+@Deprecated
 public class RideshareDetails implements Serializable, IDetailsModel {
     private String title;
     private String pickupLocation;

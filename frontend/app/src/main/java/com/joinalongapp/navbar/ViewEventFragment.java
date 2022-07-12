@@ -1,6 +1,7 @@
 package com.joinalongapp.navbar;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.Constants;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.SelectRideshareActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.Tag;
@@ -55,6 +57,7 @@ public class ViewEventFragment extends Fragment {
     private TextView numPeople;
     private ImageButton backButton;
     private Button joinButton;
+    private Button rideshareButton;
     private Event event;
 
     public ViewEventFragment() {
@@ -99,6 +102,8 @@ public class ViewEventFragment extends Fragment {
 //        Event event = removeMeInitEvent();
 //        initEventDetails(event);
 
+        initButtonVisibility();
+
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,6 +140,8 @@ public class ViewEventFragment extends Fragment {
                                             @Override
                                             public void run() {
                                                 joinButton.setVisibility(View.GONE);
+                                                rideshareButton.setVisibility(View.VISIBLE);
+
                                                 new AlertDialog.Builder(activity)
                                                         .setTitle("Event Successfully Joined!")
                                                         .setMessage("Congratulations, you are now a part of " + event.getTitle())
@@ -146,8 +153,16 @@ public class ViewEventFragment extends Fragment {
                                                         })
                                                         .create()
                                                         .show();
+
+                                                String userName = userApplicationInfo.getProfile().getFullName();
+                                                Chip chip = new Chip(activity);
+                                                chip.setText(userName);
+                                                members.addView(chip);
                                             }
                                         });
+
+
+
                                     }
                                 }, 0);
                             } else {
@@ -189,7 +204,27 @@ public class ViewEventFragment extends Fragment {
             }
         });
 
+        rideshareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), SelectRideshareActivity.class);
+                startActivity(i);
+            }
+        });
+
         return view;
+    }
+
+    private void initButtonVisibility() {
+        UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
+        String userId = userApplicationInfo.getProfile().getId();
+        if (event.getMembers().contains(userId)) {
+            joinButton.setVisibility(View.GONE);
+            rideshareButton.setVisibility(View.VISIBLE);
+        } else {
+            joinButton.setVisibility(View.VISIBLE);
+            rideshareButton.setVisibility(View.GONE);
+        }
     }
 
     private Event removeMeInitEvent() {
@@ -219,6 +254,7 @@ public class ViewEventFragment extends Fragment {
         numPeople = view.findViewById(R.id.eventViewNumPeople);
         backButton = view.findViewById(R.id.viewEventBackButton);
         joinButton = view.findViewById(R.id.joinEventButton);
+        rideshareButton = view.findViewById(R.id.viewEventBookRideshareButton);
     }
 
     private void initEventDetails(Event event) {
@@ -300,6 +336,7 @@ public class ViewEventFragment extends Fragment {
                                         @Override
                                         public void run() {
                                             memberChip.setText(memberName);
+
                                         }
                                     });
                                 }

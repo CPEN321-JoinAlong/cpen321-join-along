@@ -8,6 +8,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,17 +42,21 @@ public class ManageChatActivity extends AppCompatActivity {
     private ChipGroup friendChipGroup;
     private ImageButton cancelButton;
     private Button submitButton;
+    private List<UserProfile> trackFriends;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_chat);
 
+        String token = ((UserApplicationInfo) getApplication()).getUserToken();
+        UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
+
         initElement();
 
         Bundle info = getIntent().getExtras();
         Boolean manageOption = info.getBoolean("EDIT_OPTION");
-        UserProfile user = (UserProfile) info.getSerializable("USER");
+        //UserProfile user = (UserProfile) info.getSerializable("USER");
 
         if(manageOption){
             ChatDetails chatDetails = (ChatDetails) info.getSerializable("CHAT_DETAILS");
@@ -112,6 +117,7 @@ public class ManageChatActivity extends AppCompatActivity {
                     ChatDetails resultChat = new ChatDetails();
 
                     resultChat.setDescription(chatDescription.getText().toString());
+
                     //resultChat.setTags(chipGroupToList(tagChipGroup));
                     resultChat.setTitle(chatTitle.getText().toString());
                     // TODO: need to backwards associate string names to User object (maybe mapping between chips and user?)
@@ -131,7 +137,7 @@ public class ManageChatActivity extends AppCompatActivity {
         chatDescription = findViewById(R.id.manageChatEditTextDescription);
         friendAutoComplete = findViewById(R.id.autoCompleteFriendText);
         friendChipGroup = findViewById(R.id.manageTags);
-        cancelButton = findViewById(R.id.cancelButton);
+        cancelButton = findViewById(R.id.manageChatCancelButton);
         submitButton = findViewById(R.id.submitManageChatButton);
     }
 
@@ -250,6 +256,7 @@ public class ManageChatActivity extends AppCompatActivity {
                 autoCompleteTextView.setText("");
 
                 Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, chipGroup, false);
+
                 chip.setText((String) parent.getItemAtPosition(position));
                 chip.setOnCloseIconClickListener(new View.OnClickListener() {
                     @Override

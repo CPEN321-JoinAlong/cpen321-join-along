@@ -30,7 +30,7 @@ public class SearchPeopleCustomAdapter extends RecyclerView.Adapter<SearchPeople
     private Fragment fragment;
 
 
-    public SearchPeopleCustomAdapter(List<UserProfile> dataset, FragmentTransaction context) {
+    public SearchPeopleCustomAdapter(List<UserProfile> dataset) {
         this.dataset = dataset;
         this.context = context;
         this.fragment = fragment;
@@ -68,8 +68,7 @@ public class SearchPeopleCustomAdapter extends RecyclerView.Adapter<SearchPeople
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        System.out.println(position);
-        System.out.println(holder.itemView);
+
         holder.getName().setText((dataset.get(holder.getBindingAdapterPosition())).getFullName());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -82,13 +81,13 @@ public class SearchPeopleCustomAdapter extends RecyclerView.Adapter<SearchPeople
                 info.putBoolean("HIDE", false);
                 info.putSerializable("USER_INFO", dataset.get(holder.getBindingAdapterPosition()));
                 viewProfileFragment.setArguments(info);
-                
-
-                FragmentTransaction fragmentTransaction = context;
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frameLayoutSearch, viewProfileFragment);
+                //fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frameLayoutSearch));
+                //fragmentTransaction.add(R.id.frameLayoutSearch, viewProfileFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
-
 
             }
         });

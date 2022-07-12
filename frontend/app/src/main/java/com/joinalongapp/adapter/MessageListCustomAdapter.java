@@ -147,4 +147,8 @@ public class MessageListCustomAdapter extends RecyclerView.Adapter {
             return messages.size();
         }
     }
+
+    public void changeDataset(List<Message> inputMessages){
+        messages = inputMessages;
+    }
 }

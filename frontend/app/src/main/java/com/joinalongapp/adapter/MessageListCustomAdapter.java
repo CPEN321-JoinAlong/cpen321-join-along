@@ -140,6 +140,11 @@ public class MessageListCustomAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return messages.size();
+        if(messages == null){
+            return 0;
+        }
+        else{
+            return messages.size();
+        }
     }
 }

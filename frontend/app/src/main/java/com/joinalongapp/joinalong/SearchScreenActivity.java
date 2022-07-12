@@ -12,6 +12,14 @@ import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.joinalongapp.adapter.FriendsRequestCustomAdapter;
+import com.joinalongapp.adapter.SearchPeopleCustomAdapter;
+import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.navbar.FriendsRequestFragment;
+import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +29,22 @@ public class SearchScreenActivity extends AppCompatActivity {
     private ImageView returnButton;
     private static final int SEARCH_QUERY_THRESHOLD = 1;
     private static String theBaseUrl;
+    private SearchScreenActivity.LayoutManagerType layoutManagerType;
+    private SearchPeopleCustomAdapter searchPeopleCustomAdapter;
+    private List<UserProfile> dataset;
 
+
+
+    private enum LayoutManagerType {
+        LINEAR_LAYOUT_MANAGER
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
 
         initElements();
+        initDataset();
 
         setUpPageForMode();
 
@@ -37,10 +54,41 @@ public class SearchScreenActivity extends AppCompatActivity {
                 new String[] { SearchManager.SUGGEST_COLUMN_TEXT_1 },
                 new int[] { android.R.id.text1 }));
 
+        layoutManagerType = SearchScreenActivity.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+        RecyclerView recyclerView = findViewById(R.id.searchPeopleRecyclerView);
+
+        if(savedInstanceState != null){
+            layoutManagerType = (SearchScreenActivity.LayoutManagerType) savedInstanceState.getSerializable("layoutManager");
+        }
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        searchPeopleCustomAdapter = new SearchPeopleCustomAdapter(dataset);
+        recyclerView.setAdapter(searchPeopleCustomAdapter);
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                RequestManager requestManager = new RequestManager();
+                /**
+                requestManager.get("user/name/" + query, new RequestManager.OnRequestCompleteListener() {
+                    @Override
+                    public void onSuccess(Call call, Response response) {
+
+                    }
+
+                    @Override
+                    public void onError(Call call, IOException e) {
+
+                    }
+                })
+                return true;
+                 **/
+
+
+
                 return false;
+
             }
 
             @Override
@@ -61,6 +109,8 @@ public class SearchScreenActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+
 
     }
 
@@ -132,5 +182,15 @@ public class SearchScreenActivity extends AppCompatActivity {
     private SearchMode getSearchMode() {
         assert(getIntent().getExtras() != null);
         return (SearchMode) getIntent().getExtras().get("mode");
+    }
+
+    private void initDataset(){
+        UserProfile a = new UserProfile();
+        UserProfile b = new UserProfile();
+        a.setFirstName("Ken");
+        a.setLastName("Liang");
+        b.setFirstName("a");
+        b.setLastName("b");
+        
     }
 }

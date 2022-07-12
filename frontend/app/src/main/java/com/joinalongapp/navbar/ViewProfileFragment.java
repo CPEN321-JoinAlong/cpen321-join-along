@@ -1,19 +1,35 @@
 package com.joinalongapp.navbar;
 
+import android.app.DownloadManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.ReportActivity;
+import com.joinalongapp.joinalong.UserApplicationInfo;
+import com.joinalongapp.viewmodel.ReportDetails;
 import com.joinalongapp.viewmodel.UserProfile;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,6 +53,9 @@ public class ViewProfileFragment extends Fragment {
     private ImageView profilePicture;
     private ChipGroup manageTags;
     private TextView description;
+    private Button report;
+    private Button addFriend;
+    private boolean hide;
 
     public ViewProfileFragment() {
         // Required empty public constructor
@@ -67,6 +86,7 @@ public class ViewProfileFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
             userProfile = (UserProfile) getArguments().getSerializable("USER_INFO");
+            hide = (boolean) getArguments().getBoolean("HIDE");
         }
     }
 
@@ -76,6 +96,12 @@ public class ViewProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_profile, container, false);
         initDataset(view);
+
+        String token = ((UserApplicationInfo) (getActivity().getApplication())).getUserToken();
+        UserProfile globalUserProfile = ((UserApplicationInfo) (getActivity().getApplication())).getProfile();
+        String userId = globalUserProfile.getId();
+        String otherUserId = userProfile.getId();
+
         if(userProfile.getInterests() != null){
             addTagsToChipGroup();
         }
@@ -83,6 +109,47 @@ public class ViewProfileFragment extends Fragment {
 
         profileName.setText(userProfile.getFullName());
         description.setText(userProfile.getDescription());
+
+        report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent reportIntent = new Intent(getActivity(), ReportActivity.class);
+                reportIntent.putExtra("REPORT_PERSON", true);
+                startActivity(reportIntent);
+            }
+        });
+        if(hide){
+            addFriend.setVisibility(View.INVISIBLE);
+        }
+        addFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addFriend.setVisibility(View.INVISIBLE);
+                RequestManager requestManager = new RequestManager();
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("token", token);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    requestManager.put("user/addFriend/" + userId + "/" + otherUserId, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                        @Override
+                        public void onSuccess(Call call, Response response) {
+                            System.out.println(response.toString());
+                        }
+
+                        @Override
+                        public void onError(Call call, IOException e) {
+                            System.out.println(call.toString());
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
 
 
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +168,8 @@ public class ViewProfileFragment extends Fragment {
         profilePicture = view.findViewById(R.id.profilePicture);
         manageTags  = view.findViewById(R.id.manageTags);
         description = view.findViewById(R.id.description);
+        report = view.findViewById(R.id.blockUserButton);
+        addFriend = view.findViewById(R.id.addFriendButton);
     }
 
     private void addTagsToChipGroup(){
@@ -110,6 +179,4 @@ public class ViewProfileFragment extends Fragment {
             manageTags.addView(chip);
         }
     }
-
-
 }

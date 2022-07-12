@@ -16,6 +16,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
+import com.joinalongapp.joinalong.ManageChatActivity;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.SearchScreenActivity;
 
@@ -93,8 +94,8 @@ public class MessagingFragment extends Fragment {
         addFriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent searchUsers = new Intent(getActivity(), SearchScreenActivity.class);
-                searchUsers.putExtra("mode", SearchScreenActivity.SearchMode.USER_MODE);
+                Intent searchUsers = new Intent(getActivity(), ManageChatActivity.class);
+                searchUsers.putExtra("EDIT_OPTION", false);
                 startActivity(searchUsers);
             }
         });

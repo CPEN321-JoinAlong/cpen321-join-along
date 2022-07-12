@@ -10,12 +10,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.adapter.FriendsRequestCustomAdapter;
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.UserProfile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,7 +78,11 @@ public class FriendsRequestFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        initDataset();
+        try {
+            initDataset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -96,29 +106,28 @@ public class FriendsRequestFragment extends Fragment {
 
         return rootView;
     }
-    private void initDataset(){
+    private void initDataset() throws IOException {
         // TODO: GET LIST OF USERS
-        UserProfile a = new UserProfile(UUID.randomUUID().toString(), "Ken", "");
-        a.setInterests(new ArrayList<>());
-        UserProfile b = new UserProfile(UUID.randomUUID().toString(), "Justin", "");
-        UserProfile c = new UserProfile(UUID.randomUUID().toString(), "Kamran", "");
-        UserProfile d = new UserProfile(UUID.randomUUID().toString(), "Zoeb", "");
-        UserProfile e = new UserProfile(UUID.randomUUID().toString(), "Ken", "");
-        UserProfile f = new UserProfile(UUID.randomUUID().toString(), "Justin", "");
-        UserProfile g = new UserProfile(UUID.randomUUID().toString(), "Kamran", "");
-        UserProfile h = new UserProfile(UUID.randomUUID().toString(), "Zoeb", "");
-        UserProfile i = new UserProfile(UUID.randomUUID().toString(), "Zoeb", "");
 
-        List<UserProfile> result = new ArrayList<>();
-        result.add(a);
-        result.add(b);
-        result.add(c);
-        result.add(d);
-        result.add(e);
-        result.add(f);
-        result.add(g);
-        result.add(h);
-        result.add(i);
-        dataset = result;
+        UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
+        String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
+        String id = user.getId();
+        RequestManager requestManager = new RequestManager();
+
+
+        requestManager.get("user/" + id + "/friendRequest", userToken, new RequestManager.OnRequestCompleteListener() {
+            @Override
+            public void onSuccess(Call call, Response response) {
+                System.out.println(response.toString());
+                System.out.println(response.body().toString());
+
+            }
+
+            @Override
+            public void onError(Call call, IOException e) {
+                System.out.println(call.toString());
+            }
+        });
+
     }
 }

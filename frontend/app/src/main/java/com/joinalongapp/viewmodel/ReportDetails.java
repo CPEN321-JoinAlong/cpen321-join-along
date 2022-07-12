@@ -72,6 +72,17 @@ public class ReportDetails implements Serializable, IDetailsModel {
         this.reportingEvent = reportingEvent;
     }
 
+    public JSONObject toJson() throws JSONException{
+        JSONObject json = new JSONObject();
+
+        json.put("user", getReportingName());
+        json.put("reason", getReason());
+        json.put("description", getDescription());
+        json.put("block", getBlockStatus());
+
+        return json;
+    }
+
     public String toJsonString() throws JSONException {
         JSONObject json = new JSONObject();
 

@@ -2,6 +2,7 @@ package com.joinalongapp.joinalong;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DownloadManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,13 +10,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.ReportDetails;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class ReportActivity extends AppCompatActivity {
 
@@ -37,15 +46,21 @@ public class ReportActivity extends AppCompatActivity {
 
         Bundle info = getIntent().getExtras();
         Boolean reportType = info.getBoolean("REPORT_PERSON");
-
+        String path = null;
+        String reportingId = null;
+        System.out.println(reportType.toString());
         ReportDetails reportDetails = new ReportDetails();
+        String token = ((UserApplicationInfo) getApplication()).getUserToken();
+        UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
         String reportEntityName;
         if(reportType){
-            UserProfile reportingPerson = (UserProfile) info.getSerializable("REPORTING_USER");
+            UserProfile reportingPerson = ((UserApplicationInfo) getApplication()).getProfile();
             String reportingName = " " + reportingPerson.getFullName();
             reportEntityName = reportingPerson.getFullName();
             reportingSubtitle.append(reportingName);
             reportDetails.setReportPerson(true);
+            path = "/reportUser/";
+            reportingId = reportingPerson.getId();
         }
         else{
             Event reportingEvent = (Event) info.getSerializable("REPORTING_EVENT");
@@ -54,10 +69,9 @@ public class ReportActivity extends AppCompatActivity {
             reportingSubtitle.append(reportingEventName);
             reportBlockSubtitle.append(" " + reportingEvent.getOwnerName());
             reportDetails.setReportPerson(false);
+            path = "/reportEvent/";
+            reportingId = reportingEvent.getEventId();
         }
-
-
-
 
 
 
@@ -68,6 +82,8 @@ public class ReportActivity extends AppCompatActivity {
             }
         });
 
+        String finalPath = path;
+        String finalReportingId = reportingId;
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,15 +92,32 @@ public class ReportActivity extends AppCompatActivity {
                 reportDetails.setDescription(reportDescription.getText().toString());
                 reportDetails.setBlockStatus(blockSelectionTab.getSelectedTabPosition() == BLOCK_INDEX);
 
+                JSONObject json = null;
                 try {
-                    String request = reportDetails.toJsonString();
-                    Log.d("ReportActivity", request);
-                    finish();
-                } catch(JSONException e) {
+                    json = reportDetails.toJson();
+                    json.put("token", token);
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                //TODO: post to backend
+                RequestManager requestManager = new RequestManager();
+                try {
+                    requestManager.post("user/" + user.getId() + finalPath + "/" + finalReportingId, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                        @Override
+                        public void onSuccess(Call call, Response response) {
+                            //Toast.makeText(getBaseContext(), "Successful Report", Toast.LENGTH_SHORT).show();
+                            System.out.println("WHAT");
+                        }
+
+                        @Override
+                        public void onError(Call call, IOException e) {
+                            //Toast.makeText(getBaseContext(), "Unsuccessful Report", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
     }

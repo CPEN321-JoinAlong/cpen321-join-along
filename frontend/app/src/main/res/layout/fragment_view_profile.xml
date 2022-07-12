@@ -6,7 +6,6 @@
     android:outlineAmbientShadowColor="#FFFFFF"
     tools:context="com.joinalongapp.navbar.ProfileFragment">
 
-    <!-- TODO: Update blank fragment layout -->
 
     <TextView
         android:id="@+id/profileName"
@@ -152,6 +151,27 @@
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toBottomOf="@+id/descriptionText" />
+
+    <Button
+        android:id="@+id/blockUserButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_report_text"
+        app:layout_constraintBottom_toTopOf="@+id/guideline18"
+        app:layout_constraintStart_toStartOf="@+id/guideline16"
+        app:layout_constraintTop_toBottomOf="@+id/description"
+        app:layout_constraintVertical_bias="0.639" />
+
+    <Button
+        android:id="@+id/addFriendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="65dp"
+        android:text="@string/add_friend_subtitle"
+        app:layout_constraintEnd_toStartOf="@+id/guideline19"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/blockUserButton"
+        tools:layout_editor_absoluteY="434dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,7 +15,12 @@ import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.UserProfile;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
@@ -107,58 +112,34 @@ public class FriendsListFragment extends Fragment {
         return rootView;
     }
 
-    private void initDataset() throws IOException {
-        // TODO: GET LIST OF USERS
+    private void initDataset() throws IOException{
         UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         String id = user.getId();
         RequestManager requestManager = new RequestManager();
-
-
-        requestManager.get("/user/" + id + "/friends", userToken, new RequestManager.OnRequestCompleteListener() {
+        requestManager.get("user/" + id + "/friends", userToken, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
-
-
+                System.out.println(response.toString());
+                System.out.println(response.body().toString());
+                List<UserProfile> outputFriends = new ArrayList<>();
+                try{
+                    JSONArray jsonArray = new JSONArray(response.body().toString());
+                    for(int i = 0; i < jsonArray.length(); i++){
+                        UserProfile userProfile = new UserProfile();
+                        userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                        outputFriends.add(userProfile);
+                    }
+                } catch(JSONException e){
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onError(Call call, IOException e) {
-
+                System.out.println(call.toString());
             }
         });
 
-        /**
-
-
-        UserProfile a = new UserProfile(UUID.randomUUID(), "Ken", "L");
-        Tag t = new Tag("Hiking");
-        Tag ta = new Tag("swimming");
-        List<Tag> lt = new ArrayList<>();
-        lt.add(t);
-        lt.add(ta);
-        a.setInterests(lt);
-        a.setDescription("PLEASE WORK");
-        UserProfile b = new UserProfile(UUID.randomUUID(), "Justin", "D");
-        UserProfile c = new UserProfile(UUID.randomUUID(), "Kamran", "A");
-        UserProfile d = new UserProfile(UUID.randomUUID(), "Zoeb", "G");
-        UserProfile e = new UserProfile(UUID.randomUUID(), "Ken", "");
-        UserProfile f = new UserProfile(UUID.randomUUID(), "Justin", "");
-        UserProfile g = new UserProfile(UUID.randomUUID(), "Kamran", "");
-        UserProfile h = new UserProfile(UUID.randomUUID(), "Zoeb", "");
-        UserProfile i = new UserProfile(UUID.randomUUID(), "Zoeb", "");
-
-        List<UserProfile> result = new ArrayList<>();
-        result.add(a);
-        result.add(b);
-        result.add(c);
-        result.add(d);
-        result.add(e);
-        result.add(f);
-        result.add(g);
-        result.add(h);
-        result.add(i);
-        dataset = result;
-         **/
     }
 }

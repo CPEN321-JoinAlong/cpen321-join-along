@@ -26,6 +26,7 @@ import com.joinalongapp.navbar.FriendsFragment;
 import com.joinalongapp.navbar.FriendsListFragment;
 import com.joinalongapp.navbar.ViewProfileFragment;
 import com.joinalongapp.viewmodel.UserProfile;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -123,6 +124,7 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
             public void onClick(View v) {
                 ViewProfileFragment viewProfileFragment = new ViewProfileFragment();
                 Bundle info = new Bundle();
+                info.putBoolean("HIDE", false);
                 info.putSerializable("USER_INFO", users.get(holder.getBindingAdapterPosition()));
                 viewProfileFragment.setArguments(info);
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
@@ -133,11 +135,14 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                 fragmentTransaction.commit();
             }
         });
-        //holder.getProfilePicture().set
+        Picasso.get().load(((UserApplicationInfo) (holder.itemView.getContext().getApplicationContext())).getProfile().getProfilePicture()).into(holder.getProfilePicture());
     }
 
     @Override
     public int getItemCount() {
+        if(users == null){
+            return 0;
+        }
         return users.size();
     }
 
@@ -155,7 +160,7 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         String userId = user.getId();
         JSONObject json = new JSONObject();
         json.put("token", token);
-        requestManager.put("/user/removeFriend/" + userId + "/" + otherUserId, json.toString(), new RequestManager.OnRequestCompleteListener() {
+        requestManager.put("user/removeFriend/" + userId + "/" + otherUserId, json.toString(), new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
                 Toast.makeText(context, "Deleted Friend!", Toast.LENGTH_SHORT).show();
@@ -169,8 +174,4 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         notifyDataSetChanged();
 
     }
-
-
-
-
 }

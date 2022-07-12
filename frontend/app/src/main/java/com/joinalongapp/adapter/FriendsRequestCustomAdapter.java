@@ -14,13 +14,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.navbar.ViewProfileFragment;
 import com.joinalongapp.viewmodel.UserProfile;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsRequestCustomAdapter.ViewHolder>{
     private List<UserProfile> users;
@@ -76,13 +86,62 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
         holder.getAccept().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteRequest(users.get(holder.getAdapterPosition()).getId());
+                UserProfile otherUser = users.get(holder.getBindingAdapterPosition());
+                UserProfile user = ((UserApplicationInfo) v.getContext().getApplicationContext()).getProfile();
+                String userToken = ((UserApplicationInfo) v.getContext().getApplicationContext()).getUserToken();
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("token", userToken);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                RequestManager requestManager = new RequestManager();
+                try {
+                    requestManager.put("user/acceptUser/" + user.getId() + "/" + otherUser.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                        @Override
+                        public void onSuccess(Call call, Response response) {
+                            deleteRequest(users.get(holder.getBindingAdapterPosition()).getId());
+                        }
+
+                        @Override
+                        public void onError(Call call, IOException e) {
+
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
         holder.getReject().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteRequest(users.get(holder.getAdapterPosition()).getId());
+                UserProfile otherUser = users.get(holder.getBindingAdapterPosition());
+                UserProfile user = ((UserApplicationInfo) v.getContext().getApplicationContext()).getProfile();
+                String userToken = ((UserApplicationInfo) v.getContext().getApplicationContext()).getUserToken();
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("token", userToken);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                RequestManager requestManager = new RequestManager();
+                try {
+                    requestManager.put("user/rejectUser/" + user.getId() + "/" + otherUser.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                        @Override
+                        public void onSuccess(Call call, Response response) {
+                            deleteRequest(users.get(holder.getBindingAdapterPosition()).getId());
+                        }
+
+                        @Override
+                        public void onError(Call call, IOException e) {
+
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -91,6 +150,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
             public void onClick(View v) {
                 ViewProfileFragment viewProfileFragment = new ViewProfileFragment();
                 Bundle info = new Bundle();
+                info.putBoolean("HIDE", true);
                 info.putSerializable("USER_INFO", users.get(holder.getBindingAdapterPosition()));
                 viewProfileFragment.setArguments(info);
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
@@ -101,12 +161,17 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                 fragmentTransaction.commit();
             }
         });
-        //holder.getProfilePicture().set
+        Picasso.get().load(((UserApplicationInfo) (holder.itemView.getContext().getApplicationContext())).getProfile().getProfilePicture()).into(holder.getProfilePicture());
     }
 
     @Override
     public int getItemCount() {
-        return users.size();
+        if(users == null){
+            return 0;
+        }
+        else{
+            return users.size();
+        }
     }
 
     private void deleteRequest(String uuid){

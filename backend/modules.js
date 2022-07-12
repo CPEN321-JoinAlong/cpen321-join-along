@@ -48,9 +48,9 @@ class UserStore {
     }
 
     async updateUserAccount(userID, userInfo) {
-        console.log("IN UPDATE USER ACCOUNT")
-        console.log(userID)
-        console.log(userInfo)
+        console.log("IN UPDATE USER ACCOUNT");
+        console.log(userID);
+        console.log(userInfo);
         return await User.findByIdAndUpdate(userID, userInfo);
     }
 
@@ -64,6 +64,10 @@ class UserStore {
                 $in: friendIDList,
             },
         });
+    }
+
+    async findChatInvites(chatReqList, chatEngine) {
+        return await chatEngine.findChatByIDList(chatReqList);
     }
 
     async acceptChatInvite(userID, chatID, chatEngine) {
@@ -168,7 +172,7 @@ class UserStore {
 
     async findUserByName(userName) {
         return await Event.find({
-            name: userName
+            name: userName,
         });
     }
 
@@ -235,7 +239,7 @@ class UserStore {
 
     async findUserForLogin(Token) {
         let user = await User.findOne({
-            token: Token, 
+            token: Token,
         });
         return user;
     }
@@ -260,6 +264,12 @@ class ChatEngine {
 
     async findChatByID(chatID) {
         return await Chat.findById(chatID);
+    }
+
+    async findChatByIDList(chatIDList) {
+        return await Chat.find({
+            _id: {$in: chatIDList}
+        })
     }
 
     async findChatByUser(userID) {
@@ -287,8 +297,8 @@ class ChatEngine {
                 $push: {
                     messages: {
                         participantID: fromUserID,
-						participantName: name,
-						timeStamp: date,
+                        participantName: name,
+                        timeStamp: date,
                         text: text,
                     },
                 },
@@ -305,8 +315,8 @@ class ChatEngine {
                 $push: {
                     messages: {
                         participantID: userID,
-						participantName: name,
-						timeStamp: date,
+                        participantName: name,
+                        timeStamp: date,
                         text: text,
                     },
                 },
@@ -397,10 +407,14 @@ class EventStore {
     }
 
     async removeUser(eventID, userID, userStore) {
-        await this.updateEvent(eventID, {
-            $pull: { participants: userID },
-            $dec: { currCapacity: 1 },
-        }, userStore);
+        await this.updateEvent(
+            eventID,
+            {
+                $pull: { participants: userID },
+                $dec: { currCapacity: 1 },
+            },
+            userStore
+        );
     }
 
     async findEventByUser(userID) {
@@ -445,9 +459,9 @@ class EventStore {
             let user = await userStore.findUserByID(participant);
             if (user) {
                 user.events.push(eventObject._id);
-                console.log("IN CREATE EVENT")
-                console.log(eventObject._id)
-                console.log(user.events)
+                console.log("IN CREATE EVENT");
+                console.log(eventObject._id);
+                console.log(user.events);
                 await userStore.updateUserAccount(participant, user);
             }
         });

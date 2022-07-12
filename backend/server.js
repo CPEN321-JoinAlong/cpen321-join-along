@@ -74,12 +74,15 @@ app.listen(port, () => {
 
 app.use(async (req, res, next) => {
     let token;
-    if(Object.keys(req.body).length !== 0) 
-        token = req.body.token;
-    else
-        token = req.headers.token;
+    if (Object.keys(req.body).length !== 0) token = req.body.token;
+    else token = req.headers.token;
     let user = await userStore.findUserForLogin(token);
-    if (user != null || req.path.includes("/user/create") || req.path.includes("/login") || req.path == "/") {
+    if (
+        user != null ||
+        req.path.includes("/user/create") ||
+        req.path.includes("/login") ||
+        req.path == "/"
+    ) {
         next();
     } else {
         res.status(404).send("Unsuccessfull");
@@ -252,6 +255,17 @@ app.get("/user/:id/chat", async (req, res) => {
     let { id } = req.params;
     let chatList = await chatEngine.findChatByUser(id);
     res.status(200).send(chatList);
+});
+
+//Sends the list of chatInvites - get
+app.get("/user/:id/chatInvites", async (req, res) => {
+    let { id } = req.params;
+    let foundUser = await userStore.findUserByID(id);
+    if (foundUser == null) res.status(404).send("No User Found");
+    else {
+        let chatInviteList = await userStore.findChatInvites(foundUser.chatInvites, chatEngine);
+        res.status(200).send(chatInviteList);
+    }
 });
 
 //Chat: send message to a single user

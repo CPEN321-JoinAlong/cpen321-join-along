@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/frameLayoutSearch"
     tools:context=".SearchScreenActivity">
+
 
     <SearchView
         android:id="@+id/searchBar"
         android:layout_width="350dp"
         android:layout_height="49dp"
+        android:layout_gravity="right"
+        android:gravity="right"
+
         android:iconifiedByDefault="false"
-        android:queryHint="@string/default_search"
-        app:layout_constraintBottom_toTopOf="@+id/guideline23"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.819"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        android:queryHint="@string/default_search">
 
     </SearchView>
 
@@ -32,23 +31,20 @@
         android:id="@+id/searchBackButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_gravity="top"
+
         android:layout_weight="1"
+
+
         android:background="@android:color/transparent"
-        android:src="?attr/actionModeCloseDrawable"
-        app:layout_constraintBottom_toTopOf="@+id/guideline23"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        android:src="?attr/actionModeCloseDrawable" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchPeopleRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="650dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchBar"
-        app:layout_constraintVertical_bias="0.0" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="675dp"
+        android:layout_gravity="bottom" />
+
+
+
+</FrameLayout>

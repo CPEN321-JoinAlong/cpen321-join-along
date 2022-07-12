@@ -15,6 +15,9 @@ import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.UserProfile;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +123,18 @@ public class FriendsRequestFragment extends Fragment {
             public void onSuccess(Call call, Response response) {
                 System.out.println(response.toString());
                 System.out.println(response.body().toString());
+                List<UserProfile> outputFriends = new ArrayList<>();
+                try{
+                    JSONArray jsonArray = new JSONArray(response.body().string());
+                    for(int i = 0; i < jsonArray.length(); i++){
+                        UserProfile userProfile = new UserProfile();
+                        userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                        outputFriends.add(userProfile);
+                    }
+                } catch(JSONException | IOException e){
+                    e.printStackTrace();
+                }
+                dataset = outputFriends;
 
             }
 

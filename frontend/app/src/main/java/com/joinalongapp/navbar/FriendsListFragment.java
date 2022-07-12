@@ -1,6 +1,7 @@
 package com.joinalongapp.navbar;
 
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -120,17 +123,31 @@ public class FriendsListFragment extends Fragment {
         requestManager.get("user/" + id + "/friends", userToken, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
-                System.out.println(response.toString());
-                System.out.println(response.body().toString());
+
+
                 List<UserProfile> outputFriends = new ArrayList<>();
                 try{
-                    JSONArray jsonArray = new JSONArray(response.body().toString());
+                    System.out.println(response);
+                    JSONArray jsonArray = new JSONArray(response.body().string());
                     for(int i = 0; i < jsonArray.length(); i++){
                         UserProfile userProfile = new UserProfile();
                         userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
                         outputFriends.add(userProfile);
                     }
-                } catch(JSONException e){
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dataset = outputFriends;
+                                }
+                            });
+                        }
+                    }, 0, 1000);
+                    System.out.println("efwa");
+
+                } catch(JSONException | IOException e){
                     e.printStackTrace();
                 }
             }

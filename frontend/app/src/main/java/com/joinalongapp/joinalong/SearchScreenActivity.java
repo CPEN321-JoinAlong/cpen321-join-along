@@ -17,16 +17,12 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.joinalongapp.adapter.FriendsRequestCustomAdapter;
 import com.joinalongapp.adapter.SearchPeopleCustomAdapter;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.navbar.FriendsRequestFragment;
-import com.joinalongapp.navbar.ViewProfileFragment;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -98,6 +94,8 @@ public class SearchScreenActivity extends AppCompatActivity {
 
 
 
+        //TODO: call this for on click suggestions
+        //searchView.setOnSuggestionListener();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -159,7 +157,6 @@ public class SearchScreenActivity extends AppCompatActivity {
                 if (terms.get(index).startsWith(params[0])) {
                     cursor.addRow(row);
                 }
-
             }
 
             return cursor;

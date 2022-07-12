@@ -146,6 +146,10 @@ public class ManageEventActivity extends AppCompatActivity {
                     event.setBeginningDate(bDate);
                     event.setEndDate(eDate);
                     event.setPublicVisibility(eventVisibilityTab.getSelectedTabPosition() == PUBLIC_VISIBILITY_INDEX);
+
+                    String ownerId = ((UserApplicationInfo) getApplication()).getProfile().getId();
+                    event.setEventOwnerId(ownerId);
+
                     RequestManager requestManager = new RequestManager();
                     try {
                         JSONObject json = event.toJson();

@@ -9,20 +9,31 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.Tag;
-import com.joinalongapp.viewmodel.UserProfile;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,12 +88,12 @@ public class ViewEventFragment extends Fragment {
 
         if (bundle != null) {
             Event event = (Event) bundle.getSerializable("event");
-            event = removeMeInitEvent();
+            //event = removeMeInitEvent();
             initEventDetails(event);
         }
         //TODO: Remove the next two lines
-        Event event = removeMeInitEvent();
-        initEventDetails(event);
+//        Event event = removeMeInitEvent();
+//        initEventDetails(event);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,15 +130,6 @@ public class ViewEventFragment extends Fragment {
         tags.add(new Tag("tag2"));
         event.setTags(tags);
         event.setNumberOfPeople(500);
-        List<UserProfile> members = new ArrayList<>();
-        UserProfile profile = new UserProfile();
-        profile.setFirstName("first1");
-        profile.setLastName("last1");
-        members.add(profile);
-        profile.setFirstName("first2");
-        profile.setLastName("last2");
-        members.add(profile);
-        event.setFriends(members);
         return event;
     }
 
@@ -163,15 +165,95 @@ public class ViewEventFragment extends Fragment {
         endDate.setText(sdf.format(event.getEndDate()));
 
         Chip ownerChip = new Chip(getActivity());
-        ownerChip.setText("owner"/*event.getOwnerName()*/);
+
+        FragmentActivity fragmentActivity = getActivity();
+        String path = "user/" + event.getEventOwnerId();
+        String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
+        RequestManager organizerRequestManager = new RequestManager();
+        try {
+            organizerRequestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
+                @Override
+                public void onSuccess(Call call, Response response) {
+                    try {
+                        JSONObject json = new JSONObject(response.body().string());
+                        String organizerName = json.getString("name");
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                fragmentActivity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ownerChip.setText(organizerName);
+                                    }
+                                });
+                            }
+                        }, 0);
+
+                    } catch (IOException | JSONException e) {
+                        //todo
+                    }
+
+                }
+
+                @Override
+                public void onError(Call call, IOException e) {
+                    //todo
+                }
+            });
+        } catch (IOException e) {
+            //todo
+        }
+
         organizer.addView(ownerChip);
 
-        for (UserProfile member : event.getFriends()) {
-            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, members, false);
-            String personName = member.getFirstName() + " " + member.getLastName();
-            chip.setText(personName);
-            members.addView(chip);
+        //todo: consolidate this into one backend call
+        RequestManager membersRequestManager = new RequestManager();
+        for (String memberId : event.getMembers()) {
+            Chip memberChip = new Chip(fragmentActivity);
+            String memberPath = "user/" + memberId;
+            try {
+                membersRequestManager.get(memberPath, userToken, new RequestManager.OnRequestCompleteListener() {
+                    @Override
+                    public void onSuccess(Call call, Response response) {
+                        try {
+                            JSONObject json = new JSONObject(response.body().string());
+                            String memberName = json.getString("name");
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    fragmentActivity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            memberChip.setText(memberName);
+                                        }
+                                    });
+                                }
+                            }, 0);
+
+                        } catch (IOException | JSONException e) {
+                            //todo
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Call call, IOException e) {
+                        //todo
+                    }
+                });
+            } catch (IOException e) {
+                //todo
+            }
+            members.addView(memberChip);
         }
+
+
+//        for (UserProfile member : event.getMembers()) {
+//            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, members, false);
+//            String personName = member.getFirstName() + " " + member.getLastName();
+//            chip.setText(personName);
+//            members.addView(chip);
+//        }
 
         //TODO: update with numPeople/capacity
         String numPeopleInEventString = "(" + event.getNumberOfPeople() + ")";

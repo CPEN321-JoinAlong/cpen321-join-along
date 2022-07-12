@@ -10,9 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class UserApplicationInfo extends Application implements IDetailsModel {
     private String userToken;
     private UserProfile profile = new UserProfile();
@@ -56,10 +53,7 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
 
     @Override
     public String toJsonString() throws JSONException {
-        List<String> friendId = new ArrayList<>();
-        for(UserProfile friend : profile.getFriends()){
-            friendId.add(friend.getId().toString());
-        }
+
         JSONObject json = new JSONObject();
         json.put("token", getUserToken());
         json.put("id", profile.getId());
@@ -71,8 +65,8 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
         json.put("interests", interests);
         json.put("description", profile.getDescription());
         json.put("profilePicture", profile.getProfilePicture());
-        if (!friendId.isEmpty()) {
-            json.put("friends", new JSONArray(friendId));
+        if (!profile.getFriends().isEmpty()) {
+            json.put("friends", new JSONArray(profile.getFriends()));
         }
 
         return json.toString();

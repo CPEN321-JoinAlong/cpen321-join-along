@@ -439,6 +439,10 @@ class EventStore {
         });
     }
 
+    async findAllEvents(){
+        return await Event.find({});
+    }
+
     async findEventByID(eventID) {
         return await Event.findById(eventID);
     }

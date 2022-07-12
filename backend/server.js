@@ -263,7 +263,10 @@ app.get("/user/:id/chatInvites", async (req, res) => {
     let foundUser = await userStore.findUserByID(id);
     if (foundUser == null) res.status(404).send("No User Found");
     else {
-        let chatInviteList = await userStore.findChatInvites(foundUser.chatInvites, chatEngine);
+        let chatInviteList = await userStore.findChatInvites(
+            foundUser.chatInvites,
+            chatEngine
+        );
         res.status(200).send(chatInviteList);
     }
 });
@@ -346,6 +349,12 @@ app.get("/event/:id", async (req, res) => {
     let { id } = req.params;
     let event = await eventStore.findEventByID(id);
     res.status(200).send(event);
+});
+
+//Event: Sends all events in the database
+app.get("/event", async (req, res) => {
+    let eventList = await eventStore.findAllEvents();
+    res.status(200).send(eventList);
 });
 
 //* Accept or Reject requests (can be used for join as well) and invites

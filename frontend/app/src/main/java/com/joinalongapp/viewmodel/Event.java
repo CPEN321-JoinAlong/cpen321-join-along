@@ -187,6 +187,8 @@ public class Event implements Serializable, IDetailsModel {
     public Event populateDetailsFromJson(String jsonBody) throws JSONException {
         JSONObject json = new JSONObject(jsonBody);
 
+        setEventId(json.getString("_id"));
+
         setTitle(json.getString("title"));
         setEventOwnerId(json.getString("eventOwnerID"));
 
@@ -203,7 +205,7 @@ public class Event implements Serializable, IDetailsModel {
             Date date = serverSDF.parse(beginDateString.substring(0, beginDateString.length()-2));
             setBeginningDate(date);
         } catch (ParseException e){
-            Log.d("Event", "helpppppppppppppp");
+            Log.d("Event", "unable to determine begin date");
         }
 
         //todo: convert to date object, need to know the storage format first
@@ -214,7 +216,7 @@ public class Event implements Serializable, IDetailsModel {
             Date date = serverSDF.parse(endDateString.substring(0, endDateString.length()-2));
             setEndDate(date);
         } catch (ParseException e){
-            Log.d("Event", "helpppppppppppppp");
+            Log.d("Event", "unable to determine end date");
         }
         //todo: convert to date object, need to know the storage format first
         //setEndDate();

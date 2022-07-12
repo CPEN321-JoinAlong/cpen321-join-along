@@ -166,7 +166,7 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
                                     }
                                 });
                             }
-                        }, 0, 1000);
+                        }, 0);
 
                     } catch (IOException | JSONException e) {
                         Log.e(TAG, "Unable to parse events from server.");

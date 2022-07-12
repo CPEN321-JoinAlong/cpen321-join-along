@@ -112,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
             applicationInfo.setUserToken(idToken);
 
             try {
-                String jsonBody = applicationInfo.tokenToJsonString();
+                String jsonBody = applicationInfo.tokenToJsonStringForLogin();
 
                 RequestManager requestManager = new RequestManager();
                 requestManager.post("login", jsonBody, new RequestManager.OnRequestCompleteListener() {

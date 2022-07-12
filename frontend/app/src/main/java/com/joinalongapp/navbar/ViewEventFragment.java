@@ -1,5 +1,6 @@
 package com.joinalongapp.navbar;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -15,6 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.Constants;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
@@ -52,6 +55,7 @@ public class ViewEventFragment extends Fragment {
     private TextView numPeople;
     private ImageButton backButton;
     private Button joinButton;
+    private Event event;
 
     public ViewEventFragment() {
         // Required empty public constructor
@@ -87,7 +91,7 @@ public class ViewEventFragment extends Fragment {
         Bundle bundle = getArguments();
 
         if (bundle != null) {
-            Event event = (Event) bundle.getSerializable("event");
+            event = (Event) bundle.getSerializable("event");
             //event = removeMeInitEvent();
             initEventDetails(event);
         }
@@ -111,6 +115,76 @@ public class ViewEventFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //todo call the back
+                RequestManager requestManager = new RequestManager();
+                UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
+                String userId = userApplicationInfo.getProfile().getId();
+                String eventId = event.getEventId();
+                String path = "user/acceptEvent/" + userId + "/" + eventId;
+                FragmentActivity activity = getActivity();
+
+                try {
+                    String userToken = userApplicationInfo.tokenToJsonString();
+                    requestManager.put(path, userToken, new RequestManager.OnRequestCompleteListener() {
+                        @Override
+                        public void onSuccess(Call call, Response response) {
+                            if (response.code() == Constants.STATUS_HTTP_200) {
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                joinButton.setVisibility(View.GONE);
+                                                new AlertDialog.Builder(activity)
+                                                        .setTitle("Event Successfully Joined!")
+                                                        .setMessage("Congratulations, you are now a part of " + event.getTitle())
+                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        })
+                                                        .create()
+                                                        .show();
+                                            }
+                                        });
+                                    }
+                                }, 0);
+                            } else {
+
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                new AlertDialog.Builder(activity)
+                                                        .setTitle("Unable to join event.")
+                                                        .setMessage("You were unable to join this event.")
+                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        })
+                                                        .create()
+                                                        .show();
+                                            }
+                                        });
+                                    }
+                                }, 0);
+                            }
+
+                        }
+
+                        @Override
+                        public void onError(Call call, IOException e) {
+
+                        }
+                    });
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                }
 
             }
         });
@@ -207,8 +281,9 @@ public class ViewEventFragment extends Fragment {
         organizer.addView(ownerChip);
 
         //todo: consolidate this into one backend call
-        RequestManager membersRequestManager = new RequestManager();
+
         for (String memberId : event.getMembers()) {
+            RequestManager membersRequestManager = new RequestManager();
             Chip memberChip = new Chip(fragmentActivity);
             String memberPath = "user/" + memberId;
             try {

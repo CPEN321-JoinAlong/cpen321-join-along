@@ -45,9 +45,15 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
         this.profile = profile;
     }
 
-    public String tokenToJsonString() throws JSONException {
+    public String tokenToJsonStringForLogin() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("Token", getUserToken());
+        return json.toString();
+    }
+
+    public String tokenToJsonString() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("token", getUserToken());
         return json.toString();
     }
 

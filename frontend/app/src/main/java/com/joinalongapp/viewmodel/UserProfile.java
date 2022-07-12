@@ -16,7 +16,7 @@ public class UserProfile implements Serializable, IDetailsModel {
     private List<Tag> tags = new ArrayList<>();
     private String description;
     private String profilePictureUrl;
-    private List<UserProfile> friends = new ArrayList<UserProfile>();
+    private List<String> friends = new ArrayList<String>();
 
 
     public void setId(String id) {
@@ -39,11 +39,11 @@ public class UserProfile implements Serializable, IDetailsModel {
         this.tags.addAll(tags);
     }
 
-    public void setFriends(List<UserProfile> friends) {
+    public void setFriends(List<String> friends) {
         this.friends.addAll(friends);
     }
 
-    public void addFriendToList(UserProfile friend) {
+    public void addFriendToList(String friend) {
         friends.add(friend);
     }
 
@@ -60,7 +60,7 @@ public class UserProfile implements Serializable, IDetailsModel {
         return id;
     }
 
-    public List<UserProfile> getFriends() {
+    public List<String> getFriends() {
         return friends;
     }
 
@@ -117,19 +117,16 @@ public class UserProfile implements Serializable, IDetailsModel {
         return firstName + " " + lastName;
     }
 
-    public String[] getFriendsStringArray(){
-        String[] result = new String[friends.size()];
-        for(int i = 0; i < friends.size(); i++){
-            result[i] = friends.get(i).getFullName();
-        }
-        return result;
-    }
+    //THIS METHOD IS NOW BROKEN
+//    public String[] getFriendsStringArray(){
+//        String[] result = new String[friends.size()];
+//        for(int i = 0; i < friends.size(); i++){
+//            result[i] = friends.get(i).getFullName();
+//        }
+//        return result;
+//    }
 
     public String toJsonString() throws JSONException {
-        List<String> friendId = new ArrayList<>();
-        for(UserProfile friend : friends){
-            friendId.add(friend.getId().toString());
-        }
         JSONObject json = new JSONObject();
         json.put("id", getId());
         json.put("name", getFullName());
@@ -137,7 +134,9 @@ public class UserProfile implements Serializable, IDetailsModel {
         json.put("interests", getStringListOfTags());
         json.put("description", getDescription());
         json.put("profilePicture", getProfilePicture());
-        json.put("friends", friendId);
+
+        JSONArray jsonArray = new JSONArray(friends);
+        json.put("friends", jsonArray);
 
         return json.toString();
     }
@@ -166,9 +165,9 @@ public class UserProfile implements Serializable, IDetailsModel {
         setDescription(json.getString("description"));
         setProfilePicture(json.getString("profilePicture"));
 
-        JSONArray friends = json.getJSONArray("friends");
-        for (int i = 0; i < friends.length(); i++) {
-            addFriendToList((UserProfile) friends.get(i));
+        JSONArray jsonFriendsList = json.getJSONArray("friends");
+        for (int i = 0; i < jsonFriendsList.length(); i++) {
+            addFriendToList(jsonFriendsList.getString(i));
         }
 
         return this;

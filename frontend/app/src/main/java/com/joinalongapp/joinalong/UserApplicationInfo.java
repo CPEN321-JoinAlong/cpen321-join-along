@@ -106,7 +106,7 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
 
         JSONArray friends = json.getJSONArray("friends");
         for (int i = 0; i < friends.length(); i++) {
-            profile.addFriendToList((UserProfile) friends.get(i));
+            profile.addFriendToList(friends.getString(i));
         }
 
         setUserToken(json.getString("token"));

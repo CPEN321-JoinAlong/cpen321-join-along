@@ -1,7 +1,5 @@
 package com.joinalongapp.joinalong;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,13 +11,23 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.UserProfile;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 
 public class ManageChatActivity extends AppCompatActivity {
@@ -52,7 +60,39 @@ public class ManageChatActivity extends AppCompatActivity {
         }
 
         String[] tags = getResources().getStringArray(R.array.sample_tags);
-        String[] friends = (String[]) user.getFriendsStringArray();
+
+        //TODO: this is a temp solution, no clue if it actually works or not
+        //      ken, please check
+
+        List<String> friendUserIds = user.getFriends();
+        String userToken = ((UserApplicationInfo) getApplication()).getUserToken();
+        RequestManager requestManager = new RequestManager();
+        List<String> friendNames = new ArrayList<>();
+        for (String friendId : friendUserIds) {
+            try {
+                requestManager.get("user/" + friendId, userToken, new RequestManager.OnRequestCompleteListener() {
+                    @Override
+                    public void onSuccess(Call call, Response response) {
+                        try {
+                            JSONObject userJson = new JSONObject(response.body().string());
+                            friendNames.add(userJson.getString("name"));
+                        } catch (IOException | JSONException e) {
+                            //todo
+                        }
+                    }
+
+                    @Override
+                    public void onError(Call call, IOException e) {
+                        //todo
+                    }
+                });
+            } catch (IOException e) {
+                //todo
+            }
+
+        }
+
+        String[] friends = friendNames.toArray(new String[friendNames.size()]);
 
         initAutoCompleteChipGroup(tagAutoComplete, tagChipGroup, tags);
         initAutoCompleteChipGroup(friendAutoComplete, friendChipGroup, friends);

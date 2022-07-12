@@ -129,7 +129,7 @@ public class ViewEventFragment extends Fragment {
         tags.add(new Tag("tag1"));
         tags.add(new Tag("tag2"));
         event.setTags(tags);
-        event.setNumberOfPeople(500);
+        event.setNumberOfPeopleAllowed(500);
         return event;
     }
 
@@ -256,7 +256,7 @@ public class ViewEventFragment extends Fragment {
 //        }
 
         //TODO: update with numPeople/capacity
-        String numPeopleInEventString = "(" + event.getNumberOfPeople() + ")";
+        String numPeopleInEventString = "(" + event.getCurrentNumPeopleRegistered() + "/" + event.getNumberOfPeopleAllowed() + ")";
         numPeople.setText(numPeopleInEventString);
 
 

@@ -117,7 +117,7 @@ public class ManageEventActivity extends AppCompatActivity {
                 eventVisibilityTab.setSelectedTabIndicator(PRIVATE_VISIBILITY_INDEX);
             }
 
-            int position = arrayAdapter.getPosition(String.valueOf(userEvent.getNumberOfPeople()));
+            int position = arrayAdapter.getPosition(String.valueOf(userEvent.getNumberOfPeopleAllowed()));
             numberOfPeople.setSelection(position);
             description.setText(userEvent.getDescription());
         }
@@ -141,7 +141,7 @@ public class ManageEventActivity extends AppCompatActivity {
                     event.setTitle(title.getText().toString());
                     event.setTags(getTagsFromChipGroup());
                     event.setLocation(location.getText().toString());
-                    event.setNumberOfPeople(Integer.valueOf(numberOfPeople.getSelectedItem().toString()));
+                    event.setNumberOfPeopleAllowed(Integer.valueOf(numberOfPeople.getSelectedItem().toString()));
                     event.setDescription(description.getText().toString());
                     event.setBeginningDate(bDate);
                     event.setEndDate(eDate);

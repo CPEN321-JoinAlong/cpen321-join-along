@@ -155,19 +155,19 @@ public class HomeEventMapFragment extends Fragment {
         Event e1 = new Event();
         e1.setTitle("UBC");
         e1.setDescription("description1");
-        e1.setNumberOfPeople(1);
+        e1.setNumberOfPeopleAllowed(1);
         e1.setLocation("2366 Main Mall, Vancouver BC");
         eventList.add(e1);
         Event e2 = new Event();
         e2.setTitle("UoT");
         e2.setDescription("description2");
-        e2.setNumberOfPeople(2);
+        e2.setNumberOfPeopleAllowed(2);
         e2.setLocation("27 Kings College Cir, Toronto ON");
         eventList.add(e2);
         Event e3 = new Event();
         e3.setTitle("SFU");
         e3.setDescription("description3");
-        e3.setNumberOfPeople(3);
+        e3.setNumberOfPeopleAllowed(3);
         e3.setLocation("8888 University Dr, Burnaby BC");
         eventList.add(e3);
     }

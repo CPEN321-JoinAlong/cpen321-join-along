@@ -24,10 +24,11 @@ public class Event implements Serializable, IDetailsModel {
     private Date beginningDate;
     private Date endDate;
     private Boolean publicVisibility;
-    private int numberOfPeople;
+    private int numberOfPeopleAllowed;
     private List<Tag> tags = new ArrayList<>();
     private List<String> members = new ArrayList<>();
     private String description;
+    private int currentNumPeopleRegistered;
 
     public Event() {
     }
@@ -40,8 +41,16 @@ public class Event implements Serializable, IDetailsModel {
         this.beginningDate = beginningDate;
         this.endDate = endDate;
         this.publicVisibility = publicVisibility;
-        this.numberOfPeople = numberOfPeople;
+        this.numberOfPeopleAllowed = numberOfPeople;
         this.description = description;
+    }
+
+    public int getCurrentNumPeopleRegistered() {
+        return currentNumPeopleRegistered;
+    }
+
+    public void setCurrentNumPeopleRegistered(int currentNumPeopleRegistered) {
+        this.currentNumPeopleRegistered = currentNumPeopleRegistered;
     }
 
     public void setEventId(String eventId) {
@@ -72,8 +81,8 @@ public class Event implements Serializable, IDetailsModel {
         this.publicVisibility = publicVisibility;
     }
 
-    public void setNumberOfPeople(int numberOfPeople) {
-        this.numberOfPeople = numberOfPeople;
+    public void setNumberOfPeopleAllowed(int numberOfPeopleAllowed) {
+        this.numberOfPeopleAllowed = numberOfPeopleAllowed;
     }
 
     public void setTags(List<Tag> tags) {
@@ -129,8 +138,8 @@ public class Event implements Serializable, IDetailsModel {
         return publicVisibility;
     }
 
-    public int getNumberOfPeople() {
-        return numberOfPeople;
+    public int getNumberOfPeopleAllowed() {
+        return numberOfPeopleAllowed;
     }
 
     public List<Tag> getTags() {
@@ -166,7 +175,7 @@ public class Event implements Serializable, IDetailsModel {
         json.put("tags", tags);
 
         json.put("location", getLocation());
-        json.put("numberOfPeople", getNumberOfPeople());
+        json.put("numberOfPeople", getNumberOfPeopleAllowed());
         json.put("description", getDescription());
         json.put("beginningDate", getBeginningDate());
         json.put("endDate", getEndDate());
@@ -211,7 +220,7 @@ public class Event implements Serializable, IDetailsModel {
         //setEndDate();
 
         setPublicVisibility(json.getBoolean("publicVisibility"));
-        setNumberOfPeople(json.getInt("numberOfPeople"));
+        setNumberOfPeopleAllowed(json.getInt("numberOfPeople"));
         setLocation(json.getString("location"));
         setDescription(json.getString("description"));
 
@@ -220,7 +229,9 @@ public class Event implements Serializable, IDetailsModel {
             addMemberToList(members.getString(i));
         }
 
-        //todo?: participant list, capacity, event image, event chat
+        setCurrentNumPeopleRegistered(json.getInt("currCapacity"));
+
+        //todo?: capacity, event image, event chat
 
 
         return this;

@@ -71,12 +71,12 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         Event e1 = new Event();
         e1.setTitle("Test1");
         e1.setDescription("description1");
-        e1.setNumberOfPeople(1);
+        e1.setNumberOfPeopleAllowed(1);
         eventList.add(e1);
         Event e2 = new Event();
         e2.setTitle("Test2");
         e2.setDescription("description2");
-        e2.setNumberOfPeople(2);
+        e2.setNumberOfPeopleAllowed(2);
         eventList.add(e2);
     }
 
@@ -84,32 +84,32 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         Event e1 = new Event();
         e1.setTitle("Test1");
         e1.setDescription("description1");
-        e1.setNumberOfPeople(1);
+        e1.setNumberOfPeopleAllowed(1);
         eventList.add(e1);
         Event e2 = new Event();
         e2.setTitle("Test2");
         e2.setDescription("description2");
-        e2.setNumberOfPeople(2);
+        e2.setNumberOfPeopleAllowed(2);
         eventList.add(e2);
         Event e3 = new Event();
         e3.setTitle("Test3");
         e3.setDescription("description3");
-        e3.setNumberOfPeople(3);
+        e3.setNumberOfPeopleAllowed(3);
         eventList.add(e3);
         Event e4 = new Event();
         e4.setTitle("Test4");
         e4.setDescription("description4");
-        e4.setNumberOfPeople(4);
+        e4.setNumberOfPeopleAllowed(4);
         eventList.add(e4);
         Event e5 = new Event();
         e5.setTitle("Test5");
         e5.setDescription("description5");
-        e5.setNumberOfPeople(5);
+        e5.setNumberOfPeopleAllowed(5);
         eventList.add(e5);
         Event e6 = new Event();
         e6.setTitle("Test6");
         e6.setDescription("description6");
-        e6.setNumberOfPeople(6);
+        e6.setNumberOfPeopleAllowed(6);
         eventList.add(e6);
     }
 

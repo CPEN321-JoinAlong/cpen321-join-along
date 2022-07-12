@@ -146,7 +146,6 @@ public class HomeFragment extends Fragment {
 
     private void initSpinner() {
         eventFilterList.add("Recommended");
-        //TODO: only my events for now
         eventFilterList.add("My Events");
 
         //TODO: change this to get user interests from global
@@ -159,7 +158,7 @@ public class HomeFragment extends Fragment {
 
     private static class EventViewAdapter extends FragmentStateAdapter {
         //TODO change this default later
-        String filter = "MyEvents";
+        String filter = "Recommended";
 
         public EventViewAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
             super(fragmentManager, lifecycle);

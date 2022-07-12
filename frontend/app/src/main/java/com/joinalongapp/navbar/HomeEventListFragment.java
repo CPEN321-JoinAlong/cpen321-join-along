@@ -130,6 +130,8 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         //below we get the filters and search based on them
 
         String filter = getArguments() == null ? "empty" : getArguments().getString("filter");
+
+        //TODO: remove this
         Toast.makeText(getActivity(), filter, Toast.LENGTH_LONG).show();
 
         RequestManager requestManager = new RequestManager();
@@ -138,7 +140,19 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
 
         //TODO: change the path based on filter
-        String path = "user/" + userId + "/event";
+
+        String path;
+
+        switch (filter) {
+            case "My Events":
+                path = "user/" + userId + "/event";
+                break;
+            case "Recommended":
+            default:
+                path = "event";
+                break;
+        }
+
         FragmentActivity fragmentActivity = getActivity();
 
         try {

@@ -6,6 +6,7 @@ const admin = require("firebase-admin");
 const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
+const Report = require("./models/Report");
 const axios = require("axios");
 
 const {
@@ -72,9 +73,13 @@ app.listen(port, () => {
 });
 
 app.use(async (req, res, next) => {
-    const { token } = req.body;
+    let token;
+    if(Object.keys(req.body).length !== 0) 
+        token = req.body.token;
+    else
+        token = req.headers.token;
     let user = await userStore.findUserForLogin(token);
-    if (user != null || req.path.includes("/user/create") || req.path.includes("/login")) {
+    if (user != null || req.path.includes("/user/create") || req.path.includes("/login") || req.path == "/") {
         next();
     } else {
         res.status(404).send("Unsuccessfull");
@@ -85,25 +90,23 @@ app.use(async (req, res, next) => {
 app.get("/", async (req, res) => {
     let a = {};
     // await User.deleteMany({});
-    // await Event.deleteMany({});
-    // await Chat.deleteMany({});
-    console.log(req.headers)
+    //await Event.deleteMany({});
+    //await Chat.deleteMany({});
     a["user"] = await User.find({});
     a["chat"] = await Chat.find({});
     a["event"] = await Event.find({});
+    a["report"] = await Report.find({});
     res.send(a);
 });
 
 //login - post
 app.post("/login", async (req, res) => {
     const { Token } = req.body;
-    console.log(req.body);
     try {
         let response = await axios(
             `https://oauth2.googleapis.com/tokeninfo?id_token=${Token}`
         );
         console.log("HUHHH");
-        console.log(response.data);
         if (response.status == 200) {
             let foundUser = await userStore.findUserForLogin(response.data.sub);
             if (foundUser == null)

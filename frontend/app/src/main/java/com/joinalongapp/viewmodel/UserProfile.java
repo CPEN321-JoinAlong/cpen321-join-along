@@ -16,7 +16,7 @@ public class UserProfile implements Serializable, IDetailsModel {
     private List<Tag> tags = new ArrayList<>();
     private String description;
     private String profilePictureUrl;
-    private List<UserProfile> friends = new ArrayList<>();
+    private List<UserProfile> friends = new ArrayList<UserProfile>();
 
 
     public void setId(String id) {

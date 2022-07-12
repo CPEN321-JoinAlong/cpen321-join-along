@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,11 +23,12 @@ import com.joinalongapp.viewmodel.Event;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -130,32 +132,41 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         String filter = getArguments() == null ? "empty" : getArguments().getString("filter");
         Toast.makeText(getActivity(), filter, Toast.LENGTH_LONG).show();
 
-        if (filter.equals("Recommended")) {
-            removeMe_PopulateEventList_ForRecommended();
-        } else {
-            removeMe_PopulateEventList_ForMyEvents();
-        }
-
-        //TODO: backend being fixed, commenting out for now
         RequestManager requestManager = new RequestManager();
+
         String userId = ((UserApplicationInfo) getActivity().getApplication()).getProfile().getId();
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
+
         //TODO: change the path based on filter
         String path = "user/" + userId + "/event";
+        FragmentActivity fragmentActivity = getActivity();
+
         try {
             requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
                 @Override
                 public void onSuccess(Call call, Response response) {
                     try {
                         if (response.code() == Constants.STATUS_HTTP_200) {
-                            JSONObject jsonResponse = new JSONObject(response.body().string());
-                            JSONArray jsonEvents = jsonResponse.getJSONArray("events");
-
+                            JSONArray jsonEvents = new JSONArray(response.body().string());
                             eventList.clear();
                             for (int i = 0; i < jsonEvents.length(); i++) {
-                                eventList.add((Event) jsonEvents.get(i));
+                                Event event = new Event();
+                                event.populateDetailsFromJson(jsonEvents.getString(i));
+                                eventList.add(event);
                             }
                         }
+
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                fragmentActivity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setEventCards();
+                                    }
+                                });
+                            }
+                        }, 0, 1000);
 
                     } catch (IOException | JSONException e) {
                         Log.e(TAG, "Unable to parse events from server.");
@@ -165,7 +176,9 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
                 public void onError(Call call, IOException e) {
                     Log.e(TAG, "Unable to get events from server.");
                 }
+
             });
+
         } catch (IOException e) {
             Log.e(TAG, "Unable to get events from server.");
         }
@@ -193,7 +206,7 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
 
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, new ViewEventFragment());
+        fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }

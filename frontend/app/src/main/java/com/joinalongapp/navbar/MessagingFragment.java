@@ -44,7 +44,7 @@ public class MessagingFragment extends Fragment {
     TabLayout tabLayout;
     FragmentManager fragmentManager;
     ViewPager2 viewPager2;
-    ImageButton addFriends;
+    ImageButton createChat;
 
     public MessagingFragment() {
         // Required empty public constructor
@@ -89,14 +89,14 @@ public class MessagingFragment extends Fragment {
         viewPager2.setAdapter(viewStateAdapter);
 
         tabLayout = rootView.findViewById(R.id.messagingTabLayout);
-        addFriends = rootView.findViewById(R.id.addButton);
+        createChat = rootView.findViewById(R.id.addButton);
 
-        addFriends.setOnClickListener(new View.OnClickListener() {
+        createChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent searchUsers = new Intent(getActivity(), ManageChatActivity.class);
-                searchUsers.putExtra("EDIT_OPTION", false);
-                startActivity(searchUsers);
+                Intent manageChat = new Intent(getActivity(), ManageChatActivity.class);
+                manageChat.putExtra("EDIT_OPTION", false);
+                startActivity(manageChat);
             }
         });
 

@@ -13,13 +13,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.navbar.ViewChatFragment;
 import com.joinalongapp.viewmodel.ChatDetails;
+import com.joinalongapp.viewmodel.UserProfile;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<MessagingRequestCustomAdapter.ViewHolder> {
     private List<ChatDetails> chatDetails;
@@ -73,13 +83,61 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
         holder.getAccept().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());
+                ChatDetails otherChat = chatDetails.get(holder.getBindingAdapterPosition());
+                UserProfile user = ((UserApplicationInfo) v.getContext().getApplicationContext()).getProfile();
+                String userToken = ((UserApplicationInfo) v.getContext().getApplicationContext()).getUserToken();
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("token", userToken);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                RequestManager requestManager = new RequestManager();
+                try {
+                    requestManager.put("user/acceptChat/" + user.getId() + "/" + otherChat.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                        @Override
+                        public void onSuccess(Call call, Response response) {
+                            deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());
+                        }
+
+                        @Override
+                        public void onError(Call call, IOException e) {
+
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         holder.getReject().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());
+                ChatDetails otherChat = chatDetails.get(holder.getBindingAdapterPosition());
+                UserProfile user = ((UserApplicationInfo) v.getContext().getApplicationContext()).getProfile();
+                String userToken = ((UserApplicationInfo) v.getContext().getApplicationContext()).getUserToken();
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("token", userToken);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                RequestManager requestManager = new RequestManager();
+                try {
+                    requestManager.put("user/rejectChat/" + user.getId() + "/" + otherChat.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                        @Override
+                        public void onSuccess(Call call, Response response) {
+                            deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());
+                        }
+
+                        @Override
+                        public void onError(Call call, IOException e) {
+
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         holder.itemView.setOnClickListener(new View.OnClickListener() {

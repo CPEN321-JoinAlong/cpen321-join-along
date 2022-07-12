@@ -57,13 +57,16 @@ public class SearchScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
 
+        String token = ((UserApplicationInfo) getApplication()).getUserToken();
+        UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
+
+        Activity activity = this;
         initElements();
-        initDataset();
+        initDataset(activity, token);
 
         setUpPageForMode();
 
-        String token = ((UserApplicationInfo) getApplication()).getUserToken();
-        UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
+
 
         searchView.requestFocus();
         searchView.setSuggestionsAdapter(new SimpleCursorAdapter(
@@ -88,56 +91,18 @@ public class SearchScreenActivity extends AppCompatActivity {
 
 
 
-        searchPeopleCustomAdapter = new SearchPeopleCustomAdapter(dataset, fragmentTransaction);
+        searchPeopleCustomAdapter = new SearchPeopleCustomAdapter(dataset);
 
         recyclerView.setAdapter(searchPeopleCustomAdapter);
 
 
 
-        Activity activity = this;
+
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                RequestManager requestManager = new RequestManager();
 
-                try {
-                    requestManager.get("user/name/" + query, token, new RequestManager.OnRequestCompleteListener() {
-                        @Override
-                        public void onSuccess(Call call, Response response) {
-                            List<UserProfile> outputFriends = new ArrayList<>();
-                            try{
-                                JSONArray jsonArray = new JSONArray(response.body().string());
-                                for(int i = 0; i < jsonArray.length(); i++){
-                                    UserProfile userProfile = new UserProfile();
-                                    userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
-                                    outputFriends.add(userProfile);
-                                }
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        activity.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                searchPeopleCustomAdapter.changeDataset(outputFriends);
-                                            }
-                                        });
-                                    }
-                                }, 0, 1000);
-                                System.out.println("efwa");
-                            } catch(JSONException | IOException e){
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onError(Call call, IOException e) {
-                            System.out.println(call.toString());
-                        }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 return false;
 
             }
@@ -237,8 +202,47 @@ public class SearchScreenActivity extends AppCompatActivity {
         return (SearchMode) getIntent().getExtras().get("mode");
     }
 
-    private void initDataset(){
+    private void initDataset(Activity activity, String token){
+        RequestManager requestManager = new RequestManager();
 
+        try {
+
+            requestManager.get("user/" , token, new RequestManager.OnRequestCompleteListener() {
+                @Override
+                public void onSuccess(Call call, Response response) {
+                    List<UserProfile> outputFriends = new ArrayList<>();
+                    try{
+                        JSONArray jsonArray = new JSONArray(response.body().string());
+                        for(int i = 0; i < jsonArray.length(); i++){
+                            UserProfile userProfile = new UserProfile();
+                            userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                            outputFriends.add(userProfile);
+                        }
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        searchPeopleCustomAdapter.changeDataset(outputFriends);
+                                    }
+                                });
+                            }
+                        }, 0, 1000);
+                        System.out.println("efwa");
+                    } catch(JSONException | IOException e){
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onError(Call call, IOException e) {
+                    System.out.println(call.toString());
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         
     }
 }

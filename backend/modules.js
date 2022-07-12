@@ -48,6 +48,9 @@ class UserStore {
     }
 
     async updateUserAccount(userID, userInfo) {
+        console.log("IN UPDATE USER ACCOUNT")
+        console.log(userID)
+        console.log(userInfo)
         return await User.findByIdAndUpdate(userID, userInfo);
     }
 
@@ -442,6 +445,9 @@ class EventStore {
             let user = await userStore.findUserByID(participant);
             if (user) {
                 user.events.push(eventObject._id);
+                console.log("IN CREATE EVENT")
+                console.log(eventObject._id)
+                console.log(user.events)
                 await userStore.updateUserAccount(participant, user);
             }
         });

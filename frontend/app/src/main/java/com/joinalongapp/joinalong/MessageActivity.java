@@ -68,16 +68,41 @@ public class MessageActivity extends AppCompatActivity {
                 messageField.setText("");
                 message.setOwner(true);
                 message.setCreatedAt(date.getTime());
-                message.setName(user.getFullName());
                 String path = "sendSingle";
                 //String otherId = chatDetails.get;
                 if(group){
                     path = "sendGroup";
 
                 }
+                JSONObject json = null;
+                try {
+                    json = message.toJson();
+                    json.put("token", token);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
 
                 RequestManager requestManager = new RequestManager();
-                //requestManager.put("/chat/" + path + "/" + user.getId() + "/" + )
+                try {
+                    requestManager.put("/chat/" + path + "/" + user.getId() + "/" + chatDetails.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                        @Override
+                        public void onSuccess(Call call, Response response) {
+                            if(response.isSuccessful()){
+                                List<Message> messageList = messageAdapter.getMessages();
+                                messageList.add(message);
+                                messageAdapter.notifyItemInserted(messageAdapter.getItemCount() - 1);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Call call, IOException e) {
+                            System.out.println("");
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             }
         });
@@ -89,6 +114,7 @@ public class MessageActivity extends AppCompatActivity {
         messageRecycler.setLayoutManager(new LinearLayoutManager(this));
         messageRecycler.setAdapter(messageAdapter);
     }
+
 
     private void initElements(){
         messageRecycler = (RecyclerView) findViewById(R.id.chatRecycler);

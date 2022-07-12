@@ -76,6 +76,17 @@ public class Message implements IDetailsModel {
         return json.toString();
     }
 
+    public JSONObject toJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("message", getMessage());
+        json.put("name", getName());
+        json.put("id", getId());
+        json.put("createdAt", createdAt);
+        json.put("isOwner", isOwner());
+        Log.w("MessageModel", "this may produce unintended results if json keys dont match");
+        return json;
+    }
+
     @Override
     public IDetailsModel populateDetailsFromJson(String jsonBody) throws JSONException {
         return null;

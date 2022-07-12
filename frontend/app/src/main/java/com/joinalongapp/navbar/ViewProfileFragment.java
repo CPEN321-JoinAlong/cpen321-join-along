@@ -133,7 +133,7 @@ public class ViewProfileFragment extends Fragment {
                     e.printStackTrace();
                 }
                 try {
-                    requestManager.put("user/acceptUser/" + userId + "/" + otherUserId, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    requestManager.put("user/sendFriendRequest/" + userId + "/" + otherUserId, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             System.out.println(response.toString());

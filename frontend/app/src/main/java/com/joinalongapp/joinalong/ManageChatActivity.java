@@ -18,6 +18,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.ChatDetails;
+import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONException;
@@ -25,7 +26,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -43,6 +46,7 @@ public class ManageChatActivity extends AppCompatActivity {
     private ImageButton cancelButton;
     private Button submitButton;
     private List<UserProfile> trackFriends;
+    private Map<String, String> chipIdToUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,8 @@ public class ManageChatActivity extends AppCompatActivity {
         String userToken = ((UserApplicationInfo) getApplication()).getUserToken();
         RequestManager requestManager = new RequestManager();
         List<String> friendNames = new ArrayList<>();
+        Map<String, String> idToName = new HashMap<>();
+
         for (String friendId : friendUserIds) {
             try {
                 requestManager.get("user/" + friendId, userToken, new RequestManager.OnRequestCompleteListener() {
@@ -81,6 +87,7 @@ public class ManageChatActivity extends AppCompatActivity {
                         try {
                             JSONObject userJson = new JSONObject(response.body().string());
                             friendNames.add(userJson.getString("name"));
+                            idToName.put(friendId, userJson.getString("name"));
                         } catch (IOException | JSONException e) {
                             //todo
                         }
@@ -117,11 +124,29 @@ public class ManageChatActivity extends AppCompatActivity {
                     ChatDetails resultChat = new ChatDetails();
 
                     resultChat.setDescription(chatDescription.getText().toString());
-
-                    //resultChat.setTags(chipGroupToList(tagChipGroup));
+                    resultChat.setTags(chipGroupToList(tagChipGroup));
                     resultChat.setTitle(chatTitle.getText().toString());
-                    // TODO: need to backwards associate string names to User object (maybe mapping between chips and user?)
-                    //resultChat.setPeople(chipGroupToList(friendChipGroup));
+                    resultChat.setPeople(chipFriendsGroupToList(friendChipGroup, idToName));
+
+                    RequestManager submitManager = new RequestManager();
+                    try{
+                        JSONObject json = resultChat.toJson();
+                        json.put("token", token);
+                        submitManager.post("chat/create", json.toString(), new RequestManager.OnRequestCompleteListener() {
+                            @Override
+                            public void onSuccess(Call call, Response response) {
+                                System.out.println(response.body());
+                            }
+
+                            @Override
+                            public void onError(Call call, IOException e) {
+                                System.out.println(call.toString());
+                            }
+                        });
+                    } catch(IOException | JSONException e){
+
+                    }
+
 
                 }
             }
@@ -139,6 +164,7 @@ public class ManageChatActivity extends AppCompatActivity {
         friendChipGroup = findViewById(R.id.manageTags);
         cancelButton = findViewById(R.id.manageChatCancelButton);
         submitButton = findViewById(R.id.submitManageChatButton);
+        chipIdToUserId = new HashMap<>();
     }
 
     private void autofillChatDetails(ChatDetails chatDetails){
@@ -200,12 +226,28 @@ public class ManageChatActivity extends AppCompatActivity {
         }
     }
 
-    private List<String> chipGroupToList(ChipGroup chipGroup){
+    private List<Tag> chipGroupToList(ChipGroup chipGroup){
+        List<Tag> result = new ArrayList<>();
+        List<Integer> ids = chipGroup.getCheckedChipIds();
+        for(Integer id : ids){
+            Chip chip = chipGroup.findViewById(id);
+            result.add(new Tag(chip.getText().toString()));
+        }
+        return result;
+    }
+
+    private List<String> chipFriendsGroupToList(ChipGroup chipGroup, Map idToName){
         List<String> result = new ArrayList<>();
         List<Integer> ids = chipGroup.getCheckedChipIds();
         for(Integer id : ids){
             Chip chip = chipGroup.findViewById(id);
-            result.add(chip.getText().toString());
+            String name = chip.getText().toString();
+            for(Object s : idToName.values()){
+                String individualName = (String) s;
+                if(individualName.equals(name)){
+                    result.add((String)idToName.get(individualName));
+                }
+            }
         }
         return result;
     }
@@ -268,4 +310,6 @@ public class ManageChatActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

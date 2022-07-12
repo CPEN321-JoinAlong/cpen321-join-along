@@ -117,6 +117,23 @@ public class ChatDetails implements Serializable, IDetailsModel {
         return json.toString();
     }
 
+
+    public JSONObject toJson() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        json.put("title", getTitle());
+
+        JSONArray tags = new JSONArray(getStringListOfTags());
+        json.put("tags", tags);
+
+        json.put("numberOfPeople", getMaxNumPeople());
+        json.put("description", getDescription());
+        json.put("capacity", getNumPeople());
+        json.put("participants", new JSONArray(getPeople()));
+
+        return json;
+    }
+
     @Override
     public IDetailsModel populateDetailsFromJson(String jsonBody) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonBody);

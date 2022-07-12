@@ -1,5 +1,7 @@
 package com.joinalongapp.adapter;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.navbar.ViewProfileFragment;
+import com.joinalongapp.viewmodel.Message;
 import com.joinalongapp.viewmodel.UserProfile;
 import com.squareup.picasso.Picasso;
 
@@ -27,6 +30,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import okhttp3.Call;
@@ -83,6 +88,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
     @Override
     public void onBindViewHolder(@NonNull FriendsRequestCustomAdapter.ViewHolder holder, int position) {
         holder.getName().setText(users.get(position).getFullName());
+        Activity activity = (Activity) holder.itemView.getContext();
         holder.getAccept().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,7 +106,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                     requestManager.put("user/acceptUser/" + user.getId() + "/" + otherUser.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            deleteRequest(users.get(holder.getBindingAdapterPosition()).getId());
+
                         }
 
                         @Override
@@ -108,6 +114,18 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
 
                         }
                     });
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    deleteRequest(users.get(holder.getBindingAdapterPosition()).getId());
+                                }
+                            });
+                        }
+                    }, 0, 1000);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -131,7 +149,8 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                     requestManager.put("user/rejectUser/" + user.getId() + "/" + otherUser.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            deleteRequest(users.get(holder.getBindingAdapterPosition()).getId());
+
+
                         }
 
                         @Override
@@ -139,6 +158,18 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
 
                         }
                     });
+
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    deleteRequest(users.get(holder.getBindingAdapterPosition()).getId());
+                                }
+                            });
+                        }
+                    }, 0, 1000);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -174,6 +205,11 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
         }
     }
 
+    public void changeDataset(List<UserProfile> input){
+        users = input;
+        notifyDataSetChanged();
+    }
+
     private void deleteRequest(String uuid){
         for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
             UserProfile value = iterator.next();
@@ -181,7 +217,6 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                 iterator.remove();
             }
         }
-        // TODO: SEND BACKEND
         notifyDataSetChanged();
 
     }

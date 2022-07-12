@@ -174,4 +174,9 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         notifyDataSetChanged();
 
     }
+
+    public void changeDataset(List<UserProfile> input){
+        users = input;
+        notifyDataSetChanged();
+    }
 }

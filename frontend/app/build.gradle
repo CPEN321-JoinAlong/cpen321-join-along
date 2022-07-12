@@ -29,6 +29,7 @@ android {
     configurations {
         all {
             exclude group: "com.android.support", module: "support-core-ui"
+            exclude group: "org.jetbrains" , module:"annotations"
         }
     }
     compileOptions {
@@ -51,8 +52,8 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:2.3.0'
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
     implementation 'com.squareup.picasso:picasso:2.8'
-//    implementation 'com.uber.sdk:rides-android:0.5.3'
-//    implementation 'com.lyft:lyft-android-sdk:2.0.2'
+    implementation 'com.uber.sdk:rides-android:0.5.3'
+    implementation 'com.lyft:lyft-android-sdk:2.0.2'
     def nav_version = "2.5.0"
 
     // disable swiping in viewpager2 to resolve moving around map

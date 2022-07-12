@@ -16,7 +16,8 @@ public class UserProfile implements Serializable, IDetailsModel {
     private List<Tag> tags = new ArrayList<>();
     private String description;
     private String profilePictureUrl;
-    private List<String> friends = new ArrayList<String>();
+    //TODO: probably should make constructor instantiate these, or modify the existing setters to null check them
+    private List<String> friends = new ArrayList<>();
 
 
     public void setId(String id) {

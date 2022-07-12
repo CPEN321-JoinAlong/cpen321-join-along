@@ -1,11 +1,13 @@
 package com.joinalongapp.joinalong;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -23,6 +25,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -34,8 +38,8 @@ public class LoginActivity extends AppCompatActivity {
     private int RC_SIGN_IN = 1;
     private SignInButton signInButton;
 
-    private final String SCHEME = "http";
-    private final String BASE_URL = "20.9.17.127";
+    private static final String SCHEME = "http";
+    private static final String BASE_URL = "20.9.17.127";
     private final int PORT = 3000;
 
     @Override
@@ -45,6 +49,9 @@ public class LoginActivity extends AppCompatActivity {
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
+//                .requestIdToken("693671271113-iii855v6rtbcv26d21pdif7ljgi1canc.apps.googleusercontent.com")
+//                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+//                .requestServerAuthCode("693671271113-iii855v6rtbcv26d21pdif7ljgi1canc.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
@@ -130,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                                     ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(profileOnLogin);
                                     startMainActivity();
                                 } catch (IOException | JSONException e) {
-                                    Log.e(TAG, "Failed to load user details from backend server: " + e.getMessage());
+                                    createParseError(e);
                                 }
                                 break;
 
@@ -143,7 +150,7 @@ public class LoginActivity extends AppCompatActivity {
                                     JSONObject responseBody = new JSONObject(response.body().string());
                                     i.putExtra("userToken", responseBody.getString("token"));
                                 } catch (IOException | JSONException e) {
-                                    Log.e(TAG, "Failed to load user details from backend server: " + e.getMessage());
+                                    createParseError(e);
                                 }
 
                                 i.putExtra("lastName", account.getFamilyName());
@@ -155,22 +162,19 @@ public class LoginActivity extends AppCompatActivity {
                             // User token was invalid
                             case Constants.STATUS_HTTP_406:
                             default:
-                                //TODO make a warning message
+                                createBadTokenError();
                                 break;
-
-
                         }
-
                     }
 
                     @Override
                     public void onError(Call call, IOException e) {
-                        Log.e(TAG, "Failed to authenticate with backend server: " + e.getMessage());
+                        createBackendAuthError(e);
                     }
                 });
 
             } catch (JSONException | IOException e) {
-                Log.e(TAG, "Failed to authenticate with backend server");
+                createBackendAuthError(e);
             }
 
             // Signed in successfully, show authenticated UI.
@@ -183,11 +187,86 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void createBackendAuthError(Exception e) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                LoginActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(LoginActivity.this)
+                                .setTitle("Login Failed")
+                                .setMessage("Failed to authenticate with backend server. \n Please try again later.")
+                                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .create()
+                                .show();
+                    }
+                });
+            }
+        }, 0);
+        Log.e(TAG, "Failed to authenticate with backend server: " + e.getMessage());
+    }
+
+    private void createBadTokenError() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                LoginActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(LoginActivity.this)
+                                .setTitle("Login Failed")
+                                .setMessage("Failure to authenticate with user token. \n Please try again later.")
+                                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .create()
+                                .show();
+                    }
+                });
+            }
+        }, 0);
+        Log.e(TAG, "Failure to authenticate with user token.");
+    }
+
+    private void createParseError(Exception e) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                LoginActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(LoginActivity.this)
+                                .setTitle("Login Failed")
+                                .setMessage("Unable to parse user data into app.\n Please try again later.")
+                                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .create()
+                                .show();
+                    }
+                });
+            }
+        }, 0);
+        Log.e(TAG, "Unable to parse user data into app: " + e.getMessage());
+    }
+
     private void updateUI(GoogleSignInAccount account) {
         if (account == null) {
             Log.d(TAG, "There is no user signed in!");
         } else {
-            Log.d(TAG, "Successful sign in");
+            Log.d(TAG, account.getGivenName() + account.getFamilyName() + " has successfully sign in.");
         }
     }
 

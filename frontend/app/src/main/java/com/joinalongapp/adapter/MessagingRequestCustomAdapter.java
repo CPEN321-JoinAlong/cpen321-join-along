@@ -1,5 +1,6 @@
 package com.joinalongapp.adapter;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -80,6 +82,7 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
     @Override
     public void onBindViewHolder(@NonNull MessagingRequestCustomAdapter.ViewHolder holder, int position) {
         holder.getName().setText(chatDetails.get(position).getTitle());
+        Activity activity = (Activity) holder.itemView.getContext();
         holder.getAccept().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,7 +100,17 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
                     requestManager.put("user/acceptChat/" + user.getId() + "/" + otherChat.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());
+                                        }
+                                    });
+                                }
+                            }, 0);
                         }
 
                         @Override
@@ -160,6 +173,9 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
 
     @Override
     public int getItemCount() {
+        if (chatDetails == null) {
+            return 0;
+        }
         return chatDetails.size();
     }
 

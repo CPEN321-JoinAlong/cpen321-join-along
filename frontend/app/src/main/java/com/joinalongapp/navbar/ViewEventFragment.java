@@ -21,6 +21,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.Constants;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.ReportActivity;
 import com.joinalongapp.joinalong.SelectRideshareActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
@@ -59,6 +60,7 @@ public class ViewEventFragment extends Fragment {
     private Button joinButton;
     private Button rideshareButton;
     private Event event;
+    private Button reportButton;
 
     public ViewEventFragment() {
         // Required empty public constructor
@@ -220,6 +222,16 @@ public class ViewEventFragment extends Fragment {
             }
         });
 
+        reportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), ReportActivity.class);
+                i.putExtra("REPORT_PERSON", false);
+                i.putExtra("REPORTING_EVENT", event);
+                startActivity(i);
+            }
+        });
+
         return view;
     }
 
@@ -263,6 +275,7 @@ public class ViewEventFragment extends Fragment {
         backButton = view.findViewById(R.id.viewEventBackButton);
         joinButton = view.findViewById(R.id.joinEventButton);
         rideshareButton = view.findViewById(R.id.viewEventBookRideshareButton);
+        reportButton = view.findViewById(R.id.eventReportButton);
     }
 
     private void initEventDetails(Event event) {

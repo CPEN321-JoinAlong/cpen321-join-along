@@ -329,7 +329,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline35"
-        app:layout_constraintVertical_bias="0.51" />
+        app:layout_constraintVertical_bias="0.294" />
 
     <Button
         android:id="@+id/viewEventBookRideshareButton"
@@ -340,5 +340,17 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline27"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline35"
-        app:layout_constraintVertical_bias="0.51" />
+        app:layout_constraintVertical_bias="0.294" />
+
+    <Button
+        android:id="@+id/eventReportButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_report_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline35"
+        app:layout_constraintVertical_bias="0.762" />
 </androidx.constraintlayout.widget.ConstraintLayout>

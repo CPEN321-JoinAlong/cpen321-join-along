@@ -1,6 +1,5 @@
 package com.joinalongapp.navbar;
 
-import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -20,7 +18,6 @@ import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.ReportActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
-import com.joinalongapp.viewmodel.ReportDetails;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONException;
@@ -118,9 +115,12 @@ public class ViewProfileFragment extends Fragment {
                 startActivity(reportIntent);
             }
         });
-        if(hide){
+
+
+        if (hide || shouldHideAddFriendButton(globalUserProfile, otherUserId)){
             addFriend.setVisibility(View.INVISIBLE);
         }
+
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,6 +161,34 @@ public class ViewProfileFragment extends Fragment {
 
         return view;
     }
+
+    private boolean shouldHideAddFriendButton(UserProfile theGlobalUserProfile, String theOtherUserId) {
+        return theGlobalUserProfile.getFriends().contains(theOtherUserId);
+    }
+
+//    private boolean shouldHideAddFriendButton(String token, String userId, String theOtherUserId) {
+//        RequestManager requestManager = new RequestManager();
+//        String path = "user/" + userId + "/friends";
+//
+////        try {
+////            requestManager.get(path, token, new RequestManager.OnRequestCompleteListener() {
+////                @Override
+////                public void onSuccess(Call call, Response response) {
+////                    JSONArray friendsArray = new JSONArray();
+////                    friendsArray.getString(0);
+////                }
+////
+////                @Override
+////                public void onError(Call call, IOException e) {
+////
+////                }
+////            });
+////        } catch (IOException | JSONException e) {
+////
+////        }
+//        return true;
+//
+//    }
 
     private void initDataset(View view){
         backButton = view.findViewById(R.id.backButton);

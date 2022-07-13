@@ -172,12 +172,12 @@ class UserStore {
         });
     }
 
-    async sendChatRequest(userID, chatID, chatEngine) {
+    async sendChatInvite(userID, chatID, chatEngine) {
         let user = await this.findUserByID(userID);
         let chat = await chatEngine.findChatByID(chatID);
         if (user && chat) {
             if(!user.chats.includes(chatID) && !chat.participants.includes(userID) && !user.chatInvites.includes(chatID)){
-                await User.findByIdAndUpdate(otherUserID, {
+                await User.findByIdAndUpdate(userID, {
                     $push: { chatInvites: chatID }
                 });
                 return SUCCESS
@@ -328,6 +328,7 @@ class ChatEngine {
     constructor() {}
 
     async findChatByID(chatID) {
+        console.log(chatID)
         return await Chat.findById(chatID);
     }
 
@@ -347,8 +348,6 @@ class ChatEngine {
     async sendChatMessage(userID, chatID, text, name, date, userStore){
         let chat = await Chat.findById(chatID);
         let user = await userStore.findUserByID(userID);
-        console.log(chat)
-        console.log(user)
         if(user && chat){
             console.log("HELLOOOOO")
             return await Chat.findByIdAndUpdate(chatID,

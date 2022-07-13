@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.adapter.SearchPeopleCustomAdapter;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONArray;
@@ -94,7 +95,7 @@ public class SearchScreenActivity extends AppCompatActivity {
 
 
 
-        fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(userToken, activity);
+        fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(userToken, activity, getSearchMode());
 
 
 
@@ -115,7 +116,7 @@ public class SearchScreenActivity extends AppCompatActivity {
 
                     if (fetchSearchTermSuggestionsTask.getStatus() != AsyncTask.Status.RUNNING) {
                         if (fetchSearchTermSuggestionsTask.getStatus() == AsyncTask.Status.FINISHED) {
-                            fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(userToken, activity);
+                            fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(userToken, activity, getSearchMode());
                             System.out.println("reset");
                         }
                         fetchSearchTermSuggestionsTask.execute(newText);
@@ -148,10 +149,12 @@ public class SearchScreenActivity extends AppCompatActivity {
 
         private String userToken;
         private WeakReference<Context> activity;
+        private SearchMode mode;
 
-        FetchSearchTermSuggestionsTask(String userToken, Context activity){
+        FetchSearchTermSuggestionsTask(String userToken, Context activity, SearchMode mode){
             this.userToken = userToken;
             this.activity = new WeakReference<>(activity);
+            this.mode = mode;
         }
 
         private static final String[] sAutocompleteColNames = new String[] {
@@ -171,55 +174,108 @@ public class SearchScreenActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             try {
-                                RequestManager requestManager = new RequestManager();
-                                requestManager.get(myUrlPath + params[0], userToken, new RequestManager.OnRequestCompleteListener() {
-                                    @Override
-                                    public void onSuccess(Call call, Response response) {
-                                        List<UserProfile> outputFriends = new ArrayList<>();
+                                if (mode == SearchMode.USER_MODE) {
+                                    RequestManager requestManager = new RequestManager();
+                                    requestManager.get(myUrlPath + params[0], userToken, new RequestManager.OnRequestCompleteListener() {
+                                        @Override
+                                        public void onSuccess(Call call, Response response) {
+                                            List<UserProfile> outputFriends = new ArrayList<>();
 
-                                        try {
-                                            JSONArray jsonArray = new JSONArray(response.body().string());
-                                            for(int i = 0; i < jsonArray.length(); i++){
-                                                UserProfile userProfile = new UserProfile();
-                                                userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
-                                                outputFriends.add(userProfile);
+                                            try {
+                                                JSONArray jsonArray = new JSONArray(response.body().string());
+                                                for(int i = 0; i < jsonArray.length(); i++){
+                                                    UserProfile userProfile = new UserProfile();
+                                                    userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                                                    outputFriends.add(userProfile);
 
-                                                String userName = userProfile.getFullName();
+                                                    String userName = userProfile.getFullName();
 
-                                                Object[] row = new Object[] { i, userName };
+                                                    Object[] row = new Object[] { i, userName };
 
-                                                cursor.addRow(row);
-                                                System.out.println(i);
+                                                    cursor.addRow(row);
+                                                    System.out.println(i);
+                                                }
+
+                                                new Timer().schedule(new TimerTask() {
+                                                    @Override
+                                                    public void run() {
+                                                        ((Activity) activity.get()).runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                searchView.getSuggestionsAdapter().notifyDataSetChanged();
+                                                            }
+                                                        });
+                                                    }
+                                                }, 0);
+
+
+                                                System.out.println("efwa");
+                                            } catch (IOException | JSONException e) {
+                                                System.out.println("OHNO");
                                             }
 
-                                            new Timer().schedule(new TimerTask() {
-                                                @Override
-                                                public void run() {
-                                                    ((Activity) activity.get()).runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            searchView.getSuggestionsAdapter().notifyDataSetChanged();
-                                                        }
-                                                    });
-                                                }
-                                            }, 0);
 
 
-                                            System.out.println("efwa");
-                                        } catch (IOException | JSONException e) {
-                                            System.out.println("OHNO");
+
                                         }
 
+                                        @Override
+                                        public void onError(Call call, IOException e) {
+                                            System.out.println(call.toString());
+                                        }
+                                    });
+                                } else {
+                                    RequestManager requestManager = new RequestManager();
+                                    requestManager.get(myUrlPath + params[0], userToken, new RequestManager.OnRequestCompleteListener() {
+                                        @Override
+                                        public void onSuccess(Call call, Response response) {
+                                            List<Event> events = new ArrayList<>();
+
+                                            try {
+                                                JSONArray jsonArray = new JSONArray(response.body().string());
+                                                for(int i = 0; i < jsonArray.length(); i++){
+                                                    Event event = new Event();
+                                                    event.populateDetailsFromJson(jsonArray.get(i).toString());
+                                                    events.add(event);
+
+                                                    String eventTitle = event.getTitle();
+
+                                                    Object[] row = new Object[] { i, eventTitle };
+
+                                                    cursor.addRow(row);
+                                                    System.out.println(i);
+                                                }
+
+                                                new Timer().schedule(new TimerTask() {
+                                                    @Override
+                                                    public void run() {
+                                                        ((Activity) activity.get()).runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                searchView.getSuggestionsAdapter().notifyDataSetChanged();
+                                                            }
+                                                        });
+                                                    }
+                                                }, 0);
+
+
+                                                System.out.println("efwa");
+                                            } catch (IOException | JSONException e) {
+                                                System.out.println("OHNO");
+                                            }
 
 
 
-                                    }
 
-                                    @Override
-                                    public void onError(Call call, IOException e) {
-                                        System.out.println(call.toString());
-                                    }
-                                });
+                                        }
+
+                                        @Override
+                                        public void onError(Call call, IOException e) {
+                                            System.out.println(call.toString());
+                                        }
+                                    });
+                                }
+
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

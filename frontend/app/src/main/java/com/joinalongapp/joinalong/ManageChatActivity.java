@@ -1,6 +1,7 @@
 package com.joinalongapp.joinalong;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.chip.Chip;
@@ -163,11 +165,56 @@ public class ManageChatActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Call call, Response response) {
                                 System.out.println(response.body());
+
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        ManageChatActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                new AlertDialog.Builder(ManageChatActivity.this)
+                                                        .setTitle("Chat created!")
+                                                        .setMessage("The " + chatTitle.getText().toString() + " has been successfully created.")
+                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                                finish();
+                                                            }
+                                                        })
+                                                        .create()
+                                                        .show();
+                                            }
+                                        });
+                                    }
+                                }, 0);
+
                             }
 
                             @Override
                             public void onError(Call call, IOException e) {
                                 System.out.println(call.toString());
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        ManageChatActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                new AlertDialog.Builder(ManageChatActivity.this)
+                                                        .setTitle("Unable to create chat.")
+                                                        .setMessage("Unable to create the " + chatTitle.getText().toString() + " chat. \n Please try again later.")
+                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        })
+                                                        .create()
+                                                        .show();
+                                            }
+                                        });
+                                    }
+                                }, 0);
                             }
                         });
                     } catch(IOException | JSONException e){

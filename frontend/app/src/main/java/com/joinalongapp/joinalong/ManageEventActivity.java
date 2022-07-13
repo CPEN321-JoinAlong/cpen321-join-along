@@ -1,6 +1,7 @@
 package com.joinalongapp.joinalong;
 
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -18,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.chip.Chip;
@@ -38,6 +40,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -165,12 +169,55 @@ public class ManageEventActivity extends AppCompatActivity {
                                     Log.e(TAG, "error printing log");
                                 }
 
-                                startActivity(i);
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        ManageEventActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                new AlertDialog.Builder(ManageEventActivity.this)
+                                                        .setTitle("Chat created!")
+                                                        .setMessage("The " + title.getText().toString() + " has been successfully created.")
+                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                                startActivity(i);
+                                                            }
+                                                        })
+                                                        .create()
+                                                        .show();
+                                            }
+                                        });
+                                    }
+                                }, 0);
+
+
                             }
 
                             @Override
                             public void onError(Call call, IOException e) {
-                                Toast.makeText(v.getContext(), "ERROR OCCURRED", Toast.LENGTH_SHORT).show();
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        ManageEventActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                new AlertDialog.Builder(ManageEventActivity.this)
+                                                        .setTitle("Unable to create chat.")
+                                                        .setMessage("Unable to create the " + title.getText().toString() + " chat. \n Please try again later.")
+                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        })
+                                                        .create()
+                                                        .show();
+                                            }
+                                        });
+                                    }
+                                }, 0);
                             }
                         });
                     } catch (IOException e) {

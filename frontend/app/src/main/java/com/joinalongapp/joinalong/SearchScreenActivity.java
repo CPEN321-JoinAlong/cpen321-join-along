@@ -39,12 +39,13 @@ public class SearchScreenActivity extends AppCompatActivity {
     private static SearchView searchView;
     private ImageView returnButton;
     private static final int SEARCH_QUERY_THRESHOLD = 1;
-    private static String myOnSearchButtonUrlPath;
+    private static String myUrlPath;
     private static String mySuggestionUrlPath;
     private SearchScreenActivity.LayoutManagerType layoutManagerType;
     private SearchPeopleCustomAdapter searchPeopleCustomAdapter;
     private RecyclerView recyclerView;
     private List<UserProfile> dataset;
+    private FetchSearchTermSuggestionsTask fetchSearchTermSuggestionsTask;
 
 
 
@@ -93,6 +94,8 @@ public class SearchScreenActivity extends AppCompatActivity {
 
 
 
+        fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(userToken, activity);
+
 
 
         //TODO: call this for on click suggestions
@@ -109,7 +112,17 @@ public class SearchScreenActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.length() >= SEARCH_QUERY_THRESHOLD) {
-                    new FetchSearchTermSuggestionsTask(userToken, activity).execute(newText);
+
+                    if (fetchSearchTermSuggestionsTask.getStatus() != AsyncTask.Status.RUNNING) {
+                        if (fetchSearchTermSuggestionsTask.getStatus() == AsyncTask.Status.FINISHED) {
+                            fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(userToken, activity);
+                            System.out.println("reset");
+                        }
+                        fetchSearchTermSuggestionsTask.execute(newText);
+                        System.out.println("search");
+                    }
+                    System.out.println("changed");
+
                 } else {
                     searchView.getSuggestionsAdapter().changeCursor(null);
                 }
@@ -151,65 +164,71 @@ public class SearchScreenActivity extends AppCompatActivity {
 
             MatrixCursor cursor = new MatrixCursor(sAutocompleteColNames);
 
-            RequestManager requestManager = new RequestManager();
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    ((Activity) activity.get()).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                RequestManager requestManager = new RequestManager();
+                                requestManager.get(myUrlPath + params[0], userToken, new RequestManager.OnRequestCompleteListener() {
+                                    @Override
+                                    public void onSuccess(Call call, Response response) {
+                                        List<UserProfile> outputFriends = new ArrayList<>();
 
-            try {
+                                        try {
+                                            JSONArray jsonArray = new JSONArray(response.body().string());
+                                            for(int i = 0; i < jsonArray.length(); i++){
+                                                UserProfile userProfile = new UserProfile();
+                                                userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                                                outputFriends.add(userProfile);
 
-                requestManager.get(myOnSearchButtonUrlPath + params[0], userToken, new RequestManager.OnRequestCompleteListener() {
-                    @Override
-                    public void onSuccess(Call call, Response response) {
-                        List<UserProfile> outputFriends = new ArrayList<>();
-                        try{
-                            JSONArray jsonArray = new JSONArray(response.body().string());
-                            for(int i = 0; i < jsonArray.length(); i++){
-                                UserProfile userProfile = new UserProfile();
-                                userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
-                                outputFriends.add(userProfile);
-                            }
-                            new Timer().schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    ((Activity) activity.get()).runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            //TODO: get list of names in user profile and display it here
+                                                String userName = userProfile.getFullName();
 
+                                                Object[] row = new Object[] { i, userName };
+
+                                                cursor.addRow(row);
+                                                System.out.println(i);
+                                            }
+
+                                            new Timer().schedule(new TimerTask() {
+                                                @Override
+                                                public void run() {
+                                                    ((Activity) activity.get()).runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            searchView.getSuggestionsAdapter().notifyDataSetChanged();
+                                                        }
+                                                    });
+                                                }
+                                            }, 0);
+
+
+                                            System.out.println("efwa");
+                                        } catch (IOException | JSONException e) {
+                                            System.out.println("OHNO");
                                         }
-                                    });
-                                }
-                            }, 0);
-                            System.out.println("efwa");
-                        } catch(JSONException | IOException e){
-                            e.printStackTrace();
+
+
+
+
+                                    }
+
+                                    @Override
+                                    public void onError(Call call, IOException e) {
+                                        System.out.println(call.toString());
+                                    }
+                                });
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
                         }
-                    }
-
-                    @Override
-                    public void onError(Call call, IOException e) {
-                        System.out.println(call.toString());
-                    }
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            //TODO: DO A GET
-            //TODO: remove me for testing only
-            List<String> terms = new ArrayList<>();
-            terms.add("dog");
-            terms.add("cat");
-
-            for (int index = 0; index < terms.size(); index++) {
-                String term = terms.get(index);
-
-                Object[] row = new Object[] { index, term };
-
-                //TODO: remove this if statement and move cursor.add out, just testing search
-                if (terms.get(index).startsWith(params[0])) {
-                    cursor.addRow(row);
+                    });
                 }
-            }
+            }, 0);
+
 
             return cursor;
         }
@@ -238,14 +257,12 @@ public class SearchScreenActivity extends AppCompatActivity {
 
         if (theMode == SearchMode.EVENT_MODE) {
             searchView.setQueryHint("Search Events");
-            myOnSearchButtonUrlPath = "";
-            mySuggestionUrlPath = "";
+            myUrlPath = "event/title/";
 
         }
         if (theMode == SearchMode.USER_MODE) {
             searchView.setQueryHint("Search Users");
-            myOnSearchButtonUrlPath = "user/name/";
-            mySuggestionUrlPath = "";
+            myUrlPath = "user/name/";
         }
     }
 
@@ -259,7 +276,7 @@ public class SearchScreenActivity extends AppCompatActivity {
 
         try {
 
-            requestManager.get(myOnSearchButtonUrlPath + query, token, new RequestManager.OnRequestCompleteListener() {
+            requestManager.get(myUrlPath + query, token, new RequestManager.OnRequestCompleteListener() {
                 @Override
                 public void onSuccess(Call call, Response response) {
                     List<UserProfile> outputFriends = new ArrayList<>();

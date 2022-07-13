@@ -9,7 +9,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,8 +48,9 @@ public class ManageChatActivity extends AppCompatActivity {
     private ChipGroup friendChipGroup;
     private ImageButton cancelButton;
     private Button submitButton;
-    private List<UserProfile> trackFriends;
+    private List<UserProfile> trackFriends = new ArrayList<>();
     private Map<String, String> chipIdToUserId;
+    private String[] friends;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +59,8 @@ public class ManageChatActivity extends AppCompatActivity {
 
         String token = ((UserApplicationInfo) getApplication()).getUserToken();
         UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
+
+        friends = new String[user.getFriends().size()];
 
         initElement();
 
@@ -90,29 +92,33 @@ public class ManageChatActivity extends AppCompatActivity {
         }
 
         Activity activity = this;
+
+
         try {
             requestManager.get("user/" + user.getId() + "/friends", token, new RequestManager.OnRequestCompleteListener() {
                 @Override
                 public void onSuccess(Call call, Response response) {
-                    List<UserProfile> outputFriends = new ArrayList<>();
                     try {
                         JSONArray jsonArray = new JSONArray(response.body().string());
                         for(int i = 0; i < jsonArray.length(); i++){
                             UserProfile userProfile = new UserProfile();
                             userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
-                            outputFriends.add(userProfile);
+
+                            friends[i] = userProfile.getFullName();
                         }
+
                         new Timer().schedule(new TimerTask() {
                             @Override
                             public void run() {
                                 activity.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        trackFriends = outputFriends;
+                                        initAutoCompleteChipGroup(friendAutoComplete, friendChipGroup, friends);
                                     }
                                 });
                             }
-                        }, 0, 1000);
+                        }, 0);
+
                     } catch(JSONException | IOException e){
                         e.printStackTrace();
                     }
@@ -120,17 +126,15 @@ public class ManageChatActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(Call call, IOException e) {
-
+                    System.out.println("ERROR");
                 }
             });
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        String[] friends = friendNames.toArray(new String[friendNames.size()]);
 
         initAutoCompleteChipGroup(tagAutoComplete, tagChipGroup, tags);
-        initAutoCompleteChipGroup(friendAutoComplete, friendChipGroup, friends);
 
 
         cancelButton.setOnClickListener(new View.OnClickListener() {

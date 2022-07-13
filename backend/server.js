@@ -79,17 +79,13 @@ app.use(async (req, res, next) => {
     let token;
     if (Object.keys(req.body).length !== 0) token = req.body.token;
     else token = req.headers.token;
-    console.log(req.body)
-    console.log(req.headers)
-    console.log(token)
     let user = await userStore.findUserForLogin(token);
     if (
         user != null ||
-        req.path.includes("/login") || req.path == "/test"
+        req.path.includes("/login") || req.path.includes("/user/create") || req.path == "/test"
     ) {
         next();
     } else {
-        console.log("HELLLLLLLOOOOOOOO")
         res.status(404).send("Unsuccessfull");
     }
 });
@@ -117,7 +113,6 @@ app.post("/login", async (req, res) => {
         let response = await axios(
             `https://oauth2.googleapis.com/tokeninfo?id_token=${Token}`
         );
-        console.log("HUHHH");
         if (response.status == 200) {
             let foundUser = await userStore.findUserForLogin(response.data.sub);
             if (foundUser == null)

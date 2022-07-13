@@ -20,7 +20,7 @@ class UserAccount {
         //fields which will be created automatically
         this.eventInvites = userInfo.eventInvites ? userInfo.eventInvites : [];
         this.chatInvites = userInfo.chatInvites ? userInfo.chatInvites : [];
-        this.friendRequest = userInfofriendRequest
+        this.friendRequest = userInfo.friendRequest
             ? userInfo.friendRequest
             : [];
         this.events = userInfo.events ? userInfo.events : [];

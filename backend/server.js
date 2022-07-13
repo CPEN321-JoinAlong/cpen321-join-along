@@ -29,7 +29,7 @@ function logRequest(req, res, next) {
     next();
 }
 
-mongoose.connect("mongodb://localhost:27017/joinalong", {
+mongoose.connect("mongodb://localhost:34542/joinalong", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
@@ -79,30 +79,30 @@ app.use(async (req, res, next) => {
     let token;
     if (Object.keys(req.body).length !== 0) token = req.body.token;
     else token = req.headers.token;
-    //console.log(req.body)
-    //console.log(req.headers)
-    //console.log(token)
+    console.log(req.body)
+    console.log(req.headers)
+    console.log(token)
     let user = await userStore.findUserForLogin(token);
     if (
         user != null ||
-        req.path.includes("/user/create") ||
-        req.path.includes("/login") ||
-        req.path == "/"
+        req.path.includes("/login") || req.path == "/test"
     ) {
         next();
     } else {
+        console.log("HELLLLLLLOOOOOOOO")
         res.status(404).send("Unsuccessfull");
     }
 });
 
 //JUST FOR TESTING
-app.get("/", async (req, res) => {
+app.get("/test", async (req, res) => {
     let a = {};
-    // await User.deleteMany({});
+    //await User.deleteMany({});
     //await Event.deleteMany({});
     //await Chat.deleteMany({});
     //await User.updateMany({},{ friends: [] })
     //await User.updateMany({},{ friendRequest: [] })
+    //await Chat.findByIdAndUpdate("62ccd155190a458def14f2f3", {messages: []})
     a["user"] = await User.find({});
     a["chat"] = await Chat.find({});
     a["event"] = await Event.find({});
@@ -295,7 +295,8 @@ app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
     console.log("hello");
     let { userID, chatID } = req.params;
     let { timeStamp, text } = req.body;
-    fromUserName = await userStore.findUserByID(userID).name;
+    let fromUser = await userStore.findUserByID(userID);
+    let fromUserName = fromUser.name;
     let updatedChat = await chatEngine.sendChatMessage(
         userID,
         chatID,
@@ -305,7 +306,6 @@ app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
         userStore
     );
 
-    console.log(updatedChat)
 
     // getMessaging().send({
     //     data: {
@@ -375,6 +375,8 @@ app.put("/chat/sendGroup/:userID/:eventID", async (req, res) => {
 //Chat: Sends the chat object (which includes all the messages) - get
 app.get("/chat/:id", async (req, res) => {
     let { id } = req.params;
+    console.log("IN CHAT END POINT")
+    console.log(id)
     let chat = await chatEngine.findChatByID(id);
     res.status(200).send(chat);
 });
@@ -405,6 +407,17 @@ app.get("/event/:id", async (req, res) => {
 app.get("/event", async (req, res) => {
     let eventList = await eventStore.findAllEvents();
     res.status(200).send(eventList);
+});
+
+app.put("/chat/sendChatInvite/:chatID/:userID", async (req, res) => {
+    let { userID, chatID } = req.params;
+    let result = await userStore.sendChatInvite(userID, chatID, chatEngine);
+    if(result == SUCCESS)
+        res.status(200).send("Sucessful");
+    else {
+        console.log(result);
+        res.status(result).send("Unsuccessfull");
+    }
 });
 
 app.put("/user/sendFriendRequest/:userID/:otherUserID", async (req, res) => {

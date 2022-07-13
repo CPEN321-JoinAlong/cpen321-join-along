@@ -2,6 +2,11 @@ const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
 const Report = require("./models/Report");
+const CONFLICT = 409;
+const NOTFOUND = 404;
+const SUCCESS = 200;
+
+
 
 class UserAccount {
     constructor(userInfo) {
@@ -15,7 +20,7 @@ class UserAccount {
         //fields which will be created automatically
         this.eventInvites = userInfo.eventInvites ? userInfo.eventInvites : [];
         this.chatInvites = userInfo.chatInvites ? userInfo.chatInvites : [];
-        this.friendRequest = userInfo.friendRequest
+        this.friendRequest = userInfofriendRequest
             ? userInfo.friendRequest
             : [];
         this.events = userInfo.events ? userInfo.events : [];
@@ -47,6 +52,11 @@ class UserStore {
         return await User.findById(userID);
     }
 
+    async findAllUsers() {
+        let userList = await User.find({});
+        return userList;
+    }
+
     async updateUserAccount(userID, userInfo) {
         console.log("IN UPDATE USER ACCOUNT");
         console.log(userID);
@@ -74,7 +84,7 @@ class UserStore {
         let chat = await chatEngine.findChatByID(chatID);
         let user = await this.findUserByID(userID);
         if (chat && user) {
-            if (chat.currCapacity < chat.numberOfPeople) {
+            if (chat.currCapacity < chat.numberOfPeople && !user.chats.includes(chatID) && !chat.participants.includes(userID)) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { chat: chatID },
                     $pull: { chatInvites: chatID },
@@ -88,7 +98,12 @@ class UserStore {
                     },
                     this
                 );
+                return SUCCESS;
+            } else {
+                return CONFLICT;
             }
+        } else {
+            return NOTFOUND;
         }
     }
 
@@ -103,7 +118,7 @@ class UserStore {
         let user = await this.findUserByID(userID);
         let chat = await chatEngine.findChatByID(event.chat);
         if (event && user && chat) {
-            if (event.currCapacity < event.numberOfPeople) {
+            if (event.currCapacity < event.numberOfPeople && !user.chats.includes(eventID) && !event.participants.includes(userID)) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { events: eventID },
                     $pull: { eventInvites: eventID },
@@ -117,8 +132,13 @@ class UserStore {
                     },
                     this
                 );
-                await this.acceptChatInvite(userID, chat._id, chatEngine);
+                let r = await this.acceptChatInvite(userID, chat._id, chatEngine);
+                return SUCCESS
+            } else {
+                return CONFLICT
             }
+        } else {
+            return NOTFOUND;
         }
     }
 
@@ -128,17 +148,21 @@ class UserStore {
         });
     }
 
-    async acceptFriendRequest(userID, otherUserID) {
+    async sendFriendRequest(userID, otherUserID) {
+        console.log("IN THE SEND FRIEND REQUEST FUNCTION")
         let user = await this.findUserByID(userID);
         let otherUser = await this.findUserByID(otherUserID);
         if (user && otherUser) {
-            await User.findByIdAndUpdate(userID, {
-                $push: { friends: otherUserID },
-                $pull: { friendRequests: otherUserID },
-            });
-            await User.findByIdAndUpdate(otherUserID, {
-                $push: { friends: userID },
-            });
+            if(!user.friends.includes(otherUserID) && !otherUser.friends.includes(userID) && !otherUser.friendRequest.includes(userID)){
+                await User.findByIdAndUpdate(otherUserID, {
+                    $push: { friendRequest: userID }
+                });
+                return SUCCESS
+            } else {
+                return CONFLICT
+            }
+        } else {
+            return NOTFOUND
         }
     }
 
@@ -147,6 +171,45 @@ class UserStore {
             $pull: { friendRequest: otherUserID },
         });
     }
+
+    async sendChatRequest(userID, chatID, chatEngine) {
+        let user = await this.findUserByID(userID);
+        let chat = await chatEngine.findChatByID(chatID);
+        if (user && chat) {
+            if(!user.chats.includes(chatID) && !chat.participants.includes(userID) && !user.chatInvites.includes(chatID)){
+                await User.findByIdAndUpdate(otherUserID, {
+                    $push: { chatInvites: chatID }
+                });
+                return SUCCESS
+            } else {
+                return CONFLICT
+            }
+        } else {
+            return NOTFOUND
+        }
+    }
+    
+    async acceptFriendRequest(userID, otherUserID) {
+        let user = await this.findUserByID(userID);
+        let otherUser = await this.findUserByID(otherUserID);
+        if (user && otherUser) {
+            if(!user.friends.includes(otherUserID) && !otherUser.friends.includes(userID)){
+                await User.findByIdAndUpdate(userID, {
+                    $push: { friends: otherUserID },
+                    $pull: { friendRequest: otherUserID },
+                });
+                await User.findByIdAndUpdate(otherUserID, {
+                    $push: { friends: userID },
+                });
+                return SUCCESS
+            } else {
+                return CONFLICT
+            }
+        } else {
+            return NOTFOUND
+        }
+    }
+
 
     async findUnblockedUsers(userID) {
         let user = await this.findUserByID(userID);
@@ -174,8 +237,7 @@ class UserStore {
         let capName = titleCase(userName)
         console.log(capName)
         return await User.find({
-           // name: `/${capName}*/`,
-            name: {$regex: capName} 
+            name: {$regex: capName, $options: 'i'} 
         });
     }
 
@@ -279,6 +341,33 @@ class ChatEngine {
         return await Chat.find({
             participants: userID,
         });
+    }
+
+    //send Message to a chat object
+    async sendChatMessage(userID, chatID, text, name, date, userStore){
+        let chat = await Chat.findById(chatID);
+        let user = await userStore.findUserByID(userID);
+        console.log(chat)
+        console.log(user)
+        if(user && chat){
+            console.log("HELLOOOOO")
+            return await Chat.findByIdAndUpdate(chatID,
+                { $push: {
+                        messages: {
+                            participantID: userID,
+                            participantName: name,
+                            timeStamp: date,
+                            text: text,
+                        },
+                    }   
+                }, 
+                {
+                    new: true
+                }
+            )
+        } else {
+            return null;
+        }
     }
 
     //Assumes both users exist
@@ -386,11 +475,6 @@ class EventDetails {
         return await eventStore.findEventByDetails(eventInfo);
     }
 
-    async findEventsByName(searchEvent) {
-        return await Event.find({
-            title: searchEvent,
-        });
-    }
 }
 
 class EventStore {
@@ -418,6 +502,20 @@ class EventStore {
             },
             userStore
         );
+    }
+
+    //async findEventsByName(eventName) {
+    //    let capName = titleCase(eventName)
+    //    console.log(capName)
+    //    return await Event.find({
+    //        title: {$regex: capName} 
+    //    });
+    //}
+    
+    async findEventsByName(searchEvent) {
+        return await Event.find({
+            title: {$regex: searchEvent, $options: 'i' }
+        });
     }
 
     async findEventByUser(userID) {

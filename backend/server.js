@@ -8,6 +8,9 @@ const Event = require("./models/Event");
 const Chat = require("./models/Chat");
 const Report = require("./models/Report");
 const axios = require("axios");
+const CONFLICT = 409;
+const SUCCESS = 200;
+const NOTFOUND = 404;
 
 const {
     UserAccount,
@@ -76,9 +79,9 @@ app.use(async (req, res, next) => {
     let token;
     if (Object.keys(req.body).length !== 0) token = req.body.token;
     else token = req.headers.token;
-    console.log(req.body)
-    console.log(req.headers)
-    console.log(token)
+    //console.log(req.body)
+    //console.log(req.headers)
+    //console.log(token)
     let user = await userStore.findUserForLogin(token);
     if (
         user != null ||
@@ -98,6 +101,8 @@ app.get("/", async (req, res) => {
     // await User.deleteMany({});
     //await Event.deleteMany({});
     //await Chat.deleteMany({});
+    //await User.updateMany({},{ friends: [] })
+    //await User.updateMany({},{ friendRequest: [] })
     a["user"] = await User.find({});
     a["chat"] = await Chat.find({});
     a["event"] = await Event.find({});
@@ -227,6 +232,17 @@ app.get("/user/name/:userName", async (req, res) => {
     }
 });
 
+//Get event list by name
+app.get("/event/title/:eventName", async (req, res) => {
+    let { eventName } = req.params;
+    let foundEventList = await eventStore.findEventsByName(eventName);
+    if (foundEventList.length != 0) {
+        res.status(200).send(foundEventList);
+    } else {
+        res.status(404).send(foundEventList);
+    }
+});
+
 //Sends the list of friend requests of user - get
 app.get("/user/:id/friendRequest", async (req, res) => {
     let { id } = req.params;
@@ -272,6 +288,37 @@ app.get("/user/:id/chatInvites", async (req, res) => {
         );
         res.status(200).send(chatInviteList);
     }
+});
+
+//Chat: send message to a single user
+app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
+    console.log("hello");
+    let { userID, chatID } = req.params;
+    let { timeStamp, text } = req.body;
+    fromUserName = await userStore.findUserByID(userID).name;
+    let updatedChat = await chatEngine.sendChatMessage(
+        userID,
+        chatID,
+        text,
+        fromUserName,
+        timeStamp,
+        userStore
+    );
+
+    console.log(updatedChat)
+
+    // getMessaging().send({
+    //     data: {
+    //         name: fromUserName,
+    //         text: text
+    //     },
+    //     topic: fromUserID + "_" + toUserID
+    // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
+    
+    if(updatedChat)
+        res.status(200).send("Successful");
+    else
+        res.status(404).send("Unsuccessfull");
 });
 
 //Chat: send message to a single user
@@ -360,27 +407,43 @@ app.get("/event", async (req, res) => {
     res.status(200).send(eventList);
 });
 
-//* Accept or Reject requests (can be used for join as well) and invites
+app.put("/user/sendFriendRequest/:userID/:otherUserID", async (req, res) => {
+    let { userID, otherUserID } = req.params;
+    let result = await userStore.sendFriendRequest(userID, otherUserID);
+    if(result == SUCCESS)
+        res.status(200).send("Sucessful");
+    else {
+        console.log(result);
+        res.status(result).send("Unsuccessfull");
+    }
+});
 
+//* Accept or Reject requests (can be used for join as well) and invites
 app.put("/user/acceptChat/:userID/:chatID", async (req, res) => {
     let { userID, chatID } = req.params;
-    await userStore.acceptChatInvite(userID, chatID, chatEngine);
-    res.status(200).send("Sucessful");
+    let result = await userStore.acceptChatInvite(userID, chatID, chatEngine);
+    if(result == SUCCESS)
+        res.status(200).send("Sucessful");
+    else res.status(result).send("Unsuccessfull");
 });
 
 app.put("/user/acceptEvent/:userID/:eventID", async (req, res) => {
     let { userID, eventID } = req.params;
-    await userStore.acceptEventInvite(userID, eventID, eventStore, chatEngine);
-    res.status(200).send("Sucessful");
+    let result = await userStore.acceptEventInvite(userID, eventID, eventStore, chatEngine);
+    if(result == SUCCESS)
+        res.status(200).send("Sucessful");
+    else res.status(result).send("Unsuccessfull");
 });
 
 app.put("/user/acceptUser/:userID/:otherUserID", async (req, res) => {
     let { userID, otherUserID } = req.params;
-    await userStore.acceptFriendRequest(userID, otherUserID);
-    res.status(200).send("Sucessful");
+    let result = await userStore.acceptFriendRequest(userID, otherUserID);
+    if(result == SUCCESS)
+        res.status(200).send("Sucessful");
+    else res.status(result).send("Unsuccessfull");
 });
 
-app.put("/user/rejectUser/:userID/:chatID", async (req, res) => {
+app.put("/user/rejectChat/:userID/:chatID", async (req, res) => {
     let { userID, chatID } = req.params;
     await userStore.rejectChatInvite(userID, chatID);
     res.status(200).send("Sucessful");
@@ -392,7 +455,7 @@ app.put("/user/rejectEvent/:userID/:eventID", async (req, res) => {
     res.status(200).send("Sucessful");
 });
 
-app.put("/user/rejectChat/:userID/:otherUserID", async (req, res) => {
+app.put("/user/rejectUser/:userID/:otherUserID", async (req, res) => {
     let { userID, otherUserID } = req.params;
     await userStore.rejectFriendRequest(userID, otherUserID);
     res.status(200).send("Sucessful");
@@ -458,6 +521,11 @@ app.post("/user/:id/ban", async (req, res) => {
     await banService.banUser(id, userStore);
     res.status(200).send("Successful");
 });
+
+app.get("/user", async(req, res) => {
+    let userList = await userStore.findAllUsers();
+    res.status(200).send(userList)
+})
 
 app.post("/event/:id/ban", async (req, res) => {
     let { id } = req.params;

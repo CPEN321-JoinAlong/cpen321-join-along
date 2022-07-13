@@ -29,7 +29,7 @@ function logRequest(req, res, next) {
     next();
 }
 
-mongoose.connect("mongodb://localhost:34542/joinalong", {
+mongoose.connect("mongodb://localhost:27017/joinalong", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });

@@ -93,20 +93,12 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                     public boolean onMenuItemClick(MenuItem item) {
                         switch(item.getItemId()){
                             case R.id.menu1:
-                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getFullName());
-
-                                Log.d("FriendsAdapter", "MENU1");
                                 try {
                                     deleteFriend(users.get(holder.getAdapterPosition()).getId(), v.getContext());
                                 } catch (JSONException | IOException e) {
                                     e.printStackTrace();
                                 }
 
-                                return true;
-
-                            case R.id.menu2:
-                                Log.d("FriendsAdapter", users.get(holder.getAdapterPosition()).getFullName());
-                                Log.d("FriendsAdapter", "MENU2");
                                 return true;
 
 
@@ -135,7 +127,7 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                 fragmentTransaction.commit();
             }
         });
-        Picasso.get().load(((UserApplicationInfo) (holder.itemView.getContext().getApplicationContext())).getProfile().getProfilePicture()).into(holder.getProfilePicture());
+        Picasso.get().load(users.get(holder.getBindingAdapterPosition()).getProfilePicture()).into(holder.getProfilePicture());
     }
 
     @Override
@@ -163,12 +155,12 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         requestManager.put("user/removeFriend/" + userId + "/" + otherUserId, json.toString(), new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
-                Toast.makeText(context, "Deleted Friend!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Deleted Friend!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(Call call, IOException e) {
-                Toast.makeText(context, "Error Occured", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Error Occured", Toast.LENGTH_SHORT).show();
             }
         });
         notifyDataSetChanged();

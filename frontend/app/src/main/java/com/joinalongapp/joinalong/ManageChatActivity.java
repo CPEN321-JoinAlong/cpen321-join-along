@@ -1,5 +1,6 @@
 package com.joinalongapp.joinalong;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +22,7 @@ import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,6 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -74,34 +78,53 @@ public class ManageChatActivity extends AppCompatActivity {
         //      ken, please check
 
         List<String> friendUserIds = user.getFriends();
-        String userToken = ((UserApplicationInfo) getApplication()).getUserToken();
         RequestManager requestManager = new RequestManager();
         List<String> friendNames = new ArrayList<>();
         Map<String, String> idToName = new HashMap<>();
 
-        for (String friendId : friendUserIds) {
-            try {
-                requestManager.get("user/" + friendId, userToken, new RequestManager.OnRequestCompleteListener() {
-                    @Override
-                    public void onSuccess(Call call, Response response) {
-                        try {
-                            JSONObject userJson = new JSONObject(response.body().string());
-                            friendNames.add(userJson.getString("name"));
-                            idToName.put(friendId, userJson.getString("name"));
-                        } catch (IOException | JSONException e) {
-                            //todo
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("token", token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Activity activity = this;
+        try {
+            requestManager.get("user/" + user.getId() + "/friends", token, new RequestManager.OnRequestCompleteListener() {
+                @Override
+                public void onSuccess(Call call, Response response) {
+                    List<UserProfile> outputFriends = new ArrayList<>();
+                    try {
+                        JSONArray jsonArray = new JSONArray(response.body().string());
+                        for(int i = 0; i < jsonArray.length(); i++){
+                            UserProfile userProfile = new UserProfile();
+                            userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                            outputFriends.add(userProfile);
                         }
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        trackFriends = outputFriends;
+                                    }
+                                });
+                            }
+                        }, 0, 1000);
+                    } catch(JSONException | IOException e){
+                        e.printStackTrace();
                     }
+                }
 
-                    @Override
-                    public void onError(Call call, IOException e) {
-                        //todo
-                    }
-                });
-            } catch (IOException e) {
-                //todo
-            }
+                @Override
+                public void onError(Call call, IOException e) {
 
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         String[] friends = friendNames.toArray(new String[friendNames.size()]);

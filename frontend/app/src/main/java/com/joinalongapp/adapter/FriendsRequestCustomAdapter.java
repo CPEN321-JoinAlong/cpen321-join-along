@@ -188,7 +188,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                 fragmentTransaction.commit();
             }
         });
-        Picasso.get().load(((UserApplicationInfo) (holder.itemView.getContext().getApplicationContext())).getProfile().getProfilePicture()).into(holder.getProfilePicture());
+        Picasso.get().load(users.get(holder.getBindingAdapterPosition()).getProfilePicture()).into(holder.getProfilePicture());
     }
 
     @Override

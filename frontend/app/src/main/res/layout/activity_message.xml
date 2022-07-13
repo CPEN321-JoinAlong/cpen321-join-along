@@ -70,7 +70,7 @@
         app:layout_constraintGuide_begin="50dp" />
 
     <ImageButton
-        android:id="@+id/backButton"
+        android:id="@+id/chatBackButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_weight="1"

@@ -38,6 +38,7 @@ public class MessageActivity extends AppCompatActivity {
     private ImageButton sendMessageButton;
     private EditText messageField;
     private TextView chatTitle;
+    private ImageButton backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +119,12 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.onBackPressed();
+            }
+        });
 
 
 
@@ -134,6 +140,7 @@ public class MessageActivity extends AppCompatActivity {
         sendMessageButton = findViewById(R.id.sendChatButton);
         messageField = findViewById(R.id.editTextChatMessage);
         chatTitle = findViewById(R.id.chatTitleName);
+        backButton = findViewById(R.id.chatBackButton);
     }
 
     private void initMessages(String id, String token, Activity activity) throws IOException, JSONException {

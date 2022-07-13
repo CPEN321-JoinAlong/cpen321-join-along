@@ -191,7 +191,7 @@ public class ViewProfileFragment extends Fragment {
 //    }
 
     private void initDataset(View view){
-        backButton = view.findViewById(R.id.backButton);
+        backButton = view.findViewById(R.id.chatBackButton);
         profileName = view.findViewById(R.id.profileName);
         profilePicture = view.findViewById(R.id.profilePicture);
         manageTags  = view.findViewById(R.id.manageTags);

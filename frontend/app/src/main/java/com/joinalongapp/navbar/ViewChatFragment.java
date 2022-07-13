@@ -104,7 +104,7 @@ public class ViewChatFragment extends Fragment {
     }
 
     private void initDataset(View view){
-        backButton = view.findViewById(R.id.backButton);
+        backButton = view.findViewById(R.id.chatBackButton);
         title = view.findViewById(R.id.viewChatTitle);
         description = view.findViewById(R.id.viewChatDescription);
         tags = view.findViewById(R.id.viewChatAddTags);

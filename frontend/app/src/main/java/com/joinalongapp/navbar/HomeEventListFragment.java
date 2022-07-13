@@ -214,6 +214,7 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
     public void onItemClick(View view, int position) {
         Bundle bundle = new Bundle();
         bundle.putSerializable("event", eventList.get(position));
+        bundle.putString("theFrom", "home");
 
         ViewEventFragment fragment = new ViewEventFragment();
         fragment.setArguments(bundle);

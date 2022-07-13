@@ -108,11 +108,19 @@ public class ViewEventFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO: this needs fixing to use the native back button
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                if (getArguments().getString("theFrom").equals("search")) {
+                    getActivity().onBackPressed();
+                } else {
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+
+
+
+
             }
         });
 

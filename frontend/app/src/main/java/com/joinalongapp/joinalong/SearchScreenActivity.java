@@ -18,8 +18,11 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.adapter.SearchEventCustomAdapter;
 import com.joinalongapp.adapter.SearchPeopleCustomAdapter;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.navbar.ViewEventFragment;
+import com.joinalongapp.navbar.ViewProfileFragment;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.UserProfile;
 
@@ -36,6 +39,8 @@ import java.util.TimerTask;
 import okhttp3.Call;
 import okhttp3.Response;
 
+//TODO: this class needs a lot of refactoring to remove duplication
+
 public class SearchScreenActivity extends AppCompatActivity {
     private static SearchView searchView;
     private ImageView returnButton;
@@ -44,9 +49,13 @@ public class SearchScreenActivity extends AppCompatActivity {
     private static String mySuggestionUrlPath;
     private SearchScreenActivity.LayoutManagerType layoutManagerType;
     private SearchPeopleCustomAdapter searchPeopleCustomAdapter;
+    private SearchEventCustomAdapter searchEventCustomAdapter;
     private RecyclerView recyclerView;
     private List<UserProfile> dataset;
+    private List<Event> datasetEvent;
     private FetchSearchTermSuggestionsTask fetchSearchTermSuggestionsTask;
+    private static List<UserProfile> theUserSuggestionList = new ArrayList<>();
+    private static List<Event> theEventSuggestionList = new ArrayList<>();
 
 
 
@@ -90,7 +99,12 @@ public class SearchScreenActivity extends AppCompatActivity {
 
 
         searchPeopleCustomAdapter = new SearchPeopleCustomAdapter(dataset);
-        recyclerView.setAdapter(searchPeopleCustomAdapter);
+        searchEventCustomAdapter = new SearchEventCustomAdapter(datasetEvent);
+        if (getSearchMode() == SearchMode.USER_MODE) {
+            recyclerView.setAdapter(searchPeopleCustomAdapter);
+        } else {
+            recyclerView.setAdapter(searchEventCustomAdapter);
+        }
 
 
 
@@ -99,13 +113,51 @@ public class SearchScreenActivity extends AppCompatActivity {
 
 
 
-        //TODO: call this for on click suggestions
-        //searchView.setOnSuggestionListener();
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                if (getSearchMode() == SearchMode.USER_MODE) {
+                    ViewProfileFragment viewProfileFragment = new ViewProfileFragment();
+                    Bundle info = new Bundle();
+                    info.putBoolean("HIDE", false);
+                    info.putSerializable("USER_INFO", theUserSuggestionList.get(position));
+                    viewProfileFragment.setArguments(info);
+                    AppCompatActivity activity = SearchScreenActivity.this;
+                    FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.frameLayoutSearch, viewProfileFragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                } else {
+                    ViewEventFragment viewEventFragment = new ViewEventFragment();
+                    Event theSelectedEvent = theEventSuggestionList.get(position);
+                    Bundle info = new Bundle();
+                    info.putSerializable("event", theSelectedEvent);
+                    info.putString("theFrom", "search");
+                    viewEventFragment.setArguments(info);
+                    AppCompatActivity activity = SearchScreenActivity.this;
+                    FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.frameLayoutSearch, viewEventFragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                return false;
+            }
+        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                onSearchButtonPressed(activity, userToken, query);
+                if (getSearchMode() == SearchMode.USER_MODE) {
+                    onSearchButtonPressedUser(activity, userToken, query);
+                } else {
+                    onSearchButtonPressedEvent(activity, userToken, query);
+                }
+
                 return false;
 
             }
@@ -208,15 +260,13 @@ public class SearchScreenActivity extends AppCompatActivity {
                                                     }
                                                 }, 0);
 
-
                                                 System.out.println("efwa");
                                             } catch (IOException | JSONException e) {
                                                 System.out.println("OHNO");
                                             }
 
-
-
-
+                                            theUserSuggestionList.clear();
+                                            theUserSuggestionList = outputFriends;
                                         }
 
                                         @Override
@@ -264,9 +314,8 @@ public class SearchScreenActivity extends AppCompatActivity {
                                                 System.out.println("OHNO");
                                             }
 
-
-
-
+                                            theEventSuggestionList.clear();
+                                            theEventSuggestionList = events;
                                         }
 
                                         @Override
@@ -327,7 +376,7 @@ public class SearchScreenActivity extends AppCompatActivity {
         return (SearchMode) getIntent().getExtras().get("mode");
     }
 
-    private void onSearchButtonPressed(Activity activity, String token, String query){
+    private void onSearchButtonPressedUser(Activity activity, String token, String query){
         RequestManager requestManager = new RequestManager();
 
         try {
@@ -369,5 +418,48 @@ public class SearchScreenActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         
+    }
+
+    private void onSearchButtonPressedEvent(Activity activity, String token, String query) {
+        RequestManager requestManager = new RequestManager();
+
+        try {
+
+            requestManager.get(myUrlPath + query, token, new RequestManager.OnRequestCompleteListener() {
+                @Override
+                public void onSuccess(Call call, Response response) {
+                    List<Event> events = new ArrayList<>();
+                    try{
+                        JSONArray jsonArray = new JSONArray(response.body().string());
+                        for(int i = 0; i < jsonArray.length(); i++){
+                            Event event = new Event();
+                            event.populateDetailsFromJson(jsonArray.get(i).toString());
+                            events.add(event);
+                        }
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        searchEventCustomAdapter.changeDataset(events);
+                                    }
+                                });
+                            }
+                        }, 0);
+                        System.out.println("efwa");
+                    } catch(JSONException | IOException e){
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onError(Call call, IOException e) {
+                    System.out.println(call.toString());
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

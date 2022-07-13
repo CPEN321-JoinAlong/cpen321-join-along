@@ -137,7 +137,7 @@ public class ChatDetails implements Serializable, IDetailsModel {
     @Override
     public IDetailsModel populateDetailsFromJson(String jsonBody) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonBody);
-
+        setId(jsonObject.getString("_id"));
         setTitle(jsonObject.getString("title"));
 
         JSONArray tagJson = jsonObject.getJSONArray("tags");
@@ -147,7 +147,7 @@ public class ChatDetails implements Serializable, IDetailsModel {
 
         setMaxNumPeople(jsonObject.getInt("numberOfPeople"));
         setDescription(jsonObject.getString("description"));
-        setNumPeople(jsonObject.getInt("capacity"));
+        setNumPeople(jsonObject.getInt("currCapacity"));
 
         JSONArray friendsJson = jsonObject.getJSONArray("participants");
         for (int i = 0; i < friendsJson.length(); i++) {
@@ -158,10 +158,16 @@ public class ChatDetails implements Serializable, IDetailsModel {
     }
 
     private void addToFriends(String string) {
+        if(people == null){
+            people = new ArrayList<>();
+        }
         people.add(string);
     }
 
     private void addTagToInterests(Tag tag) {
+        if(tags == null){
+            tags = new ArrayList<>();
+        }
         tags.add(tag);
     }
 }

@@ -13,6 +13,7 @@ import com.joinalongapp.adapter.MessagingListCustomAdapter;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
+import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONArray;
@@ -21,6 +22,8 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import okhttp3.Call;
@@ -42,7 +45,7 @@ public class MessagingListFragment extends Fragment {
     private MessagingListFragment.LayoutManagerType layoutManagerType;
     private MessagingListCustomAdapter messagingListCustomAdapter;
 
-    protected List<UserProfile> dataset;
+    protected List<ChatDetails> dataset;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -81,7 +84,11 @@ public class MessagingListFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        //initDataset();
+        try {
+            initDataset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -99,7 +106,7 @@ public class MessagingListFragment extends Fragment {
 
         messagingListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        //messagingListCustomAdapter = new MessagingListCustomAdapter(dataset);
+        messagingListCustomAdapter = new MessagingListCustomAdapter(dataset);
         messagingListRecyclerView.setAdapter(messagingListCustomAdapter);
 
 
@@ -113,24 +120,32 @@ public class MessagingListFragment extends Fragment {
         RequestManager requestManager = new RequestManager();
 
 
-        requestManager.get("user/" + id + "/chatInvites", userToken, new RequestManager.OnRequestCompleteListener() {
+        requestManager.get("user/" + id + "/chat", userToken, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
                 System.out.println(response.toString());
-                System.out.println(response.body().toString());
-                List<UserProfile> outputFriends = new ArrayList<>();
+                List<ChatDetails> outputChats = new ArrayList<>();
                 try{
                     JSONArray jsonArray = new JSONArray(response.body().string());
                     for(int i = 0; i < jsonArray.length(); i++){
-                        UserProfile userProfile = new UserProfile();
-                        userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
-                        outputFriends.add(userProfile);
+                        ChatDetails chatDetails = new ChatDetails();
+                        chatDetails.populateDetailsFromJson(jsonArray.get(i).toString());
+                        outputChats.add(chatDetails);
                     }
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    messagingListCustomAdapter.changeDataset(outputChats);
+                                }
+                            });
+                        }
+                    }, 0);
                 } catch(JSONException | IOException e){
                     e.printStackTrace();
                 }
-                dataset = outputFriends;
-
             }
 
             @Override

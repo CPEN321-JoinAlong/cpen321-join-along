@@ -101,6 +101,7 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(v.getContext(), MessageActivity.class);
+                i.putExtra("CHAT_DETAILS", chatDetailsList.get(holder.getBindingAdapterPosition()));
                 v.getContext().startActivity(i);
             }
         });
@@ -127,5 +128,10 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
         // TODO: SEND BACKEND
         notifyDataSetChanged();
 
+    }
+
+    public void changeDataset(List<ChatDetails> input){
+        chatDetailsList = input;
+        notifyDataSetChanged();
     }
 }

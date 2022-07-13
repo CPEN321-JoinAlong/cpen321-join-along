@@ -89,6 +89,12 @@ public class Message implements IDetailsModel {
 
     @Override
     public IDetailsModel populateDetailsFromJson(String jsonBody) throws JSONException {
+        JSONObject json = new JSONObject(jsonBody);
+        setName((String) json.get("participantName"));
+        setId((String) json.get("participantID"));
+        setMessage((String) json.get("text"));
+        setCreatedAt((Long) Long.valueOf((String) json.get("timeStamp")));
+
         return null;
     }
 }

@@ -81,12 +81,14 @@ public class MessageActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                System.out.println("chat/" + path + "/" + user.getId() + "/" + chatDetails.getId());
 
                 RequestManager requestManager = new RequestManager();
                 try {
-                    requestManager.put("/chat/" + path + "/" + user.getId() + "/" + chatDetails.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    requestManager.put("chat/sendChat/" + user.getId() + "/" + chatDetails.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
+                            System.out.println(response);
                             if(response.isSuccessful()){
                                 List<Message> messageList = messageAdapter.getMessages();
                                 messageList.add(message);
@@ -126,12 +128,14 @@ public class MessageActivity extends AppCompatActivity {
         RequestManager requestManager = new RequestManager();
         JSONObject json = new JSONObject();
         json.put("token", token);
+        System.out.println(id);
 
         requestManager.get("chat/" + id, token, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
                 try {
-                    JSONArray jsonArray = new JSONArray(response.body().string());
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    JSONArray jsonArray = (JSONArray) jsonObject.get("messages");
                     List<Message> outputMessages = new ArrayList<>();
                     for(int i = 0; i < jsonArray.length(); i++){
                         Message message = new Message();

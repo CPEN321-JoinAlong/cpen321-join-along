@@ -112,13 +112,10 @@ public class FriendsRequestFragment extends Fragment {
         return rootView;
     }
     private void initDataset(Activity activity) throws IOException {
-        // TODO: GET LIST OF USERS
-
         UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         String id = user.getId();
         RequestManager requestManager = new RequestManager();
-
 
         requestManager.get("user/" + id + "/friendRequest", userToken, new RequestManager.OnRequestCompleteListener() {
             @Override

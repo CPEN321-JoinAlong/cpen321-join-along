@@ -1,5 +1,6 @@
 package com.joinalongapp.navbar;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +11,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.adapter.MessagingRequestCustomAdapter;
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -73,7 +85,11 @@ public class MessagingRequestFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        initDataset();
+        try {
+            initDataset(getActivity());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -98,38 +114,50 @@ public class MessagingRequestFragment extends Fragment {
         return rootView;
         }
 
-    private void initDataset(){
-        // TODO: GET LIST OF USERS
-        ChatDetails a = new ChatDetails();
-        a.setId("123");
-        a.setTitle("CHAT 1");
-        a.setDescription("SAMPLE DESCRIPTION");
-        Tag t = new Tag("hike");
-        UserProfile u = new UserProfile("123", "Ken", "Liang");
-        UserProfile ub = new UserProfile("456", "Justin", "D");
-        List<Tag> lt = new ArrayList<>();
-        List<String> lu = new ArrayList<>();
-        List<String> lb = new ArrayList<>();
-        lt.add(t);
-        lu.add("123");
+    private void initDataset(Activity activity) throws IOException {
+        UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
+        String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
+        String id = user.getId();
+        RequestManager requestManager = new RequestManager();
 
-        a.setTags(lt);
-        a.setPeople(lu);
-        lb.add("456");
-        ChatDetails b = new ChatDetails();
-        b.setId("456");
-        b.setTitle("yes");
-        b.setPeople(lb);
-        ChatDetails c = new ChatDetails();
-        ChatDetails d = new ChatDetails();
+        requestManager.get("user/" + id + "/chatInvites", userToken, new RequestManager.OnRequestCompleteListener() {
+            @Override
+            public void onSuccess(Call call, Response response) {
+
+                List<ChatDetails> outputChats = new ArrayList<>();
+                try{
+                    //System.out.println(response.body().string());
+                    JSONArray jsonArray = new JSONArray(response.body().string());
+                    for(int i = 0; i < jsonArray.length(); i++){
+                        ChatDetails chatDetails = new ChatDetails();
+                        chatDetails.populateDetailsFromJson(jsonArray.get(i).toString());
+                        outputChats.add(chatDetails);
+                    }
+
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    messagingRequestCustomAdapter.changeDataset(outputChats);
+                                }
+                            });
+                        }
+                    }, 0);
 
 
-        List<ChatDetails> result = new ArrayList<>();
-        result.add(a);
-        result.add(b);
-        result.add(c);
-        result.add(d);
+                } catch(JSONException | IOException e){
+                    e.printStackTrace();
+                }
 
-        dataset = result;
+
+            }
+
+            @Override
+            public void onError(Call call, IOException e) {
+                System.out.println(call.toString());
+            }
+        });
     }
 }

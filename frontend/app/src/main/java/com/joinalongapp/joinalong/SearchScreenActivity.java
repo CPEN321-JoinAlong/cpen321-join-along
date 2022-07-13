@@ -166,6 +166,12 @@ public class SearchScreenActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
                 if (newText.length() >= SEARCH_QUERY_THRESHOLD) {
 
+                    if (getSearchMode() == SearchMode.USER_MODE) {
+                        searchPeopleCustomAdapter.changeDataset(new ArrayList<>());
+                    } else {
+                        searchEventCustomAdapter.changeDataset(new ArrayList<>());
+                    }
+
                     if (fetchSearchTermSuggestionsTask.getStatus() != AsyncTask.Status.RUNNING) {
                         if (fetchSearchTermSuggestionsTask.getStatus() == AsyncTask.Status.FINISHED) {
                             fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(userToken, activity, getSearchMode());

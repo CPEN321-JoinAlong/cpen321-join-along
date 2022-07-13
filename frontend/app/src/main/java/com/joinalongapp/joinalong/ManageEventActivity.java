@@ -176,7 +176,7 @@ public class ManageEventActivity extends AppCompatActivity {
                                             @Override
                                             public void run() {
                                                 new AlertDialog.Builder(ManageEventActivity.this)
-                                                        .setTitle("Chat created!")
+                                                        .setTitle("Event created!")
                                                         .setMessage("The " + title.getText().toString() + " has been successfully created.")
                                                         .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                                                             @Override
@@ -204,7 +204,7 @@ public class ManageEventActivity extends AppCompatActivity {
                                             @Override
                                             public void run() {
                                                 new AlertDialog.Builder(ManageEventActivity.this)
-                                                        .setTitle("Unable to create chat.")
+                                                        .setTitle("Unable to create event.")
                                                         .setMessage("Unable to create the " + title.getText().toString() + " chat. \n Please try again later.")
                                                         .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                                                             @Override

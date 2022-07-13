@@ -182,7 +182,7 @@ public class Event implements Serializable, IDetailsModel {
         json.put("endDate", getEndDate());
         json.put("publicVisibility", getPublicVisibility());
         json.put("eventOwnerID", getEventOwnerId());
-        json.put("participants", new JSONArray(getMembers()));
+        //json.put("participants", new JSONArray(getMembers()));
         return json;
     }
 

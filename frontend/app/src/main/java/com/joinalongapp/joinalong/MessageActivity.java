@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,6 +37,7 @@ public class MessageActivity extends AppCompatActivity {
     private List<Message> messages;
     private ImageButton sendMessageButton;
     private EditText messageField;
+    private TextView chatTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,9 @@ public class MessageActivity extends AppCompatActivity {
         }
         initElements();
 
+        chatTitle.setText(chatDetails.getTitle());
 
+        Activity activity = this;
 
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,12 +71,7 @@ public class MessageActivity extends AppCompatActivity {
                 messageField.setText("");
                 message.setOwner(true);
                 message.setCreatedAt(date.getTime());
-                String path = "sendSingle";
-                //String otherId = chatDetails.get;
-                if(group){
-                    path = "sendGroup";
 
-                }
                 JSONObject json = null;
                 try {
                     json = message.toJson();
@@ -81,19 +80,13 @@ public class MessageActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                System.out.println("chat/" + path + "/" + user.getId() + "/" + chatDetails.getId());
+                System.out.println(json.toString());
 
                 RequestManager requestManager = new RequestManager();
                 try {
                     requestManager.put("chat/sendChat/" + user.getId() + "/" + chatDetails.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            System.out.println(response);
-                            if(response.isSuccessful()){
-                                List<Message> messageList = messageAdapter.getMessages();
-                                messageList.add(message);
-                                messageAdapter.notifyItemInserted(messageAdapter.getItemCount() - 1);
-                            }
                         }
 
                         @Override
@@ -101,6 +94,23 @@ public class MessageActivity extends AppCompatActivity {
                             System.out.println("");
                         }
                     });
+
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    List<Message> messageList = messageAdapter.getMessages();
+                                    if(messageList == null){
+                                        messageList = new ArrayList<>();
+                                    }
+                                    messageList.add(message);
+                                    messageAdapter.notifyDataSetChanged();
+                                }
+                            });
+                        }
+                    }, 0);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -113,6 +123,7 @@ public class MessageActivity extends AppCompatActivity {
 
 
         messageRecycler.setLayoutManager(new LinearLayoutManager(this));
+        messageAdapter = new MessageListCustomAdapter(messages);
         messageRecycler.setAdapter(messageAdapter);
     }
 
@@ -122,6 +133,7 @@ public class MessageActivity extends AppCompatActivity {
         messageAdapter = new MessageListCustomAdapter(messages);
         sendMessageButton = findViewById(R.id.sendChatButton);
         messageField = findViewById(R.id.editTextChatMessage);
+        chatTitle = findViewById(R.id.chatTitleName);
     }
 
     private void initMessages(String id, String token, Activity activity) throws IOException, JSONException {
@@ -140,6 +152,7 @@ public class MessageActivity extends AppCompatActivity {
                     for(int i = 0; i < jsonArray.length(); i++){
                         Message message = new Message();
                         message.populateDetailsFromJson(jsonArray.get(i).toString());
+                        System.out.println(message.getMessage());
                         outputMessages.add(message);
                     }
 
@@ -149,6 +162,7 @@ public class MessageActivity extends AppCompatActivity {
                             activity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    messages = outputMessages;
                                     messageAdapter.changeDataset(outputMessages);
                                 }
                             });

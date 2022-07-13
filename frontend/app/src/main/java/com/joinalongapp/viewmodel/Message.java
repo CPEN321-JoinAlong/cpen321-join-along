@@ -67,10 +67,10 @@ public class Message implements IDetailsModel {
     @Override
     public String toJsonString() throws JSONException {
         JSONObject json = new JSONObject();
-        json.put("message", getMessage());
-        json.put("name", getName());
-        json.put("id", getId());
-        json.put("createdAt", createdAt);
+        json.put("text", getMessage());
+        json.put("participantName", getName());
+        json.put("participantID", getId());
+        json.put("timeStamp", createdAt);
         json.put("isOwner", isOwner());
         Log.w("MessageModel", "this may produce unintended results if json keys dont match");
         return json.toString();
@@ -78,10 +78,10 @@ public class Message implements IDetailsModel {
 
     public JSONObject toJson() throws JSONException {
         JSONObject json = new JSONObject();
-        json.put("message", getMessage());
-        json.put("name", getName());
-        json.put("id", getId());
-        json.put("createdAt", createdAt);
+        json.put("text", getMessage());
+        json.put("participantName", getName());
+        json.put("participantID", getId());
+        json.put("timeStamp", createdAt);
         json.put("isOwner", isOwner());
         Log.w("MessageModel", "this may produce unintended results if json keys dont match");
         return json;

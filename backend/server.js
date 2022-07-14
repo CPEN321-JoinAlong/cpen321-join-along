@@ -11,17 +11,24 @@ const axios = require("axios");
 const CONFLICT = 409;
 const SUCCESS = 200;
 const NOTFOUND = 404;
-
-const {
-    UserAccount,
-    UserStore,
-    ChatDetails,
-    ChatEngine,
-    EventDetails,
-    EventStore,
-    ReportService,
-    BanService,
-} = require("./modules");
+const UserAccount = require("./modules/user_module/UserAccount");
+const UserStore = require("./modules/user_module/UserStore");
+const ChatDetails = require("./modules/chat_module/ChatDetails");
+const ChatEngine = require("./modules/chat_module/ChatEngine");
+const EventDetails = require("./modules/event_module/EventDetails");
+const EventStore = require("./modules/event_module/EventStore");
+const ReportService = require("./modules/report_module/ReportService")
+const BanService = require("./modules/ban_module/BanService")
+// const {
+//     UserAccount,
+//     UserStore,
+//     ChatDetails,
+//     ChatEngine,
+//     EventDetails,
+//     EventStore,
+//     ReportService,
+//     BanService,
+// } = require("./modules");
 const { response } = require("express");
 
 function logRequest(req, res, next) {
@@ -97,8 +104,8 @@ app.get("/test", async (req, res) => {
     //await Event.deleteMany({});
     //await Chat.deleteMany({});
     //await User.updateMany({},{ friends: [] })
-    //await User.updateMany({},{ friendRequest: [] })
-    //await Chat.findByIdAndUpdate("62ccd155190a458def14f2f3", {messages: []})
+    // console.log(await User.updateMany({location: "fsdhfkjshfsdh"},{ $push: {interests: "HEH"} }))
+    // await User.findByIdAndUpdate("62cc914dcb4206428b972c28", {$pull: {events: "dslkfjl"}})
     a["user"] = await User.find({});
     a["chat"] = await Chat.find({});
     a["event"] = await Event.find({});
@@ -189,8 +196,12 @@ app.put("/chat/:id/edit", async (req, res) => {
 //Edits User and sends it to frontend
 app.put("/event/:id/edit", async (req, res) => {
     let { id } = req.params;
-    await eventStore.updateEvent(id, req.body, userStore);
-    res.status(200).send(await eventStore.findEventByID(id)); //do we need to send the
+    let result = await eventStore.updateEvent(id, req.body, userStore);
+    if(result == SUCCESS){
+        res.status(200).send(await eventStore.findEventByID(id)); //do we need to send the
+    } else {
+        res.status(result).send(await eventStore.findEventByID(id));
+    }
 });
 
 //* Home Screen
@@ -381,7 +392,7 @@ app.get("/chat/:id", async (req, res) => {
 //Event list: Sends the list of Events the user is in - get
 app.get("/user/:id/event", async (req, res) => {
     let { id } = req.params;
-    let eventList = await eventStore.findEventByUser(id);
+    let eventList = await eventStore.findEventByUser(id, userStore);
     res.status(200).send(eventList);
 });
 

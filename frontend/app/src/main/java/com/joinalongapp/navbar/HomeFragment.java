@@ -134,6 +134,17 @@ public class HomeFragment extends Fragment {
             }
         });
 
+//        eventViewPager.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+//            @Override
+//            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+//
+//            }
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//                tab2.setX(tab1.getX(););
+//            }
+//        });
+
         return rootView;
     }
 

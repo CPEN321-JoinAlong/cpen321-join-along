@@ -97,7 +97,11 @@ public class HomeEventMapFragment extends Fragment {
                 clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MapClusterItem>() {
                     @Override
                     public boolean onClusterClick(Cluster<MapClusterItem> cluster) {
-                        return false;
+                        double latitude = cluster.getPosition().latitude;
+                        double longitude = cluster.getPosition().longitude;
+                        float zoom = map.getCameraPosition().zoom + 2;
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), zoom));
+                        return true;
                     }
                 });
 

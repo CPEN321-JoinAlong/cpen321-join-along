@@ -5,31 +5,6 @@ const NOTFOUND = 404;
 const SUCCESS = 200;
 const INVALID = 422;
 
-class EventDetails {
-    constructor(eventInfo) {
-        this.title = eventInfo.title;
-        this.eventOwnerID = eventInfo.eventOwnerID;
-        this.tags = eventInfo.tags;
-        this.beginningDate = eventInfo.beginningDate;
-        this.endDate = eventInfo.endDate;
-        this.publicVisibility = eventInfo.publicVisibility;
-        this.numberOfPeople = eventInfo.numberOfPeople;
-        this.location = eventInfo.location;
-        this.description = eventInfo.description;
-
-        this.participants = eventInfo.participants
-            ? eventInfo.participants
-            : [this.eventOwnerID];
-        this.currCapacity = eventInfo.currCapacity ? eventInfo.currCapacity : 1;
-        this.eventImage = eventInfo.eventImage;
-        this.chat = eventInfo.chat ? eventInfo.chat : null;
-    }
-
-    async findEvents(eventInfo, eventStore) {
-        return await eventStore.findEventByDetails(eventInfo);
-    }
-}
-
 class EventStore {
     constructor() {}
 
@@ -129,13 +104,13 @@ class EventStore {
     async createEvent(eventInfo, userStore) {
         let eventObject = await new Event(eventInfo).save();
         eventObject.participants.forEach(async (participant) => {
-            console.log(participant);
+            // console.log(participant);
             let user = await userStore.findUserByID(participant);
             if (user) {
                 user.events.push(eventObject._id);
-                console.log("IN CREATE EVENT");
-                console.log(eventObject._id);
-                console.log(user.events);
+                // console.log("IN CREATE EVENT");
+                // console.log(eventObject._id);
+                // console.log(user.events);
                 await userStore.updateUserAccount(participant, user);
             }
         });
@@ -187,15 +162,6 @@ class EventStore {
     //     if (user == null) return;
     //     return user.events;
     // }
-}
-
-function titleCase(str) {
-    var splitStr = str.toLowerCase().split(" ");
-    for (var i = 0; i < splitStr.length; i++) {
-        splitStr[i] =
-            splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-    }
-    return splitStr.join(" ");
 }
 
 module.exports = EventStore;

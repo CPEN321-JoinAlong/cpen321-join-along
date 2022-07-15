@@ -17,10 +17,6 @@ class EventDetails {
         this.eventImage = eventInfo.eventImage;
         this.chat = eventInfo.chat ? eventInfo.chat : null;
     }
-
-    async findEvents(eventInfo, eventStore) {
-        return await eventStore.findEventByDetails(eventInfo);
-    }
 }
 
 module.exports = EventDetails

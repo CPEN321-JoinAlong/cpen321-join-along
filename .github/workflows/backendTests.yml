@@ -9,11 +9,13 @@ on:
   pull_request:
     branches: [ "main", "post-m5" ]
 
+defaults:
+    run:
+      working-directory: ./backend
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x]
@@ -26,5 +28,5 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci --prefix backend/
-    - run: npm test --prefix backend/
+    - run: npm ci
+    - run: npm test

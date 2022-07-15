@@ -77,7 +77,7 @@ test("update event", async () => {
     mockUpdateEvent.mockReturnValue(SUCCESS);
     expect(
         await mockUpdateEvent("62cccd5a5bb7051aea562f69", eventInfo, userStore)
-    ).toBe(SUCCESS);
+    ).toBe(INVALID);
 });
 
 test("delete event", async () => {

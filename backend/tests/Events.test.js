@@ -65,7 +65,7 @@ test("create event", async () => {
 test("update event", async () => {
     const eventStore = new EventStore();
     const eventInfo = new EventDetails({
-        _id: "62cccd5a5bb7051aea562f79",
+        _id: "62cccd5a5bb7051aea362f79",
         title: "test event",
         eventOwnerID: "sdffsdlkfslkj",
         tags: ["Hiking", "BasketBall"],
@@ -76,7 +76,7 @@ test("update event", async () => {
     const mockUpdateEvent = mockEventStoreInstance.updateEvent;
     mockUpdateEvent.mockReturnValue(SUCCESS);
     expect(
-        await mockUpdateEvent("62cccd5a5bb7051aea562f79", eventInfo, userStore)
+        await mockUpdateEvent("62cccd5a5bb7051aea362f79", eventInfo, userStore)
     ).toBe(SUCCESS);
 });
 

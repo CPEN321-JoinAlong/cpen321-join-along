@@ -10,10 +10,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,26 +21,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
-import com.joinalongapp.Constants;
 import com.joinalongapp.MapClusterItem;
 import com.joinalongapp.MapInfoWindowAdapter;
-import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.EventList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import okhttp3.Call;
-import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -96,12 +84,6 @@ public class HomeEventMapFragment extends Fragment {
                 initMapCamera();
                 initClusterManager();
 
-                //TODO: should be a GET
-//                removeMe_PopulateEventList();
-//
-//                addEventsToMap();
-
-//                getEventsForFilter(filter, inflater);
                 eventList = ((EventList) getArguments().getSerializable("eventsList")).eventList;
                 addEventsToMap();
                 clusterManager.cluster();
@@ -111,7 +93,6 @@ public class HomeEventMapFragment extends Fragment {
                 clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MapClusterItem>() {
                     @Override
                     public void onClusterItemInfoWindowClick(MapClusterItem item) {
-//                        Toast.makeText(getActivity(), item.getEvent(), Toast.LENGTH_SHORT).show();
 
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("event", item.getEvent());
@@ -139,89 +120,13 @@ public class HomeEventMapFragment extends Fragment {
                     }
                 });
 
-//                clusterManager.getMarkerCollection().setInfoWindowAdapter(new MapInfoWindowAdapter(inflater));
-//                map.setInfoWindowAdapter(clusterManager.getMarkerManager());
-
-
-
             }
         });
-
-        //TODO: below block is just testing
-        EventList el = new ViewModelProvider(requireActivity()).get(EventList.class);
-        Event event = new Event();
-        event.setTitle("map");
-        el.add(event);
 
         return view;
     }
 
-    private void getEventsForFilter(String filter, LayoutInflater inflater) {
-        String userId = ((UserApplicationInfo) getActivity().getApplication()).getProfile().getId();
-        String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
-        String path;
 
-        switch (filter) {
-            case "My Events":
-                path = "user/" + userId + "/event";
-                break;
-            case "Recommended":
-            default:
-                path = "event";
-                break;
-        }
-
-        FragmentActivity fragmentActivity = getActivity();
-
-        RequestManager requestManager = new RequestManager();
-
-        try {
-            requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
-                @Override
-                public void onSuccess(Call call, Response response) {
-                    try {
-                        if (response.code() == Constants.STATUS_HTTP_200) {
-                            JSONArray jsonEvents = new JSONArray(response.body().string());
-                            eventList.clear();
-                            for (int i = 0; i < jsonEvents.length(); i++) {
-                                Event event = new Event();
-                                event.populateDetailsFromJson(jsonEvents.getString(i));
-                                eventList.add(event);
-                            }
-                        }
-
-                        new Timer().schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                fragmentActivity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        addEventsToMap();
-                                        clusterManager.cluster();
-                                        clusterManager.getMarkerCollection().setInfoWindowAdapter(new MapInfoWindowAdapter(inflater));
-                                        map.setInfoWindowAdapter(clusterManager.getMarkerManager());
-
-
-                                    }
-                                });
-                            }
-                        }, 0);
-
-                    } catch (IOException | JSONException e) {
-                        Log.e(TAG, "Unable to parse events from server.");
-                    }
-                }
-                @Override
-                public void onError(Call call, IOException e) {
-                    Log.e(TAG, "Unable to get events from server.");
-                }
-
-            });
-
-        } catch (IOException e) {
-            Log.e(TAG, "Unable to get events from server.");
-        }
-    }
 
     private void initClusterManager() {
         clusterManager = new ClusterManager<>(getActivity(), map);

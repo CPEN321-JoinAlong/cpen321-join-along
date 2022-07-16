@@ -8,12 +8,10 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.adapter.EventAdapter;
-import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.EventList;
@@ -112,85 +110,8 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         eventRecycler.setLayoutManager(linearLayoutManager);
 
-        setEventCards();
-
-
-        //below we get the filters and search based on them
-
-        String filter = getArguments() == null ? "empty" : getArguments().getString("filter");
-
-        RequestManager requestManager = new RequestManager();
-
-//        String userId = ((UserApplicationInfo) getActivity().getApplication()).getProfile().getId();
-//        String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
-//
-//        //TODO: change the path based on filter
-//
-//        String path;
-//
-//        switch (filter) {
-//            case "My Events":
-//                path = "user/" + userId + "/event";
-//                break;
-//            case "Recommended":
-//            default:
-//                path = "event";
-//                break;
-//        }
-//
-//        FragmentActivity fragmentActivity = getActivity();
-//
-//        try {
-//            requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
-//                @Override
-//                public void onSuccess(Call call, Response response) {
-//                    try {
-//                        if (response.code() == Constants.STATUS_HTTP_200) {
-//                            JSONArray jsonEvents = new JSONArray(response.body().string());
-//                            eventList.clear();
-//                            for (int i = 0; i < jsonEvents.length(); i++) {
-//                                Event event = new Event();
-//                                event.populateDetailsFromJson(jsonEvents.getString(i));
-//                                eventList.add(event);
-//                            }
-//                        }
-//
-//                        new Timer().schedule(new TimerTask() {
-//                            @Override
-//                            public void run() {
-//                                fragmentActivity.runOnUiThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        setEventCards();
-//                                    }
-//                                });
-//                            }
-//                        }, 0);
-//
-//                    } catch (IOException | JSONException e) {
-//                        Log.e(TAG, "Unable to parse events from server.");
-//                    }
-//                }
-//                @Override
-//                public void onError(Call call, IOException e) {
-//                    Log.e(TAG, "Unable to get events from server.");
-//                }
-//
-//            });
-//
-//        } catch (IOException e) {
-//            Log.e(TAG, "Unable to get events from server.");
-//        }
-
-        //todo: below is refactored might need eventlist clear
         eventList = ((EventList) getArguments().getSerializable("eventsList")).eventList;
         setEventCards();
-
-        //TODO: below block is just testing
-        EventList el = new ViewModelProvider(requireActivity()).get(EventList.class);
-        Event event = new Event();
-        event.setTitle("list");
-        el.add(event);
 
         return view;
     }

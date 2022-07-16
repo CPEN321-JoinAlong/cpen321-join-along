@@ -60,8 +60,6 @@ public class HomeFragment extends Fragment {
 
     private ImageButton homepageSearchBar;
 
-    protected List<String> thingy = new ArrayList<>();
-
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -89,7 +87,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        //TODO: refactor and implement search
+        //TODO: refactor
 
 
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
@@ -107,18 +105,7 @@ public class HomeFragment extends Fragment {
         eventViewTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-//                if (viewStateAdapter.getPositionsRENAME() == -1) {
-//                    eventViewPager.setCurrentItem(tab.getPosition());
-//                    viewStateAdapter.setPositionsRENAME(tab.getPosition());
-//                }
-//                else {
-//                    eventViewPager.setCurrentItem(viewStateAdapter.getPositionsRENAME());
-//                }
-
                 eventViewPager.setCurrentItem(tab.getPosition());
-
-//                viewStateAdapter.setPositionsRENAME(tab.getPosition());
-//                eventViewPager.setAdapter(viewStateAdapter);
             }
 
             @Override
@@ -128,9 +115,6 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
-                //getActivity().getSupportFragmentManager().beginTransaction().detach(this).attach(this).commit();
-                //viewStateAdapter.refresh();
                 //DO NOTHING
             }
         });
@@ -139,13 +123,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onPageSelected(int position) {
                 eventViewTabs.selectTab(eventViewTabs.getTabAt(position));
-//                if (viewStateAdapter.getPositionsRENAME() == -1) {
-//                    eventViewTabs.selectTab(eventViewTabs.getTabAt(position));
-//                    viewStateAdapter.setPositionsRENAME(position);
-//                }
-//                else {
-//                    eventViewTabs.selectTab(eventViewTabs.getTabAt(viewStateAdapter.getPositionsRENAME()));
-//                }
             }
         });
 
@@ -157,23 +134,6 @@ public class HomeFragment extends Fragment {
                 int curr = eventViewPager.getCurrentItem();
                 getEventsForFilter(selectedFilter, curr);
                 viewStateAdapter.setFilter(selectedFilter);
-//                int curr = eventViewPager.getCurrentItem();
-//                new Timer().schedule(new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        getActivity().runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-////                                eventViewPager.setAdapter(viewStateAdapter);
-//                                eventViewTabs.selectTab(eventViewTabs.getTabAt(curr));
-//                                eventViewPager.setCurrentItem(curr);
-//                            }
-//                        });
-//                    }
-//                }, 200); //TODO: DEBT, hacky delay
-
-
-                //todo
             }
 
             @Override
@@ -190,17 +150,6 @@ public class HomeFragment extends Fragment {
                 startActivity(i);
             }
         });
-
-//        eventViewPager.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-//            @Override
-//            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-//
-//            }
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//                tab2.setX(tab1.getX(););
-//            }
-//        });
 
         return rootView;
     }
@@ -294,9 +243,7 @@ public class HomeFragment extends Fragment {
         //TODO change this default later
         String filter = "Recommended";
 
-        //could instead use parcelable arraylist
         EventList eventList = new EventList();
-        int positionsRENAME = -1;
 
         public EventViewAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
             super(fragmentManager, lifecycle);
@@ -306,14 +253,6 @@ public class HomeFragment extends Fragment {
             this.eventList.eventList.clear();
             this.eventList.eventList.addAll(eventList);
             notifyDataSetChanged();
-        }
-
-        public void setPositionsRENAME(int pos) {
-            positionsRENAME = pos;
-        }
-
-        public int getPositionsRENAME() {
-            return positionsRENAME;
         }
 
         public void setFilter(String filter) {

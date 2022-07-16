@@ -1,4 +1,4 @@
-package com.joinalongapp;
+package com.joinalongapp.maputils;
 
 import android.content.Context;
 

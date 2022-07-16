@@ -26,12 +26,12 @@ import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.SearchScreenActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
-import com.joinalongapp.viewmodel.EventList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -243,15 +243,15 @@ public class HomeFragment extends Fragment {
         //TODO change this default later
         String filter = "Recommended";
 
-        EventList eventList = new EventList();
+        List<Event> eventList = new ArrayList<>();
 
         public EventViewAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
             super(fragmentManager, lifecycle);
         }
 
         public void setEventList(List<Event> eventList) {
-            this.eventList.eventList.clear();
-            this.eventList.eventList.addAll(eventList);
+            this.eventList.clear();
+            this.eventList.addAll(eventList);
             notifyDataSetChanged();
         }
 
@@ -265,7 +265,7 @@ public class HomeFragment extends Fragment {
             if (position == MAP_VIEW_TAB){
                 System.out.println("redraw map");
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("eventsList", eventList);
+                bundle.putSerializable("eventsList", (Serializable) eventList);
                 bundle.putString("filter", filter);
                 HomeEventMapFragment fragment = new HomeEventMapFragment();
                 fragment.setArguments(bundle);
@@ -274,7 +274,7 @@ public class HomeFragment extends Fragment {
                 //TODO add event list udpate
                 System.out.println("redraw list");
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("eventsList", eventList);
+                bundle.putSerializable("eventsList", (Serializable) eventList);
                 bundle.putString("filter", filter);
                 HomeEventListFragment fragment = new HomeEventListFragment();
                 fragment.setArguments(bundle);

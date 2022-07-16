@@ -26,7 +26,6 @@ import com.joinalongapp.MapInfoWindowAdapter;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
-import com.joinalongapp.viewmodel.EventList;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -84,7 +83,7 @@ public class HomeEventMapFragment extends Fragment {
                 initMapCamera();
                 initClusterManager();
 
-                eventList = ((EventList) getArguments().getSerializable("eventsList")).eventList;
+                eventList = (List<Event>) getArguments().getSerializable("eventsList");
                 addEventsToMap();
                 clusterManager.cluster();
                 clusterManager.getMarkerCollection().setInfoWindowAdapter(new MapInfoWindowAdapter(inflater));

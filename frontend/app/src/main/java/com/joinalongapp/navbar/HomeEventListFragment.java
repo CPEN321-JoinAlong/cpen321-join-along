@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.joinalongapp.adapter.EventAdapter;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Event;
-import com.joinalongapp.viewmodel.EventList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +109,7 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         eventRecycler.setLayoutManager(linearLayoutManager);
 
-        eventList = ((EventList) getArguments().getSerializable("eventsList")).eventList;
+        eventList = (List<Event>) getArguments().getSerializable("eventsList");
         setEventCards();
 
         return view;

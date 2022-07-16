@@ -101,7 +101,12 @@ public class HomeEventMapFragment extends Fragment {
 //
 //                addEventsToMap();
 
-                getEventsForFilter(filter, inflater);
+//                getEventsForFilter(filter, inflater);
+                eventList = ((EventList) getArguments().getSerializable("eventsList")).eventList;
+                addEventsToMap();
+                clusterManager.cluster();
+                clusterManager.getMarkerCollection().setInfoWindowAdapter(new MapInfoWindowAdapter(inflater));
+                map.setInfoWindowAdapter(clusterManager.getMarkerManager());
 
                 clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MapClusterItem>() {
                     @Override

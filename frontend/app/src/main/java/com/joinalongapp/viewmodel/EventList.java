@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,8 +12,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 //TODO: could just make the eventlist public
-public class EventList extends ViewModel implements List<Event> {
-    List<Event> eventList = new ArrayList<>();
+public class EventList extends ViewModel implements List<Event>, Serializable {
+    public List<Event> eventList = new ArrayList<>();
 
     @Override
     public void clear() {

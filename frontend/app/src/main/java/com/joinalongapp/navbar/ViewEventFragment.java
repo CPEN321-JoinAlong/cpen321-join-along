@@ -112,6 +112,13 @@ public class ViewEventFragment extends Fragment {
                 //TODO: this needs fixing to use the native back button
                 if (getArguments().getString("theFrom").equals("search")) {
                     getActivity().onBackPressed();
+                } else if (getArguments().getString("theFrom").equals("map")) {
+                    //TODO go back to map
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
                 } else {
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

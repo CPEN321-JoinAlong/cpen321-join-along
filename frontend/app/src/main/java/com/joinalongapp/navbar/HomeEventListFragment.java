@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,6 +20,7 @@ import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
+import com.joinalongapp.viewmodel.EventList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -192,6 +194,12 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         } catch (IOException e) {
             Log.e(TAG, "Unable to get events from server.");
         }
+
+        //TODO: below block is just testing
+        EventList el = new ViewModelProvider(requireActivity()).get(EventList.class);
+        Event event = new Event();
+        event.setTitle("list");
+        el.add(event);
 
         return view;
     }

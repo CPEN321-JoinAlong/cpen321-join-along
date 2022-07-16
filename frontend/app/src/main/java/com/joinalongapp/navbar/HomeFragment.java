@@ -99,6 +99,9 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+
+                //getActivity().getSupportFragmentManager().beginTransaction().detach(this).attach(this).commit();
+                //viewStateAdapter.refresh();
                 //DO NOTHING
             }
         });
@@ -183,9 +186,15 @@ public class HomeFragment extends Fragment {
         @Override
         public Fragment createFragment(int position) {
             if (position == MAP_VIEW_TAB){
-                return new HomeEventMapFragment();
+                System.out.println("redraw map");
+                Bundle bundle = new Bundle();
+                bundle.putString("filter", filter);
+                HomeEventMapFragment fragment = new HomeEventMapFragment();
+                fragment.setArguments(bundle);
+                return fragment;
             } else {
                 //TODO add event list udpate
+                System.out.println("redraw list");
                 Bundle bundle = new Bundle();
                 bundle.putString("filter", filter);
                 HomeEventListFragment fragment = new HomeEventListFragment();

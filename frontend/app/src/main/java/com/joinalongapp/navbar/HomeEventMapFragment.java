@@ -7,10 +7,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,14 +23,26 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
+import com.joinalongapp.Constants;
 import com.joinalongapp.MapClusterItem;
+import com.joinalongapp.MapInfoWindowAdapter;
+import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
-import com.joinalongapp.viewmodel.UserProfile;
+import com.joinalongapp.viewmodel.EventList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,6 +87,7 @@ public class HomeEventMapFragment extends Fragment {
         mapView = view.findViewById(R.id.eventMap);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
+        String filter = getArguments().getString("filter");
 
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -81,16 +97,29 @@ public class HomeEventMapFragment extends Fragment {
                 initClusterManager();
 
                 //TODO: should be a GET
-                removeMe_PopulateEventList();
+//                removeMe_PopulateEventList();
+//
+//                addEventsToMap();
 
-                addEventsToMap();
-
-                //TODO zoom in on cluster click
+                getEventsForFilter(filter, inflater);
 
                 clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MapClusterItem>() {
                     @Override
                     public void onClusterItemInfoWindowClick(MapClusterItem item) {
-                        Toast.makeText(getActivity(), "uwu", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getActivity(), item.getEvent(), Toast.LENGTH_SHORT).show();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("event", item.getEvent());
+                        bundle.putString("theFrom", "map");
+                        ViewEventFragment fragment = new ViewEventFragment();
+                        fragment.setArguments(bundle);
+
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.frame_layout, fragment);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+
                     }
                 });
 
@@ -105,15 +134,88 @@ public class HomeEventMapFragment extends Fragment {
                     }
                 });
 
-                //TODO: edit this later after MVP (customize the info window)
-//                clusterManager.getMarkerCollection().setInfoWindowAdapter(new CustomInfoViewAdapter(inflater));
+//                clusterManager.getMarkerCollection().setInfoWindowAdapter(new MapInfoWindowAdapter(inflater));
 //                map.setInfoWindowAdapter(clusterManager.getMarkerManager());
+
 
 
             }
         });
 
+        //TODO: below block is just testing
+        EventList el = new ViewModelProvider(requireActivity()).get(EventList.class);
+        Event event = new Event();
+        event.setTitle("map");
+        el.add(event);
+
         return view;
+    }
+
+    private void getEventsForFilter(String filter, LayoutInflater inflater) {
+        String userId = ((UserApplicationInfo) getActivity().getApplication()).getProfile().getId();
+        String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
+        String path;
+
+        switch (filter) {
+            case "My Events":
+                path = "user/" + userId + "/event";
+                break;
+            case "Recommended":
+            default:
+                path = "event";
+                break;
+        }
+
+        FragmentActivity fragmentActivity = getActivity();
+
+        RequestManager requestManager = new RequestManager();
+
+        try {
+            requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
+                @Override
+                public void onSuccess(Call call, Response response) {
+                    try {
+                        if (response.code() == Constants.STATUS_HTTP_200) {
+                            JSONArray jsonEvents = new JSONArray(response.body().string());
+                            eventList.clear();
+                            for (int i = 0; i < jsonEvents.length(); i++) {
+                                Event event = new Event();
+                                event.populateDetailsFromJson(jsonEvents.getString(i));
+                                eventList.add(event);
+                            }
+                        }
+
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                fragmentActivity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        addEventsToMap();
+                                        clusterManager.cluster();
+                                        clusterManager.getMarkerCollection().setInfoWindowAdapter(new MapInfoWindowAdapter(inflater));
+                                        map.setInfoWindowAdapter(clusterManager.getMarkerManager());
+
+
+                                    }
+                                });
+                            }
+                        }, 0);
+
+                    } catch (IOException | JSONException e) {
+                        Log.e(TAG, "Unable to parse events from server.");
+                    }
+                }
+                @Override
+                public void onError(Call call, IOException e) {
+                    Log.e(TAG, "Unable to get events from server.");
+                }
+
+            });
+
+        } catch (IOException e) {
+            Log.e(TAG, "Unable to get events from server.");
+        }
     }
 
     private void initClusterManager() {
@@ -129,46 +231,46 @@ public class HomeEventMapFragment extends Fragment {
             Address address = getAddressFromString(eventLocation);
             if (address != null) {
                 LatLng eventLatLng = new LatLng(address.getLatitude(), address.getLongitude());
-                MapClusterItem item = new MapClusterItem(eventLatLng.latitude, eventLatLng.longitude, event.getTitle(), event.getDescription());
+                MapClusterItem item = new MapClusterItem(eventLatLng.latitude, eventLatLng.longitude, event);
                 clusterManager.addItem(item);
             }
         }
     }
 
     private void initMapCamera() {
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            UserProfile profile = (UserProfile) bundle.get("Profile");
-            if (profile != null) {
-                String userLocation = profile.getLocation();
-                Address address = getAddressFromString(userLocation);
-                if (address != null) {
-                    LatLng userLatLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    map.moveCamera(CameraUpdateFactory.newLatLng(userLatLng));
-                    return;
-                }
-            }
+        UserApplicationInfo userInfo = ((UserApplicationInfo) getActivity().getApplication());
+        String userLocation = userInfo.getProfile().getLocation();
+
+        Address address = getAddressFromString(userLocation);
+        if (address != null) {
+            LatLng userLatLng = new LatLng(address.getLatitude(), address.getLongitude());
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 10F));
+            return;
         }
+
         // default camera view
         //TODO: edit this
-        LatLng sydney = new LatLng(-34, 151);
-        map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng defaultView = new LatLng(0, 0);
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultView, 10F));
     }
 
     private void removeMe_PopulateEventList() {
         Event e1 = new Event();
+        e1.setEventId("1");
         e1.setTitle("UBC");
         e1.setDescription("description1");
         e1.setNumberOfPeopleAllowed(1);
         e1.setLocation("2366 Main Mall, Vancouver BC");
         eventList.add(e1);
         Event e2 = new Event();
+        e2.setEventId("2");
         e2.setTitle("UoT");
         e2.setDescription("description2");
         e2.setNumberOfPeopleAllowed(2);
         e2.setLocation("27 Kings College Cir, Toronto ON");
         eventList.add(e2);
         Event e3 = new Event();
+        e3.setEventId("3");
         e3.setTitle("SFU");
         e3.setDescription("description3");
         e3.setNumberOfPeopleAllowed(3);
@@ -189,4 +291,5 @@ public class HomeEventMapFragment extends Fragment {
         }
         return retVal;
     }
+
 }

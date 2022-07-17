@@ -95,7 +95,6 @@ public class ManageProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 modifyOriginalProfile(originalProfile);
 
-
                 UserApplicationInfo userInput = createUserObject();
 
                 if (validateElements(originalProfile)) {

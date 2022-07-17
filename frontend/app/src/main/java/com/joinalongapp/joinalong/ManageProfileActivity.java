@@ -136,12 +136,13 @@ public class ManageProfileActivity extends AppCompatActivity {
                 public void onSuccess(Call call, Response response) {
 
                     if (response.code() == Constants.STATUS_HTTP_200) {
-                        ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(userInput);
+                        ((UserApplicationInfo) getApplication()).updateApplicationInfo(userInput);
                     } else {
                         Log.e(TAG, "Unable to update user profile");
                     }
 
                     //todo: should go to profile?
+                    //      success message
                     startMainActivity();
                 }
 
@@ -173,7 +174,7 @@ public class ManageProfileActivity extends AppCompatActivity {
                     UserApplicationInfo newUserInfo = new UserApplicationInfo();
                     try {
                         newUserInfo.populateDetailsFromJson(response.body().string());
-                        ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(newUserInfo);
+                        ((UserApplicationInfo) getApplication()).updateApplicationInfo(newUserInfo);
                         startMainActivity();
 
                     } catch (IOException | JSONException e) {

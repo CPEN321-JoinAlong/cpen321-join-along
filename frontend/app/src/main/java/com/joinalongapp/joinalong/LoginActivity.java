@@ -170,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
         UserApplicationInfo profileOnLogin = new UserApplicationInfo();
         String jsonBody = response.body().string();
         profileOnLogin.populateDetailsFromJson(jsonBody);
-        ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(profileOnLogin);
+        ((UserApplicationInfo) getApplication()).updateApplicationInfo(profileOnLogin);
     }
 
     private String getTokenForBackendAuth(String idToken) throws JSONException {

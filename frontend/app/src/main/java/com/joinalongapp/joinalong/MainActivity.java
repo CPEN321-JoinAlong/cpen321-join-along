@@ -1,5 +1,6 @@
 package com.joinalongapp.joinalong;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,7 +9,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.joinalongapp.joinalong.databinding.ActivityMainBinding;
-import com.joinalongapp.navbar.EventsFragment;
 import com.joinalongapp.navbar.FriendsFragment;
 import com.joinalongapp.navbar.HomeFragment;
 import com.joinalongapp.navbar.MessagingFragment;
@@ -36,7 +36,8 @@ public class MainActivity extends AppCompatActivity{
                     replaceFragment(new MessagingFragment());
                     break;
                 case R.id.event:
-                    replaceFragment(new EventsFragment());
+                    Intent i = new Intent(MainActivity.this, ManageEventActivity.class);
+                    startActivity(i);
                     break;
                 case R.id.friends:
                     replaceFragment(new FriendsFragment());

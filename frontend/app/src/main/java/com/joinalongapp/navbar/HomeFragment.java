@@ -21,6 +21,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.joinalongapp.Constants;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.SearchScreenActivity;
@@ -180,11 +181,11 @@ public class HomeFragment extends Fragment {
 
         switch (filter) {
             case "My Events":
-                path = "user/" + userId + "/event";
+                path = new PathBuilder().addUser().addNode(userId).addEvent().build();
                 break;
             case "Recommended":
             default:
-                path = "event";
+                path = new PathBuilder().addEvent().build();
                 break;
         }
 

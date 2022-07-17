@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.ReportActivity;
@@ -133,7 +134,13 @@ public class ViewProfileFragment extends Fragment {
                     e.printStackTrace();
                 }
                 try {
-                    requestManager.put("user/sendFriendRequest/" + userId + "/" + otherUserId, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    String path = new PathBuilder()
+                            .addUser()
+                            .addNode("sendFriendRequest")
+                            .addNode(userId)
+                            .addNode(otherUserId)
+                            .build();
+                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             System.out.println(response.toString());

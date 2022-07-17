@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.Constants;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.ReportActivity;
@@ -142,8 +143,13 @@ public class ViewEventFragment extends Fragment {
                 UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
                 String userId = userApplicationInfo.getProfile().getId();
                 String eventId = event.getEventId();
-                String path = "user/acceptEvent/" + userId + "/" + eventId;
 
+                String path = new PathBuilder()
+                        .addUser()
+                        .addNode("acceptEvent")
+                        .addNode(userId)
+                        .addNode(eventId)
+                        .build();
 
                 try {
                     String userToken = userApplicationInfo.tokenToJsonString();
@@ -271,6 +277,12 @@ public class ViewEventFragment extends Fragment {
 //                                RequestManager requestManager = new RequestManager();
 //
 //                                try {
+//                                    String path = new PathBuilder()
+//                                            .addUser()
+//                                            .addNode("leaveEvent")
+//                                            .addNode(userId)
+//                                            .addNode(eventId)
+//                                            .build();
 //                                    String userToken = userApplicationInfo.tokenToJsonString();
 //                                    requestManager.put(path, userToken, new RequestManager.OnRequestCompleteListener() {
 //                                        @Override

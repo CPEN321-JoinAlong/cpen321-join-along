@@ -342,15 +342,15 @@
         app:layout_constraintTop_toTopOf="@+id/guideline35"
         app:layout_constraintVertical_bias="0.294" />
 
-    <Button
-        android:id="@+id/eventReportButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/create_report_text"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <ImageButton
+        android:id="@+id/eventOptions"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_baseline_more_vert_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline35"
-        app:layout_constraintVertical_bias="0.762" />
+        app:layout_constraintTop_toTopOf="@+id/guideline28" />
 </androidx.constraintlayout.widget.ConstraintLayout>

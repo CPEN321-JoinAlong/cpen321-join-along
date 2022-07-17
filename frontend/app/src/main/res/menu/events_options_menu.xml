@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/eventLeave"
+        android:title="@string/event_leave_title" />
+
+    <item
+        android:id="@+id/eventReport"
+        android:title="@string/event_report_title" />
+
+
+
+
+</menu>

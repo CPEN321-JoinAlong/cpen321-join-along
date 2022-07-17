@@ -137,6 +137,8 @@
     <string name="view_events_end_date_title">End Date</string>
     <string name="join_event">Join!</string>
     <string name="book_rideshare">Book Rideshare</string>
+    <string name="event_leave_title">Leave Event</string>
+    <string name="event_report_title">Report Event</string>
 
     <!--TODO: idk if this is best place for id-->
     <!--LOGIN-->

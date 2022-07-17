@@ -378,8 +378,10 @@ public class ViewEventFragment extends Fragment {
         String userId = userApplicationInfo.getProfile().getId();
         if (isPartOfEvent(userId)) {
             menu.getMenu().findItem(R.id.eventLeave).setEnabled(true);
+            menu.getMenu().findItem(R.id.eventLeave).setVisible(true);
         } else {
             menu.getMenu().findItem(R.id.eventLeave).setEnabled(false);
+            menu.getMenu().findItem(R.id.eventLeave).setVisible(false);
         }
     }
 

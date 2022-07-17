@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.tabs.TabLayout;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.Tag;
@@ -101,13 +102,16 @@ public class ManageEventActivity extends AppCompatActivity {
         initAutoCompleteChipGroup(autoCompleteChipTags, chipGroupTags, sampleTags);
 
         Bundle info = getIntent().getExtras();
-        String path = "create";
+
+        PathBuilder pathBuilder = new PathBuilder();
+        pathBuilder.addEvent();
 
         if (info != null && info.getSerializable("EVENT") != null) {
             // Must append pre-existing text due to editing of Event.
             Event userEvent = (Event) info.getSerializable("EVENT");
             manageEventTitle.setText("Edit Event");
-            path = "edit";
+            //TODO: add event id to path builder
+            pathBuilder.addEdit();
 
             title.setText(userEvent.getTitle());
             location.setText(userEvent.getLocation());
@@ -124,10 +128,10 @@ public class ManageEventActivity extends AppCompatActivity {
             int position = arrayAdapter.getPosition(String.valueOf(userEvent.getNumberOfPeopleAllowed()));
             numberOfPeople.setSelection(position);
             description.setText(userEvent.getDescription());
+        } else {
+            pathBuilder.addCreate();
         }
 
-
-        String finalPath = path;
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,7 +163,7 @@ public class ManageEventActivity extends AppCompatActivity {
                         JSONObject json = event.toJson();
                         json.put("token", ((UserApplicationInfo) getApplication()).getUserToken());
 
-                        requestManager.post("event/" + finalPath, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                        requestManager.post(pathBuilder.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
                             @Override
                             public void onSuccess(Call call, Response response) {
                                 Intent i = new Intent(v.getContext(), MainActivity.class);

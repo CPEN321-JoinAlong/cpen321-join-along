@@ -22,6 +22,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.Constants;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
@@ -115,7 +116,13 @@ public class ManageProfileActivity extends AppCompatActivity {
                         try {
                             String jsonBody = userInput.toJsonString();
                             RequestManager requestManager = new RequestManager();
-                            requestManager.post("user/create", jsonBody, new RequestManager.OnRequestCompleteListener() {
+
+                            String path = new PathBuilder()
+                                    .addUser()
+                                    .addCreate()
+                                    .build();
+
+                            requestManager.post(path, jsonBody, new RequestManager.OnRequestCompleteListener() {
                                 @Override
                                 public void onSuccess(Call call, Response response) {
                                     UserApplicationInfo newUserInfo = new UserApplicationInfo();
@@ -145,7 +152,11 @@ public class ManageProfileActivity extends AppCompatActivity {
                             RequestManager requestManager = new RequestManager();
 
                             String userId = ((UserApplicationInfo) getApplication()).getProfile().getId();
-                            String path = "user/" + userId + "/edit";
+                            String path = new PathBuilder()
+                                    .addUser()
+                                    .addNode(userId)
+                                    .addEdit()
+                                    .build();
 
                             requestManager.put(path, jsonBody, new RequestManager.OnRequestCompleteListener() {
                                 @Override

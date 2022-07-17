@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
@@ -97,7 +98,14 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
                 }
                 RequestManager requestManager = new RequestManager();
                 try {
-                    requestManager.put("user/acceptChat/" + user.getId() + "/" + otherChat.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    String path = new PathBuilder()
+                            .addUser()
+                            .addNode("acceptChat")
+                            .addNode(user.getId())
+                            .addNode(otherChat.getId())
+                            .build();
+
+                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             new Timer().schedule(new TimerTask() {
@@ -137,7 +145,14 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
                 }
                 RequestManager requestManager = new RequestManager();
                 try {
-                    requestManager.put("user/rejectChat/" + user.getId() + "/" + otherChat.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    String path = new PathBuilder()
+                            .addUser()
+                            .addNode("rejectChat")
+                            .addNode(user.getId())
+                            .addNode(otherChat.getId())
+                            .build();
+
+                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());

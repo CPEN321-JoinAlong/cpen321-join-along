@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
@@ -99,7 +100,14 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                 }
                 RequestManager requestManager = new RequestManager();
                 try {
-                    requestManager.put("user/acceptUser/" + user.getId() + "/" + otherUser.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    String path = new PathBuilder()
+                            .addUser()
+                            .addNode("acceptUser")
+                            .addNode(user.getId())
+                            .addNode(otherUser.getId())
+                            .build();
+
+                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
 
@@ -142,7 +150,14 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                 }
                 RequestManager requestManager = new RequestManager();
                 try {
-                    requestManager.put("user/rejectUser/" + user.getId() + "/" + otherUser.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    String path = new PathBuilder()
+                            .addUser()
+                            .addNode("rejectUser")
+                            .addNode(user.getId())
+                            .addNode(otherUser.getId())
+                            .build();
+
+                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
 

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.adapter.MessageListCustomAdapter;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.Message;
@@ -85,7 +86,14 @@ public class MessageActivity extends AppCompatActivity {
 
                 RequestManager requestManager = new RequestManager();
                 try {
-                    requestManager.put("chat/sendChat/" + user.getId() + "/" + chatDetails.getId(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    String path = new PathBuilder()
+                            .addChat()
+                            .addNode("sendChat")
+                            .addNode(user.getId())
+                            .addNode(chatDetails.getId())
+                            .build();
+
+                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
                         }
@@ -149,7 +157,12 @@ public class MessageActivity extends AppCompatActivity {
         json.put("token", token);
         System.out.println(id);
 
-        requestManager.get("chat/" + id, token, new RequestManager.OnRequestCompleteListener() {
+        String path = new PathBuilder()
+                .addChat()
+                .addNode(id)
+                .build();
+
+        requestManager.get(path, token, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
                 try {

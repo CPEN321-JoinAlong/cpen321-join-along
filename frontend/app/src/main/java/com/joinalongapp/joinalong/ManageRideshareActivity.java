@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+@Deprecated
 //TODO: it might be nice to extract common methods between activities such as address and stuff into another utility like interface
 public class ManageRideshareActivity extends AppCompatActivity {
     private EditText titleEdit;

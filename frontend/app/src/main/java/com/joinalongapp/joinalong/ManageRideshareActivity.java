@@ -29,7 +29,10 @@ import java.util.List;
 import java.util.Locale;
 
 @Deprecated
-//TODO: it might be nice to extract common methods between activities such as address and stuff into another utility like interface
+/**
+ * Not sure if we are going to use this class, ran into limitations
+ * Marking as deprecated for now
+ */
 public class ManageRideshareActivity extends AppCompatActivity {
     private EditText titleEdit;
     private EditText pickUpLocationEdit;

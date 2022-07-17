@@ -13,9 +13,6 @@ import com.joinalongapp.navbar.FriendsFragment;
 import com.joinalongapp.navbar.HomeFragment;
 import com.joinalongapp.navbar.MessagingFragment;
 import com.joinalongapp.navbar.ProfileFragment;
-import com.joinalongapp.viewmodel.UserProfile;
-
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity{
     ActivityMainBinding binding;
@@ -28,11 +25,6 @@ public class MainActivity extends AppCompatActivity{
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         replaceFragment(new HomeFragment());
-
-        UserProfile u = new UserProfile(UUID.randomUUID().toString(), "Ken", "Liang");
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("USER", u);
-
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
 
@@ -50,9 +42,7 @@ public class MainActivity extends AppCompatActivity{
                     replaceFragment(new FriendsFragment());
                     break;
                 case R.id.profile:
-                    ProfileFragment pf = new ProfileFragment();
-                    pf.setArguments(bundle);
-                    replaceFragment(pf);
+                    replaceFragment(new ProfileFragment());
                     break;
             }
 

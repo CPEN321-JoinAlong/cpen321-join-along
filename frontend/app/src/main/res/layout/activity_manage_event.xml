@@ -93,7 +93,7 @@
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
-        app:layout_constraintVertical_bias="0.717" />
+        app:layout_constraintVertical_bias="0.884" />
 
     <EditText
         android:id="@+id/editTextEventManagementLocation"
@@ -289,7 +289,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftMarginGuideline"
@@ -338,21 +338,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="478dp" />
+        app:layout_constraintGuide_begin="458dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/visibilityGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="408dp" />
+        app:layout_constraintGuide_begin="398dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/tagsGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="577dp" />
+        app:layout_constraintGuide_begin="586dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/aboveTitleGuideline"
@@ -395,6 +395,6 @@
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
-        app:layout_constraintVertical_bias="0.245" />
+        app:layout_constraintVertical_bias="0.202" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

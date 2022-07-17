@@ -5,11 +5,12 @@
       <map>
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_chat.xml" value="0.22" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_event.xml" value="0.22" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_event.xml" value="0.5" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_message.xml" value="0.33" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_report.xml" value="0.5" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_search_screen.xml" value="0.2739273927392739" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_friends_request.xml" value="0.2234375" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_home.xml" value="0.29846014492753625" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_messaging.xml" value="0.28125" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_messaging_list.xml" value="0.28125" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_messaging_request.xml" value="0.28125" />

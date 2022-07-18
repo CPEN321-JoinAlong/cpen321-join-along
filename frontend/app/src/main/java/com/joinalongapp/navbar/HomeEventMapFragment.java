@@ -90,8 +90,8 @@ public class HomeEventMapFragment extends Fragment {
                 clusterManager.getMarkerCollection().setInfoWindowAdapter(new MapInfoWindowAdapter(inflater));
                 map.setInfoWindowAdapter(clusterManager.getMarkerManager());
 
-                initializeInfoWindowClickListener();
-                initializeClusterClickListener();
+                initMarkerInfoWindowClickListerner();
+                initMarkerClusterClickListener();
 
             }
         });
@@ -99,7 +99,7 @@ public class HomeEventMapFragment extends Fragment {
         return view;
     }
 
-    private void initializeClusterClickListener() {
+    private void initMarkerClusterClickListener() {
         clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MapClusterItem>() {
             @Override
             public boolean onClusterClick(Cluster<MapClusterItem> cluster) {
@@ -112,7 +112,7 @@ public class HomeEventMapFragment extends Fragment {
         });
     }
 
-    private void initializeInfoWindowClickListener() {
+    private void initMarkerInfoWindowClickListerner() {
         clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MapClusterItem>() {
             @Override
             public void onClusterItemInfoWindowClick(MapClusterItem item) {
@@ -145,11 +145,15 @@ public class HomeEventMapFragment extends Fragment {
             String eventLocation = event.getLocation();
             Address address = getAddressFromString(eventLocation);
             if (address != null) {
-                LatLng eventLatLng = new LatLng(address.getLatitude(), address.getLongitude());
-                MapClusterItem item = new MapClusterItem(eventLatLng.latitude, eventLatLng.longitude, event);
-                clusterManager.addItem(item);
+                addMapMarker(event, address);
             }
         }
+    }
+
+    private void addMapMarker(Event event, Address address) {
+        LatLng eventLatLng = new LatLng(address.getLatitude(), address.getLongitude());
+        MapClusterItem item = new MapClusterItem(eventLatLng.latitude, eventLatLng.longitude, event);
+        clusterManager.addItem(item);
     }
 
     private void initMapCamera() {

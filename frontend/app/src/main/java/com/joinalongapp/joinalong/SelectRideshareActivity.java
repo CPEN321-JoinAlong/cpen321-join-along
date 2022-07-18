@@ -1,6 +1,5 @@
 package com.joinalongapp.joinalong;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -38,9 +37,10 @@ public class SelectRideshareActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //TODO: change MainActivity.class to the activity that calls ManageRideshareActivity
-                Intent intent = new Intent(SelectRideshareActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
+//                Intent intent = new Intent(SelectRideshareActivity.this, MainActivity.class);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//                startActivity(intent);
+                finish();
             }
         });
     }

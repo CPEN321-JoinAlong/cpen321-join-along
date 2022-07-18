@@ -15,12 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.joinalongapp.Constants;
+import com.joinalongapp.adapter.EventViewAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
@@ -32,7 +31,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -47,9 +45,6 @@ import okhttp3.Response;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
-    private static final int LIST_VIEW_TAB = 0;
-    private static final int MAP_VIEW_TAB = 1;
-    private static final int NUM_TABS = 2;
     private static final String TAG = "HomeFragment";
 
     private TabLayout eventViewTabs;
@@ -87,10 +82,6 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-        //TODO: refactor
-
-
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
         initElements(rootView);
@@ -103,6 +94,43 @@ public class HomeFragment extends Fragment {
         //without this, moving map is seen as swipe between tabs
         eventViewPager.setUserInputEnabled(false);
 
+        initViewTabs();
+        initFilters();
+        initSearchbar();
+
+        return rootView;
+    }
+
+    private void initSearchbar() {
+        homepageSearchBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), SearchScreenActivity.class);
+                i.putExtra("mode", SearchScreenActivity.SearchMode.EVENT_MODE);
+                startActivity(i);
+            }
+        });
+    }
+
+    private void initFilters() {
+        eventFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedFilter = eventFilterList.get(position);
+
+                int curr = eventViewPager.getCurrentItem();
+                getEventsWithFilter(selectedFilter, curr);
+                viewStateAdapter.setFilter(selectedFilter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //default is already taken care of
+            }
+        });
+    }
+
+    private void initViewTabs() {
         eventViewTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -126,33 +154,6 @@ public class HomeFragment extends Fragment {
                 eventViewTabs.selectTab(eventViewTabs.getTabAt(position));
             }
         });
-
-        eventFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedFilter = eventFilterList.get(position);
-
-                int curr = eventViewPager.getCurrentItem();
-                getEventsForFilter(selectedFilter, curr);
-                viewStateAdapter.setFilter(selectedFilter);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                //default is already taken care of
-            }
-        });
-
-        homepageSearchBar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), SearchScreenActivity.class);
-                i.putExtra("mode", SearchScreenActivity.SearchMode.EVENT_MODE);
-                startActivity(i);
-            }
-        });
-
-        return rootView;
     }
 
     private void initElements(View view) {
@@ -174,7 +175,7 @@ public class HomeFragment extends Fragment {
         eventFilterSpinner.setAdapter(adapter);
     }
 
-    private void getEventsForFilter(String filter, int curr) {
+    private void getEventsWithFilter(String filter, int curr) {
         String userId = ((UserApplicationInfo) getActivity().getApplication()).getProfile().getId();
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         String path;
@@ -198,32 +199,8 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onSuccess(Call call, Response response) {
                     try {
-                        List<Event> eventList = new ArrayList<>();
-                        if (response.code() == Constants.STATUS_HTTP_200) {
-                            JSONArray jsonEvents = new JSONArray(response.body().string());
-                            for (int i = 0; i < jsonEvents.length(); i++) {
-                                Event event = new Event();
-                                event.populateDetailsFromJson(jsonEvents.getString(i));
-                                eventList.add(event);
-                            }
-                        }
-
-                        new Timer().schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                fragmentActivity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        viewStateAdapter.setEventList(eventList);
-                                        eventViewPager.setAdapter(viewStateAdapter);
-                                        eventViewTabs.selectTab(eventViewTabs.getTabAt(curr));
-                                        eventViewPager.setCurrentItem(curr);
-
-                                    }
-                                });
-                            }
-                        }, 0);
-
+                        List<Event> eventList = getEventListFromResponse(response);
+                        updateEventLists(eventList, fragmentActivity, curr);
                     } catch (IOException | JSONException e) {
                         Log.e(TAG, "Unable to parse events from server.");
                     }
@@ -240,52 +217,35 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private static class EventViewAdapter extends FragmentStateAdapter {
-        //TODO change this default later
-        String filter = "Recommended";
-
+    @NonNull
+    private List<Event> getEventListFromResponse(Response response) throws JSONException, IOException {
         List<Event> eventList = new ArrayList<>();
-
-        public EventViewAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
-            super(fragmentManager, lifecycle);
-        }
-
-        public void setEventList(List<Event> eventList) {
-            this.eventList.clear();
-            this.eventList.addAll(eventList);
-            notifyDataSetChanged();
-        }
-
-        public void setFilter(String filter) {
-            this.filter = filter;
-        }
-
-        @NonNull
-        @Override
-        public Fragment createFragment(int position) {
-            if (position == MAP_VIEW_TAB){
-                System.out.println("redraw map");
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("eventsList", (Serializable) eventList);
-                bundle.putString("filter", filter);
-                HomeEventMapFragment fragment = new HomeEventMapFragment();
-                fragment.setArguments(bundle);
-                return fragment;
-            } else {
-                //TODO add event list udpate
-                System.out.println("redraw list");
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("eventsList", (Serializable) eventList);
-                bundle.putString("filter", filter);
-                HomeEventListFragment fragment = new HomeEventListFragment();
-                fragment.setArguments(bundle);
-                return fragment;
+        if (response.code() == Constants.STATUS_HTTP_200) {
+            JSONArray jsonEvents = new JSONArray(response.body().string());
+            for (int i = 0; i < jsonEvents.length(); i++) {
+                Event event = new Event();
+                event.populateDetailsFromJson(jsonEvents.getString(i));
+                eventList.add(event);
             }
         }
-
-        @Override
-        public int getItemCount() {
-            return NUM_TABS;
-        }
+        return eventList;
     }
+
+    private void updateEventLists(List<Event> eventList, FragmentActivity fragmentActivity, int curr) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                fragmentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        viewStateAdapter.setEventList(eventList);
+                        eventViewPager.setAdapter(viewStateAdapter);
+                        eventViewTabs.selectTab(eventViewTabs.getTabAt(curr));
+                        eventViewPager.setCurrentItem(curr);
+                    }
+                });
+            }
+        }, 0);
+    }
+
 }

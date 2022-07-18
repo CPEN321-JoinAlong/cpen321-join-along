@@ -34,18 +34,6 @@ public class Event implements Serializable, IDetailsModel {
     public Event() {
     }
 
-    public Event(String eventId, String eventOwnerId, String title, String location, Date beginningDate, Date endDate, Boolean publicVisibility, int numberOfPeople, String description) {
-        this.eventId = eventId;
-        this.eventOwnerId = eventOwnerId;
-        this.title = title;
-        this.location = location;
-        this.beginningDate = beginningDate;
-        this.endDate = endDate;
-        this.publicVisibility = publicVisibility;
-        this.numberOfPeopleAllowed = numberOfPeople;
-        this.description = description;
-    }
-
     public int getCurrentNumPeopleRegistered() {
         return currentNumPeopleRegistered;
     }
@@ -182,7 +170,7 @@ public class Event implements Serializable, IDetailsModel {
         json.put("endDate", getEndDate());
         json.put("publicVisibility", getPublicVisibility());
         json.put("eventOwnerID", getEventOwnerId());
-        //json.put("participants", new JSONArray(getMembers()));
+
         return json;
     }
 
@@ -200,7 +188,6 @@ public class Event implements Serializable, IDetailsModel {
         }
 
         SimpleDateFormat serverSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-//        "2022-07-11T07:00:00.000Z"
 
         String beginDateString = json.getString("beginningDate");
         try {
@@ -210,9 +197,6 @@ public class Event implements Serializable, IDetailsModel {
             Log.d("Event", "unable to determine begin date");
         }
 
-        //todo: convert to date object, need to know the storage format first
-        //setBeginningDate();
-
         String endDateString = json.getString("endDate");
         try {
             Date date = serverSDF.parse(endDateString.substring(0, endDateString.length()-2));
@@ -220,8 +204,6 @@ public class Event implements Serializable, IDetailsModel {
         } catch (ParseException e){
             Log.d("Event", "unable to determine end date");
         }
-        //todo: convert to date object, need to know the storage format first
-        //setEndDate();
 
         setPublicVisibility(json.getBoolean("publicVisibility"));
         setNumberOfPeopleAllowed(json.getInt("numberOfPeople"));
@@ -234,9 +216,6 @@ public class Event implements Serializable, IDetailsModel {
         }
 
         setCurrentNumPeopleRegistered(json.getInt("currCapacity"));
-
-        //todo?: capacity, event image, event chat
-
 
         return this;
     }

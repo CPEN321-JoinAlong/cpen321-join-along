@@ -113,19 +113,9 @@ public class UserProfile implements Serializable, IDetailsModel {
         this.profilePictureUrl = profilePicture;
     }
 
-
     public String getFullName(){
         return firstName + " " + lastName;
     }
-
-    //THIS METHOD IS NOW BROKEN
-//    public String[] getFriendsStringArray(){
-//        String[] result = new String[friends.size()];
-//        for(int i = 0; i < friends.size(); i++){
-//            result[i] = friends.get(i).getFullName();
-//        }
-//        return result;
-//    }
 
     public String toJsonString() throws JSONException {
         JSONObject json = new JSONObject();

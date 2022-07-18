@@ -65,6 +65,7 @@ public class ReportActivity extends AppCompatActivity {
             String reportingEventName = " " + reportingEvent.getTitle();
             reportEntityName = reportingEvent.getTitle();
             reportingSubtitle.append(reportingEventName);
+            //TODO: warning: get owner name always return empty string
             reportBlockSubtitle.append(" " + reportingEvent.getOwnerName());
             reportDetails.setReportPerson(false);
             path = "reportEvent";

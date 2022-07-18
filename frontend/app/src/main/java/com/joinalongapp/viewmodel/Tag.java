@@ -1,17 +1,16 @@
 package com.joinalongapp.viewmodel;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 public class Tag implements Serializable {
     private String name;
-    private UUID id;
+    private String id;
 
     public Tag(String name) {
         this.name = name;
     }
 
-    public Tag(String name, UUID id) {
+    public Tag(String name, String id) {
         this.name = name;
         this.id = id;
     }
@@ -20,7 +19,7 @@ public class Tag implements Serializable {
         return name;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
@@ -28,7 +27,7 @@ public class Tag implements Serializable {
         this.name = name;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 

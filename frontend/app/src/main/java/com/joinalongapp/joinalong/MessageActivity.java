@@ -57,7 +57,6 @@ public class MessageActivity extends AppCompatActivity {
         initElements();
 
         chatTitle.setText(chatDetails.getTitle());
-
         Activity activity = this;
 
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +95,7 @@ public class MessageActivity extends AppCompatActivity {
                     requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
+                            // TODO: add messages
                         }
 
                         @Override
@@ -123,7 +123,6 @@ public class MessageActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         });
 
@@ -134,10 +133,7 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-
-
         messageRecycler.setLayoutManager(new LinearLayoutManager(this));
-        messageAdapter = new MessageListCustomAdapter(messages);
         messageRecycler.setAdapter(messageAdapter);
     }
 
@@ -155,7 +151,6 @@ public class MessageActivity extends AppCompatActivity {
         RequestManager requestManager = new RequestManager();
         JSONObject json = new JSONObject();
         json.put("token", token);
-        System.out.println(id);
 
         String path = new PathBuilder()
                 .addChat()
@@ -197,7 +192,7 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onError(Call call, IOException e) {
-
+                // TODO: add error messages.
             }
         });
     }

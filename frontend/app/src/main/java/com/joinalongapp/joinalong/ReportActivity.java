@@ -46,11 +46,11 @@ public class ReportActivity extends AppCompatActivity {
         Boolean reportType = info.getBoolean("REPORT_PERSON");
         String path;
         String reportingId;
-        System.out.println(reportType.toString());
         ReportDetails reportDetails = new ReportDetails();
         String token = ((UserApplicationInfo) getApplication()).getUserToken();
         UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
         String reportEntityName;
+
         if(reportType){
             UserProfile reportingPerson = ((UserApplicationInfo) getApplication()).getProfile();
             String reportingName = " " + reportingPerson.getFullName();
@@ -111,13 +111,12 @@ public class ReportActivity extends AppCompatActivity {
                     requestManager.post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            //Toast.makeText(getBaseContext(), "Successful Report", Toast.LENGTH_SHORT).show();
-                            System.out.println("WHAT");
+                            // TODO: add success and error messages.
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-                            //Toast.makeText(getBaseContext(), "Unsuccessful Report", Toast.LENGTH_SHORT).show();
+
                         }
                     });
                 } catch (IOException e) {

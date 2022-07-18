@@ -36,10 +36,6 @@ public class SelectRideshareActivity extends AppCompatActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: change MainActivity.class to the activity that calls ManageRideshareActivity
-//                Intent intent = new Intent(SelectRideshareActivity.this, MainActivity.class);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                startActivity(intent);
                 finish();
             }
         });

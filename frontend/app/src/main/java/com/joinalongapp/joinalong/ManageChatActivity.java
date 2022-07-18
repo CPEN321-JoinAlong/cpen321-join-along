@@ -79,8 +79,6 @@ public class ManageChatActivity extends AppCompatActivity {
 
         String[] tags = getResources().getStringArray(R.array.sample_tags);
 
-        //TODO: this is a temp solution, no clue if it actually works or not
-        //      ken, please check
 
         List<String> friendUserIds = user.getFriends();
         RequestManager requestManager = new RequestManager();

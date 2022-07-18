@@ -166,6 +166,7 @@ public class HomeFragment extends Fragment {
     private void initSpinner() {
         eventFilterList.add("Recommended");
         eventFilterList.add("My Events");
+        eventFilterList.add("Joined Events");
 
         //TODO: change this to get user interests from global
         List<String> userInterests = new ArrayList<>();

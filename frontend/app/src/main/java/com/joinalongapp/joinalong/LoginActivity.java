@@ -35,12 +35,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
     GoogleSignInClient mGoogleSignInClient;
-    private int RC_SIGN_IN = 1;
+    private final int RC_SIGN_IN = 1;
     private SignInButton signInButton;
-
-    private static final String SCHEME = "http";
-    private static final String BASE_URL = "20.9.17.127";
-    private final int PORT = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

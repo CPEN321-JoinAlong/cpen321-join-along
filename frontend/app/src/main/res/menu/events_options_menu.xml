@@ -5,10 +5,11 @@
         android:title="@string/event_leave_title" />
 
     <item
+        android:id="@+id/eventEdit"
+        android:title="@string/event_edit_title" />
+
+    <item
         android:id="@+id/eventReport"
         android:title="@string/event_report_title" />
-
-
-
 
 </menu>

@@ -219,11 +219,11 @@
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/profileManagementChipGroup"
-        android:layout_width="309dp"
+        android:layout_width="314dp"
         android:layout_height="37dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline12"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline11"
         app:layout_constraintVertical_bias="0.364">

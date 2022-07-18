@@ -24,6 +24,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.Constants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.joinalong.ManageEventActivity;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.ReportActivity;
 import com.joinalongapp.joinalong.SelectRideshareActivity;
@@ -212,11 +213,18 @@ public class ViewEventFragment extends Fragment {
 //                                }
 
                                 return true;
+
                             case R.id.eventReport:
-                                Intent i = new Intent(getActivity(), ReportActivity.class);
-                                i.putExtra("REPORT_PERSON", false);
-                                i.putExtra("REPORTING_EVENT", event);
-                                startActivity(i);
+                                Intent report = new Intent(getActivity(), ReportActivity.class);
+                                report.putExtra("REPORT_PERSON", false);
+                                report.putExtra("REPORTING_EVENT", event);
+                                startActivity(report);
+                                return true;
+
+                            case R.id.eventEdit:
+                                Intent editEvent = new Intent(getActivity(), ManageEventActivity.class);
+                                editEvent.putExtra("EVENT", event);
+                                startActivity(editEvent);
                                 return true;
 
                             default:
@@ -369,13 +377,27 @@ public class ViewEventFragment extends Fragment {
     private void initMenuOptionsVisibility() {
         UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
         String userId = userApplicationInfo.getProfile().getId();
-        if (isPartOfEvent(userId)) {
-            menu.getMenu().findItem(R.id.eventLeave).setEnabled(true);
-            menu.getMenu().findItem(R.id.eventLeave).setVisible(true);
+
+        if (isEventOwner(userId)) {
+            shouldAllowMenuItem(R.id.eventLeave, false);
+            shouldAllowMenuItem(R.id.eventEdit, true);
+            shouldAllowMenuItem(R.id.eventReport, false);
+
+        } else if (isPartOfEvent(userId)){
+            shouldAllowMenuItem(R.id.eventLeave, true);
+            shouldAllowMenuItem(R.id.eventEdit, false);
+            shouldAllowMenuItem(R.id.eventReport, true);
+
         } else {
-            menu.getMenu().findItem(R.id.eventLeave).setEnabled(false);
-            menu.getMenu().findItem(R.id.eventLeave).setVisible(false);
+            shouldAllowMenuItem(R.id.eventLeave, false);
+            shouldAllowMenuItem(R.id.eventEdit, false);
+            shouldAllowMenuItem(R.id.eventReport, true);
         }
+    }
+
+    private void shouldAllowMenuItem(int menuItemId, boolean shouldAllow) {
+        menu.getMenu().findItem(menuItemId).setEnabled(shouldAllow);
+        menu.getMenu().findItem(menuItemId).setVisible(shouldAllow);
     }
 
     private void initButtonVisibility() {
@@ -540,5 +562,10 @@ public class ViewEventFragment extends Fragment {
         numPeople.setText(numPeopleInEventString);
 
 
+    }
+
+    public boolean isEventOwner(String userId){
+        String eventOwnerId = event.getEventOwnerId();
+        return eventOwnerId.equals(userId);
     }
 }

@@ -8,9 +8,6 @@ const Event = require("./models/Event");
 const Chat = require("./models/Chat");
 const Report = require("./models/Report");
 const axios = require("axios");
-const CONFLICT = 409;
-const SUCCESS = 200;
-const NOTFOUND = 404;
 const UserAccount = require("./modules/user_module/UserAccount");
 const UserStore = require("./modules/user_module/UserStore");
 const ChatDetails = require("./modules/chat_module/ChatDetails");
@@ -19,17 +16,11 @@ const EventDetails = require("./modules/event_module/EventDetails");
 const EventStore = require("./modules/event_module/EventStore");
 const ReportService = require("./modules/report_module/ReportService")
 const BanService = require("./modules/ban_module/BanService")
-// const {
-//     UserAccount,
-//     UserStore,
-//     ChatDetails,
-//     ChatEngine,
-//     EventDetails,
-//     EventStore,
-//     ReportService,
-//     BanService,
-// } = require("./modules");
-const { response } = require("express");
+const CONFLICT = 409;
+const SUCCESS = 200;
+const NOTFOUND = 404;
+const INVALID = 422;
+const NOTACCEPTABLE = 406;
 
 function logRequest(req, res, next) {
     console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
@@ -65,7 +56,6 @@ let banService = new BanService();
 // express app
 let app = express();
 
-app.set("views", path.join(__dirname, "views"));
 app.use(express.json()); // to parse application/json
 app.use(
     express.urlencoded({
@@ -120,18 +110,18 @@ app.post("/login", async (req, res) => {
         let response = await axios(
             `https://oauth2.googleapis.com/tokeninfo?id_token=${Token}`
         );
-        if (response.status == 200) {
+        if (response.status === SUCCESS) {
             let foundUser = await userStore.findUserForLogin(response.data.sub);
             if (foundUser == null)
-                res.status(404).send({ token: response.data.sub });
-            else res.status(200).send(foundUser);
+                res.status(NOTFOUND).send({ token: response.data.sub });
+            else res.status(SUCCESS).send(foundUser);
         } else {
-            res.status(406).send(
+            res.status(NOTACCEPTABLE).send(
                 "Token not valid, try signing in again or use another account"
             );
         }
     } catch (e) {
-        res.status(406).send(
+        res.status(NOTACCEPTABLE).send(
             "Token not valid, try signing in again or use another account"
         );
     }
@@ -231,7 +221,7 @@ app.get("/user/:id", async (req, res) => {
 app.get("/user/name/:userName", async (req, res) => {
     let { userName } = req.params;
     let foundUserList = await userStore.findUserByName(userName);
-    if (foundUserList.length != 0) {
+    if (foundUserList.length !== 0) {
         res.status(200).send(foundUserList);
     } else {
         res.status(404).send(foundUserList);
@@ -242,7 +232,7 @@ app.get("/user/name/:userName", async (req, res) => {
 app.get("/event/title/:eventName", async (req, res) => {
     let { eventName } = req.params;
     let foundEventList = await eventStore.findEventsByName(eventName);
-    if (foundEventList.length != 0) {
+    if (foundEventList.length !== 0) {
         res.status(200).send(foundEventList);
     } else {
         res.status(404).send(foundEventList);
@@ -491,14 +481,14 @@ app.put("/user/removeFriend/:userID/:otherUserID", async (req, res) => {
 app.put("/user/leaveEvent/:userID/:eventID", async (req, res) => {
     let { userID, eventID } = req.params;
     let event = eventStore.findEventByID(eventID);
-    await userStore.leaveEvent(userID, eventID);
-    await userStore.leaveChat(userID, event.chat);
+    await userStore.leaveEvent(userID, eventID, eventStore);
+    await userStore.leaveChat(userID, event.chat, chatEngine);
     res.status(200).send("Sucessful");
 });
 
 app.put("/user/leaveChat/:userID/:chatID", async (req, res) => {
     let { userID, chatID } = req.params;
-    await userStore.leaveChat(userID, chatID);
+    await userStore.leaveChat(userID, chatID, chatEngine);
     res.status(200).send("Sucessful");
 });
 

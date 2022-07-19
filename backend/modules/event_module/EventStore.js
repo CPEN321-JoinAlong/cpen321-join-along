@@ -6,8 +6,6 @@ const SUCCESS = 200;
 const INVALID = 422;
 
 class EventStore {
-    constructor() {}
-
     async findUnblockedEvents(userID, userStore) {
         if (!mongoose.isObjectIdOrHexString(userID)) return [];
         let user = await userStore.findUserByID(userID);

@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity{
                 case R.id.profile:
                     replaceFragment(new ProfileFragment());
                     break;
+                default:
+                    throw new IllegalStateException("Unknown tab");
             }
 
             return true;

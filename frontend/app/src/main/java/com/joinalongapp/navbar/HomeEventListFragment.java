@@ -27,7 +27,6 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
     private RecyclerView eventRecycler;
     private List<Event> eventList = new ArrayList<>();
     private EventAdapter eventAdapter;
-    private static final String TAG = "HomeEventListFragment";
 
     public HomeEventListFragment() {
         // Required empty public constructor
@@ -64,14 +63,22 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         eventRecycler.setLayoutManager(linearLayoutManager);
 
         eventList = (List<Event>) getArguments().getSerializable("eventsList");
-        setEventCards();
+        updateEventCards();
 
         return view;
     }
 
-    private void setEventCards() {
+    private void updateEventCards() {
+        updateAdapter();
+        updateRecycler();
+    }
+
+    private void updateAdapter() {
         eventAdapter = new EventAdapter(getActivity(), eventList);
         eventAdapter.setClickListener(this);
+    }
+
+    private void updateRecycler() {
         eventRecycler.setAdapter(eventAdapter);
     }
 

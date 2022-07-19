@@ -21,25 +21,21 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.joinalongapp.Constants;
+import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.joinalong.CreateReportActivity;
 import com.joinalongapp.joinalong.ManageEventActivity;
 import com.joinalongapp.joinalong.R;
-import com.joinalongapp.joinalong.CreateReportActivity;
 import com.joinalongapp.joinalong.SelectRideshareActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
-import com.joinalongapp.viewmodel.Tag;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -271,7 +267,7 @@ public class ViewEventFragment extends Fragment {
                     requestManager.put(path, userToken, new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            if (response.code() == Constants.STATUS_HTTP_200) {
+                            if (response.code() == HttpStatusConstants.STATUS_HTTP_200) {
                                 new Timer().schedule(new TimerTask() {
                                     @Override
                                     public void run() {
@@ -414,21 +410,6 @@ public class ViewEventFragment extends Fragment {
 
     private boolean isPartOfEvent(String userId) {
         return event.getMembers().contains(userId);
-    }
-
-    private Event removeMeInitEvent() {
-        Event event = new Event();
-        event.setTitle("exciting event title");
-        event.setDescription("desc");
-        event.setLocation("2366 Main Mall, Vancouver BC");
-        event.setBeginningDate(new Date());
-        event.setEndDate(new Date());
-        List<Tag> tags = new ArrayList<>();
-        tags.add(new Tag("tag1"));
-        tags.add(new Tag("tag2"));
-        event.setTags(tags);
-        event.setNumberOfPeopleAllowed(500);
-        return event;
     }
 
     private void initElements(View view) {

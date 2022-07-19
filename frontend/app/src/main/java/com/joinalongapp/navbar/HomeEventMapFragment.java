@@ -72,7 +72,8 @@ public class HomeEventMapFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_event_map, container, false);
 
-        mapView = view.findViewById(R.id.eventMap);
+        initElements(view);
+
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
 
@@ -97,6 +98,10 @@ public class HomeEventMapFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void initElements(View view) {
+        mapView = view.findViewById(R.id.eventMap);
     }
 
     private void initMarkerClusterClickListener() {

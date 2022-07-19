@@ -23,10 +23,6 @@ public class ChatDetails implements Serializable, IDetailsModel {
     private int numPeople = 1;
     private Bitmap groupPhoto;
 
-    public ChatDetails(){
-
-    }
-
     public String getId(){
         return id;
     }

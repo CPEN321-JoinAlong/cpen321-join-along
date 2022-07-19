@@ -14,14 +14,15 @@ public class ReportDetails implements Serializable, IDetailsModel {
     private Boolean reportPerson;
     private Event reportingEvent;
 
-    public ReportDetails() {
-    }
-
     public ReportDetails(String reportingName, String reason, String description, Boolean blockStatus) {
         this.reportingName = reportingName;
         this.reason = reason;
         this.description = description;
         this.blockStatus = blockStatus;
+    }
+
+    public ReportDetails() {
+        //Default constructor
     }
 
     public String getReportingName() {
@@ -96,7 +97,7 @@ public class ReportDetails implements Serializable, IDetailsModel {
 
     @Override
     public IDetailsModel populateDetailsFromJson(String jsonString) throws JSONException {
-        JSONObject jsonBody = new JSONObject(jsonString);
+        //JSONObject jsonBody = new JSONObject(jsonString);
 
         //todo: i have no idea what some of these fields are meant to be
         //leaving blank for now, please implement later

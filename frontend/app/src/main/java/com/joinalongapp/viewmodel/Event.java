@@ -31,9 +31,6 @@ public class Event implements Serializable, IDetailsModel {
     private String description;
     private int currentNumPeopleRegistered;
 
-    public Event() {
-    }
-
     public int getCurrentNumPeopleRegistered() {
         return currentNumPeopleRegistered;
     }

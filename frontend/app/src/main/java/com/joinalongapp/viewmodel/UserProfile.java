@@ -19,6 +19,15 @@ public class UserProfile implements Serializable, IDetailsModel {
     //TODO: probably should make constructor instantiate these, or modify the existing setters to null check them
     private List<String> friends = new ArrayList<>();
 
+    public UserProfile(String id, String firstName, String lastName) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public UserProfile() {
+        //Default Constructor
+    }
 
     public void setId(String id) {
         this.id = id;
@@ -46,15 +55,6 @@ public class UserProfile implements Serializable, IDetailsModel {
 
     public void addFriendToList(String friend) {
         friends.add(friend);
-    }
-
-    public UserProfile(String id, String firstName, String lastName) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
-    public UserProfile() {
     }
 
     public String getId() {

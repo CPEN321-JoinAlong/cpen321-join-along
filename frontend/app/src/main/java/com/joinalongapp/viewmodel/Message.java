@@ -10,15 +10,15 @@ public class Message implements IDetailsModel {
     private long createdAt;
     private boolean isOwner;
 
+    public Message() {
+        // Default constructor
+    }
+
     public Message(String message, String name, String id, long createdAt) {
         this.message = message;
         this.name = name;
         this.id = id;
         this.createdAt = createdAt;
-    }
-
-    public Message() {
-        // empty default constructor
     }
 
     public String getMessage() {

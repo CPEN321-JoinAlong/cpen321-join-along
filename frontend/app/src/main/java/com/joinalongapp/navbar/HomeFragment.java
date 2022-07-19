@@ -18,7 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
-import com.joinalongapp.Constants;
+import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.adapter.EventViewAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
@@ -221,7 +221,7 @@ public class HomeFragment extends Fragment {
     @NonNull
     private List<Event> getEventListFromResponse(Response response) throws JSONException, IOException {
         List<Event> eventList = new ArrayList<>();
-        if (response.code() == Constants.STATUS_HTTP_200) {
+        if (response.code() == HttpStatusConstants.STATUS_HTTP_200) {
             JSONArray jsonEvents = new JSONArray(response.body().string());
             for (int i = 0; i < jsonEvents.length(); i++) {
                 Event event = new Event();

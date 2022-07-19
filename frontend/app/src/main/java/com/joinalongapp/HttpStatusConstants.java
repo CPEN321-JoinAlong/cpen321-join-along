@@ -1,6 +1,6 @@
 package com.joinalongapp;
 
-public class Constants {
+public class HttpStatusConstants {
     public static final int STATUS_HTTP_404 = 404;
     public static final int STATUS_HTTP_200 = 200;
     public static final int STATUS_HTTP_406 = 406;
@@ -11,8 +11,4 @@ public class Constants {
     //TODO: i would argue that if token somehow become null (maybe google is down and the world is burning, or someone purposefully removed it)
     //      then we should have checks for no token on the backend, maybe return 403 or 400
     //      that way, we avoid the it did nothing i'm so confused when we were testing by having this error check on front and back
-
-    public Constants() {
-        // empty constructor
-    }
 }

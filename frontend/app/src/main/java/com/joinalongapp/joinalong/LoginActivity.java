@@ -18,7 +18,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.joinalongapp.Constants;
+import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.RequestManager;
 
 import org.json.JSONException;
@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
 
-        signInButton = findViewById(R.id.sign_in_button);
+        initElements();
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +67,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void initElements() {
+        signInButton = findViewById(R.id.sign_in_button);
     }
 
 
@@ -103,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         switch (responseCode) {
                             // Successful login, loading user data
-                            case Constants.STATUS_HTTP_200:
+                            case HttpStatusConstants.STATUS_HTTP_200:
                                 try {
                                     populateUserDetailsOnLogin(response);
                                     startMainActivity();
@@ -113,12 +117,12 @@ public class LoginActivity extends AppCompatActivity {
                                 break;
 
                             // User not found, must be a new user
-                            case Constants.STATUS_HTTP_404:
+                            case HttpStatusConstants.STATUS_HTTP_404:
                                 startCreateProfileActivity(response, account);
                                 break;
 
                             // User token was invalid
-                            case Constants.STATUS_HTTP_406:
+                            case HttpStatusConstants.STATUS_HTTP_406:
                             default:
                                 createBadTokenError();
                                 break;

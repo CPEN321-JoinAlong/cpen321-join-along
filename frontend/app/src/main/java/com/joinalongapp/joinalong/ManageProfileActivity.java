@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.joinalongapp.Constants;
+import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.Tag;
@@ -135,7 +135,7 @@ public class ManageProfileActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Call call, Response response) {
 
-                    if (response.code() == Constants.STATUS_HTTP_200) {
+                    if (response.code() == HttpStatusConstants.STATUS_HTTP_200) {
                         ((UserApplicationInfo) getApplication()).updateApplicationInfo(userInput);
                     } else {
                         Log.e(TAG, "Unable to update user profile");
@@ -227,6 +227,18 @@ public class ManageProfileActivity extends AppCompatActivity {
         return result;
     }
 
+    public void initChipsForChipGroup(ChipGroup chipGroup, String chipText) {
+        Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, chipGroup, false);
+        chip.setText(chipText);
+        chip.setOnCloseIconClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chipGroup.removeView(chip);
+            }
+        });
+        chipGroup.addView(chip);
+    }
+
     private void initAutoCompleteChipGroup(AutoCompleteTextView autoCompleteTextView, ChipGroup chipGroup, String[] fillArray){
         ArrayAdapter<String> arrayAdapterTags = new ArrayAdapter<>(this, android.R.layout.select_dialog_item, fillArray);
         autoCompleteTextView.setThreshold(1);
@@ -236,15 +248,7 @@ public class ManageProfileActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 autoCompleteTextView.setText("");
 
-                Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, chipGroup, false);
-                chip.setText((String) parent.getItemAtPosition(position));
-                chip.setOnCloseIconClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        chipGroup.removeView(chip);
-                    }
-                });
-                chipGroup.addView(chip);
+                initChipsForChipGroup(chipGroup, (String) parent.getItemAtPosition(position));
             }
         });
     }
@@ -298,12 +302,6 @@ public class ManageProfileActivity extends AppCompatActivity {
 //        });
     }
 
-    private void setProfilePicToggleColors(int usePicColor, int dontUsePicColor) {
-        useProfilePic.setBackgroundColor(usePicColor);
-        dontUseProfilePic.setBackgroundColor(dontUsePicColor);
-    }
-
-
     private void startMainActivity() {
         Intent i = new Intent(ManageProfileActivity.this, MainActivity.class);
         startActivity(i);
@@ -331,15 +329,7 @@ public class ManageProfileActivity extends AppCompatActivity {
 
         List<String> existingInterests = existingUserProfile.getStringListOfTags();
         for (String interest : existingInterests) {
-            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, interestsChip, false);
-            chip.setText(interest);
-            chip.setOnCloseIconClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    interestsChip.removeView(chip);
-                }
-            });
-            interestsChip.addView(chip);
+            initChipsForChipGroup(interestsChip, interest);
         }
 
         descriptionEdit.setText(existingUserProfile.getDescription());
@@ -389,13 +379,6 @@ public class ManageProfileActivity extends AppCompatActivity {
     public enum ManageProfileMode {
         PROFILE_EDIT,
         PROFILE_CREATE
-    }
-
-    private String convertAddressToString(Address address) {
-        return address.getAddressLine(0) +
-                address.getLocality() +
-                address.getAdminArea() +
-                address.getCountryName();
     }
 
     private boolean validateElements(UserProfile profile) {

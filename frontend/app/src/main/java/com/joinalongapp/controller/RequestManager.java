@@ -17,14 +17,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class RequestManager implements Callback {
-    private final String SCHEME = "http";
-    private final String BASE_URL = "54.200.52.211";
-    private final int PORT = 3000;
+    private static final String SCHEME = "http";
+    private static final String BASE_URL = "54.200.52.211";
+    private static final int PORT = 3000;
     private OnRequestCompleteListener onRequestCompleteListener;
-
-    public RequestManager() {
-        super();
-    }
 
     /**
      * Read from the given path

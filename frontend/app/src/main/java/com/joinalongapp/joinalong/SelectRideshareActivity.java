@@ -14,7 +14,6 @@ import com.uber.sdk.android.rides.RideRequestButton;
 import com.uber.sdk.rides.client.SessionConfiguration;
 
 public class SelectRideshareActivity extends AppCompatActivity {
-    private static final String TAG = "SelectRideshareActivity";
     RideRequestButton uberButton;
     LyftButton lyftButton;
     ImageButton close;

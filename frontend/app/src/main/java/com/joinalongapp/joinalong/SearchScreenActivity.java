@@ -8,6 +8,7 @@ import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -46,8 +47,6 @@ public class SearchScreenActivity extends AppCompatActivity {
     private ImageView returnButton;
     private static final int SEARCH_QUERY_THRESHOLD = 1;
     private static String myUrlPath;
-    private static String mySuggestionUrlPath;
-    private SearchScreenActivity.LayoutManagerType layoutManagerType;
     private SearchPeopleCustomAdapter searchPeopleCustomAdapter;
     private SearchEventCustomAdapter searchEventCustomAdapter;
     private RecyclerView recyclerView;
@@ -68,14 +67,11 @@ public class SearchScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_screen);
 
         String userToken = ((UserApplicationInfo) getApplication()).getUserToken();
-        UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
 
         Activity activity = this;
         initElements();
 
         setUpPageForMode();
-
-
 
         searchView.requestFocus();
         searchView.setSuggestionsAdapter(new SimpleCursorAdapter(
@@ -83,20 +79,7 @@ public class SearchScreenActivity extends AppCompatActivity {
                 new String[] { SearchManager.SUGGEST_COLUMN_TEXT_1 },
                 new int[] { android.R.id.text1 }));
 
-        layoutManagerType = SearchScreenActivity.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-
-
-        if(savedInstanceState != null){
-            layoutManagerType = (SearchScreenActivity.LayoutManagerType) savedInstanceState.getSerializable("layoutManager");
-        }
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
-
-        FragmentTransaction fragmentTransaction = this.getSupportFragmentManager().beginTransaction();
-
-
 
         searchPeopleCustomAdapter = new SearchPeopleCustomAdapter(dataset);
         searchEventCustomAdapter = new SearchEventCustomAdapter(datasetEvent);
@@ -106,12 +89,7 @@ public class SearchScreenActivity extends AppCompatActivity {
             recyclerView.setAdapter(searchEventCustomAdapter);
         }
 
-
-
-
         fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(userToken, activity, getSearchMode());
-
-
 
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
@@ -123,10 +101,12 @@ public class SearchScreenActivity extends AppCompatActivity {
             public boolean onSuggestionClick(int position) {
                 if (getSearchMode() == SearchMode.USER_MODE) {
                     ViewProfileFragment viewProfileFragment = new ViewProfileFragment();
+
                     Bundle info = new Bundle();
                     info.putBoolean("HIDE", false);
                     info.putSerializable("USER_INFO", theUserSuggestionList.get(position));
                     viewProfileFragment.setArguments(info);
+
                     AppCompatActivity activity = SearchScreenActivity.this;
                     FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.frameLayoutSearch, viewProfileFragment);
@@ -135,10 +115,12 @@ public class SearchScreenActivity extends AppCompatActivity {
                 } else {
                     ViewEventFragment viewEventFragment = new ViewEventFragment();
                     Event theSelectedEvent = theEventSuggestionList.get(position);
+
                     Bundle info = new Bundle();
                     info.putSerializable("event", theSelectedEvent);
                     info.putString("theFrom", "search");
                     viewEventFragment.setArguments(info);
+
                     AppCompatActivity activity = SearchScreenActivity.this;
                     FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.frameLayoutSearch, viewEventFragment);
@@ -208,17 +190,16 @@ public class SearchScreenActivity extends AppCompatActivity {
         private String userToken;
         private WeakReference<Context> activity;
         private SearchMode mode;
+        private static final String[] sAutocompleteColNames = new String[] {
+                BaseColumns._ID,
+                SearchManager.SUGGEST_COLUMN_TEXT_1
+        };
 
         FetchSearchTermSuggestionsTask(String userToken, Context activity, SearchMode mode){
             this.userToken = userToken;
             this.activity = new WeakReference<>(activity);
             this.mode = mode;
         }
-
-        private static final String[] sAutocompleteColNames = new String[] {
-                BaseColumns._ID,
-                SearchManager.SUGGEST_COLUMN_TEXT_1
-        };
 
         @Override
         protected Cursor doInBackground(String... params) {
@@ -251,24 +232,13 @@ public class SearchScreenActivity extends AppCompatActivity {
                                                     Object[] row = new Object[] { i, userName };
 
                                                     cursor.addRow(row);
-                                                    System.out.println(i);
                                                 }
 
-                                                new Timer().schedule(new TimerTask() {
-                                                    @Override
-                                                    public void run() {
-                                                        ((Activity) activity.get()).runOnUiThread(new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                searchView.getSuggestionsAdapter().notifyDataSetChanged();
-                                                            }
-                                                        });
-                                                    }
-                                                }, 0);
+                                                updateSuggestions();
 
-                                                System.out.println("efwa");
                                             } catch (IOException | JSONException e) {
-                                                System.out.println("OHNO");
+                                                //TODO: make error message
+                                                Log.d("Search", "error");
                                             }
 
                                             theUserSuggestionList.clear();
@@ -299,25 +269,13 @@ public class SearchScreenActivity extends AppCompatActivity {
                                                     Object[] row = new Object[] { i, eventTitle };
 
                                                     cursor.addRow(row);
-                                                    System.out.println(i);
                                                 }
 
-                                                new Timer().schedule(new TimerTask() {
-                                                    @Override
-                                                    public void run() {
-                                                        ((Activity) activity.get()).runOnUiThread(new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                searchView.getSuggestionsAdapter().notifyDataSetChanged();
-                                                            }
-                                                        });
-                                                    }
-                                                }, 0);
+                                                updateSuggestions();
 
-
-                                                System.out.println("efwa");
                                             } catch (IOException | JSONException e) {
-                                                System.out.println("OHNO");
+                                                //TODO: make error message
+                                                Log.d("Eventsearch", "error");
                                             }
 
                                             theEventSuggestionList.clear();
@@ -342,6 +300,20 @@ public class SearchScreenActivity extends AppCompatActivity {
 
 
             return cursor;
+        }
+
+        private void updateSuggestions() {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    ((Activity) activity.get()).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            searchView.getSuggestionsAdapter().notifyDataSetChanged();
+                        }
+                    });
+                }
+            }, 0);
         }
 
         @Override

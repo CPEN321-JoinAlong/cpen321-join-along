@@ -51,9 +51,9 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
             super(itemView);
 
 
-            name = (TextView) itemView.findViewById(R.id.individualUserName);
+            name = (TextView) itemView.findViewById(R.id.individualReportName);
             profilePicture = (ImageView) itemView.findViewById(R.id.individualProfilePicture);
-            options = (Button) itemView.findViewById(R.id.friendOptions);
+            options = (Button) itemView.findViewById(R.id.reportOptions);
         }
 
         public TextView getName() {

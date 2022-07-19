@@ -26,7 +26,7 @@ import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.ManageEventActivity;
 import com.joinalongapp.joinalong.R;
-import com.joinalongapp.joinalong.ReportActivity;
+import com.joinalongapp.joinalong.CreateReportActivity;
 import com.joinalongapp.joinalong.SelectRideshareActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
@@ -215,7 +215,7 @@ public class ViewEventFragment extends Fragment {
                                 return true;
 
                             case R.id.eventReport:
-                                Intent report = new Intent(getActivity(), ReportActivity.class);
+                                Intent report = new Intent(getActivity(), CreateReportActivity.class);
                                 report.putExtra("REPORT_PERSON", false);
                                 report.putExtra("REPORTING_EVENT", event);
                                 startActivity(report);

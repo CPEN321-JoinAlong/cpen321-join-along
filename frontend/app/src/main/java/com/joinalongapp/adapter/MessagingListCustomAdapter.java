@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.joinalongapp.joinalong.MessageActivity;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.ChatDetails;
-import com.joinalongapp.viewmodel.UserProfile;
 
 import java.util.Iterator;
 import java.util.List;
@@ -39,9 +38,9 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
 
 
 
-            name = (TextView) itemView.findViewById(R.id.individualUserName);
+            name = (TextView) itemView.findViewById(R.id.individualReportName);
             profilePicture = (ImageView) itemView.findViewById(R.id.individualProfilePicture);
-            options = (Button) itemView.findViewById(R.id.friendOptions);
+            options = (Button) itemView.findViewById(R.id.reportOptions);
         }
 
         public TextView getName() {

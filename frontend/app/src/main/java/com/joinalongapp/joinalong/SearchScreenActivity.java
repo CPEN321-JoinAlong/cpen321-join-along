@@ -353,7 +353,7 @@ public class SearchScreenActivity extends AppCompatActivity {
 
     private void initElements() {
         searchView = findViewById(R.id.searchBar);
-        returnButton = findViewById(R.id.searchBackButton);
+        returnButton = findViewById(R.id.reportBackButton);
         recyclerView = findViewById(R.id.searchPeopleRecyclerView);
 
     }

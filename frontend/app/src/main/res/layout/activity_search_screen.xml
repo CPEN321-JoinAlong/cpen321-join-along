@@ -28,7 +28,7 @@
         app:layout_constraintGuide_begin="65dp" />
 
     <ImageButton
-        android:id="@+id/searchBackButton"
+        android:id="@+id/reportBackButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="top"

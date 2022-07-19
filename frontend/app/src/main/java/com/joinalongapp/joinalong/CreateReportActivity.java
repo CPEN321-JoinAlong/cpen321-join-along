@@ -24,7 +24,7 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class ReportActivity extends AppCompatActivity {
+public class CreateReportActivity extends AppCompatActivity {
 
     private TextView reportingSubtitle;
     private EditText reportReason;
@@ -38,7 +38,7 @@ public class ReportActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_report);
+        setContentView(R.layout.activity_create_report);
 
         initElements();
 

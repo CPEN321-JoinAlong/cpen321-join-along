@@ -18,6 +18,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ViewReportActivity"
+            android:exported="false" />
+        <activity
             android:name=".SelectRideshareActivity"
             android:exported="false" />
         <activity
@@ -44,7 +47,7 @@
             android:name=".ManageEventActivity"
             android:exported="false" />
         <activity
-            android:name=".ReportActivity"
+            android:name=".CreateReportActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

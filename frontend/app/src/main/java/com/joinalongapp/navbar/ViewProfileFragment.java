@@ -17,7 +17,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
-import com.joinalongapp.joinalong.ReportActivity;
+import com.joinalongapp.joinalong.CreateReportActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.UserProfile;
 
@@ -111,7 +111,7 @@ public class ViewProfileFragment extends Fragment {
         report.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent reportIntent = new Intent(getActivity(), ReportActivity.class);
+                Intent reportIntent = new Intent(getActivity(), CreateReportActivity.class);
                 reportIntent.putExtra("REPORT_PERSON", true);
                 startActivity(reportIntent);
             }

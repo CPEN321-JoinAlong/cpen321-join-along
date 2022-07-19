@@ -50,7 +50,7 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            name = (TextView) itemView.findViewById(R.id.individualUserName);
+            name = (TextView) itemView.findViewById(R.id.individualReportName);
             profilePicture = (ImageView) itemView.findViewById(R.id.individualProfilePicture);
             accept = (Button) itemView.findViewById(R.id.acceptButton);
             reject = (Button) itemView.findViewById(R.id.rejectButton);

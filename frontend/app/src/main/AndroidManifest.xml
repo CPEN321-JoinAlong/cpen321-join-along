@@ -41,9 +41,6 @@
             android:name=".ManageProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".ManageRideshareActivity"
-            android:exported="false" />
-        <activity
             android:name=".ManageEventActivity"
             android:exported="false" />
         <activity

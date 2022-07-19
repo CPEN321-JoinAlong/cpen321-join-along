@@ -1,13 +1,11 @@
 package com.joinalongapp.joinalong;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -18,6 +16,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.RequestManager;
 
@@ -25,8 +24,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -179,78 +176,26 @@ public class LoginActivity extends AppCompatActivity {
         return preAuthDetails.tokenToJsonStringForLogin();
     }
 
+    private void createBadLoginError(String description) {
+        new FeedbackMessageBuilder()
+                .setTitle("Login Failed")
+                .setDescription(description)
+                .withActivity(LoginActivity.this)
+                .buildAsyncNeutralMessage();
+    }
+
     private void createBackendAuthError(Exception e) {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                LoginActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        new AlertDialog.Builder(LoginActivity.this)
-                                .setTitle("Login Failed")
-                                .setMessage("Failed to authenticate with backend server. \n Please try again later.")
-                                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .create()
-                                .show();
-                    }
-                });
-            }
-        }, 0);
+        createBadLoginError("Failed to authenticate with backend server.\nPlease try again later.");
         Log.e(TAG, "Failed to authenticate with backend server: " + e.getMessage());
     }
 
     private void createBadTokenError() {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                LoginActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        new AlertDialog.Builder(LoginActivity.this)
-                                .setTitle("Login Failed")
-                                .setMessage("Failure to authenticate with user token. \n Please try again later.")
-                                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .create()
-                                .show();
-                    }
-                });
-            }
-        }, 0);
+        createBadLoginError("Failure to authenticate with user token.\nPlease try again later.");
         Log.e(TAG, "Failure to authenticate with user token.");
     }
 
     private void createParseError(Exception e) {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                LoginActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        new AlertDialog.Builder(LoginActivity.this)
-                                .setTitle("Login Failed")
-                                .setMessage("Unable to parse user data into app.\n Please try again later.")
-                                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .create()
-                                .show();
-                    }
-                });
-            }
-        }, 0);
+        createBadLoginError("Unable to parse user data into app.\nPlease try again later.");
         Log.e(TAG, "Unable to parse user data into app: " + e.getMessage());
     }
 

@@ -7,10 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,10 +21,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
-import com.joinalongapp.MapClusterItem;
+import com.joinalongapp.maputils.MapClusterItem;
+import com.joinalongapp.maputils.MapInfoWindowAdapter;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
-import com.joinalongapp.viewmodel.UserProfile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ public class HomeEventMapFragment extends Fragment {
     private GoogleMap map;
     private List<Event> eventList = new ArrayList<>();
     private ClusterManager<MapClusterItem> clusterManager;
+    private static final float DEFAULT_ZOOM = 10F;
 
     public HomeEventMapFragment() {
         // Required empty public constructor
@@ -80,36 +83,54 @@ public class HomeEventMapFragment extends Fragment {
                 initMapCamera();
                 initClusterManager();
 
-                //TODO: should be a GET
-                removeMe_PopulateEventList();
-
+                eventList = (List<Event>) getArguments().getSerializable("eventsList");
                 addEventsToMap();
 
-                //TODO zoom in on cluster click
+                clusterManager.cluster();
+                clusterManager.getMarkerCollection().setInfoWindowAdapter(new MapInfoWindowAdapter(inflater));
+                map.setInfoWindowAdapter(clusterManager.getMarkerManager());
 
-                clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MapClusterItem>() {
-                    @Override
-                    public void onClusterItemInfoWindowClick(MapClusterItem item) {
-                        Toast.makeText(getActivity(), "uwu", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MapClusterItem>() {
-                    @Override
-                    public boolean onClusterClick(Cluster<MapClusterItem> cluster) {
-                        return false;
-                    }
-                });
-
-                //TODO: edit this later after MVP (customize the info window)
-//                clusterManager.getMarkerCollection().setInfoWindowAdapter(new CustomInfoViewAdapter(inflater));
-//                map.setInfoWindowAdapter(clusterManager.getMarkerManager());
-
+                initMarkerInfoWindowClickListerner();
+                initMarkerClusterClickListener();
 
             }
         });
 
         return view;
+    }
+
+    private void initMarkerClusterClickListener() {
+        clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MapClusterItem>() {
+            @Override
+            public boolean onClusterClick(Cluster<MapClusterItem> cluster) {
+                double latitude = cluster.getPosition().latitude;
+                double longitude = cluster.getPosition().longitude;
+                float zoom = map.getCameraPosition().zoom + 2;
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), zoom));
+                return true;
+            }
+        });
+    }
+
+    private void initMarkerInfoWindowClickListerner() {
+        clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MapClusterItem>() {
+            @Override
+            public void onClusterItemInfoWindowClick(MapClusterItem item) {
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("event", item.getEvent());
+                bundle.putString("theFrom", "map");
+                ViewEventFragment fragment = new ViewEventFragment();
+                fragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frame_layout, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+
+            }
+        });
     }
 
     private void initClusterManager() {
@@ -124,52 +145,32 @@ public class HomeEventMapFragment extends Fragment {
             String eventLocation = event.getLocation();
             Address address = getAddressFromString(eventLocation);
             if (address != null) {
-                LatLng eventLatLng = new LatLng(address.getLatitude(), address.getLongitude());
-                MapClusterItem item = new MapClusterItem(eventLatLng.latitude, eventLatLng.longitude, event.getTitle(), event.getDescription());
-                clusterManager.addItem(item);
+                addMapMarker(event, address);
             }
         }
+    }
+
+    private void addMapMarker(Event event, Address address) {
+        LatLng eventLatLng = new LatLng(address.getLatitude(), address.getLongitude());
+        MapClusterItem item = new MapClusterItem(eventLatLng.latitude, eventLatLng.longitude, event);
+        clusterManager.addItem(item);
     }
 
     private void initMapCamera() {
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            UserProfile profile = (UserProfile) bundle.get("Profile");
-            if (profile != null) {
-                String userLocation = profile.getLocation();
-                Address address = getAddressFromString(userLocation);
-                if (address != null) {
-                    LatLng userLatLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    map.moveCamera(CameraUpdateFactory.newLatLng(userLatLng));
-                    return;
-                }
-            }
+        UserApplicationInfo userInfo = ((UserApplicationInfo) getActivity().getApplication());
+        String userLocation = userInfo.getProfile().getLocation();
+
+        Address address = getAddressFromString(userLocation);
+        if (address != null) {
+            LatLng userLatLng = new LatLng(address.getLatitude(), address.getLongitude());
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, DEFAULT_ZOOM));
+            return;
         }
+
         // default camera view
         //TODO: edit this
-        LatLng sydney = new LatLng(-34, 151);
-        map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-    }
-
-    private void removeMe_PopulateEventList() {
-        Event e1 = new Event();
-        e1.setTitle("UBC");
-        e1.setDescription("description1");
-        e1.setNumberOfPeopleAllowed(1);
-        e1.setLocation("2366 Main Mall, Vancouver BC");
-        eventList.add(e1);
-        Event e2 = new Event();
-        e2.setTitle("UoT");
-        e2.setDescription("description2");
-        e2.setNumberOfPeopleAllowed(2);
-        e2.setLocation("27 Kings College Cir, Toronto ON");
-        eventList.add(e2);
-        Event e3 = new Event();
-        e3.setTitle("SFU");
-        e3.setDescription("description3");
-        e3.setNumberOfPeopleAllowed(3);
-        e3.setLocation("8888 University Dr, Burnaby BC");
-        eventList.add(e3);
+        LatLng defaultView = new LatLng(0, 0);
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultView, DEFAULT_ZOOM));
     }
 
     private Address getAddressFromString(String address) {
@@ -185,4 +186,5 @@ public class HomeEventMapFragment extends Fragment {
         }
         return retVal;
     }
+
 }

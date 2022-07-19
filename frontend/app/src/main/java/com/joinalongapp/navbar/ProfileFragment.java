@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.joinalong.LoginActivity;
 import com.joinalongapp.joinalong.ManageProfileActivity;
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.joinalong.SearchScreenActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.UserProfile;
 import com.squareup.picasso.Picasso;
@@ -42,6 +44,7 @@ public class ProfileFragment extends Fragment {
     private ChipGroup interestsChipGroup;
     private ImageButton logoutButton;
     private TextView profileDescription;
+    private Button viewReportsButton;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -102,6 +105,15 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        viewReportsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchUsers = new Intent(getActivity(), SearchScreenActivity.class);
+                searchUsers.putExtra("mode", SearchScreenActivity.SearchMode.USER_MODE);
+                startActivity(searchUsers);
+            }
+        });
+
         return view;
     }
 
@@ -120,6 +132,7 @@ public class ProfileFragment extends Fragment {
         interestsChipGroup = view.findViewById(R.id.interestsChipGroup);
         logoutButton = view.findViewById(R.id.logoutButton);
         profileDescription = view.findViewById(R.id.userDescription);
+        viewReportsButton = view.findViewById(R.id.viewReportsButton);
     }
 
     private void signOut() {

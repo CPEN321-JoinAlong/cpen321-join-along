@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.adapter.MessagingRequestCustomAdapter;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.ChatDetails;
-import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONArray;
@@ -119,6 +119,12 @@ public class MessagingRequestFragment extends Fragment {
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         String id = user.getId();
         RequestManager requestManager = new RequestManager();
+
+        String path = new PathBuilder()
+                .addUser()
+                .addNode(id)
+                .addNode("chatInvites")
+                .build();
 
         requestManager.get("user/" + id + "/chatInvites", userToken, new RequestManager.OnRequestCompleteListener() {
             @Override

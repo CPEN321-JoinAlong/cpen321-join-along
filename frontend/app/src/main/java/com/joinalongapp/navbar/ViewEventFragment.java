@@ -4,11 +4,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -19,9 +22,11 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.Constants;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.joinalong.ManageEventActivity;
 import com.joinalongapp.joinalong.R;
-import com.joinalongapp.joinalong.ReportActivity;
+import com.joinalongapp.joinalong.CreateReportActivity;
 import com.joinalongapp.joinalong.SelectRideshareActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
@@ -60,7 +65,8 @@ public class ViewEventFragment extends Fragment {
     private Button joinButton;
     private Button rideshareButton;
     private Event event;
-    private Button reportButton;
+    private ImageButton options;
+    private PopupMenu menu;
 
     public ViewEventFragment() {
         // Required empty public constructor
@@ -97,35 +103,153 @@ public class ViewEventFragment extends Fragment {
 
         if (bundle != null) {
             event = (Event) bundle.getSerializable("event");
-            //event = removeMeInitEvent();
             initEventDetails(event);
         }
-        //TODO: Remove the next two lines
-//        Event event = removeMeInitEvent();
-//        initEventDetails(event);
 
         initButtonVisibility();
 
-        backButton.setOnClickListener(new View.OnClickListener() {
+        initBackButton();
+        initJoinButton();
+        initRideshareButton();
+        initEventMenu();
+
+        return view;
+    }
+
+    private void initEventMenu() {
+        options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: this needs fixing to use the native back button
-                if (getArguments().getString("theFrom").equals("search")) {
-                    getActivity().onBackPressed();
-                } else {
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                }
+                menu = new PopupMenu(getActivity(), getActivity().findViewById(R.id.eventOptions));
+                menu.inflate(R.menu.events_options_menu);
+                initMenuOptionsVisibility();
 
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.eventLeave:
+                                Toast.makeText(getActivity(), "TODO FIX ME", Toast.LENGTH_LONG).show();
+                                //TODO: see if endpoint is broken
+//                                UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
+//                                String userId = userApplicationInfo.getProfile().getId();
+//                                String eventId = event.getEventId();
+//                                String path = "user/leaveEvent/" + userId + "/" + eventId;
+//                                RequestManager requestManager = new RequestManager();
+//
+//                                try {
+//                                    String path = new PathBuilder()
+//                                            .addUser()
+//                                            .addNode("leaveEvent")
+//                                            .addNode(userId)
+//                                            .addNode(eventId)
+//                                            .build();
+//                                    String userToken = userApplicationInfo.tokenToJsonString();
+//                                    requestManager.put(path, userToken, new RequestManager.OnRequestCompleteListener() {
+//                                        @Override
+//                                        public void onSuccess(Call call, Response response) {
+//                                            new Timer().schedule(new TimerTask() {
+//                                                @Override
+//                                                public void run() {
+//                                                    activity.runOnUiThread(new Runnable() {
+//                                                        @Override
+//                                                        public void run() {
+//                                                            joinButton.setVisibility(View.VISIBLE);
+//                                                            rideshareButton.setVisibility(View.GONE);
+//                                                            menu.getMenu().findItem(R.id.eventLeave).setVisible(false);
+//
+//                                                            new AlertDialog.Builder(activity)
+//                                                                    .setTitle("Successfully Left Event")
+//                                                                    .setMessage("You have now left " + event.getTitle())
+//                                                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+//                                                                        @Override
+//                                                                        public void onClick(DialogInterface dialog, int which) {
+//                                                                            dialog.dismiss();
+//                                                                        }
+//                                                                    })
+//                                                                    .create()
+//                                                                    .show();
+//
+//                                                            String userName = userApplicationInfo.getProfile().getFullName();
+//                                                            Chip chip = new Chip(activity);
+//                                                            chip.setText(userName);
+//                                                            members.removeView(chip);
+//                                                        }
+//                                                    });
+//
+//
+//
+//                                                }
+//                                            }, 0);
+//                                        }
+//
+//                                        @Override
+//                                        public void onError(Call call, IOException e) {
+//                                            new Timer().schedule(new TimerTask() {
+//                                                @Override
+//                                                public void run() {
+//                                                    activity.runOnUiThread(new Runnable() {
+//                                                        @Override
+//                                                        public void run() {
+//                                                            new AlertDialog.Builder(activity)
+//                                                                    .setTitle("Unable to leave event.")
+//                                                                    .setMessage("You were unable to leave this event.\nPlease try again later.")
+//                                                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+//                                                                        @Override
+//                                                                        public void onClick(DialogInterface dialog, int which) {
+//                                                                            dialog.dismiss();
+//                                                                        }
+//                                                                    })
+//                                                                    .create()
+//                                                                    .show();
+//                                                        }
+//                                                    });
+//                                                }
+//                                            }, 0);
+//                                        }
+//                                    });
+//                                } catch (JSONException | IOException e) {
+//                                    e.printStackTrace();
+//                                }
 
+                                return true;
 
+                            case R.id.eventReport:
+                                Intent report = new Intent(getActivity(), CreateReportActivity.class);
+                                report.putExtra("REPORT_PERSON", false);
+                                report.putExtra("REPORTING_EVENT", event);
+                                startActivity(report);
+                                return true;
 
+                            case R.id.eventEdit:
+                                Intent editEvent = new Intent(getActivity(), ManageEventActivity.class);
+                                editEvent.putExtra("EVENT", event);
+                                startActivity(editEvent);
+                                return true;
+
+                            default:
+                                return false;
+
+                        }
+                    }
+                });
+                menu.show();
             }
         });
+    }
 
+    private void initRideshareButton() {
+        rideshareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), SelectRideshareActivity.class);
+                startActivity(i);
+            }
+        });
+    }
+
+    private void initJoinButton() {
+        FragmentActivity activity = getActivity();
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,8 +258,13 @@ public class ViewEventFragment extends Fragment {
                 UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
                 String userId = userApplicationInfo.getProfile().getId();
                 String eventId = event.getEventId();
-                String path = "user/acceptEvent/" + userId + "/" + eventId;
-                FragmentActivity activity = getActivity();
+
+                String path = new PathBuilder()
+                        .addUser()
+                        .addNode("acceptEvent")
+                        .addNode(userId)
+                        .addNode(eventId)
+                        .build();
 
                 try {
                     String userToken = userApplicationInfo.tokenToJsonString();
@@ -149,62 +278,20 @@ public class ViewEventFragment extends Fragment {
                                         activity.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                joinButton.setVisibility(View.GONE);
-                                                rideshareButton.setVisibility(View.VISIBLE);
-
-                                                new AlertDialog.Builder(activity)
-                                                        .setTitle("Event Successfully Joined!")
-                                                        .setMessage("Congratulations, you are now a part of " + event.getTitle())
-                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.dismiss();
-                                                            }
-                                                        })
-                                                        .create()
-                                                        .show();
-
-                                                String userName = userApplicationInfo.getProfile().getFullName();
-                                                Chip chip = new Chip(activity);
-                                                chip.setText(userName);
-                                                members.addView(chip);
+                                                createJoinEventSuccessMessage(activity);
+                                                modifyViewOnJoinEvent(userApplicationInfo, activity);
                                             }
                                         });
-
-
-
                                     }
                                 }, 0);
                             } else {
-
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        activity.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                new AlertDialog.Builder(activity)
-                                                        .setTitle("Unable to join event.")
-                                                        .setMessage("You were unable to join this event.")
-                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.dismiss();
-                                                            }
-                                                        })
-                                                        .create()
-                                                        .show();
-                                            }
-                                        });
-                                    }
-                                }, 0);
+                                createJoinEventErrorMessage(activity);
                             }
-
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-
+                            createJoinEventErrorMessage(activity);
                         }
                     });
                 } catch (JSONException | IOException e) {
@@ -213,38 +300,120 @@ public class ViewEventFragment extends Fragment {
 
             }
         });
+    }
 
-        rideshareButton.setOnClickListener(new View.OnClickListener() {
+    private void modifyViewOnJoinEvent(UserApplicationInfo userApplicationInfo, FragmentActivity activity) {
+        joinButton.setVisibility(View.GONE);
+        rideshareButton.setVisibility(View.VISIBLE);
+        String userName = userApplicationInfo.getProfile().getFullName();
+        Chip chip = new Chip(activity);
+        chip.setText(userName);
+        members.addView(chip);
+    }
+
+    private void createJoinEventSuccessMessage(FragmentActivity activity) {
+        new AlertDialog.Builder(activity)
+                .setTitle("Event Successfully Joined!")
+                .setMessage("Congratulations, you are now a part of " + event.getTitle())
+                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    private void createJoinEventErrorMessage(FragmentActivity activity) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(activity)
+                                .setTitle("Unable to join event.")
+                                .setMessage("You were unable to join this event.\nPlease try again later.")
+                                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .create()
+                                .show();
+                    }
+                });
+            }
+        }, 0);
+    }
+
+    private void initBackButton() {
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getActivity(), SelectRideshareActivity.class);
-                startActivity(i);
+                //TODO: this needs fixing to use the native back button
+                if (getArguments().getString("theFrom").equals("search")) {
+                    getActivity().onBackPressed();
+                } else if (getArguments().getString("theFrom").equals("map")) {
+                    //TODO go back to map
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                } else {
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
             }
         });
+    }
 
-        reportButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), ReportActivity.class);
-                i.putExtra("REPORT_PERSON", false);
-                i.putExtra("REPORTING_EVENT", event);
-                startActivity(i);
-            }
-        });
+    private void initMenuOptionsVisibility() {
+        UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
+        String userId = userApplicationInfo.getProfile().getId();
 
-        return view;
+        if (isEventOwner(userId)) {
+            shouldAllowMenuItem(R.id.eventLeave, false);
+            shouldAllowMenuItem(R.id.eventEdit, true);
+            shouldAllowMenuItem(R.id.eventReport, false);
+
+        } else if (isPartOfEvent(userId)){
+            shouldAllowMenuItem(R.id.eventLeave, true);
+            shouldAllowMenuItem(R.id.eventEdit, false);
+            shouldAllowMenuItem(R.id.eventReport, true);
+
+        } else {
+            shouldAllowMenuItem(R.id.eventLeave, false);
+            shouldAllowMenuItem(R.id.eventEdit, false);
+            shouldAllowMenuItem(R.id.eventReport, true);
+        }
+    }
+
+    private void shouldAllowMenuItem(int menuItemId, boolean shouldAllow) {
+        menu.getMenu().findItem(menuItemId).setEnabled(shouldAllow);
+        menu.getMenu().findItem(menuItemId).setVisible(shouldAllow);
     }
 
     private void initButtonVisibility() {
         UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
         String userId = userApplicationInfo.getProfile().getId();
-        if (event.getMembers().contains(userId)) {
+        if (isPartOfEvent(userId)) {
             joinButton.setVisibility(View.GONE);
             rideshareButton.setVisibility(View.VISIBLE);
         } else {
             joinButton.setVisibility(View.VISIBLE);
             rideshareButton.setVisibility(View.GONE);
         }
+    }
+
+    private boolean isPartOfEvent(String userId) {
+        return event.getMembers().contains(userId);
     }
 
     private Event removeMeInitEvent() {
@@ -275,7 +444,7 @@ public class ViewEventFragment extends Fragment {
         backButton = view.findViewById(R.id.viewEventBackButton);
         joinButton = view.findViewById(R.id.joinEventButton);
         rideshareButton = view.findViewById(R.id.viewEventBookRideshareButton);
-        reportButton = view.findViewById(R.id.eventReportButton);
+        options = view.findViewById(R.id.eventOptions);
     }
 
     private void initEventDetails(Event event) {
@@ -393,5 +562,10 @@ public class ViewEventFragment extends Fragment {
         numPeople.setText(numPeopleInEventString);
 
 
+    }
+
+    public boolean isEventOwner(String userId){
+        String eventOwnerId = event.getEventOwnerId();
+        return eventOwnerId.equals(userId);
     }
 }

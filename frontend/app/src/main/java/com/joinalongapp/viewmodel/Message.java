@@ -1,12 +1,24 @@
 package com.joinalongapp.viewmodel;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Message implements IDetailsModel {
+    private String message;
+    private String name;
+    private String id;
+    private long createdAt;
+    private boolean isOwner;
+
+    public Message(String message, String name, String id, long createdAt) {
+        this.message = message;
+        this.name = name;
+        this.id = id;
+        this.createdAt = createdAt;
+    }
+
     public Message() {
+        // empty default constructor
     }
 
     public String getMessage() {
@@ -49,52 +61,40 @@ public class Message implements IDetailsModel {
         isOwner = owner;
     }
 
-    private String message;
-    private String name;
-    //todo: change to string
-    private String id;
-    private long createdAt;
-    private boolean isOwner;
-
-    public Message(String message, String name, String id, long createdAt) {
-        this.message = message;
-        this.name = name;
-        this.id = id;
-        this.createdAt = createdAt;
-    }
-
-//TODO: make sure json keys match with backend
     @Override
     public String toJsonString() throws JSONException {
         JSONObject json = new JSONObject();
+
         json.put("text", getMessage());
         json.put("participantName", getName());
         json.put("participantID", getId());
         json.put("timeStamp", createdAt);
         json.put("isOwner", isOwner());
-        Log.w("MessageModel", "this may produce unintended results if json keys dont match");
+
         return json.toString();
     }
 
     public JSONObject toJson() throws JSONException {
         JSONObject json = new JSONObject();
+
         json.put("text", getMessage());
         json.put("participantName", getName());
         json.put("participantID", getId());
         json.put("timeStamp", createdAt);
         json.put("isOwner", isOwner());
-        Log.w("MessageModel", "this may produce unintended results if json keys dont match");
+
         return json;
     }
 
     @Override
     public IDetailsModel populateDetailsFromJson(String jsonBody) throws JSONException {
         JSONObject json = new JSONObject(jsonBody);
+
         setName((String) json.get("participantName"));
         setId((String) json.get("participantID"));
         setMessage((String) json.get("text"));
         setCreatedAt((Long) Long.valueOf((String) json.get("timeStamp")));
 
-        return null;
+        return this;
     }
 }

@@ -16,12 +16,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.Constants;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
@@ -67,17 +69,18 @@ public class ManageProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_profile);
 
-        UserProfile profile = ((UserApplicationInfo) getApplication()).getProfile();
+        UserProfile originalProfile = ((UserApplicationInfo) getApplication()).getProfile();
 
         initElements();
+
         String[] sampleTags = getResources().getStringArray(R.array.sample_tags);
         initAutoCompleteChipGroup(autoCompleteInterests, interestsChip, sampleTags);
+
         try {
-            initUseGoogleProfilePicToggle(profile);
+            initUseGoogleProfilePicToggle(originalProfile);
         } catch (IOException e) {
             Log.e(TAG, "Failed to set profile pic: " + e.getMessage());
         }
-
 
         if (getIntent().getExtras() != null) {
             if (!isCreatingProfile()) {
@@ -90,87 +93,17 @@ public class ManageProfileActivity extends AppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                profile.setFirstName(firstNameEdit.getText().toString());
-                profile.setLastName(lastNameEdit.getText().toString());
-                profile.setLocation(locationEdit.getText().toString());
+                modifyOriginalProfile(originalProfile);
 
+                UserApplicationInfo userInput = createUserObject();
 
-                List<Tag> tags = getTagsFromChipGroup();
-                profile.setTags(tags);
-
-                profile.setDescription(descriptionEdit.getText().toString());
-
-                UserApplicationInfo userInput = (UserApplicationInfo) getApplication();
-
-                if (isCreatingProfile()) {
-                    userInput.setUserToken(getIntent().getExtras().getString("userToken"));
-                } else {
-                    userInput.setUserToken(((UserApplicationInfo) getApplication()).getUserToken());
-                }
-
-                if (validateElements(profile)) {
-                    userInput.setProfile(profile);
+                if (validateElements(originalProfile)) {
+                    userInput.setProfile(originalProfile);
 
                     if (isCreatingProfile()) {
-                        try {
-                            String jsonBody = userInput.toJsonString();
-                            RequestManager requestManager = new RequestManager();
-                            requestManager.post("user/create", jsonBody, new RequestManager.OnRequestCompleteListener() {
-                                @Override
-                                public void onSuccess(Call call, Response response) {
-                                    UserApplicationInfo newUserInfo = new UserApplicationInfo();
-                                    try {
-                                        newUserInfo.populateDetailsFromJson(response.body().string());
-                                        ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(newUserInfo);
-                                        startMainActivity();
-
-                                    } catch (IOException | JSONException e) {
-                                        Log.e(TAG, "Unable to load user profile");
-                                    }
-                                }
-
-                                @Override
-                                public void onError(Call call, IOException e) {
-                                    Log.e(TAG, "Unable to create profile");
-                                    Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        } catch (JSONException | IOException e) {
-                            Log.e(TAG, "Failed to create user profile");
-                            Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
-                        }
+                        createProfile(userInput);
                     } else {
-                        try {
-                            String jsonBody = userInput.toJsonString();
-                            RequestManager requestManager = new RequestManager();
-
-                            String userId = ((UserApplicationInfo) getApplication()).getProfile().getId();
-                            String path = "user/" + userId + "/edit";
-
-                            requestManager.put(path, jsonBody, new RequestManager.OnRequestCompleteListener() {
-                                @Override
-                                public void onSuccess(Call call, Response response) {
-
-                                    if (response.code() == Constants.STATUS_HTTP_200) {
-                                        ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(userInput);
-                                    } else {
-                                        Log.e(TAG, "Unable to update user profile");
-                                    }
-
-                                    //todo: should go to profile?
-                                    startMainActivity();
-                                }
-
-                                @Override
-                                public void onError(Call call, IOException e) {
-                                    Log.e(TAG, "Unable to update profile" + e.getMessage());
-                                    Toast.makeText(ManageProfileActivity.this, "Unable to update profile. Please try again later.", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        } catch (JSONException | IOException e) {
-                            Log.e(TAG, "Failed to update user profile");
-                            Toast.makeText(ManageProfileActivity.this, "Unable to update profile. Please try again later.", Toast.LENGTH_LONG).show();
-                        }
+                        editProfile(userInput);
                     }
                 }
 
@@ -184,6 +117,105 @@ public class ManageProfileActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void editProfile(UserApplicationInfo userInput) {
+        try {
+            String jsonBody = userInput.toJsonString();
+            RequestManager requestManager = new RequestManager();
+
+            String userId = ((UserApplicationInfo) getApplication()).getProfile().getId();
+            String path = new PathBuilder()
+                    .addUser()
+                    .addNode(userId)
+                    .addEdit()
+                    .build();
+
+            requestManager.put(path, jsonBody, new RequestManager.OnRequestCompleteListener() {
+                @Override
+                public void onSuccess(Call call, Response response) {
+
+                    if (response.code() == Constants.STATUS_HTTP_200) {
+                        ((UserApplicationInfo) getApplication()).updateApplicationInfo(userInput);
+                    } else {
+                        Log.e(TAG, "Unable to update user profile");
+                    }
+
+                    //todo: should go to profile?
+                    //      success message
+                    startMainActivity();
+                }
+
+                @Override
+                public void onError(Call call, IOException e) {
+                    Log.e(TAG, "Unable to update profile" + e.getMessage());
+                    Toast.makeText(ManageProfileActivity.this, "Unable to update profile. Please try again later.", Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (JSONException | IOException e) {
+            Log.e(TAG, "Failed to update user profile");
+            Toast.makeText(ManageProfileActivity.this, "Unable to update profile. Please try again later.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void createProfile(UserApplicationInfo userInput) {
+        try {
+            String jsonBody = userInput.toJsonString();
+            RequestManager requestManager = new RequestManager();
+
+            String path = new PathBuilder()
+                    .addUser()
+                    .addCreate()
+                    .build();
+
+            requestManager.post(path, jsonBody, new RequestManager.OnRequestCompleteListener() {
+                @Override
+                public void onSuccess(Call call, Response response) {
+                    UserApplicationInfo newUserInfo = new UserApplicationInfo();
+                    try {
+                        newUserInfo.populateDetailsFromJson(response.body().string());
+                        ((UserApplicationInfo) getApplication()).updateApplicationInfo(newUserInfo);
+                        startMainActivity();
+
+                    } catch (IOException | JSONException e) {
+                        Log.e(TAG, "Unable to load user profile");
+                    }
+                }
+
+                @Override
+                public void onError(Call call, IOException e) {
+                    Log.e(TAG, "Unable to create profile");
+                    Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (JSONException | IOException e) {
+            Log.e(TAG, "Failed to create user profile");
+            Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @NonNull
+    private UserApplicationInfo createUserObject() {
+        UserApplicationInfo userInput = (UserApplicationInfo) getApplication();
+
+        if (isCreatingProfile()) {
+            userInput.setUserToken(getIntent().getExtras().getString("userToken"));
+        } else {
+            userInput.setUserToken(((UserApplicationInfo) getApplication()).getUserToken());
+        }
+        return userInput;
+    }
+
+    private void modifyOriginalProfile(UserProfile originalProfile) {
+        originalProfile.setFirstName(firstNameEdit.getText().toString());
+        originalProfile.setLastName(lastNameEdit.getText().toString());
+        originalProfile.setLocation(locationEdit.getText().toString());
+
+
+        List<Tag> tags = getTagsFromChipGroup();
+        originalProfile.setTags(tags);
+
+        originalProfile.setDescription(descriptionEdit.getText().toString());
     }
 
     private List<Tag> getTagsFromChipGroup(){

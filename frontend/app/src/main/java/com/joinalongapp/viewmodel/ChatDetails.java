@@ -83,15 +83,6 @@ public class ChatDetails implements Serializable, IDetailsModel {
         this.numPeople = numPeople;
     }
 
-//
-//    public List<String> getStringListOfPeople(){
-//        List<String> result = new ArrayList<>();
-//        for(String user : people){
-//            result.add(user.getFullName());
-//        }
-//        return result;
-//    }
-
     public List<String> getStringListOfTags(){
         List<String> result = new ArrayList<>();
         for(Tag tag : tags){
@@ -154,7 +145,7 @@ public class ChatDetails implements Serializable, IDetailsModel {
             addToFriends(friendsJson.getString(i));
         }
 
-        return null;
+        return this;
     }
 
     private void addToFriends(String string) {

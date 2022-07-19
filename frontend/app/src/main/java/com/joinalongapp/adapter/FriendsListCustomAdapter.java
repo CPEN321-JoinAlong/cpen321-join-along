@@ -2,7 +2,6 @@ package com.joinalongapp.adapter;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,19 +10,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.joinalong.MainActivity;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
-import com.joinalongapp.navbar.FriendsFragment;
-import com.joinalongapp.navbar.FriendsListFragment;
 import com.joinalongapp.navbar.ViewProfileFragment;
 import com.joinalongapp.viewmodel.UserProfile;
 import com.squareup.picasso.Picasso;
@@ -34,7 +30,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -56,9 +51,9 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
             super(itemView);
 
 
-            name = (TextView) itemView.findViewById(R.id.individualUserName);
+            name = (TextView) itemView.findViewById(R.id.individualReportName);
             profilePicture = (ImageView) itemView.findViewById(R.id.individualProfilePicture);
-            options = (Button) itemView.findViewById(R.id.friendOptions);
+            options = (Button) itemView.findViewById(R.id.reportOptions);
         }
 
         public TextView getName() {
@@ -152,7 +147,14 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         String userId = user.getId();
         JSONObject json = new JSONObject();
         json.put("token", token);
-        requestManager.put("user/removeFriend/" + userId + "/" + otherUserId, json.toString(), new RequestManager.OnRequestCompleteListener() {
+        String path = new PathBuilder()
+                .addUser()
+                .addNode("removeFriend")
+                .addNode(userId)
+                .addNode(otherUserId)
+                .build();
+
+        requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
                 //Toast.makeText(context, "Deleted Friend!", Toast.LENGTH_SHORT).show();

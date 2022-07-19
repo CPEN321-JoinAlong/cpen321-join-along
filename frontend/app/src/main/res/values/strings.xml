@@ -48,6 +48,7 @@
     <string name="default_messages">Messages</string>
     <string name="default_search">Search</string>
     <string name="default_description">Description</string>
+    <string name="default_view_reports">View Reports</string>
     <string-array name="number_of_people_array">
         <item>1</item>
         <item>2</item>
@@ -137,6 +138,9 @@
     <string name="view_events_end_date_title">End Date</string>
     <string name="join_event">Join!</string>
     <string name="book_rideshare">Book Rideshare</string>
+    <string name="event_leave_title">Leave Event</string>
+    <string name="event_report_title">Report Event</string>
+    <string name="event_edit_title">Edit Event</string>
 
     <!--TODO: idk if this is best place for id-->
     <!--LOGIN-->

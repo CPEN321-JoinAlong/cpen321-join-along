@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.Tag;
@@ -78,8 +79,6 @@ public class ManageChatActivity extends AppCompatActivity {
 
         String[] tags = getResources().getStringArray(R.array.sample_tags);
 
-        //TODO: this is a temp solution, no clue if it actually works or not
-        //      ken, please check
 
         List<String> friendUserIds = user.getFriends();
         RequestManager requestManager = new RequestManager();
@@ -97,7 +96,13 @@ public class ManageChatActivity extends AppCompatActivity {
 
 
         try {
-            requestManager.get("user/" + user.getId() + "/friends", token, new RequestManager.OnRequestCompleteListener() {
+            String path = new PathBuilder()
+                    .addUser()
+                    .addNode(user.getId())
+                    .addNode("friends")
+                    .build();
+
+            requestManager.get(path, token, new RequestManager.OnRequestCompleteListener() {
                 @Override
                 public void onSuccess(Call call, Response response) {
                     try {
@@ -161,7 +166,12 @@ public class ManageChatActivity extends AppCompatActivity {
                     try{
                         JSONObject json = resultChat.toJson();
                         json.put("token", token);
-                        submitManager.post("chat/create", json.toString(), new RequestManager.OnRequestCompleteListener() {
+
+                        String path = new PathBuilder()
+                                .addChat()
+                                .addCreate()
+                                .build();
+                        submitManager.post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                             @Override
                             public void onSuccess(Call call, Response response) {
                                 System.out.println(response.body());
@@ -253,7 +263,12 @@ public class ManageChatActivity extends AppCompatActivity {
         String userToken = ((UserApplicationInfo) getApplication()).getUserToken();
         for (String friendId : peopleIds) {
             try {
-                requestManager.get("user/" + friendId, userToken, new RequestManager.OnRequestCompleteListener() {
+                String path = new PathBuilder()
+                    .addUser()
+                    .addNode(friendId)
+                    .build();
+
+                requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
                     @Override
                     public void onSuccess(Call call, Response response) {
                         try {

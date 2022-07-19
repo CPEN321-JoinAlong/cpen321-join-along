@@ -18,7 +18,7 @@ import okhttp3.Response;
 
 public class RequestManager implements Callback {
     private final String SCHEME = "http";
-    private final String BASE_URL = "20.9.17.127";
+    private final String BASE_URL = "54.200.52.211";
     private final int PORT = 3000;
     private OnRequestCompleteListener onRequestCompleteListener;
 
@@ -29,6 +29,7 @@ public class RequestManager implements Callback {
     /**
      * Read from the given path
      * @param path path of URL to read from
+     * @param tokenHeader header for user token
      * @return result/response of reading at url
      * @throws IOException
      */
@@ -51,10 +52,11 @@ public class RequestManager implements Callback {
      * Read from the given path with search parameters
      * @param path path of URL to read from
      * @param parameters parameters to search with
+     * @param tokenHeader header for user token
      * @return result/response of reading at url
      * @throws IOException
      */
-    public void get(String path, Map<String, String> parameters, OnRequestCompleteListener callback) throws IOException {
+    public void get(String path, Map<String, String> parameters, String tokenHeader, OnRequestCompleteListener callback) throws IOException {
         onRequestCompleteListener = callback;
         OkHttpClient client = new OkHttpClient();
 
@@ -62,6 +64,7 @@ public class RequestManager implements Callback {
 
         Request request = new Request.Builder()
                 .url(url)
+                .header("token", tokenHeader)
                 .get()
                 .build();
 

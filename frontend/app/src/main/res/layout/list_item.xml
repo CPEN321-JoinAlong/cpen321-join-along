@@ -14,7 +14,7 @@
         app:srcCompat="@drawable/ic_baseline_person_24" />
 
     <TextView
-        android:id="@+id/individualUserName"
+        android:id="@+id/individualReportName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -23,7 +23,7 @@
         android:textSize="28sp" />
 
     <Button
-        android:id="@+id/friendOptions"
+        android:id="@+id/reportOptions"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"

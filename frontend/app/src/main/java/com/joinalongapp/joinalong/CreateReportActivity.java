@@ -1,18 +1,16 @@
 package com.joinalongapp.joinalong;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.DownloadManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.tabs.TabLayout;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.ReportDetails;
@@ -26,7 +24,7 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class ReportActivity extends AppCompatActivity {
+public class CreateReportActivity extends AppCompatActivity {
 
     private TextView reportingSubtitle;
     private EditText reportReason;
@@ -40,26 +38,26 @@ public class ReportActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_report);
+        setContentView(R.layout.activity_create_report);
 
         initElements();
 
         Bundle info = getIntent().getExtras();
         Boolean reportType = info.getBoolean("REPORT_PERSON");
-        String path = null;
-        String reportingId = null;
-        System.out.println(reportType.toString());
+        String path;
+        String reportingId;
         ReportDetails reportDetails = new ReportDetails();
         String token = ((UserApplicationInfo) getApplication()).getUserToken();
         UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
         String reportEntityName;
+
         if(reportType){
             UserProfile reportingPerson = ((UserApplicationInfo) getApplication()).getProfile();
             String reportingName = " " + reportingPerson.getFullName();
             reportEntityName = reportingPerson.getFullName();
             reportingSubtitle.append(reportingName);
             reportDetails.setReportPerson(true);
-            path = "/reportUser/";
+            path = "reportUser";
             reportingId = reportingPerson.getId();
         }
         else{
@@ -67,9 +65,10 @@ public class ReportActivity extends AppCompatActivity {
             String reportingEventName = " " + reportingEvent.getTitle();
             reportEntityName = reportingEvent.getTitle();
             reportingSubtitle.append(reportingEventName);
+            //TODO: warning: get owner name always return empty string
             reportBlockSubtitle.append(" " + reportingEvent.getOwnerName());
             reportDetails.setReportPerson(false);
-            path = "/reportEvent/";
+            path = "reportEvent";
             reportingId = reportingEvent.getEventId();
         }
 
@@ -82,6 +81,7 @@ public class ReportActivity extends AppCompatActivity {
             }
         });
 
+        //todo: pls fix these finals
         String finalPath = path;
         String finalReportingId = reportingId;
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -102,16 +102,22 @@ public class ReportActivity extends AppCompatActivity {
 
                 RequestManager requestManager = new RequestManager();
                 try {
-                    requestManager.post("user/" + user.getId() + finalPath + "/" + finalReportingId, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    String path = new PathBuilder()
+                            .addUser()
+                            .addNode(user.getId())
+                            .addNode(finalPath)
+                            .addNode(finalReportingId)
+                            .build();
+
+                    requestManager.post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            //Toast.makeText(getBaseContext(), "Successful Report", Toast.LENGTH_SHORT).show();
-                            System.out.println("WHAT");
+                            // TODO: add success and error messages.
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-                            //Toast.makeText(getBaseContext(), "Unsuccessful Report", Toast.LENGTH_SHORT).show();
+
                         }
                     });
                 } catch (IOException e) {

@@ -19,7 +19,7 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
         super();
     }
 
-    public void updateApplicaitonInfo(UserApplicationInfo userApplicationInfo) {
+    public void updateApplicationInfo(UserApplicationInfo userApplicationInfo) {
         this.userToken = userApplicationInfo.getUserToken();
         this.profile = userApplicationInfo.getProfile();
     }
@@ -77,22 +77,6 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
 
         return json.toString();
     }
-
-    String string = "{\"interests\":[]," +
-            "\"location\":\"2336 Main Mall Vancouver BC\"," +
-            "\"chats\":[]," +
-            "\"events\":[]," +
-            "\"profilePicture\":\"https://lh3.googleusercontent.com/a/AItbvmnLZR2PnBwNbO6OnjVppOvReOM0Yp9WQPLnuZB0=s96-c\"," +
-            "\"description\":\"Yes\"," +
-            "\"chatInvites\":[]," +
-            "\"eventInvites\":[]," +
-            "\"friendRequest\":[]," +
-            "\"friends\":[]," +
-            "\"blockedUsers\":[]," +
-            "\"blockedEvents\":[]," +
-            "\"token\":\"shortToken\"," +
-            "\"_id\":\"62cbc9fcdd72460310e15459\"," +
-            "\"__v\":0}";
 
     public UserApplicationInfo populateDetailsFromJson(String jsonBody) throws JSONException {
         JSONObject json = new JSONObject(jsonBody);

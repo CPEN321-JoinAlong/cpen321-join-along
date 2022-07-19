@@ -35,12 +35,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
     GoogleSignInClient mGoogleSignInClient;
-    private int RC_SIGN_IN = 1;
+    private final int RC_SIGN_IN = 1;
     private SignInButton signInButton;
-
-    private static final String SCHEME = "http";
-    private static final String BASE_URL = "20.9.17.127";
-    private final int PORT = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +45,6 @@ public class LoginActivity extends AppCompatActivity {
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
-//                .requestIdToken("693671271113-iii855v6rtbcv26d21pdif7ljgi1canc.apps.googleusercontent.com")
-//                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
-//                .requestServerAuthCode("693671271113-iii855v6rtbcv26d21pdif7ljgi1canc.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
@@ -64,11 +57,6 @@ public class LoginActivity extends AppCompatActivity {
                         handleSignInResult(task);
                     }
                 });
-
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(LoginActivity.this);
-//        if (account != null) {
-//            //startMainActivity();
-//        }
 
         signInButton = findViewById(R.id.sign_in_button);
 
@@ -87,16 +75,6 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    private void signOut() {
-        mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // ...
-                    }
-                });
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -113,13 +91,9 @@ public class LoginActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            String idToken = account.getIdToken();
-
-            UserApplicationInfo applicationInfo = new UserApplicationInfo();
-            applicationInfo.setUserToken(idToken);
 
             try {
-                String jsonBody = applicationInfo.tokenToJsonStringForLogin();
+                String jsonBody = getTokenForBackendAuth(account.getIdToken());
 
                 RequestManager requestManager = new RequestManager();
                 requestManager.post("login", jsonBody, new RequestManager.OnRequestCompleteListener() {
@@ -131,10 +105,7 @@ public class LoginActivity extends AppCompatActivity {
                             // Successful login, loading user data
                             case Constants.STATUS_HTTP_200:
                                 try {
-                                    UserApplicationInfo profileOnLogin = new UserApplicationInfo();
-                                    String jsonBody = response.body().string();
-                                    profileOnLogin.populateDetailsFromJson(jsonBody);
-                                    ((UserApplicationInfo) getApplication()).updateApplicaitonInfo(profileOnLogin);
+                                    populateUserDetailsOnLogin(response);
                                     startMainActivity();
                                 } catch (IOException | JSONException e) {
                                     createParseError(e);
@@ -143,20 +114,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             // User not found, must be a new user
                             case Constants.STATUS_HTTP_404:
-                                Intent i = new Intent(LoginActivity.this, ManageProfileActivity.class);
-                                i.putExtra("firstName", account.getGivenName());
-
-                                try {
-                                    JSONObject responseBody = new JSONObject(response.body().string());
-                                    i.putExtra("userToken", responseBody.getString("token"));
-                                } catch (IOException | JSONException e) {
-                                    createParseError(e);
-                                }
-
-                                i.putExtra("lastName", account.getFamilyName());
-                                i.putExtra("profilePic", account.getPhotoUrl().toString());
-                                i.putExtra("MODE", ManageProfileActivity.ManageProfileMode.PROFILE_CREATE);
-                                startActivity(i);
+                                startCreateProfileActivity(response, account);
                                 break;
 
                             // User token was invalid
@@ -185,6 +143,36 @@ public class LoginActivity extends AppCompatActivity {
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode() + " Message: " + e.getMessage());
             updateUI(null);
         }
+    }
+
+    private void startCreateProfileActivity(Response response, GoogleSignInAccount account) {
+        Intent i = new Intent(LoginActivity.this, ManageProfileActivity.class);
+        i.putExtra("firstName", account.getGivenName());
+
+        try {
+            JSONObject responseBody = new JSONObject(response.body().string());
+            i.putExtra("userToken", responseBody.getString("token"));
+        } catch (IOException | JSONException e) {
+            createParseError(e);
+        }
+
+        i.putExtra("lastName", account.getFamilyName());
+        i.putExtra("profilePic", account.getPhotoUrl().toString());
+        i.putExtra("MODE", ManageProfileActivity.ManageProfileMode.PROFILE_CREATE);
+        startActivity(i);
+    }
+
+    private void populateUserDetailsOnLogin(Response response) throws IOException, JSONException {
+        UserApplicationInfo profileOnLogin = new UserApplicationInfo();
+        String jsonBody = response.body().string();
+        profileOnLogin.populateDetailsFromJson(jsonBody);
+        ((UserApplicationInfo) getApplication()).updateApplicationInfo(profileOnLogin);
+    }
+
+    private String getTokenForBackendAuth(String idToken) throws JSONException {
+        UserApplicationInfo preAuthDetails = new UserApplicationInfo();
+        preAuthDetails.setUserToken(idToken);
+        return preAuthDetails.tokenToJsonStringForLogin();
     }
 
     private void createBackendAuthError(Exception e) {

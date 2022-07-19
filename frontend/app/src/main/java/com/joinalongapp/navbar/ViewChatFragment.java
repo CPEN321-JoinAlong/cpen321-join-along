@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
@@ -124,6 +125,11 @@ public class ViewChatFragment extends Fragment {
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         for (String friendId : peopleIds) {
             try {
+                String path = new PathBuilder()
+                        .addUser()
+                        .addNode(friendId)
+                        .build();
+
                 requestManager.get("user/" + friendId, userToken, new RequestManager.OnRequestCompleteListener() {
                     @Override
                     public void onSuccess(Call call, Response response) {

@@ -1,12 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<!--TODO: make this half the screen width or smt-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map_info_window"
-    android:layout_width="wrap_content"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:textColor="@android:color/white"
-    tools:text="Text"
-    app:drawableTopCompat="@mipmap/ic_launcher" />
+    android:background="@drawable/rectangle_border_map">
+
+    <TextView
+        android:id="@+id/mapInfoWindowEventName"
+        android:layout_width="263dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="4dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="5dp"
+        android:text="@string/card_event_name_default"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/mapInfoWindowDescription"
+        android:layout_width="263dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mapInfoWindowEventName"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="8dp"
+        android:drawablePadding="2dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="5dp"
+        android:text="@string/card_event_description_default"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mapInfoWindowEventName" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="37dp"
+        android:layout_height="73dp"
+        android:layout_marginTop="4dp"
+        android:foregroundGravity="center_vertical"
+        app:flow_verticalAlign="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/mapInfoWindowEventName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
+</androidx.constraintlayout.widget.ConstraintLayout>

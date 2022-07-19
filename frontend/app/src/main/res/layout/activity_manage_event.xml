@@ -87,13 +87,13 @@
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/eventManagementTagChipGroup"
         android:layout_width="314dp"
-        android:layout_height="50dp"
+        android:layout_height="37dp"
         app:layout_constraintBottom_toTopOf="@+id/tagsGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
-        app:layout_constraintVertical_bias="0.717" />
+        app:layout_constraintVertical_bias="0.24" />
 
     <EditText
         android:id="@+id/editTextEventManagementLocation"
@@ -151,6 +151,7 @@
         app:layout_constraintTop_toTopOf="@+id/visibilityGuideline"
         app:layout_constraintVertical_bias="0.166" />
 
+
     <EditText
         android:id="@+id/eventManagementEditTextDescription"
         android:layout_width="314dp"
@@ -164,10 +165,10 @@
         android:textColorHint="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/descriptionGuideline"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tagsGuideline"
-        app:layout_constraintVertical_bias="0.968" />
+        app:layout_constraintVertical_bias="0.625" />
 
     <TextView
         android:id="@+id/descriptionText"
@@ -180,8 +181,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/tagsGuideline"
-        app:layout_constraintVertical_bias="1.0" />
-
+        app:layout_constraintVertical_bias="0.083" />
 
     <EditText
         android:id="@+id/editTextEventManagementTitle"
@@ -289,7 +289,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftMarginGuideline"
@@ -338,21 +338,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="478dp" />
+        app:layout_constraintGuide_begin="458dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/visibilityGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="408dp" />
+        app:layout_constraintGuide_begin="398dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/tagsGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="577dp" />
+        app:layout_constraintGuide_begin="574dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/aboveTitleGuideline"
@@ -380,7 +380,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/eventManagementEditTextDescription"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.478" />
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteChipTextView"
@@ -395,6 +395,6 @@
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
-        app:layout_constraintVertical_bias="0.245" />
+        app:layout_constraintVertical_bias="0.838" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

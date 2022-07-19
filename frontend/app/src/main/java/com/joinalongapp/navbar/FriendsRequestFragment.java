@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.adapter.FriendsRequestCustomAdapter;
+import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
@@ -116,8 +117,13 @@ public class FriendsRequestFragment extends Fragment {
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         String id = user.getId();
         RequestManager requestManager = new RequestManager();
+        String path = new PathBuilder()
+                .addUser()
+                .addNode(id)
+                .addNode("friendRequest")
+                .build();
 
-        requestManager.get("user/" + id + "/friendRequest", userToken, new RequestManager.OnRequestCompleteListener() {
+        requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
 

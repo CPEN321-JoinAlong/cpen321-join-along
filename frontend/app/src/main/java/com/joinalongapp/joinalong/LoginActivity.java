@@ -176,33 +176,26 @@ public class LoginActivity extends AppCompatActivity {
         return preAuthDetails.tokenToJsonStringForLogin();
     }
 
-    private void createBackendAuthError(Exception e) {
+    private void createBadLoginError(String description) {
         new FeedbackMessageBuilder()
                 .setTitle("Login Failed")
-                .setDescription("Failed to authenticate with backend server.\nPlease try again later.")
+                .setDescription(description)
                 .withActivity(LoginActivity.this)
                 .buildAsyncNeutralMessage();
+    }
 
+    private void createBackendAuthError(Exception e) {
+        createBadLoginError("Failed to authenticate with backend server.\nPlease try again later.");
         Log.e(TAG, "Failed to authenticate with backend server: " + e.getMessage());
     }
 
     private void createBadTokenError() {
-        new FeedbackMessageBuilder()
-                .setTitle("Login Failed")
-                .setDescription("Failure to authenticate with user token.\nPlease try again later.")
-                .withActivity(LoginActivity.this)
-                .buildAsyncNeutralMessage();
-
+        createBadLoginError("Failure to authenticate with user token.\nPlease try again later.");
         Log.e(TAG, "Failure to authenticate with user token.");
     }
 
     private void createParseError(Exception e) {
-        new FeedbackMessageBuilder()
-                .setTitle("Login Failed")
-                .setDescription("Unable to parse user data into app.\nPlease try again later.")
-                .withActivity(LoginActivity.this)
-                .buildAsyncNeutralMessage();
-
+        createBadLoginError("Unable to parse user data into app.\nPlease try again later.");
         Log.e(TAG, "Unable to parse user data into app: " + e.getMessage());
     }
 

@@ -25,13 +25,7 @@ import com.joinalongapp.joinalong.SearchScreenActivity;
  */
 public class FriendsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     private static final int FRIENDS_LIST_INDEX = 0;
-    private static final int REQUESTS_LIST_INDEX = 1;
     private static final int NUMBER_OF_TABS = 2;
 
     TabLayout tabLayout;
@@ -39,17 +33,9 @@ public class FriendsFragment extends Fragment {
     ViewPager2 viewPager2;
     ImageButton addFriends;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public FriendsFragment() {
         // Required empty public constructor
-    }
-
-    private enum LayoutManagerType {
-        GRID_LAYOUT_MANAGER,
-        LINEAR_LAYOUT_MANAGER
     }
 
     /**
@@ -64,8 +50,6 @@ public class FriendsFragment extends Fragment {
     public static FriendsFragment newInstance(String param1, String param2) {
         FriendsFragment fragment = new FriendsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,11 +57,6 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
     }
 
     @Override
@@ -128,10 +107,6 @@ public class FriendsFragment extends Fragment {
                 //super.onPageSelected(position);
             }
         });
-
-
-
-
         return rootView;
     }
 

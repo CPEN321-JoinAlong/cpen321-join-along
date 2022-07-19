@@ -160,7 +160,7 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
 
                         @Override
                         public void onError(Call call, IOException e) {
-
+                            System.out.println("Error!");
                         }
                     });
                 } catch (IOException e) {

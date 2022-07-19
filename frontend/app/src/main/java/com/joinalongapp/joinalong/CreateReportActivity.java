@@ -113,11 +113,12 @@ public class CreateReportActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             // TODO: add success and error messages.
+                            System.out.println("Success!");
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-
+                            System.out.println("Error!");
                         }
                     });
                 } catch (IOException e) {

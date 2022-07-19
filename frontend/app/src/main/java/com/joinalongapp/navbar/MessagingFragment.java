@@ -26,20 +26,8 @@ import com.joinalongapp.joinalong.SearchScreenActivity;
  * create an instance of this fragment.
  */
 public class MessagingFragment extends Fragment {
-    private Button testButton;
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     private static final int CHAT_LIST_INDEX = 0;
-    private static final int CHAT_REQUESTS_LIST_INDEX = 1;
     private static final int NUMBER_OF_TABS = 2;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     TabLayout tabLayout;
     FragmentManager fragmentManager;
@@ -62,8 +50,6 @@ public class MessagingFragment extends Fragment {
     public static MessagingFragment newInstance(String param1, String param2) {
         MessagingFragment fragment = new MessagingFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,10 +57,7 @@ public class MessagingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
@@ -108,12 +91,12 @@ public class MessagingFragment extends Fragment {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
+                System.out.println("TabUnselected");
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
+                System.out.println("TabReselected");
             }
         });
 

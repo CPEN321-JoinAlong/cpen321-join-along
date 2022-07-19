@@ -34,15 +34,6 @@ import okhttp3.Response;
  */
 public class ViewChatFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     ImageButton backButton;
     ChatDetails chatDetails;
     TextView title;
@@ -66,8 +57,6 @@ public class ViewChatFragment extends Fragment {
     public static ViewChatFragment newInstance(String param1, String param2) {
         ViewChatFragment fragment = new ViewChatFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,8 +65,6 @@ public class ViewChatFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
             chatDetails = (ChatDetails) getArguments().getSerializable("CHAT_INFO");
         }
     }
@@ -130,7 +117,7 @@ public class ViewChatFragment extends Fragment {
                         .addNode(friendId)
                         .build();
 
-                requestManager.get("user/" + friendId, userToken, new RequestManager.OnRequestCompleteListener() {
+                requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
                     @Override
                     public void onSuccess(Call call, Response response) {
                         try {
@@ -143,7 +130,7 @@ public class ViewChatFragment extends Fragment {
 
                     @Override
                     public void onError(Call call, IOException e) {
-                        //todo
+                        System.out.println("Error!");
                     }
                 });
             } catch (IOException e) {

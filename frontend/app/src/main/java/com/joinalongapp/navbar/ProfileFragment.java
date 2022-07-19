@@ -46,9 +46,6 @@ public class ProfileFragment extends Fragment {
     private TextView profileDescription;
     private Button viewReportsButton;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public ProfileFragment() {
         // Required empty public constructor

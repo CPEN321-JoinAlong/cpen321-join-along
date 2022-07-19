@@ -36,28 +36,16 @@ import okhttp3.Response;
  */
 public class MessagingListFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     private RecyclerView messagingListRecyclerView;
-    private MessagingListFragment.LayoutManagerType layoutManagerType;
     private MessagingListCustomAdapter messagingListCustomAdapter;
 
     protected List<ChatDetails> dataset;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public MessagingListFragment() {
         // Required empty public constructor
     }
 
-    private enum LayoutManagerType {
-        LINEAR_LAYOUT_MANAGER
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -71,8 +59,6 @@ public class MessagingListFragment extends Fragment {
     public static MessagingListFragment newInstance(String param1, String param2) {
         MessagingListFragment fragment = new MessagingListFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,10 +66,7 @@ public class MessagingListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
         try {
             initDataset();
         } catch (IOException e) {
@@ -97,12 +80,6 @@ public class MessagingListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_messaging_list, container, false);
 
         messagingListRecyclerView = (RecyclerView) rootView.findViewById(R.id.messagingListRecyclerView);
-
-        layoutManagerType = MessagingListFragment.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-
-        if(savedInstanceState != null){
-            layoutManagerType = (MessagingListFragment.LayoutManagerType) savedInstanceState.getSerializable("layoutManager");
-        }
 
         messagingListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 

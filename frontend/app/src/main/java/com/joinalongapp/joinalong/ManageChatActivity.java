@@ -51,8 +51,6 @@ public class ManageChatActivity extends AppCompatActivity {
     private ChipGroup friendChipGroup;
     private ImageButton cancelButton;
     private Button submitButton;
-    private List<UserProfile> trackFriends = new ArrayList<>();
-    private Map<String, String> chipIdToUserId;
     private String[] friends;
 
     @Override
@@ -248,7 +246,6 @@ public class ManageChatActivity extends AppCompatActivity {
         friendChipGroup = findViewById(R.id.manageTags);
         cancelButton = findViewById(R.id.manageChatCancelButton);
         submitButton = findViewById(R.id.submitManageChatButton);
-        chipIdToUserId = new HashMap<>();
     }
 
     private void autofillChatDetails(ChatDetails chatDetails){

@@ -1,6 +1,6 @@
 package com.joinalongapp.adapter;
 
-import android.content.Context;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Message;
 
-import org.w3c.dom.Text;
+
 
 import java.util.List;
 

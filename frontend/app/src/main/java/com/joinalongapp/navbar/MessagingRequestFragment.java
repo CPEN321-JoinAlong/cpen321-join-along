@@ -36,19 +36,7 @@ import okhttp3.Response;
  * create an instance of this fragment.
  */
 public class MessagingRequestFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private RecyclerView messagingRequestRecyclerView;
-    private MessagingRequestFragment.LayoutManagerType layoutManagerType;
     private MessagingRequestCustomAdapter messagingRequestCustomAdapter;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     protected List<ChatDetails> dataset;
 
@@ -56,9 +44,6 @@ public class MessagingRequestFragment extends Fragment {
         // Required empty public constructor
     }
 
-    private enum LayoutManagerType {
-        LINEAR_LAYOUT_MANAGER
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -72,8 +57,6 @@ public class MessagingRequestFragment extends Fragment {
     public static MessagingRequestFragment newInstance(String param1, String param2) {
         MessagingRequestFragment fragment = new MessagingRequestFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -81,10 +64,6 @@ public class MessagingRequestFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         try {
             initDataset(getActivity());
         } catch (IOException e) {
@@ -97,13 +76,7 @@ public class MessagingRequestFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_messaging_list, container, false);
 
-        messagingRequestRecyclerView = (RecyclerView) rootView.findViewById(R.id.messagingListRecyclerView);
-
-        layoutManagerType = MessagingRequestFragment.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-
-        if(savedInstanceState != null){
-            layoutManagerType = (MessagingRequestFragment.LayoutManagerType) savedInstanceState.getSerializable("layoutManager");
-        }
+        RecyclerView messagingRequestRecyclerView = (RecyclerView) rootView.findViewById(R.id.messagingListRecyclerView);
 
         messagingRequestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -126,7 +99,7 @@ public class MessagingRequestFragment extends Fragment {
                 .addNode("chatInvites")
                 .build();
 
-        requestManager.get("user/" + id + "/chatInvites", userToken, new RequestManager.OnRequestCompleteListener() {
+        requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
 

@@ -62,10 +62,6 @@ public class MessageActivity extends AppCompatActivity {
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean group = false;
-                if(chatDetails.getNumPeople() == 2){
-                    group = true;
-                }
                 Date date = new Date();
                 Message message = new Message();
                 message.setMessage(messageField.getText().toString());

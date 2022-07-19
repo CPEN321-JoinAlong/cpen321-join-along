@@ -34,28 +34,12 @@ import okhttp3.Response;
  * create an instance of this fragment.
  */
 public class FriendsListFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     private RecyclerView friendsListRecyclerView;
-    private LayoutManagerType layoutManagerType;
     private FriendsListCustomAdapter friendsListCustomAdapter;
-
     protected List<UserProfile> dataset;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public FriendsListFragment() {
         // Required empty public constructor
-    }
-
-    private enum LayoutManagerType {
-        LINEAR_LAYOUT_MANAGER
     }
 
     /**
@@ -70,8 +54,6 @@ public class FriendsListFragment extends Fragment {
     public static FriendsListFragment newInstance(String param1, String param2) {
         FriendsListFragment fragment = new FriendsListFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -79,10 +61,6 @@ public class FriendsListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
         try {
             initDataset();
@@ -98,18 +76,9 @@ public class FriendsListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_friends_list, container, false);
 
         friendsListRecyclerView = (RecyclerView) rootView.findViewById(R.id.friendsListRecyclerView);
-
-        layoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-
-        if(savedInstanceState != null){
-            layoutManagerType = (LayoutManagerType) savedInstanceState.getSerializable("layoutManager");
-        }
-
         friendsListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         friendsListCustomAdapter = new FriendsListCustomAdapter(dataset);
         friendsListRecyclerView.setAdapter(friendsListCustomAdapter);
-
 
         return rootView;
     }

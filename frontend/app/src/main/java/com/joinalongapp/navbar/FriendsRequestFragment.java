@@ -36,28 +36,14 @@ import okhttp3.Response;
  */
 public class FriendsRequestFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     private RecyclerView friendsRequestRecyclerView;
-    private FriendsRequestFragment.LayoutManagerType layoutManagerType;
     private FriendsRequestCustomAdapter friendsRequestCustomAdapter;
-
     protected List<UserProfile> dataset;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public FriendsRequestFragment() {
         // Required empty public constructor
     }
 
-    private enum LayoutManagerType {
-        LINEAR_LAYOUT_MANAGER
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -71,8 +57,6 @@ public class FriendsRequestFragment extends Fragment {
     public static FriendsRequestFragment newInstance(String param1, String param2) {
         FriendsRequestFragment fragment = new FriendsRequestFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,10 +64,6 @@ public class FriendsRequestFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         try {
             initDataset(getActivity());
         } catch (IOException e) {
@@ -97,18 +77,9 @@ public class FriendsRequestFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_friends_request, container, false);
 
         friendsRequestRecyclerView = (RecyclerView) rootView.findViewById(R.id.peopleRecyclerView);
-
-        layoutManagerType = FriendsRequestFragment.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-
-        if(savedInstanceState != null){
-            layoutManagerType = (FriendsRequestFragment.LayoutManagerType) savedInstanceState.getSerializable("layoutManager");
-        }
-
         friendsRequestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         friendsRequestCustomAdapter = new FriendsRequestCustomAdapter(dataset);
         friendsRequestRecyclerView.setAdapter(friendsRequestCustomAdapter);
-
 
         return rootView;
     }

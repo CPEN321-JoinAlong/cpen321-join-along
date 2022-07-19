@@ -78,7 +78,7 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
                                 Log.d("FriendsAdapter", chatDetailsList.get(holder.getBindingAdapterPosition()).getTitle());
 
                                 Log.d("FriendsAdapter", "MENU1");
-                                //deleteFriend(chatDetailsList.get(holder.getAdapterPosition()).getId());
+                                deleteMessage(chatDetailsList.get(holder.getAdapterPosition()).getId());
                                 return true;
 
                             case R.id.menu2:
@@ -117,7 +117,7 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
         }
     }
 
-    private void deleteFriend(String uuid){
+    private void deleteMessage(String uuid){
         for (Iterator<ChatDetails> iterator = chatDetailsList.iterator(); iterator.hasNext(); ) {
             ChatDetails value = iterator.next();
             if (value.getId().toString() == uuid) {

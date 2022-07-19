@@ -49,9 +49,6 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-
-
             name = (TextView) itemView.findViewById(R.id.individualReportName);
             profilePicture = (ImageView) itemView.findViewById(R.id.individualProfilePicture);
             accept = (Button) itemView.findViewById(R.id.acceptButton);
@@ -110,12 +107,12 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                     requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-
+                            System.out.println("Success!");
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-
+                            System.out.println("Failure!");
                         }
                     });
                     new Timer().schedule(new TimerTask() {
@@ -160,13 +157,12 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                     requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-
-
+                            System.out.println("Success!");
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-
+                            System.out.println("Failure!");
                         }
                     });
 

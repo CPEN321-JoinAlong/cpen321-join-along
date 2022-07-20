@@ -1,64 +1,84 @@
 const User = require("./../../models/User");
 const mongoose = require("mongoose");
-const CONFLICT = 409;
-const NOTFOUND = 404;
-const SUCCESS = 200;
-const INVALID = 422;
+const ERROR_CODES = require("./../../ErrorCodes.js")
 
 class UserStore {
-    async findUserByEvent(eventID) {
-        return await User.find({
-            events: { $in: [eventID] },
-        });
-    }
+    // async findUserByEvent(eventID) {
+    //     return await User.find({
+    //         events: { $in: [eventID] },
+    //     });
+    // }
 
     async findUserByID(userID) {
+        if (!mongoose.isObjectIdOrHexString(userID)) {
+            return {status: ERROR_CODES.INVALID, data: null}
+        };
         console.log(userID);
-        return await User.findById(userID);
+        let foundUser = await User.findById(userID);
+        if(foundUser) return {status: ERROR_CODES.SUCCESS, data: foundUser}
+        else return {status: ERROR_CODES.NOTFOUND, data: null}
     }
 
     async findAllUsers() {
         let userList = await User.find({});
-        return userList;
+        if(userList.length !== 0) return {status: ERROR_CODES.SUCCESS, data: userList}
+        else return {status: ERROR_CODES.NOTFOUND, data: userList}
     }
 
     async updateUserAccount(userID, userInfo) {
+        if (!mongoose.isObjectIdOrHexString(userID)) {
+            return {status: ERROR_CODES.INVALID, data: null}
+        };
         console.log("IN UPDATE USER ACCOUNT");
         console.log(userID);
         console.log(userInfo);
-        return await User.findByIdAndUpdate(userID, userInfo);
+        let foundUser = await User.findByIdAndUpdate(userID, userInfo, {new: true});
+        if(foundUser) return {status: ERROR_CODES.SUCCESS, data: null}
+        else return {status: ERROR_CODES.NOTFOUND, data: null}
     }
 
     async createUser(userInfo) {
-        return await new User(userInfo).save();
+        let newUser = await new User(userInfo).save();
+        return {status: ERROR_CODES.SUCCESS, data: newUser}
     }
 
     async findFriendByIDList(friendIDList) {
-        return await User.find({
+        if(!friendIDList.every((id) => mongoose.isObjectIdOrHexString(id)))
+            return {status: ERROR_CODES.INVALID, data: []}
+        let friendList = await User.find({
             _id: {
                 $in: friendIDList,
             },
         });
+        if(friendList.length !== 0) return {status: ERROR_CODES.SUCCESS, data: friendList};
+        else return {status: ERROR_CODES.NOTFOUND, data: friendList};
     }
 
     async findChatInvites(chatReqList, chatEngine) {
+        if(!chatReqList.every((id) => mongoose.isObjectIdOrHexString(id)))
+            return {status: ERROR_CODES.INVALID, data: []}
         return await chatEngine.findChatByIDList(chatReqList);
     }
 
     async acceptChatInvite(userID, chatID, chatEngine) {
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(chatID)
+        ) {
+            return { status: ERROR_CODES.INVALID, data: null };
+        }
         let chat = await chatEngine.findChatByID(chatID);
         let user = await this.findUserByID(userID);
-        if (chat && user) {
+        if (chat.data && user.data) {
             if (
-                chat.currCapacity < chat.numberOfPeople &&
-                !user.chats.includes(chatID) &&
-                !chat.participants.includes(userID)
+                chat.data.currCapacity < chat.data.numberOfPeople &&
+                !user.data.chats.includes(chatID) &&
+                !chat.data.participants.includes(userID)
             ) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { chat: chatID },
                     $pull: { chatInvites: chatID },
                 });
-                console.log();
                 await chatEngine.editChat(
                     chatID,
                     {
@@ -67,30 +87,53 @@ class UserStore {
                     },
                     this
                 );
-                return SUCCESS;
+                return {status: ERROR_CODES.SUCCESS, data: null};
             } else {
-                return CONFLICT;
+                return {status: ERROR_CODES.CONFLICT, data: null};
             }
         } else {
-            return NOTFOUND;
+            return {status: ERROR_CODES.NOTFOUND, data: null};
         }
     }
 
     async rejectChatInvite(userID, chatID) {
-        await User.findByIdAndUpdate(userID, {
-            $pull: { chatInvites: chatID },
-        });
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(chatID)
+        ) {
+            return { status: ERROR_CODES.INVALID, data: null };
+        }
+        let user = await this.findUserByID(userID);
+        if(user.data){
+            if(user.data.chatInvites.includes(chatID)){
+                await User.findByIdAndUpdate(userID, {
+                    $pull: { chatInvites: chatID },
+                });
+                return {status: ERROR_CODES.SUCCESS, data: null};
+            } else {
+                return {status: ERROR_CODES.CONFLICT, data: null};
+            }
+        } else {
+            return {status: ERROR_CODES.NOTFOUND, data: null};
+        }
     }
 
     async acceptEventInvite(userID, eventID, eventStore, chatEngine) {
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(chatID) ||
+            !mongoose.isObjectIdOrHexString(eventID)
+        ) {
+            return { status: ERROR_CODES.INVALID, data: null };
+        }
         let event = await eventStore.findEventByID(eventID);
         let user = await this.findUserByID(userID);
         let chat = await chatEngine.findChatByID(event.chat);
-        if (event && user && chat) {
+        if (event.data && user.data && chat.data) {
             if (
-                event.currCapacity < event.numberOfPeople &&
-                !user.chats.includes(eventID) &&
-                !event.participants.includes(userID)
+                event.data.currCapacity < event.data.numberOfPeople &&
+                !user.data.chats.includes(eventID) &&
+                !event.data.participants.includes(userID)
             ) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { events: eventID },
@@ -105,17 +148,16 @@ class UserStore {
                     },
                     this
                 );
-                let r = await this.acceptChatInvite(
+                return await this.acceptChatInvite(
                     userID,
                     chat._id,
                     chatEngine
                 );
-                return SUCCESS;
             } else {
-                return CONFLICT;
+                return {status: ERROR_CODES.INVALID, data: null};
             }
         } else {
-            return NOTFOUND;
+            return {status: ERROR_CODES.NOTFOUND, data: null};
         }
     }
 
@@ -138,12 +180,12 @@ class UserStore {
                 await User.findByIdAndUpdate(otherUserID, {
                     $push: { friendRequest: userID },
                 });
-                return SUCCESS;
+                return ERROR_CODES.SUCCESS;
             } else {
-                return CONFLICT;
+                return ERROR_CODES.CONFLICT;
             }
         } else {
-            return NOTFOUND;
+            return ERROR_CODES.NOTFOUND;
         }
     }
 
@@ -165,12 +207,12 @@ class UserStore {
                 await User.findByIdAndUpdate(userID, {
                     $push: { chatInvites: chatID },
                 });
-                return SUCCESS;
+                return ERROR_CODES.SUCCESS;
             } else {
-                return CONFLICT;
+                return ERROR_CODES.CONFLICT;
             }
         } else {
-            return NOTFOUND;
+            return ERROR_CODES.NOTFOUND;
         }
     }
 
@@ -189,12 +231,12 @@ class UserStore {
                 await User.findByIdAndUpdate(otherUserID, {
                     $push: { friends: userID },
                 });
-                return SUCCESS;
+                return ERROR_CODES.SUCCESS;
             } else {
-                return CONFLICT;
+                return ERROR_CODES.CONFLICT;
             }
         } else {
-            return NOTFOUND;
+            return ERROR_CODES.NOTFOUND;
         }
     }
 

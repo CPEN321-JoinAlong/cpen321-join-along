@@ -1,3 +1,5 @@
+const ERROR_CODES = require("./../../ErrorCodes.js")
+
 class UserAccount {
     constructor(userInfo) {
         //fields from userInfo
@@ -24,7 +26,8 @@ class UserAccount {
     }
 
     async createUserAccount(userStore) {
-        return await userStore.createUser(this);
+        let r = await userStore.createUser(this);
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 }
 

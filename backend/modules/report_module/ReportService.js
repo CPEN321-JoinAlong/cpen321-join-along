@@ -1,43 +1,44 @@
 const Report = require("./../../models/Report");
-const mongoose = require("mongoose");
-const CONFLICT = 409;
-const NOTFOUND = 404;
-const SUCCESS = 200;
-const INVALID = 422;
+const ERROR_CODES = require("./../../ErrorCodes.js")
 
 class ReportService {
     async reportUser(userID, reporter, reason, isBlocked, userStore) {
         if (isBlocked) {
             let reporterInfo = userStore.findUserByID(reporter);
-            if (reporterInfo == null) return;
+            if (reporterInfo == null) return { status: ERROR_CODES.NOTFOUND, data: null };
             reporterInfo.blockedUsers.push(userID);
             userStore.updateUserAccount(reporter, reporterInfo);
         }
 
-        return new Report({
+        let r = new Report({
             reporter,
             reason,
             reportedID: userID,
         });
+
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     async reportEvent(eventID, reporter, reason, isBlocked, userStore) {
         if (isBlocked) {
             let reporterInfo = userStore.findUserByID(reporter);
-            if (reporterInfo == null) return;
+            if (reporterInfo == null) return { status: ERROR_CODES.NOTFOUND, data: null };
             reporterInfo.blockedEvents.push(eventID);
             userStore.updateUserAccount(reporter, reporterInfo);
         }
 
-        return new Report({
-            reporter: reporter,
-            reason: reason,
+        let r = new Report({
+            reporter,
+            reason,
             reportedID: eventID,
         });
+
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     async viewAllReports() {
-        return await Report.find({});
+        let r = await Report.find({});
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 }
 

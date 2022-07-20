@@ -1,26 +1,25 @@
 const Chat = require("./../../models/Chat");
-const mongoose = require("mongoose");
-const CONFLICT = 409;
-const NOTFOUND = 404;
-const SUCCESS = 200;
-const INVALID = 422;
+const ERROR_CODES = require("./../../ErrorCodes.js")//isn't error codes in modules? so ./../ErrorCodes.js?
 
 class ChatEngine {
     async findChatByID(chatID) {
         console.log(chatID);
-        return await Chat.findById(chatID);
+        let r = await Chat.findById(chatID);
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     async findChatByIDList(chatIDList) {
-        return await Chat.find({
+        let r = await Chat.find({
             _id: { $in: chatIDList },
         });
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     async findChatByUser(userID) {
-        return await Chat.find({
+        let r = await Chat.find({
             participants: userID,
         });
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     //send Message to a chat object
@@ -28,7 +27,7 @@ class ChatEngine {
         let chat = await Chat.findById(chatID);
         let user = await userStore.findUserByID(userID);
         if (user && chat) {
-            return await Chat.findByIdAndUpdate(
+            let r = await Chat.findByIdAndUpdate(
                 chatID,
                 {
                     $push: {
@@ -44,14 +43,15 @@ class ChatEngine {
                     new: true,
                 }
             );
+            return { status: ERROR_CODES.SUCCESS, data: r };
         } else {
-            return null;
+            return { status: ERROR_CODES.NOTFOUND, data: null };
         }
     }
 
     //Assumes both users exist
     async sendMessage(fromUserID, toUserID, text, name, date) {
-        await Chat.findOneAndUpdate(
+        let r = await Chat.findOneAndUpdate(
             {
                 $and: [
                     {
@@ -75,10 +75,11 @@ class ChatEngine {
                 },
             }
         );
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     async sendGroupMessage(userID, eventID, text, name, date) {
-        await Chat.findOneAndUpdate(
+        let r = await Chat.findOneAndUpdate(
             {
                 event: eventID,
             },
@@ -93,6 +94,7 @@ class ChatEngine {
                 },
             }
         );
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     async createChat(chatInfo, userStore) {
@@ -104,11 +106,11 @@ class ChatEngine {
                 await userStore.updateUserAccount(participant, user);
             }
         });
-        return chatObject;
+        return { status: ERROR_CODES.SUCCESS, data: chatObject };
     }
 
     async removeUser(chatID, userID, userStore) {
-        await this.editChat(
+        let r = await this.editChat(
             chatID,
             {
                 $pull: { participants: userID },
@@ -116,6 +118,7 @@ class ChatEngine {
             },
             userStore
         );
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     async editChat(chatID, chatInfo, userStore) {
@@ -126,7 +129,8 @@ class ChatEngine {
             await userStore.addChat(chatID, chat);
             await userStore.removeChat(chatID, chat);
         }
-        return await Chat.findById(chatID);
+        let r = await Chat.findById(chatID);
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 }
 

@@ -1,23 +1,21 @@
 const Event = require("./../../models/Event");
 const mongoose = require("mongoose");
-const CONFLICT = 409;
-const NOTFOUND = 404;
-const SUCCESS = 200;
-const INVALID = 422;
+const ERROR_CODES = require("./../../ErrorCodes.js")
 
 class EventStore {
     async findUnblockedEvents(userID, userStore) {
-        if (!mongoose.isObjectIdOrHexString(userID)) return [];
+        if (!mongoose.isObjectIdOrHexString(userID)) return { status: ERROR_CODES.INVALID, data: [] };
         let user = await userStore.findUserByID(userID);
         if (user) {
-            return await Event.find({
+            let r = await Event.find({
                 $and: [
                     { _id: { $in: user.events } },
                     { _id: { $nin: user.blockedEvents } },
                 ],
             });
+            return { status: ERROR_CODES.SUCCESS, data: r };
         } else {
-            return [];
+            return { status: ERROR_CODES.NOTFOUND, data: [] };
         }
     }
 
@@ -26,12 +24,12 @@ class EventStore {
             !mongoose.isObjectIdOrHexString(userID) ||
             !mongoose.isObjectIdOrHexString(eventID)
         ) {
-            return INVALID;
+            return { status: ERROR_CODES.INVALID, data: null };
         }
         let event = await this.findEventByID(eventID);
         let user = await userStore.findUserByID(userID);
         if (event && user) {
-            await this.updateEvent(
+            let r = await this.updateEvent(
                 eventID,
                 {
                     $pull: { participants: userID },
@@ -39,27 +37,29 @@ class EventStore {
                 },
                 userStore
             );
-            return SUCCESS;
+            return { status: ERROR_CODES.SUCCESS, data: r };
         } else {
-            return NOTFOUND;
+            return { status: ERROR_CODES.NOTFOUND, data: null };
         }
     }
 
     async findEventsByName(searchEvent) {
-        return await Event.find({
+        let r = await Event.find({
             title: { $regex: searchEvent, $options: "i" },
         });
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     async findEventByUser(userID, userStore) {
-        if (!mongoose.isObjectIdOrHexString(userID)) return [];
+        if (!mongoose.isObjectIdOrHexString(userID)) return { status: ERROR_CODES.INVALID, data: [] }; 
         let user = await userStore.findUserByID(userID);
         if (user) {
-            return await Event.find({
+            let r = await Event.find({
                 participants: userID,
             });
+            return { status: ERROR_CODES.SUCCESS, data: r };
         } else {
-            return [];
+            return { status: ERROR_CODES.NOTFOUND, data: [] }; 
         }
     }
 
@@ -80,22 +80,25 @@ class EventStore {
     // }
 
     async findAllEvents() {
-        return await Event.find({});
+        let r = await Event.find({});
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     async findEventByID(eventID) {
-        if (!mongoose.isObjectIdOrHexString(eventID)) return null;
-        return await Event.findById(eventID);
+        if (!mongoose.isObjectIdOrHexString(eventID)) return { status: ERROR_CODES.INVALID, data: null };
+        let r = await Event.findById(eventID);
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     async findEventByIDList(eventIDList) {
         if (!eventIDList.every((id) => mongoose.isObjectIdOrHexString(id)))
-            return [];
-        return await Event.find({
+            return { status: ERROR_CODES.INVALID, data: [] };
+        let r = await Event.find({
             _id: {
                 $in: eventIDList,
             },
         });
+        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     //add the event to the database and adds it into users' event list and send event object to frontend
@@ -112,25 +115,25 @@ class EventStore {
                 await userStore.updateUserAccount(participant, user);
             }
         });
-        return eventObject;
+        return { status: ERROR_CODES.SUCCESS, data: eventObject };
     }
 
     async updateEvent(eventID, eventInfo, userStore) {
-        if (!mongoose.isObjectIdOrHexString(eventID)) return INVALID;
+        if (!mongoose.isObjectIdOrHexString(eventID)) return { status: ERROR_CODES.INVALID, data: null };
         let event = await Event.findByIdAndUpdate(eventID, eventInfo, {
             new: true,
         });
         if (event) {
             await userStore.addEvent(eventID, event);
             await userStore.removeEvent(eventID, event);
-            return SUCCESS;
+            return { status: ERROR_CODES.SUCCESS, data: null };
         } else {
-            return NOTFOUND;
+            return { status: ERROR_CODES.NOTFOUND, data: null };
         }
     }
 
     async deleteEvent(eventID, userStore) {
-        if (!mongoose.isObjectIdOrHexString(eventID)) return INVALID;
+        if (!mongoose.isObjectIdOrHexString(eventID)) return { status: ERROR_CODES.INVALID, data: null };
         let event = await Event.findById(eventID);
         if (event) {
             let userList = event.participants.filter((id) =>
@@ -142,9 +145,9 @@ class EventStore {
                 });
             });
             await Event.findByIdAndDelete(eventID);
-            return SUCCESS;
+            return { status: ERROR_CODES.SUCCESS, data: null };
         } else {
-            return NOTFOUND;
+            return { status: ERROR_CODES.NOTFOUND, data: null };
         }
     }
 

@@ -79,15 +79,20 @@ public class MessagingListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_messaging_list, container, false);
 
-        messagingListRecyclerView = (RecyclerView) rootView.findViewById(R.id.messagingListRecyclerView);
-
-        messagingListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        messagingListCustomAdapter = new MessagingListCustomAdapter(dataset);
-        messagingListRecyclerView.setAdapter(messagingListCustomAdapter);
-
+        initElements(rootView);
+        initAdapter();
 
         return rootView;
+    }
+
+    private void initAdapter() {
+        messagingListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        messagingListCustomAdapter = new MessagingListCustomAdapter(dataset);
+        messagingListRecyclerView.setAdapter(messagingListCustomAdapter);
+    }
+
+    private void initElements(View rootView) {
+        messagingListRecyclerView = (RecyclerView) rootView.findViewById(R.id.messagingListRecyclerView);
     }
 
     private void initDataset() throws IOException {

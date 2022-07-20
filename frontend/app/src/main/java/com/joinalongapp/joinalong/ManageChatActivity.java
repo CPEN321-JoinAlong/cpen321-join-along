@@ -77,10 +77,7 @@ public class ManageChatActivity extends AppCompatActivity {
 
         String[] tags = getResources().getStringArray(R.array.sample_tags);
 
-
-        List<String> friendUserIds = user.getFriends();
         RequestManager requestManager = new RequestManager();
-        List<String> friendNames = new ArrayList<>();
         Map<String, String> idToName = new HashMap<>();
 
         JSONObject jsonObject = new JSONObject();

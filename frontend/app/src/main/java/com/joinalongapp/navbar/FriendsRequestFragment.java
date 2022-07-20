@@ -76,13 +76,22 @@ public class FriendsRequestFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_friends_request, container, false);
 
-        friendsRequestRecyclerView = (RecyclerView) rootView.findViewById(R.id.peopleRecyclerView);
-        friendsRequestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        friendsRequestCustomAdapter = new FriendsRequestCustomAdapter(dataset);
-        friendsRequestRecyclerView.setAdapter(friendsRequestCustomAdapter);
+        initElements(rootView);
+        initAdapter();
 
         return rootView;
     }
+
+    private void initAdapter() {
+        friendsRequestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        friendsRequestCustomAdapter = new FriendsRequestCustomAdapter(dataset);
+        friendsRequestRecyclerView.setAdapter(friendsRequestCustomAdapter);
+    }
+
+    private void initElements(View rootView) {
+        friendsRequestRecyclerView = (RecyclerView) rootView.findViewById(R.id.peopleRecyclerView);
+    }
+
     private void initDataset(Activity activity) throws IOException {
         UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();

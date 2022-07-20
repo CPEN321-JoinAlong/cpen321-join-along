@@ -1,7 +1,5 @@
 package com.joinalongapp.viewmodel;
 
-import android.graphics.Bitmap;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +19,6 @@ public class ChatDetails implements Serializable, IDetailsModel {
     private int maxNumPeople = Integer.MAX_VALUE;
     //chat has at least one person, so that is the default
     private int numPeople = 1;
-    private Bitmap groupPhoto;
 
     public String getId(){
         return id;

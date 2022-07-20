@@ -97,7 +97,6 @@ public class ReportDetails implements Serializable, IDetailsModel {
 
     @Override
     public IDetailsModel populateDetailsFromJson(String jsonString) throws JSONException {
-        //JSONObject jsonBody = new JSONObject(jsonString);
 
         //todo: i have no idea what some of these fields are meant to be
         //leaving blank for now, please implement later

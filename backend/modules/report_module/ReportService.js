@@ -6,8 +6,6 @@ const SUCCESS = 200;
 const INVALID = 422;
 
 class ReportService {
-    constructor() {}
-
     async reportUser(userID, reporter, reason, isBlocked, userStore) {
         if (isBlocked) {
             let reporterInfo = userStore.findUserByID(reporter);
@@ -17,8 +15,8 @@ class ReportService {
         }
 
         return new Report({
-            reporter: reporter,
-            reason: reason,
+            reporter,
+            reason,
             reportedID: userID,
         });
     }

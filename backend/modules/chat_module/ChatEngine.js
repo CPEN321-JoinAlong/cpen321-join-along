@@ -6,8 +6,6 @@ const SUCCESS = 200;
 const INVALID = 422;
 
 class ChatEngine {
-    constructor() {}
-
     async findChatByID(chatID) {
         console.log(chatID);
         return await Chat.findById(chatID);
@@ -30,7 +28,6 @@ class ChatEngine {
         let chat = await Chat.findById(chatID);
         let user = await userStore.findUserByID(userID);
         if (user && chat) {
-            console.log("HELLOOOOO");
             return await Chat.findByIdAndUpdate(
                 chatID,
                 {
@@ -39,7 +36,7 @@ class ChatEngine {
                             participantID: userID,
                             participantName: name,
                             timeStamp: date,
-                            text: text,
+                            text,
                         },
                     },
                 },
@@ -73,7 +70,7 @@ class ChatEngine {
                         participantID: fromUserID,
                         participantName: name,
                         timeStamp: date,
-                        text: text,
+                        text,
                     },
                 },
             }
@@ -91,7 +88,7 @@ class ChatEngine {
                         participantID: userID,
                         participantName: name,
                         timeStamp: date,
-                        text: text,
+                        text,
                     },
                 },
             }

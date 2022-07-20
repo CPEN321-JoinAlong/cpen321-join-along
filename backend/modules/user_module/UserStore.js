@@ -6,8 +6,6 @@ const SUCCESS = 200;
 const INVALID = 422;
 
 class UserStore {
-    constructor() {}
-
     async findUserByEvent(eventID) {
         return await User.find({
             events: { $in: [eventID] },
@@ -281,14 +279,14 @@ class UserStore {
         await User.findByIdAndUpdate(userID, {
             $pull: { $events: eventID },
         });
-        await eventStore.removeUser(userID, this);
+        await eventStore.removeUser(userID, eventID, this);
     }
 
     async leaveChat(userID, chatID, chatEngine) {
         await User.findByIdAndUpdate(userID, {
             $pull: { $chat: chatID },
         });
-        await chatEngine.removeUser(userID, this);
+        await chatEngine.removeUser(chatID, userID, this);
     }
 
     async findUserForLogin(Token) {

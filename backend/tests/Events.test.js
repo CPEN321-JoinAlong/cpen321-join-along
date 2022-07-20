@@ -1,46 +1,26 @@
 const UserStore = require("./../modules/user_module/UserStore");
 const EventStore = require("./../modules/event_module/EventStore");
-const Event = require("./../models/Event");
 const EventDetails = require("./../modules/event_module/EventDetails");
 jest.mock("./../modules/event_module/EventStore"); //automatically creates mocks of all methods in the class
 
-const mongoose = require("mongoose");
-const { db } = require("../models/User");
-
-const CONFLICT = 409;
-const NOTFOUND = 404;
 const SUCCESS = 200;
 const INVALID = 422;
 
 let userStore = new UserStore();
 
-// beforeAll(() => {
-//     mongoose.connect("mongodb://localhost:27017/joinalong", {
-//         useNewUrlParser: true,
-//         useUnifiedTopology: true,
-//     });
-//     const db = mongoose.connection;
-//     db.on("error", console.error.bind(console, "connection error:"));
-//     db.once("open", () => {
-//         // console.log("Database connected");
-//     });
-// });
-
-// afterAll(() => {
-//     db.close();
-// });
-
 beforeEach(() => {
+    new EventStore();
+});
+
+afterEach(() => {
     EventStore.mockClear();
 });
 
 test("EventStore is called once", async () => {
-    let eventStore = new EventStore();
     expect(EventStore).toHaveBeenCalledTimes(1);
 });
 
 test("create event", async () => {
-    const eventStore = new EventStore();
     const eventInfo = new EventDetails({
         title: "test event",
         eventOwnerID: "sdffsdlkfslkj",
@@ -63,7 +43,6 @@ test("create event", async () => {
 });
 
 test("update event", async () => {
-    const eventStore = new EventStore();
     const eventInfo = new EventDetails({
         _id: "62cccd5a5bb7051aea362f79",
         title: "test event",
@@ -81,8 +60,6 @@ test("update event", async () => {
 });
 
 test("delete event", async () => {
-    let eventStore = new EventStore();
-    expect(EventStore).toHaveBeenCalledTimes(1);
     const mockEventStoreInstance = EventStore.mock.instances[0];
     const mockDeleteEvent = mockEventStoreInstance.deleteEvent;
     mockDeleteEvent.mockReturnValue(SUCCESS);
@@ -92,8 +69,6 @@ test("delete event", async () => {
 });
 
 test("remove User", async () => {
-    let eventStore = new EventStore();
-    expect(EventStore).toHaveBeenCalledTimes(1);
     const mockEventStoreInstance = EventStore.mock.instances[0];
     const mockRemoveUser = mockEventStoreInstance.removeUser;
     mockRemoveUser.mockReturnValue(INVALID);
@@ -103,8 +78,6 @@ test("remove User", async () => {
 });
 
 test("find all events", async () => {
-    let eventStore = new EventStore();
-    expect(EventStore).toHaveBeenCalledTimes(1);
     const mockEventStoreInstance = EventStore.mock.instances[0];
     const mockFindAllEvents = mockEventStoreInstance.findAllEvents;
     let result = [
@@ -130,8 +103,6 @@ test("find all events", async () => {
 });
 
 test("find event by id", async () => {
-    let eventStore = new EventStore();
-    expect(EventStore).toHaveBeenCalledTimes(1);
     const mockEventStoreInstance = EventStore.mock.instances[0];
     const mockFindEventByID = mockEventStoreInstance.findEventByID;
     let result = {
@@ -147,8 +118,6 @@ test("find event by id", async () => {
 });
 
 test("find events by idlist", async () => {
-    let eventStore = new EventStore();
-    expect(EventStore).toHaveBeenCalledTimes(1);
     const mockEventStoreInstance = EventStore.mock.instances[0];
     const mockFindEventByIDList = mockEventStoreInstance.findEventByIDList;
     let result = [
@@ -179,8 +148,6 @@ test("find events by idlist", async () => {
 });
 
 test("find events by name", async () => {
-    let eventStore = new EventStore();
-    expect(EventStore).toHaveBeenCalledTimes(1);
     const mockEventStoreInstance = EventStore.mock.instances[0];
     const mockFindEventsByName = mockEventStoreInstance.findEventsByName;
     let result = [
@@ -198,8 +165,6 @@ test("find events by name", async () => {
 });
 
 test("find unblocked events", async () => {
-    let eventStore = new EventStore();
-    expect(EventStore).toHaveBeenCalledTimes(1);
     const mockEventStoreInstance = EventStore.mock.instances[0];
     const mockFindUnblockedEvents = mockEventStoreInstance.findUnblockedEvents;
     let result = [
@@ -218,8 +183,3 @@ test("find unblocked events", async () => {
     );
 });
 
-// afterEach(async () => {
-//     await Event.deleteMany({
-//         title: "test event",
-//     });
-// });

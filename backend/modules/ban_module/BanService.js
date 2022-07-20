@@ -1,6 +1,4 @@
 class BanService {
-    constructor() {}
-
     async banUser(userID, userStore) {
         return await userStore.deleteUser(userID);
     }

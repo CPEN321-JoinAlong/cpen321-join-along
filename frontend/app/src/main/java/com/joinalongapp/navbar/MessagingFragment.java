@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
@@ -18,7 +17,6 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.joinalongapp.joinalong.ManageChatActivity;
 import com.joinalongapp.joinalong.R;
-import com.joinalongapp.joinalong.SearchScreenActivity;
 
 /**
  * A simple {@link Fragment} subclass.

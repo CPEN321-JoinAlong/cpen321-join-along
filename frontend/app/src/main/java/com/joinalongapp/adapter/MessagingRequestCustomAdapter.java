@@ -123,7 +123,8 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
 
                         @Override
                         public void onError(Call call, IOException e) {
-
+                            e.printStackTrace();
+                            //todo better error message
                         }
                     });
                 } catch (IOException e) {

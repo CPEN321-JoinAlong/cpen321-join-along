@@ -75,12 +75,20 @@ public class FriendsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_friends_list, container, false);
 
-        friendsListRecyclerView = (RecyclerView) rootView.findViewById(R.id.friendsListRecyclerView);
+        initElements(rootView);
+        initAdapter();
+
+        return rootView;
+    }
+
+    private void initAdapter() {
         friendsListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         friendsListCustomAdapter = new FriendsListCustomAdapter(dataset);
         friendsListRecyclerView.setAdapter(friendsListCustomAdapter);
+    }
 
-        return rootView;
+    private void initElements(View rootView) {
+        friendsListRecyclerView = (RecyclerView) rootView.findViewById(R.id.friendsListRecyclerView);
     }
 
     private void initDataset() throws IOException{

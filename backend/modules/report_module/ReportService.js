@@ -2,43 +2,33 @@ const Report = require("./../../models/Report");
 const ERROR_CODES = require("./../../ErrorCodes.js")
 
 class ReportService {
-    async reportUser(userID, reporter, reason, isBlocked, userStore) {
+    async report(name, reporterID, reportedID, reason, description, isEvent, isBlocked, userStore) {
         if (isBlocked) {
-            let reporterInfo = userStore.findUserByID(reporter);
-            if (reporterInfo == null) return { status: ERROR_CODES.NOTFOUND, data: null };
-            reporterInfo.blockedUsers.push(userID);
-            userStore.updateUserAccount(reporter, reporterInfo);
+            let reporterInfo = userStore.findUserByID(reporterID);
+            if (reporterInfo == null) return new ResponseObject(ERROR_CODES.NOTFOUND);
+            if(isEvent)
+                reporterInfo.blockedEvents.push(reportedID);
+            else
+                reporterInfo.blockedUsers.push(reportedID)
+            userStore.updateUserAccount(reporterID, reporterInfo);
         }
 
-        let r = new Report({
-            reporter,
+        let report = new Report({
+            name,
+            reporterID,
+            reportedID,
             reason,
-            reportedID: userID,
+            description,
+            isEvent,
+            isBlocked
         });
 
-        return { status: ERROR_CODES.SUCCESS, data: r };
-    }
-
-    async reportEvent(eventID, reporter, reason, isBlocked, userStore) {
-        if (isBlocked) {
-            let reporterInfo = userStore.findUserByID(reporter);
-            if (reporterInfo == null) return { status: ERROR_CODES.NOTFOUND, data: null };
-            reporterInfo.blockedEvents.push(eventID);
-            userStore.updateUserAccount(reporter, reporterInfo);
-        }
-
-        let r = new Report({
-            reporter,
-            reason,
-            reportedID: eventID,
-        });
-
-        return { status: ERROR_CODES.SUCCESS, data: r };
+        return new ResponseObject(ERROR_CODES.SUCCESS, report);
     }
 
     async viewAllReports() {
-        let r = await Report.find({});
-        return { status: ERROR_CODES.SUCCESS, data: r };
+        let reports = await Report.find({});
+        return new ResponseObject(ERROR_CODES.SUCCESS, reports);
     }
 }
 

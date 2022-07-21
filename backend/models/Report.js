@@ -2,11 +2,13 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const ReportSchema = new Schema({
-    reporter: String,
-    reason: String,
+    name: String,
+    reporterID: String,
     reportedID: String,
+    reason: String,
+    description: String,
     isEvent: Boolean,
-    description: String
+    isBlocked: Boolean
 });
 
 module.exports = mongoose.model("Report", ReportSchema);

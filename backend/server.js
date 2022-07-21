@@ -439,14 +439,20 @@ app.put("/user/leaveChat/:userID/:chatID", async (req, res) => {
 //* Report and Ban paths
 
 app.post("/user/:reporterID/reportUser/:reportedID", async (req, res) => {
+    let name = req.body.name
     let reporterID = req.params.reporterID
     let reportedID = req.params.reportedID
     let reason = req.body.reason
+    let description = req.body.description
+    let isEvent = 0
     let isBlocked = req.body.isBlocked
-    await reportService.reportUser(
-        reportedID,
+    await reportService.report(
+        name,
         reporterID,
+        reportedID,
         reason,
+        description,
+        isEvent,
         isBlocked,
         userStore
     );
@@ -454,14 +460,20 @@ app.post("/user/:reporterID/reportUser/:reportedID", async (req, res) => {
 });
 
 app.post("/user/:reporterID/reportEvent/:reportedID", async (req, res) => {
+    let name = req.body.name
     let reporterID = req.params.reporterID
     let reportedID = req.params.reportedID
     let reason = req.body.reason
+    let description = req.body.description
+    let isEvent = 1
     let isBlocked = req.body.isBlocked
-    await reportService.reportEvent(
-        reportedID,
+    await reportService.report(
+        name,
         reporterID,
+        reportedID,
         reason,
+        description,
+        isEvent,
         isBlocked,
         userStore
     );

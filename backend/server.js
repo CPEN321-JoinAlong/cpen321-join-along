@@ -16,7 +16,7 @@ const EventDetails = require("./modules/event_module/EventDetails");
 const EventStore = require("./modules/event_module/EventStore");
 const ReportService = require("./modules/report_module/ReportService")
 const BanService = require("./modules/ban_module/BanService")
-const ERROR_CODES = require("./../../ErrorCodes")
+const ERROR_CODES = require("./ErrorCodes")
 
 function logRequest(req, res, next) {
     console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
@@ -70,9 +70,9 @@ app.use(async (req, res, next) => {
     let token;
     if (Object.keys(req.body).length !== 0) token = req.body.token;
     else token = req.headers.token;
-    let user = await userStore.findUserForLogin(token);
+    let userResponse = await userStore.findUserForLogin(token);
     if (
-        user != null ||
+        userResponse.status === ERROR_CODES.SUCCESS ||
         req.path.includes("/login") || req.path.includes("/user/create") || req.path == "/test"
     ) {
         next();
@@ -99,16 +99,16 @@ app.get("/test", async (req, res) => {
 
 //login - post
 app.post("/login", async (req, res) => {
-    const { Token } = req.body;
+    const Token = req.body.Token
     try {
         let response = await axios(
             `https://oauth2.googleapis.com/tokeninfo?id_token=${Token}`
         );
         if (response.status === ERROR_CODES.SUCCESS) {
-            let foundUser = await userStore.findUserForLogin(response.data.sub);
-            if (foundUser == null)
-                res.status(ERROR_CODES.NOTFOUND).send({ token: response.data.sub });
-            else res.status(ERROR_CODES.SUCCESS).send(foundUser);
+            let foundUserResponse = await userStore.findUserForLogin(response.data.sub);
+            if (foundUserResponse.status !== ERROR_CODES.SUCCESS)
+                res.status(foundUserResponse.status).send({ token: response.data.sub });
+            else res.status(foundUserResponse.status).send(foundUserResponse.data);
         } else {
             res.status(ERROR_CODES.NOTACCEPTABLE).send(
                 "Token not valid, try signing in again or use another account"
@@ -167,21 +167,21 @@ app.post("/event/create", async (req, res) => {
 
 //Edits User and sends it to frontend
 app.put("/user/:id/edit", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     let userResponse = await userStore.updateUserAccount(id, req.body)
     res.status(userResponse.status).send(userResponse.data); 
 });
 
 //Edits Chat and sends it to frontend
 app.put("/chat/:id/edit", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     let chatResponse = await chatEngine.editChat(id, req.body, userStore);
     res.status(chatResponse.status).send(chatResponse.data); //update the update function to send the new object
 });
 
 //Edits User and sends it to frontend
 app.put("/event/:id/edit", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     let eventResponse = await eventStore.updateEvent(id, req.body, userStore);
     res.status(eventResponse.status).send(eventResponse.data) //update the update func to send the new object
 });
@@ -201,28 +201,28 @@ app.put("/event/:id/edit", async (req, res) => {
 
 //Sends the user object for the profile page - get
 app.get("/user/:id", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     let response = await userStore.findUserByID(id);
     res.status(response.status).send(response.data)
 });
 
 //Get user list by name
 app.get("/user/name/:userName", async (req, res) => {
-    let { userName } = req.params;
+    let userName = req.params.userName;
     let userListReponse = await userStore.findUserByName(userName)
     res.status(userListReponse.status).send(userListReponse.data)
 });
 
 //Get event list by name
 app.get("/event/title/:eventName", async (req, res) => {
-    let { eventName } = req.params;
+    let eventName = req.params.eventName;
     let eventListResponse = await eventStore.findEventsByName(eventName)
     res.status(eventListResponse.status).send(eventListResponse.data)
 });
 
 //Sends the list of friend requests of user - get
 app.get("/user/:id/friendRequest", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     let userResponse = await userStore.findUserByID(id);
     if (userResponse.status !== ERROR_CODES.SUCCESS) res.status(userResponse.status).send([]);
     else {
@@ -233,7 +233,7 @@ app.get("/user/:id/friendRequest", async (req, res) => {
 
 //Sends the list of friends of user - get
 app.get("/user/:id/friends", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     let userResponse = await userStore.findUserByID(id);
     if (userResponse.status !== ERROR_CODES.SUCCESS) res.status(userResponse.status).send([]);
     else {
@@ -246,7 +246,7 @@ app.get("/user/:id/friends", async (req, res) => {
 
 //Chat list: Sends the list of chats the user is in - get
 app.get("/user/:id/chat", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     let userResponse = await userStore.findUserByID(id);
     if (userResponse.status !== ERROR_CODES.SUCCESS) res.status(userResponse.status).send([]);
     else {
@@ -257,7 +257,7 @@ app.get("/user/:id/chat", async (req, res) => {
 
 //Sends the list of chatInvites - get
 app.get("/user/:id/chatInvites", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     let userResponse = await userStore.findUserByID(id);
     if (userResponse.status !== ERROR_CODES.SUCCESS) res.status(userResponse.status).send([]);
     else {
@@ -269,8 +269,11 @@ app.get("/user/:id/chatInvites", async (req, res) => {
 //Chat: send message to a single user
 app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
     console.log("hello");
-    let { userID, chatID } = req.params;
-    let { timeStamp, text } = req.body;
+    let userID = req.params.userID
+    let chatID = req.params.chatID
+    let timeStamp = req.body.timeStamp
+    let text = req.body.text
+
     let userResponse = await userStore.findUserByID(userID);
     if (userResponse.status !== ERROR_CODES.SUCCESS) return res.status(userResponse.status).send("Unsuccesfull")
     let fromUserName = userResponse.data.name;
@@ -299,7 +302,7 @@ app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
 
 //Chat: Sends the chat object (which includes all the messages) - get
 app.get("/chat/:id", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     console.log("IN CHAT END POINT")
     console.log(id)
     let chatResponse = await chatEngine.findChatByID(id);
@@ -310,7 +313,7 @@ app.get("/chat/:id", async (req, res) => {
 
 //Event list: Sends the list of Events the user is in - get
 app.get("/user/:id/event", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     let userResponse = await userStore.findUserByID(id);
     if (userResponse.status !== ERROR_CODES.SUCCESS) res.status(userResponse.status).send([]);
     else {
@@ -327,7 +330,7 @@ app.get("/user/:id/event", async (req, res) => {
 
 //Event: Sends the event object (for view event details?) - get
 app.get("/event/:id", async (req, res) => {
-    let { id } = req.params
+    let id = req.params.id
     let eventResponse = await eventStore.findEventByID(id)
     res.status(eventResponse.status).send(eventResponse.data)
 });
@@ -339,7 +342,8 @@ app.get("/event", async (req, res) => {
 });
 
 app.put("/chat/sendChatInvite/:chatID/:userID", async (req, res) => {
-    let { userID, chatID } = req.params;
+    let userID = req.params.userID
+    let chatID = req.params.chatID
     let chatInviteResponse = await userStore.sendChatInvite(userID, chatID, chatEngine);
     if(chatInviteResponse.status === ERROR_CODES.SUCCESS) res.status(chatInviteResponse.status).send("Successful");
     else res.status(chatInviteResponse.status).send("Unsuccessful");
@@ -347,7 +351,8 @@ app.put("/chat/sendChatInvite/:chatID/:userID", async (req, res) => {
 });
 
 app.put("/user/sendFriendRequest/:userID/:otherUserID", async (req, res) => {
-    let { userID, otherUserID } = req.params;
+    let userID = req.params.userID
+    let otherUserID = req.params.otherUserID
     let friendReqResponse = await userStore.sendFriendRequest(userID, otherUserID);
     if(friendReqResponse == ERROR_CODES.SUCCESS) res.status(friendReqResponse.status).send("Successful");
     else res.status(friendReqResponse.status).send("Unsuccessful");
@@ -355,42 +360,48 @@ app.put("/user/sendFriendRequest/:userID/:otherUserID", async (req, res) => {
 
 //* Accept or Reject requests (can be used for join as well) and invites
 app.put("/user/acceptChat/:userID/:chatID", async (req, res) => {
-    let { userID, chatID } = req.params;
+    let userID = req.params.userID
+    let chatID = req.params.chatID
     let chatInviteResponse = await userStore.acceptChatInvite(userID, chatID, chatEngine);
     if(chatInviteResponse.status === ERROR_CODES.SUCCESS) res.status(chatInviteResponse.status).send("Successful");
     else res.status(chatInviteResponse.status).send("Unsuccessful");
 });
 
 app.put("/user/acceptEvent/:userID/:eventID", async (req, res) => {
-    let { userID, eventID } = req.params;
+    let userID = req.params.userID
+    let eventID = req.params.eventID
     let eventInvResponse = await userStore.acceptEventInvite(userID, eventID, eventStore, chatEngine);
     if(eventInvResponse.status === ERROR_CODES.SUCCESS) res.status(eventInvResponse.status).send("Successful");
     else res.status(eventInvResponse.status).send("Unsuccessful");
 });
 
 app.put("/user/acceptUser/:userID/:otherUserID", async (req, res) => {
-    let { userID, otherUserID } = req.params;
+    let userID = req.params.userID
+    let otherUserID = req.params.otherUserID
     let friendReqResponse = await userStore.acceptFriendRequest(userID, otherUserID);
     if(friendReqResponse.status === ERROR_CODES.SUCCESS) res.status(friendReqResponse.status).send("Successful");
     else res.status(friendReqResponse.status).send("Unsuccessful");
 });
 
 app.put("/user/rejectChat/:userID/:chatID", async (req, res) => {
-    let { userID, chatID } = req.params;
+    let userID = req.params.userID
+    let chatID = req.params.chatID
     let chatInvResponse = await userStore.rejectChatInvite(userID, chatID)
     if(chatInvResponse.status === ERROR_CODES.SUCCESS) res.status(chatInvResponse.status).send("Successful")
     else res.status(chatInvResponse.status).send("Unsuccessful")
 });
 
 app.put("/user/rejectEvent/:userID/:eventID", async (req, res) => {
-    let { userID, eventID } = req.params;
+    let userID = req.params.userID
+    let eventID = req.params.eventID
     let eventInvResponse = await userStore.rejectEventInvite(userID, eventID);
     if(eventInvResponse.status === ERROR_CODES.SUCCESS) res.status(eventInvResponse.status).send("Successful");
     else res.status(eventInvResponse.status).send("Unsuccessful");
 });
 
 app.put("/user/rejectUser/:userID/:otherUserID", async (req, res) => {
-    let { userID, otherUserID } = req.params;
+    let userID = req.params.userID
+    let otherUserID = req.params.otherUserID
     let friendReqResponse = await userStore.rejectFriendRequest(userID, otherUserID);
     if(friendReqResponse.status === ERROR_CODES.SUCCESS) res.status(friendReqResponse.status).send("Successful");
     else res.status(friendReqResponse.status).send("Unsuccessful");
@@ -399,14 +410,16 @@ app.put("/user/rejectUser/:userID/:otherUserID", async (req, res) => {
 //* Remove friend or leave event and chat
 
 app.put("/user/removeFriend/:userID/:otherUserID", async (req, res) => {
-    let { userID, otherUserID } = req.params;
+    let userID = req.params.userID
+    let otherUserID = req.params.otherUserID
     let friendResponse = await userStore.removeFriend(userID, otherUserID);
     if(friendResponse.status === ERROR_CODES.SUCCESS) res.status(friendResponse.status).send("Successful");
     else res.status(friendResponse.status).send("Unsuccessful");
 });
 
 app.put("/user/leaveEvent/:userID/:eventID", async (req, res) => {
-    let { userID, eventID } = req.params;
+    let userID = req.params.userID
+    let eventID = req.params.eventID
     let event = eventStore.findEventByID(eventID);
     if(event.status !== ERROR_CODES.SUCCESS) return res.status(event.status).send("Event not found")
     let eventResponse = await userStore.leaveEvent(userID, eventID, eventStore);
@@ -416,7 +429,8 @@ app.put("/user/leaveEvent/:userID/:eventID", async (req, res) => {
 });
 
 app.put("/user/leaveChat/:userID/:chatID", async (req, res) => {
-    let { userID, chatID } = req.params;
+    let userID = req.params.userID;
+    let chatID = req.params.chatID
     let chatResponse = await userStore.leaveChat(userID, chatID, chatEngine);
     if(chatResponse.status === ERROR_CODES.SUCCESS) res.status(chatResponse.status).send("Successful");
     else res.status(chatResponse.status).send("Unsuccessful");
@@ -425,8 +439,10 @@ app.put("/user/leaveChat/:userID/:chatID", async (req, res) => {
 //* Report and Ban paths
 
 app.post("/user/:reporterID/reportUser/:reportedID", async (req, res) => {
-    let { reporterID, reportedID } = req.params;
-    let { reason, isBlocked } = req.body;
+    let reporterID = req.params.reporterID
+    let reportedID = req.params.reportedID
+    let reason = req.body.reason
+    let isBlocked = req.body.isBlocked
     await reportService.reportUser(
         reportedID,
         reporterID,
@@ -438,8 +454,10 @@ app.post("/user/:reporterID/reportUser/:reportedID", async (req, res) => {
 });
 
 app.post("/user/:reporterID/reportEvent/:reportedID", async (req, res) => {
-    let { reporterID, reportedID } = req.params;
-    let { reason, isBlocked } = req.body;
+    let reporterID = req.params.reporterID
+    let reportedID = req.params.reportedID
+    let reason = req.body.reason
+    let isBlocked = req.body.isBlocked
     await reportService.reportEvent(
         reportedID,
         reporterID,
@@ -456,7 +474,7 @@ app.get("/reports", async (req, res) => {
 });
 
 app.post("/user/:id/ban", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     await banService.banUser(id, userStore);
     res.status(ERROR_CODES.SUCCESS).send("Successful");
 });
@@ -467,7 +485,7 @@ app.get("/user", async(req, res) => {
 })
 
 app.post("/event/:id/ban", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     await banService.banEvent(id, eventStore);
     res.status(ERROR_CODES.SUCCESS).send("Successful");
 });

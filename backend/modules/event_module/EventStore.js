@@ -110,35 +110,33 @@ class EventStore {
     async createEvent(eventInfo, userStore) {
         let eventObject = await new Event(eventInfo).save();
         eventObject.participants.forEach(async (participant) => {
-            // console.log(participant);
-            let user = await userStore.findUserByID(participant);
-            if (user) {
-                user.events.push(eventObject._id);
-                // console.log("IN CREATE EVENT");
-                // console.log(eventObject._id);
-                // console.log(user.events);
-                await userStore.updateUserAccount(participant, user);
+            if(mongoose.isObjectIdOrHexString(participant)) {
+                await userStore.updateUserAccount(participant, {
+                    $push: {events: eventObject._id}
+                });
             }
         });
-        return { status: ERROR_CODES.SUCCESS, data: eventObject };
+        return new ResponseObject(ERROR_CODES.SUCCESS, eventObject);
     }
 
     async updateEvent(eventID, eventInfo, userStore) {
-        if (!mongoose.isObjectIdOrHexString(eventID)) return { status: ERROR_CODES.INVALID, data: null };
+        if (!mongoose.isObjectIdOrHexString(eventID)) 
+            return new ResponseObject(ERROR_CODES.INVALID);
         let event = await Event.findByIdAndUpdate(eventID, eventInfo, {
             new: true,
         });
         if (event) {
             await userStore.addEvent(eventID, event);
             await userStore.removeEvent(eventID, event);
-            return { status: ERROR_CODES.SUCCESS, data: null };
+            return new ResponseObject(ERROR_CODES.SUCCESS, event);
         } else {
-            return { status: ERROR_CODES.NOTFOUND, data: null };
+            return new ResponseObject(ERROR_CODES.INVALID);
         }
     }
 
     async deleteEvent(eventID, userStore) {
-        if (!mongoose.isObjectIdOrHexString(eventID)) return { status: ERROR_CODES.INVALID, data: null };
+        if (!mongoose.isObjectIdOrHexString(eventID)) 
+            return new ResponseObject(ERROR_CODES.INVALID);
         let event = await Event.findById(eventID);
         if (event) {
             let userList = event.participants.filter((id) =>
@@ -150,9 +148,9 @@ class EventStore {
                 });
             });
             await Event.findByIdAndDelete(eventID);
-            return { status: ERROR_CODES.SUCCESS, data: null };
+            return new ResponseObject(ERROR_CODES.SUCCESS);
         } else {
-            return { status: ERROR_CODES.NOTFOUND, data: null };
+            return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
     }
 

@@ -310,36 +310,73 @@ class UserStore {
         );
     }
 
+    //! Need to do
     async deleteUser(userID) {
         return await User.findByIdAndDelete(userID);
     }
 
     async removeFriend(userID, otherUserID) {
-        await User.updateMany(
-            { _id: { $in: [userID, otherUserID] } },
-            { $pull: { friends: { $in: [userID, otherUserID] } } }
-        );
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(otherUserID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID);
+        }
+        let userResponse = await this.findUserByID(userID)
+        let otherUserResponse = await this.findUserByID(otherUserID)
+        if (userResponse.data && otherUserResponse.data) {
+            await User.updateMany(
+                { _id: { $in: [userID, otherUserID] } },
+                { $pull: { friends: { $in: [userID, otherUserID] } } }
+            )
+            return new ResponseObject(ERROR_CODES.SUCCESS)
+        } else {
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
+        }
     }
 
     async leaveEvent(userID, eventID, eventStore) {
-        await User.findByIdAndUpdate(userID, {
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(eventID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID);
+        }
+        let user = await User.findByIdAndUpdate(userID, {
             $pull: { $events: eventID },
         });
-        await eventStore.removeUser(userID, eventID, this);
+        if(user) {
+            let response = await eventStore.removeUser(userID, eventID, this);
+            return response
+        } else {
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
+        }
     }
 
     async leaveChat(userID, chatID, chatEngine) {
-        await User.findByIdAndUpdate(userID, {
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(chatID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        }
+        let user = await User.findByIdAndUpdate(userID, {
             $pull: { $chat: chatID },
         });
-        await chatEngine.removeUser(chatID, userID, this);
+        if(user) {
+            let response = await chatEngine.removeUser(chatID, userID, this);
+            return response
+        } else {
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
+        }
     }
 
     async findUserForLogin(Token) {
         let user = await User.findOne({
             token: Token,
         });
-        return user;
+        if(user) return new ResponseObject(ERROR_CODES.SUCCESS, user)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND)
     }
 }
 

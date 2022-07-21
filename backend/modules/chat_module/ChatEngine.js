@@ -25,7 +25,7 @@ class ChatEngine {
     async findChatByUser(userID) {
         if (!mongoose.isObjectIdOrHexString(userID)) {
             return new ResponseObject(ERROR_CODES.INVALID)
-        };
+        }
         let chatList = await Chat.find({
             participants: userID,
         });

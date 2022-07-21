@@ -2,13 +2,13 @@ const ERROR_CODES = require("./../../ErrorCodes.js")
 
 class BanService {
     async banUser(userID, userStore) {
-        let r = await userStore.deleteUser(userID);
-        return { status: ERROR_CODES.SUCCESS, data: r };
+        let response = await userStore.deleteUser(userID);
+        return new ResponseObject(ERROR_CODES.SUCCESS, response)
     }
 
     async banEvent(eventID, eventStore) {
-        let r = await eventStore.deleteEvent(eventID);
-        return { status: ERROR_CODES.SUCCESS, data: r };
+        let response = await eventStore.deleteEvent(eventID);
+        return new ResponseObject(ERROR_CODES.SUCCESS, response)
     }
 }
 

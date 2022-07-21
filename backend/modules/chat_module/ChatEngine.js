@@ -3,31 +3,48 @@ const ERROR_CODES = require("./../../ErrorCodes.js")//isn't error codes in modul
 
 class ChatEngine {
     async findChatByID(chatID) {
+        if (!mongoose.isObjectIdOrHexString(chatID)) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        };
         console.log(chatID);
-        let r = await Chat.findById(chatID);
-        return { status: ERROR_CODES.SUCCESS, data: r };
+        let foundChat = await Chat.findById(chatID);
+        if(foundChat) return new ResponseObject(ERROR_CODES.SUCCESS, foundChat)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND)
     }
 
     async findChatByIDList(chatIDList) {
-        let r = await Chat.find({
+        if(!chatIDList.every((id) => mongoose.isObjectIdOrHexString(id)))
+            return new ResponseObject(ERROR_CODES.INVALID, [])
+        let chatList = await Chat.find({
             _id: { $in: chatIDList },
         });
-        return { status: ERROR_CODES.SUCCESS, data: r };
+        if(chatList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, chatList)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, chatList)
     }
 
     async findChatByUser(userID) {
-        let r = await Chat.find({
+        if (!mongoose.isObjectIdOrHexString(userID)) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        };
+        let chatList = await Chat.find({
             participants: userID,
         });
-        return { status: ERROR_CODES.SUCCESS, data: r };
+        if(chatList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, chatList)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, chatList)
     }
 
     //send Message to a chat object
     async sendChatMessage(userID, chatID, text, name, date, userStore) {
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(chatID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        }
         let chat = await Chat.findById(chatID);
-        let user = await userStore.findUserByID(userID);
-        if (user && chat) {
-            let r = await Chat.findByIdAndUpdate(
+        let userResponse = await userStore.findUserByID(userID)
+        if (userResponse.data && chat) {
+            let response = await Chat.findByIdAndUpdate(
                 chatID,
                 {
                     $push: {
@@ -43,94 +60,63 @@ class ChatEngine {
                     new: true,
                 }
             );
-            return { status: ERROR_CODES.SUCCESS, data: r };
+            return new ResponseObject(ERROR_CODES.SUCCESS, response)
         } else {
-            return { status: ERROR_CODES.NOTFOUND, data: null };
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
         }
-    }
-
-    //Assumes both users exist
-    async sendMessage(fromUserID, toUserID, text, name, date) {
-        let r = await Chat.findOneAndUpdate(
-            {
-                $and: [
-                    {
-                        event: null,
-                    },
-                    {
-                        participants: {
-                            $all: [fromUserID, toUserID],
-                        },
-                    },
-                ],
-            },
-            {
-                $push: {
-                    messages: {
-                        participantID: fromUserID,
-                        participantName: name,
-                        timeStamp: date,
-                        text,
-                    },
-                },
-            }
-        );
-        return { status: ERROR_CODES.SUCCESS, data: r };
-    }
-
-    async sendGroupMessage(userID, eventID, text, name, date) {
-        let r = await Chat.findOneAndUpdate(
-            {
-                event: eventID,
-            },
-            {
-                $push: {
-                    messages: {
-                        participantID: userID,
-                        participantName: name,
-                        timeStamp: date,
-                        text,
-                    },
-                },
-            }
-        );
-        return { status: ERROR_CODES.SUCCESS, data: r };
     }
 
     async createChat(chatInfo, userStore) {
         let chatObject = await new Chat(chatInfo).save();
         chatObject.participants.forEach(async (participant) => {
-            let user = await userStore.findUserByID(participant);
-            if (user) {
-                user.chats.push(chatObject._id);
-                await userStore.updateUserAccount(participant, user);
+            if(mongoose.isObjectIdOrHexString(participant)) {
+                await userStore.updateUserAccount(participant, {
+                    $push: {chats: chatObject._id}
+                });
             }
         });
-        return { status: ERROR_CODES.SUCCESS, data: chatObject };
+        return new ResponseObject(ERROR_CODES.SUCCESS, chatObject);
     }
 
     async removeUser(chatID, userID, userStore) {
-        let r = await this.editChat(
-            chatID,
-            {
-                $pull: { participants: userID },
-                $dec: { currCapacity: 1 },
-            },
-            userStore
-        );
-        return { status: ERROR_CODES.SUCCESS, data: r };
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(chatID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        }
+        let chatResponse = await this.findChatByID(chatID);
+        let userResponse = await userStore.findUserByID(userID);
+        if(userResponse.data && chatResponse.data) {
+            await this.editChat(
+                chatID,
+                {
+                    $pull: { participants: userID },
+                    $dec: { currCapacity: 1 },
+                },
+                userStore
+            );
+            return new ResponseObject(ERROR_CODES.SUCCESS)
+        } else {
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
+        }
     }
 
     async editChat(chatID, chatInfo, userStore) {
+        if (!mongoose.isObjectIdOrHexString(chatID)) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        };
         let chat = await Chat.findByIdAndUpdate(chatID, chatInfo, {
             new: true,
         });
         if (chat) {
             await userStore.addChat(chatID, chat);
             await userStore.removeChat(chatID, chat);
+            return new ResponseObject(ERROR_CODES.SUCCESS, chat)
+        } else {
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
         }
-        let r = await Chat.findById(chatID);
-        return { status: ERROR_CODES.SUCCESS, data: r };
+        
     }
 }
 

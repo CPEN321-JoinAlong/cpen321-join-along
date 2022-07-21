@@ -1,6 +1,7 @@
 const User = require("./../../models/User");
 const mongoose = require("mongoose");
 const ERROR_CODES = require("./../../ErrorCodes.js")
+const ResponseObject = require("./../../ResponseObject")
 
 class UserStore {
     // async findUserByEvent(eventID) {
@@ -11,53 +12,54 @@ class UserStore {
 
     async findUserByID(userID) {
         if (!mongoose.isObjectIdOrHexString(userID)) {
-            return {status: ERROR_CODES.INVALID, data: null}
+            return new ResponseObject(ERROR_CODES.INVALID)
         };
         console.log(userID);
         let foundUser = await User.findById(userID);
-        if(foundUser) return {status: ERROR_CODES.SUCCESS, data: foundUser}
-        else return {status: ERROR_CODES.NOTFOUND, data: null}
+        if(foundUser) return new ResponseObject(ERROR_CODES.SUCCESS, foundUser)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND)
     }
 
     async findAllUsers() {
         let userList = await User.find({});
-        if(userList.length !== 0) return {status: ERROR_CODES.SUCCESS, data: userList}
-        else return {status: ERROR_CODES.NOTFOUND, data: userList}
+        if(userList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, userList)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, userList)
     }
 
     async updateUserAccount(userID, userInfo) {
         if (!mongoose.isObjectIdOrHexString(userID)) {
-            return {status: ERROR_CODES.INVALID, data: null}
+            return new ResponseObject(ERROR_CODES.INVALID)
         };
-        console.log("IN UPDATE USER ACCOUNT");
-        console.log(userID);
-        console.log(userInfo);
-        let foundUser = await User.findByIdAndUpdate(userID, userInfo, {new: true});
-        if(foundUser) return {status: ERROR_CODES.SUCCESS, data: null}
-        else return {status: ERROR_CODES.NOTFOUND, data: null}
+        console.log("IN UPDATE USER ACCOUNT")
+        console.log(userID)
+        console.log(userInfo)
+        let foundUser = await User.findByIdAndUpdate(userID, userInfo, {new: true})
+        if(foundUser) return new ResponseObject(ERROR_CODES.SUCCESS, foundUser)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND)
     }
 
     async createUser(userInfo) {
         let newUser = await new User(userInfo).save();
-        return {status: ERROR_CODES.SUCCESS, data: newUser}
+        return new ResponseObject(ERROR_CODES.SUCCESS, newUser)
     }
 
     async findFriendByIDList(friendIDList) {
         if(!friendIDList.every((id) => mongoose.isObjectIdOrHexString(id)))
-            return {status: ERROR_CODES.INVALID, data: []}
+            return new ResponseObject(ERROR_CODES.INVALID, [])
         let friendList = await User.find({
             _id: {
                 $in: friendIDList,
             },
         });
-        if(friendList.length !== 0) return {status: ERROR_CODES.SUCCESS, data: friendList};
-        else return {status: ERROR_CODES.NOTFOUND, data: friendList};
+        if(friendList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, friendList)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, friendList)
     }
 
     async findChatInvites(chatReqList, chatEngine) {
         if(!chatReqList.every((id) => mongoose.isObjectIdOrHexString(id)))
-            return {status: ERROR_CODES.INVALID, data: []}
-        return await chatEngine.findChatByIDList(chatReqList);
+            return new ResponseObject(ERROR_CODES.INVALID, [])
+        let response = await chatEngine.findChatByIDList(chatReqList);
+        return new ResponseObject(ERROR_CODES.SUCCESS, response)
     }
 
     async acceptChatInvite(userID, chatID, chatEngine) {
@@ -265,9 +267,11 @@ class UserStore {
     async findUserByName(userName) {
         let capName = titleCase(userName);
         console.log(capName);
-        return await User.find({
+        let foundUserList = await User.find({
             name: { $regex: capName, $options: "i" },
         });
+        if(foundUserList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, foundUserList)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, foundUserList)
     }
 
     async removeChat(chatID, chatInfo) {

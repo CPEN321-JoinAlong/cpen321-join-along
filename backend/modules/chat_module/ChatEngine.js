@@ -105,7 +105,7 @@ class ChatEngine {
     async editChat(chatID, chatInfo, userStore) {
         if (!mongoose.isObjectIdOrHexString(chatID)) {
             return new ResponseObject(ERROR_CODES.INVALID)
-        };
+        }
         let chat = await Chat.findByIdAndUpdate(chatID, chatInfo, {
             new: true,
         });

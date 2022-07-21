@@ -5,7 +5,7 @@ class ChatEngine {
     async findChatByID(chatID) {
         if (!mongoose.isObjectIdOrHexString(chatID)) {
             return new ResponseObject(ERROR_CODES.INVALID)
-        };
+        }
         console.log(chatID);
         let foundChat = await Chat.findById(chatID);
         if(foundChat) return new ResponseObject(ERROR_CODES.SUCCESS, foundChat)

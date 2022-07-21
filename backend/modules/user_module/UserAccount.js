@@ -26,8 +26,8 @@ class UserAccount {
     }
 
     async createUserAccount(userStore) {
-        let r = await userStore.createUser(this);
-        return { status: ERROR_CODES.SUCCESS, data: r };
+        let createdUser = await userStore.createUser(this);
+        return new ResponseObject(ERROR_CODES.SUCCESS, createdUser)
     }
 }
 

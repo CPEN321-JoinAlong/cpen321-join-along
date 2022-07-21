@@ -127,7 +127,7 @@ app.post("/login", async (req, res) => {
 app.post("/user/create", async (req, res) => {
     let userObject = req.body;
     let userInfo = new UserAccount(userObject);
-    let userResponse = await userInfo.createUserAccount(userStore);
+    let userResponse = await userStore.createUser(userInfo);
     console.log(userResponse);
     res.status(userResponse.status).send(userResponse.data);
 });
@@ -354,7 +354,8 @@ app.put("/user/sendFriendRequest/:userID/:otherUserID", async (req, res) => {
     let userID = req.params.userID
     let otherUserID = req.params.otherUserID
     let friendReqResponse = await userStore.sendFriendRequest(userID, otherUserID);
-    if(friendReqResponse == ERROR_CODES.SUCCESS) res.status(friendReqResponse.status).send("Successful");
+    console.log(friendReqResponse)
+    if(friendReqResponse === ERROR_CODES.SUCCESS) res.status(friendReqResponse.status).send("Successful");
     else res.status(friendReqResponse.status).send("Unsuccessful");
 });
 

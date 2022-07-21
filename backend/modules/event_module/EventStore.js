@@ -1,6 +1,7 @@
 const Event = require("./../../models/Event");
 const mongoose = require("mongoose");
 const ERROR_CODES = require("./../../ErrorCodes.js")
+const ResponseObject = require("./../../ResponseObject")
 
 class EventStore {
     async findUnblockedEvents(userID, userStore) {

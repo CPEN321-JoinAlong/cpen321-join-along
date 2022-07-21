@@ -1,5 +1,6 @@
 const Chat = require("./../../models/Chat");
 const ERROR_CODES = require("./../../ErrorCodes.js")//isn't error codes in modules? so ./../ErrorCodes.js?
+const ResponseObject = require("./../../ResponseObject")
 
 class ChatEngine {
     async findChatByID(chatID) {

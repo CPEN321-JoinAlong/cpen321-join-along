@@ -193,9 +193,9 @@ class UserStore {
         let otherUser = await this.findUserByID(otherUserID);
         if (user && otherUser) {
             if (
-                !user.friends.includes(otherUserID) &&
-                !otherUser.friends.includes(userID) &&
-                !otherUser.friendRequest.includes(userID)
+                !user.data.friends.includes(otherUserID) &&
+                !otherUser.data.friends.includes(userID) &&
+                !otherUser.data.friendRequest.includes(userID)
             ) {
                 await User.findByIdAndUpdate(otherUserID, {
                     $push: { friendRequest: userID },
@@ -218,7 +218,7 @@ class UserStore {
         }
         let userResponse = await this.findUserByID(userID)
         if(userResponse.data) {
-            if (!userResponse.data.friendRequest.includes(otherUserID)) {
+            if (userResponse.data.friendRequest.includes(otherUserID)) {
                 await User.findByIdAndUpdate(userID, {
                     $pull: { friendRequest: otherUserID },
                 });

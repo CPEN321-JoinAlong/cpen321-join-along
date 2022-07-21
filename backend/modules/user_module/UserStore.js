@@ -13,7 +13,7 @@ class UserStore {
     async findUserByID(userID) {
         if (!mongoose.isObjectIdOrHexString(userID)) {
             return new ResponseObject(ERROR_CODES.INVALID)
-        };
+        }
         console.log(userID);
         let foundUser = await User.findById(userID);
         if(foundUser) return new ResponseObject(ERROR_CODES.SUCCESS, foundUser)
@@ -29,7 +29,7 @@ class UserStore {
     async updateUserAccount(userID, userInfo) {
         if (!mongoose.isObjectIdOrHexString(userID)) {
             return new ResponseObject(ERROR_CODES.INVALID)
-        };
+        }
         console.log("IN UPDATE USER ACCOUNT")
         console.log(userID)
         console.log(userInfo)

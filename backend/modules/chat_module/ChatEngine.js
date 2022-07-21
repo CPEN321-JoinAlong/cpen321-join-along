@@ -6,7 +6,7 @@ class ChatEngine {
     async findChatByID(chatID) {
         if (!mongoose.isObjectIdOrHexString(chatID)) {
             return new ResponseObject(ERROR_CODES.INVALID)
-        };
+        }
         console.log(chatID);
         let foundChat = await Chat.findById(chatID);
         if(foundChat) return new ResponseObject(ERROR_CODES.SUCCESS, foundChat)
@@ -26,7 +26,7 @@ class ChatEngine {
     async findChatByUser(userID) {
         if (!mongoose.isObjectIdOrHexString(userID)) {
             return new ResponseObject(ERROR_CODES.INVALID)
-        };
+        }
         let chatList = await Chat.find({
             participants: userID,
         });
@@ -106,7 +106,7 @@ class ChatEngine {
     async editChat(chatID, chatInfo, userStore) {
         if (!mongoose.isObjectIdOrHexString(chatID)) {
             return new ResponseObject(ERROR_CODES.INVALID)
-        };
+        }
         let chat = await Chat.findByIdAndUpdate(chatID, chatInfo, {
             new: true,
         });

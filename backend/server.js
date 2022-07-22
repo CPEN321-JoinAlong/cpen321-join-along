@@ -97,6 +97,7 @@ app.get("/test", async (req, res) => {
     // console.log(await User.updateMany({location: "fsdhfkjshfsdh"},{ $push: {interests: "HEH"} }))
     // await User.findByIdAndUpdate("62cc914dcb4206428b972c28", {$pull: {events: "dslkfjl"}})
     try {
+        a["user"] = await User.find({});
         a["chat"] = await Chat.find({});
         a["event"] = await Event.find({});
         a["report"] = await Report.find({});

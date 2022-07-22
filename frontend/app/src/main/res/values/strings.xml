@@ -49,6 +49,9 @@
     <string name="default_search">Search</string>
     <string name="default_description">Description</string>
     <string name="default_view_reports">View Reports</string>
+    <string name="default_report_type_subtitle">Report Type</string>
+    <string name="default_report_target_subtitle">Report Target</string>
+
     <string-array name="number_of_people_array">
         <item>1</item>
         <item>2</item>

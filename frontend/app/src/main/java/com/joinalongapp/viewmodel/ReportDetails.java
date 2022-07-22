@@ -6,13 +6,19 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 public class ReportDetails implements Serializable, IDetailsModel {
-
+    private String id;
     private String reportingName;
     private String reason;
     private String description;
     private Boolean blockStatus;
-    private Boolean reportPerson;
+    private Boolean isEvent;
     private Event reportingEvent;
+    private String reporterId;
+    private String reportedId;
+
+
+    public ReportDetails() {
+    }
 
     public ReportDetails(String reportingName, String reason, String description, Boolean blockStatus) {
         this.reportingName = reportingName;
@@ -21,8 +27,12 @@ public class ReportDetails implements Serializable, IDetailsModel {
         this.blockStatus = blockStatus;
     }
 
-    public ReportDetails() {
-        //Default constructor
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getReportingName() {
@@ -41,8 +51,8 @@ public class ReportDetails implements Serializable, IDetailsModel {
         return blockStatus;
     }
 
-    public Boolean getReportPerson() {
-        return reportPerson;
+    public Boolean getIsEvent() {
+        return isEvent;
     }
 
     public Event getReportingEvent() {
@@ -65,8 +75,8 @@ public class ReportDetails implements Serializable, IDetailsModel {
         this.blockStatus = blockStatus;
     }
 
-    public void setReportPerson(Boolean reportPerson) {
-        this.reportPerson = reportPerson;
+    public void setIsEvent(Boolean isEvent) {
+        this.isEvent = isEvent;
     }
 
     public void setReportingEvent(Event reportingEvent) {
@@ -87,20 +97,52 @@ public class ReportDetails implements Serializable, IDetailsModel {
     public String toJsonString() throws JSONException {
         JSONObject json = new JSONObject();
 
-        json.put("user", getReportingName());
+        json.put("name", getReportingName());
         json.put("reason", getReason());
         json.put("description", getDescription());
-        json.put("block", getBlockStatus());
+        json.put("isBlocked", getBlockStatus());
+        json.put("isEvent", getIsEvent());
+        json.put("reporterID", getReporterId());
+        json.put("reportedID", getReportedId());
+
 
         return json.toString();
     }
 
+    public String getReporterId() {
+        return reporterId;
+    }
+
+    public String getReportedId() {
+        return reportedId;
+    }
+
+    public void setReporterId(String reporterId) {
+        this.reporterId = reporterId;
+    }
+
+    public void setReportedId(String reportedId) {
+        this.reportedId = reportedId;
+    }
+
+    public String getReportType(){
+        if(this.getIsEvent()){
+            return "Event";
+        }
+        else{
+            return "User";
+        }
+    }
     @Override
     public IDetailsModel populateDetailsFromJson(String jsonString) throws JSONException {
-
-        //todo: i have no idea what some of these fields are meant to be
-        //leaving blank for now, please implement later
-
-        return null;
+        JSONObject jsonBody = new JSONObject(jsonString);
+        setId(jsonBody.getString("_id"));
+        setReportingName(jsonBody.getString("name"));
+        setReporterId(jsonBody.getString("reporterID"));
+        setReportedId(jsonBody.getString("reportedID"));
+        setReason(jsonBody.getString("reason"));
+        setDescription(jsonBody.getString("description"));
+        setIsEvent(jsonBody.getBoolean("isEvent"));
+        return this;
     }
 }

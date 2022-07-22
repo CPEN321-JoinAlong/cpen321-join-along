@@ -56,7 +56,7 @@ public class CreateReportActivity extends AppCompatActivity {
             String reportingName = " " + reportingPerson.getFullName();
             reportEntityName = reportingPerson.getFullName();
             reportingSubtitle.append(reportingName);
-            reportDetails.setReportPerson(true);
+            reportDetails.setIsEvent(false);
             path = "reportUser";
             reportingId = reportingPerson.getId();
         }
@@ -67,7 +67,7 @@ public class CreateReportActivity extends AppCompatActivity {
             reportingSubtitle.append(reportingEventName);
             //TODO: warning: get owner name always return empty string
             reportBlockSubtitle.append(" " + reportingEvent.getOwnerName());
-            reportDetails.setReportPerson(false);
+            reportDetails.setIsEvent(true);
             path = "reportEvent";
             reportingId = reportingEvent.getEventId();
         }
@@ -91,6 +91,8 @@ public class CreateReportActivity extends AppCompatActivity {
                 reportDetails.setReason(reportReason.getText().toString());
                 reportDetails.setDescription(reportDescription.getText().toString());
                 reportDetails.setBlockStatus(blockSelectionTab.getSelectedTabPosition() == BLOCK_INDEX);
+                reportDetails.setReporterId(user.getId());
+                reportDetails.setReportedId(reportingId);
 
                 JSONObject json = null;
                 try {

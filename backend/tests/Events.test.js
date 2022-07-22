@@ -9,7 +9,8 @@ const INVALID = 422;
 let userStore = new UserStore();
 
 beforeEach(() => {
-    let _ = new EventStore();
+    let eventStore = new EventStore();
+    console.log(eventStore)
 });
 
 afterEach(() => {

@@ -3,6 +3,10 @@ const ERROR_CODES = require("./../../ErrorCodes.js")
 
 class ReportService {
     async report(name, reporterID, reportedID, reason, description, isEvent, isBlocked, userStore) {
+        if (!mongoose.isObjectIdOrHexString(reporterID) || !mongoose.isObjectIdOrHexString(reportedID)) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        }
+
         if (isBlocked) {
             let reporterInfo = userStore.findUserByID(reporterID);
             if (reporterInfo == null) return new ResponseObject(ERROR_CODES.NOTFOUND);

@@ -164,11 +164,23 @@ public class UserProfile implements Serializable, IDetailsModel {
         return this;
     }
 
+    private boolean validateName(String name) {
+        return name.contains(" ") && name.indexOf(" ") != (name.length() - 1);
+    }
+
     private String getFirstNameFromFull(String fullName) {
-        return fullName.substring(0, fullName.indexOf(" "));
+        if (validateName(fullName)) {
+            return fullName.substring(0, fullName.indexOf(" "));
+        } else {
+            return null;
+        }
     }
 
     private String getLastNameFromFull(String fullName) {
-        return fullName.substring(fullName.indexOf(" ") + 1);
+        if (validateName(fullName)) {
+            return fullName.substring(fullName.indexOf(" ") + 1);
+        } else {
+            return null;
+        }
     }
 }

@@ -1,5 +1,3 @@
-const ERROR_CODES = require("./../../ErrorCodes.js")
-
 class UserAccount {
     constructor(userInfo) {
         //fields from userInfo

@@ -6,9 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ManageEventActivity">
 
-
-
-
     <ImageButton
         android:id="@+id/cancelButton"
         android:layout_width="48dp"
@@ -103,6 +100,7 @@
         android:ems="10"
         android:hint="@string/default_enter_location"
         android:inputType="textPostalAddress"
+        android:maxLength="@integer/max_location_length"
         android:textColor="#000000"
         android:textColorHint="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/locationGuideline"
@@ -161,6 +159,7 @@
         android:hint="@string/default_enter_description"
         android:importantForAutofill="no"
         android:inputType="textMultiLine"
+        android:maxLength="@integer/max_description_length"
         android:textColor="#000000"
         android:textColorHint="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/descriptionGuideline"
@@ -191,6 +190,7 @@
         android:hint="@string/default_enter_title"
         android:importantForAutofill="no"
         android:inputType="textPersonName"
+        android:maxLength="@integer/max_title_length"
         android:text="@string/default_empty_string"
         android:textColor="#000000"
         android:textColorHint="@color/grey"

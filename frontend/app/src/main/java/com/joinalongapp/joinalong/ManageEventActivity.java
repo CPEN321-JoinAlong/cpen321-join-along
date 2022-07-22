@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -331,8 +330,7 @@ public class ManageEventActivity extends AppCompatActivity {
         }
         if(chipGroupTags.getChildCount() == 0){
             flag = false;
-            Toast toast = Toast.makeText(this, "Empty Tag field", Toast.LENGTH_SHORT);
-            toast.show();
+            autoCompleteChipTags.setError("No interest tags selected.");
         }
         if(editTextEmpty(description)){
             flag = false;

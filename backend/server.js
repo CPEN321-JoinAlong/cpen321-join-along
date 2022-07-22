@@ -1,7 +1,7 @@
 const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
-const admin = require("firebase-admin");
+// const admin = require("firebase-admin");
 // const serviceAccount = require("/home/azureuser/serviceAccountKey.json");
 const User = require("./models/User");
 const Event = require("./models/Event");
@@ -16,11 +16,7 @@ const EventDetails = require("./modules/event_module/EventDetails");
 const EventStore = require("./modules/event_module/EventStore");
 const ReportService = require("./modules/report_module/ReportService")
 const BanService = require("./modules/ban_module/BanService")
-const CONFLICT = 409;
-const SUCCESS = 200;
-const NOTFOUND = 404;
-const INVALID = 422;
-const NOTACCEPTABLE = 406;
+const ERROR_CODES = require("./ErrorCodes")
 
 function logRequest(req, res, next) {
     console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
@@ -64,8 +60,6 @@ app.use(
 ); // to parse application/x-www-form-urlencoded
 app.use(logRequest); // logging for debug
 
-app.use(express.static(__dirname + "/public"));
-
 app.listen(port, () => {
     console.log(
         `${new Date()}  App Started. Listening on ${host}:${port}, serving ${clientApp}`
@@ -76,14 +70,20 @@ app.use(async (req, res, next) => {
     let token;
     if (Object.keys(req.body).length !== 0) token = req.body.token;
     else token = req.headers.token;
-    let user = await userStore.findUserForLogin(token);
-    if (
-        user != null ||
-        req.path.includes("/login") || req.path.includes("/user/create") || req.path == "/test"
-    ) {
-        next();
-    } else {
-        res.status(404).send("Unsuccessfull");
+    try {
+        let userResponse = await userStore.findUserForLogin(token);
+
+        if (
+            userResponse.status === ERROR_CODES.SUCCESS ||
+            req.path.includes("/login") || req.path.includes("/user/create") || req.path == "/test"
+        ) {
+            next();
+        } else {
+            res.status(ERROR_CODES.NOTFOUND).send("Unsuccessfull");
+        }
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
     }
 });
 
@@ -96,32 +96,39 @@ app.get("/test", async (req, res) => {
     //await User.updateMany({},{ friends: [] })
     // console.log(await User.updateMany({location: "fsdhfkjshfsdh"},{ $push: {interests: "HEH"} }))
     // await User.findByIdAndUpdate("62cc914dcb4206428b972c28", {$pull: {events: "dslkfjl"}})
-    a["user"] = await User.find({});
-    a["chat"] = await Chat.find({});
-    a["event"] = await Event.find({});
-    a["report"] = await Report.find({});
-    res.send(a);
+    try {
+        a["user"] = await User.find({});
+        a["chat"] = await Chat.find({});
+        a["event"] = await Event.find({});
+        a["report"] = await Report.find({});
+        res.send(a);
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 //login - post
 app.post("/login", async (req, res) => {
-    const { Token } = req.body;
+    const Token = req.body.Token
     try {
         let response = await axios(
             `https://oauth2.googleapis.com/tokeninfo?id_token=${Token}`
         );
-        if (response.status === SUCCESS) {
-            let foundUser = await userStore.findUserForLogin(response.data.sub);
-            if (foundUser == null)
-                res.status(NOTFOUND).send({ token: response.data.sub });
-            else res.status(SUCCESS).send(foundUser);
+        if (response.status === ERROR_CODES.SUCCESS) {
+            let foundUserResponse = await userStore.findUserForLogin(response.data.sub);
+            if (foundUserResponse.status !== ERROR_CODES.SUCCESS)
+                res.status(foundUserResponse.status).send({
+                    token: response.data.sub
+                });
+            else res.status(foundUserResponse.status).send(foundUserResponse.data);
         } else {
-            res.status(NOTACCEPTABLE).send(
+            res.status(ERROR_CODES.NOTACCEPTABLE).send(
                 "Token not valid, try signing in again or use another account"
             );
         }
     } catch (e) {
-        res.status(NOTACCEPTABLE).send(
+        res.status(ERROR_CODES.NOTACCEPTABLE).send(
             "Token not valid, try signing in again or use another account"
         );
     }
@@ -133,16 +140,28 @@ app.post("/login", async (req, res) => {
 app.post("/user/create", async (req, res) => {
     let userObject = req.body;
     let userInfo = new UserAccount(userObject);
-    let user = await userInfo.createUserAccount(userStore);
-    console.log(user);
-    res.status(200).send(user);
+    try {
+        let userResponse = await userStore.createUser(userInfo);
+        console.log(userResponse);
+        res.status(userResponse.status).send(userResponse.data);
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 //Creates a chat object and sends it to frontend
 app.post("/chat/create", async (req, res) => {
     let chatObject = req.body;
     let chatInfo = new ChatDetails(chatObject);
-    res.status(200).send(await chatEngine.createChat(chatInfo, userStore));
+    try {
+        let chatResponse = await chatEngine.createChat(chatInfo, userStore);
+        console.log(chatResponse);
+        res.status(chatResponse.status).send(chatResponse.data);
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 //Creates an event object (and a related chat object) and sends it to frontend
@@ -150,116 +169,144 @@ app.post("/event/create", async (req, res) => {
     let eventObject = req.body;
     let eventInfo = new EventDetails(eventObject);
     console.log(eventInfo);
-    let event = await eventStore.createEvent(eventInfo, userStore);
-    let chat = await chatEngine.createChat(
-        new ChatDetails({
-            title: event.title,
-            tags: event.tags,
-            numberOfPeople: event.numberOfPeople,
-            participants: event.participants,
-            description: event.description,
-            event: event._id,
-        }),
-        userStore
-    );
-    event.chat = chat._id;
-    await eventStore.updateEvent(event._id, event, userStore);
-    res.status(200).send(event);
+    try {
+        let eventResponse = await eventStore.createEvent(eventInfo, userStore);
+        let chatResponse = await chatEngine.createChat(
+            new ChatDetails({
+                title: eventResponse.data.title,
+                tags: eventResponse.data.tags,
+                numberOfPeople: eventResponse.data.numberOfPeople,
+                participants: eventResponse.data.participants,
+                description: eventResponse.data.description,
+                event: eventResponse.data._id,
+            }),
+            userStore
+        );
+        eventResponse.data.chat = chatResponse.data._id;
+        let updatedEvent = await eventStore.updateEvent(eventResponse.data._id, eventResponse.data, userStore);
+        res.status(updatedEvent.status).send(updatedEvent.data);
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 //* All the edit paths for the main modules
 
 //Edits User and sends it to frontend
 app.put("/user/:id/edit", async (req, res) => {
-    let { id } = req.params;
-    console.log(await userStore.updateUserAccount(id, req.body));
-    res.status(200).send(await userStore.findUserByID(id)); //do we need to send the
+    let id = req.params.id;
+    try {
+        let userResponse = await userStore.updateUserAccount(id, req.body)
+        res.status(userResponse.status).send(userResponse.data);
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 //Edits Chat and sends it to frontend
 app.put("/chat/:id/edit", async (req, res) => {
-    let { id } = req.params;
-    await chatEngine.editChat(id, req.body, userStore);
-    res.status(200).send(await chatEngine.findChatByID(id)); //do we need to send the
+    let id = req.params.id;
+    try {
+        let chatResponse = await chatEngine.editChat(id, req.body, userStore);
+        res.status(chatResponse.status).send(chatResponse.data); //update the update function to send the new object
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 //Edits User and sends it to frontend
 app.put("/event/:id/edit", async (req, res) => {
-    let { id } = req.params;
-    let result = await eventStore.updateEvent(id, req.body, userStore);
-    if(result == SUCCESS){
-        res.status(200).send(await eventStore.findEventByID(id)); //do we need to send the
-    } else {
-        res.status(result).send(await eventStore.findEventByID(id));
+    let id = req.params.id;
+    try {
+        let eventResponse = await eventStore.updateEvent(id, req.body, userStore);
+        res.status(eventResponse.status).send(eventResponse.data) //update the update func to send the new object
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
     }
 });
 
 //* Home Screen
 
-//Sends the user object and events the user is a part of for the home screen - get
-app.get("/user/:id/home", async (req, res) => {
-    let { id } = req.params;
-    let foundUser = await userStore.findUserByID(id);
-    if (foundUser == null) res.status(404).send("No User Found");
-    else {
-        let events = await eventStore.findEventByIDList(foundUser.events);
-        res.status(200).send(events); //need to change this to event id, name and description only
-    }
-});
+// //Sends the user object and events the user is a part of for the home screen - get
+// app.get("/user/:id/home", async (req, res) => {
+//     let { id } = req.params;
+//     let foundUser = await userStore.findUserByID(id);
+//     if (foundUser == null) res.status(ERROR_CODES.NOTFOUND).send("No User Found");
+//     else {
+//         let events = await eventStore.findEventByIDList(foundUser.events);
+//         res.status(ERROR_CODES.SUCCESS).send(events); //need to change this to event id, name and description only
+//     }
+// });
 
 //Sends the user object for the profile page - get
 app.get("/user/:id", async (req, res) => {
-    let { id } = req.params;
-    let foundUser = await userStore.findUserByID(id);
-    if (foundUser == null) res.status(404).send("No User Found");
-    else {
-        res.status(200).send(foundUser);
+    let id = req.params.id;
+    try {
+        let response = await userStore.findUserByID(id);
+        res.status(response.status).send(response.data)
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
     }
 });
 
 //Get user list by name
 app.get("/user/name/:userName", async (req, res) => {
-    let { userName } = req.params;
-    let foundUserList = await userStore.findUserByName(userName);
-    if (foundUserList.length !== 0) {
-        res.status(200).send(foundUserList);
-    } else {
-        res.status(404).send(foundUserList);
+    let userName = req.params.userName;
+    try {
+        let userListReponse = await userStore.findUserByName(userName)
+        res.status(userListReponse.status).send(userListReponse.data)
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
     }
 });
 
 //Get event list by name
 app.get("/event/title/:eventName", async (req, res) => {
-    let { eventName } = req.params;
-    let foundEventList = await eventStore.findEventsByName(eventName);
-    if (foundEventList.length !== 0) {
-        res.status(200).send(foundEventList);
-    } else {
-        res.status(404).send(foundEventList);
+    let eventName = req.params.eventName;
+    try {
+        let eventListResponse = await eventStore.findEventsByName(eventName)
+        res.status(eventListResponse.status).send(eventListResponse.data)
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
     }
 });
 
 //Sends the list of friend requests of user - get
 app.get("/user/:id/friendRequest", async (req, res) => {
-    let { id } = req.params;
-    let foundUser = await userStore.findUserByID(id);
-    if (foundUser == null) res.status(404).send("No User Found");
-    else {
-        let friendsReqList = await userStore.findFriendByIDList(
-            foundUser.friendRequest
-        );
-        res.status(200).send(friendsReqList);
+    let id = req.params.id;
+    try {
+        let userResponse = await userStore.findUserByID(id);
+        if (userResponse.status !== ERROR_CODES.SUCCESS) res.status(userResponse.status).send([]);
+        else {
+            let friendListResponse = await userStore.findFriendByIDList(userResponse.data.friendRequest);
+            res.status(friendListResponse.status).send(friendListResponse.data);
+        }
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
     }
 });
 
 //Sends the list of friends of user - get
 app.get("/user/:id/friends", async (req, res) => {
-    let { id } = req.params;
-    let foundUser = await userStore.findUserByID(id);
-    if (foundUser == null) res.status(404).send("No User Found");
-    else {
-        let friendsList = await userStore.findFriendByIDList(foundUser.friends);
-        res.status(200).send(friendsList);
+    let id = req.params.id;
+    try {
+        let userResponse = await userStore.findUserByID(id);
+        if (userResponse.status !== ERROR_CODES.SUCCESS) res.status(userResponse.status).send([]);
+        else {
+            let friendListResponse = await userStore.findFriendByIDList(userResponse.data.friends);
+            res.status(friendListResponse.status).send(friendListResponse.data);
+        }
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
     }
 });
 
@@ -267,277 +314,377 @@ app.get("/user/:id/friends", async (req, res) => {
 
 //Chat list: Sends the list of chats the user is in - get
 app.get("/user/:id/chat", async (req, res) => {
-    let { id } = req.params;
-    let chatList = await chatEngine.findChatByUser(id);
-    res.status(200).send(chatList);
+    let id = req.params.id;
+    try {
+        let userResponse = await userStore.findUserByID(id);
+        if (userResponse.status !== ERROR_CODES.SUCCESS) res.status(userResponse.status).send([]);
+        else {
+            let chatListResponse = await chatEngine.findChatByUser(id);
+            res.status(chatListResponse.status).send(chatListResponse.data);
+        }
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 //Sends the list of chatInvites - get
 app.get("/user/:id/chatInvites", async (req, res) => {
-    let { id } = req.params;
-    let foundUser = await userStore.findUserByID(id);
-    if (foundUser == null) res.status(404).send("No User Found");
-    else {
-        let chatInviteList = await userStore.findChatInvites(
-            foundUser.chatInvites,
-            chatEngine
-        );
-        res.status(200).send(chatInviteList);
+    let id = req.params.id;
+    try {
+        let userResponse = await userStore.findUserByID(id);
+        if (userResponse.status !== ERROR_CODES.SUCCESS) res.status(userResponse.status).send([]);
+        else {
+            let chatInvResponse = await userStore.findChatInvites(foundUser.chatInvites, chatEngine);
+            res.status(chatInvResponse.status).send(chatInvResponse.data);
+        }
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
     }
 });
 
 //Chat: send message to a single user
 app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
     console.log("hello");
-    let { userID, chatID } = req.params;
-    let { timeStamp, text } = req.body;
-    let fromUser = await userStore.findUserByID(userID);
-    let fromUserName = fromUser.name;
-    let updatedChat = await chatEngine.sendChatMessage(
-        userID,
-        chatID,
-        text,
-        fromUserName,
-        timeStamp,
-        userStore
-    );
+    let userID = req.params.userID
+    let chatID = req.params.chatID
+    let timeStamp = req.body.timeStamp
+    let text = req.body.text
 
+    try {
+        let userResponse = await userStore.findUserByID(userID);
+        if (userResponse.status !== ERROR_CODES.SUCCESS) return res.status(userResponse.status).send("Unsuccesfull")
+        let fromUserName = userResponse.data.name;
+        let updatedChatResponse = await chatEngine.sendChatMessage(
+            userID,
+            chatID,
+            text,
+            fromUserName,
+            timeStamp,
+            userStore
+        );
 
-    // getMessaging().send({
-    //     data: {
-    //         name: fromUserName,
-    //         text: text
-    //     },
-    //     topic: fromUserID + "_" + toUserID
-    // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
-    
-    if(updatedChat)
-        res.status(200).send("Successful");
-    else
-        res.status(404).send("Unsuccessfull");
+        // getMessaging().send({
+        //     data: {
+        //         name: fromUserName,
+        //         text: text
+        //     },
+        //     topic: fromUserID + "_" + toUserID
+        // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
+
+        res.status(updatedChatResponse.status).send(updatedChatResponse.data)
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
-//Chat: send message to a single user
-app.put("/chat/sendSingle/:fromUserID/:toUserID", async (req, res) => {
-    console.log("hello");
-    let { fromUserID, toUserID } = req.params;
-    let { timeStamp, text } = req.body;
-    fromUserName = await userStore.findUserByID(fromUserID).name;
-    await chatEngine.sendMessage(
-        fromUserID,
-        toUserID,
-        text,
-        fromUserName,
-        timeStamp
-    );
 
-    // getMessaging().send({
-    //     data: {
-    //         name: fromUserName,
-    //         text: text
-    //     },
-    //     topic: fromUserID + "_" + toUserID
-    // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
-
-    res.status(200).send("Successful");
-});
-
-//Chat: send message to a group
-app.put("/chat/sendGroup/:userID/:eventID", async (req, res) => {
-    let { userID, eventID } = req.params;
-    let { timeStamp, text } = req.body;
-
-    fromUserName = await userStore.findUserByID(userID).name;
-    eventName = await eventStore.findEventByID(eventID).title;
-    await chatEngine.sendGroupMessage(
-        userID,
-        eventID,
-        text,
-        fromUserName,
-        timeStamp
-    );
-
-    // getMessaging().send({
-    //     data: {
-    //         name: fromUserName,
-    //         text: text
-    //     },
-    //     topic: eventName
-    // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
-
-    res.status(200).send("Successful");
-});
 
 //Chat: Sends the chat object (which includes all the messages) - get
 app.get("/chat/:id", async (req, res) => {
-    let { id } = req.params;
+    let id = req.params.id;
     console.log("IN CHAT END POINT")
     console.log(id)
-    let chat = await chatEngine.findChatByID(id);
-    res.status(200).send(chat);
+    try {
+        let chatResponse = await chatEngine.findChatByID(id);
+        res.status(chatResponse.status).send(chatResponse.data);
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 //* Event info
 
 //Event list: Sends the list of Events the user is in - get
 app.get("/user/:id/event", async (req, res) => {
-    let { id } = req.params;
-    let eventList = await eventStore.findEventByUser(id, userStore);
-    res.status(200).send(eventList);
+    let id = req.params.id;
+    try {
+        let userResponse = await userStore.findUserByID(id);
+        if (userResponse.status !== ERROR_CODES.SUCCESS) res.status(userResponse.status).send([]);
+        else {
+            let eventListResponse = await eventStore.findEventByUser(id)
+            res.status(eventListResponse.status).send(eventListResponse.data)
+        }
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 //Event list: Send list of Event
-app.post("/event/filter", async (req, res) => {
-    let eventList = await eventStore.findEventByDetails(req.body);
-    res.status(200).send(eventList);
-});
+// app.post("/event/filter", async (req, res) => {
+//     let eventList = await eventStore.findEventByDetails(req.body);
+//     res.status(ERROR_CODES.SUCCESS).send(eventList);
+// });
 
 //Event: Sends the event object (for view event details?) - get
 app.get("/event/:id", async (req, res) => {
-    let { id } = req.params;
-    let event = await eventStore.findEventByID(id);
-    res.status(200).send(event);
+    let id = req.params.id
+    try {
+        let eventResponse = await eventStore.findEventByID(id)
+        res.status(eventResponse.status).send(eventResponse.data)
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 //Event: Sends all events in the database
 app.get("/event", async (req, res) => {
-    let eventList = await eventStore.findAllEvents();
-    res.status(200).send(eventList);
+    try {
+        let eventListResponse = await eventStore.findAllEvents();
+        res.status(eventListResponse.status).send(eventListResponse.data);
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 app.put("/chat/sendChatInvite/:chatID/:userID", async (req, res) => {
-    let { userID, chatID } = req.params;
-    let result = await userStore.sendChatInvite(userID, chatID, chatEngine);
-    if(result == SUCCESS)
-        res.status(200).send("Sucessful");
-    else {
-        console.log(result);
-        res.status(result).send("Unsuccessfull");
+    let userID = req.params.userID
+    let chatID = req.params.chatID
+    try {
+        let chatInviteResponse = await userStore.sendChatInvite(userID, chatID, chatEngine);
+        if (chatInviteResponse.status === ERROR_CODES.SUCCESS) res.status(chatInviteResponse.status).send("Successful");
+        else res.status(chatInviteResponse.status).send("Unsuccessful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
     }
 });
 
 app.put("/user/sendFriendRequest/:userID/:otherUserID", async (req, res) => {
-    let { userID, otherUserID } = req.params;
-    let result = await userStore.sendFriendRequest(userID, otherUserID);
-    if(result == SUCCESS)
-        res.status(200).send("Sucessful");
-    else {
-        console.log(result);
-        res.status(result).send("Unsuccessfull");
+    let userID = req.params.userID
+    let otherUserID = req.params.otherUserID
+    try {
+        let friendReqResponse = await userStore.sendFriendRequest(userID, otherUserID);
+        console.log(friendReqResponse)
+        if (friendReqResponse === ERROR_CODES.SUCCESS) res.status(friendReqResponse.status).send("Successful");
+        else res.status(friendReqResponse.status).send("Unsuccessful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
     }
 });
 
 //* Accept or Reject requests (can be used for join as well) and invites
 app.put("/user/acceptChat/:userID/:chatID", async (req, res) => {
-    let { userID, chatID } = req.params;
-    let result = await userStore.acceptChatInvite(userID, chatID, chatEngine);
-    if(result == SUCCESS)
-        res.status(200).send("Sucessful");
-    else res.status(result).send("Unsuccessfull");
+    let userID = req.params.userID
+    let chatID = req.params.chatID
+    try {
+        let chatInviteResponse = await userStore.acceptChatInvite(userID, chatID, chatEngine);
+        if (chatInviteResponse.status === ERROR_CODES.SUCCESS) res.status(chatInviteResponse.status).send("Successful");
+        else res.status(chatInviteResponse.status).send("Unsuccessful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 app.put("/user/acceptEvent/:userID/:eventID", async (req, res) => {
-    let { userID, eventID } = req.params;
-    let result = await userStore.acceptEventInvite(userID, eventID, eventStore, chatEngine);
-    if(result == SUCCESS)
-        res.status(200).send("Sucessful");
-    else res.status(result).send("Unsuccessfull");
+    let userID = req.params.userID
+    let eventID = req.params.eventID
+    try {
+        let eventInvResponse = await userStore.acceptEventInvite(userID, eventID, eventStore, chatEngine);
+        if (eventInvResponse.status === ERROR_CODES.SUCCESS) res.status(eventInvResponse.status).send("Successful");
+        else res.status(eventInvResponse.status).send("Unsuccessful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 app.put("/user/acceptUser/:userID/:otherUserID", async (req, res) => {
-    let { userID, otherUserID } = req.params;
-    let result = await userStore.acceptFriendRequest(userID, otherUserID);
-    if(result == SUCCESS)
-        res.status(200).send("Sucessful");
-    else res.status(result).send("Unsuccessfull");
+    let userID = req.params.userID
+    let otherUserID = req.params.otherUserID
+    try {
+        let friendReqResponse = await userStore.acceptFriendRequest(userID, otherUserID);
+        if (friendReqResponse.status === ERROR_CODES.SUCCESS) res.status(friendReqResponse.status).send("Successful");
+        else res.status(friendReqResponse.status).send("Unsuccessful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 app.put("/user/rejectChat/:userID/:chatID", async (req, res) => {
-    let { userID, chatID } = req.params;
-    await userStore.rejectChatInvite(userID, chatID);
-    res.status(200).send("Sucessful");
+    let userID = req.params.userID
+    let chatID = req.params.chatID
+    try {
+        let chatInvResponse = await userStore.rejectChatInvite(userID, chatID)
+        if (chatInvResponse.status === ERROR_CODES.SUCCESS) res.status(chatInvResponse.status).send("Successful")
+        else res.status(chatInvResponse.status).send("Unsuccessful")
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 app.put("/user/rejectEvent/:userID/:eventID", async (req, res) => {
-    let { userID, eventID } = req.params;
-    await userStore.rejectEventInvite(userID, eventID);
-    res.status(200).send("Sucessful");
+    let userID = req.params.userID
+    let eventID = req.params.eventID
+    try {
+        let eventInvResponse = await userStore.rejectEventInvite(userID, eventID);
+        if (eventInvResponse.status === ERROR_CODES.SUCCESS) res.status(eventInvResponse.status).send("Successful");
+        else res.status(eventInvResponse.status).send("Unsuccessful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 app.put("/user/rejectUser/:userID/:otherUserID", async (req, res) => {
-    let { userID, otherUserID } = req.params;
-    await userStore.rejectFriendRequest(userID, otherUserID);
-    res.status(200).send("Sucessful");
+    let userID = req.params.userID
+    let otherUserID = req.params.otherUserID
+    try {
+        let friendReqResponse = await userStore.rejectFriendRequest(userID, otherUserID);
+        if (friendReqResponse.status === ERROR_CODES.SUCCESS) res.status(friendReqResponse.status).send("Successful");
+        else res.status(friendReqResponse.status).send("Unsuccessful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 //* Remove friend or leave event and chat
 
 app.put("/user/removeFriend/:userID/:otherUserID", async (req, res) => {
-    let { userID, otherUserID } = req.params;
-    await userStore.removeFriend(userID, otherUserID);
-    res.status(200).send("Sucessful");
+    let userID = req.params.userID
+    let otherUserID = req.params.otherUserID
+    try {
+        let friendResponse = await userStore.removeFriend(userID, otherUserID);
+        if (friendResponse.status === ERROR_CODES.SUCCESS) res.status(friendResponse.status).send("Successful");
+        else res.status(friendResponse.status).send("Unsuccessful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 app.put("/user/leaveEvent/:userID/:eventID", async (req, res) => {
-    let { userID, eventID } = req.params;
+    let userID = req.params.userID
+    let eventID = req.params.eventID
     let event = eventStore.findEventByID(eventID);
-    await userStore.leaveEvent(userID, eventID, eventStore);
-    await userStore.leaveChat(userID, event.chat, chatEngine);
-    res.status(200).send("Sucessful");
+    if (event.status !== ERROR_CODES.SUCCESS) return res.status(event.status).send("Event not found")
+    try {
+        let eventResponse = await userStore.leaveEvent(userID, eventID, eventStore);
+        await userStore.leaveChat(userID, event.chat, chatEngine);
+        if (eventResponse.status === ERROR_CODES.SUCCESS) res.status(eventResponse.status).send("Successful");
+        else res.status(eventResponse.status).send("Unsuccessful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 app.put("/user/leaveChat/:userID/:chatID", async (req, res) => {
-    let { userID, chatID } = req.params;
-    await userStore.leaveChat(userID, chatID, chatEngine);
-    res.status(200).send("Sucessful");
+    let userID = req.params.userID;
+    let chatID = req.params.chatID
+    try {
+        let chatResponse = await userStore.leaveChat(userID, chatID, chatEngine);
+        if (chatResponse.status === ERROR_CODES.SUCCESS) res.status(chatResponse.status).send("Successful");
+        else res.status(chatResponse.status).send("Unsuccessful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 //* Report and Ban paths
 
 app.post("/user/:reporterID/reportUser/:reportedID", async (req, res) => {
-    let { reporterID, reportedID } = req.params;
-    let { reason, isBlocked } = req.body;
-    await reportService.reportUser(
-        reportedID,
-        reporterID,
-        reason,
-        isBlocked,
-        userStore
-    );
-    res.status(200).send("Successful");
+    let name = req.body.name
+    let reporterID = req.params.reporterID
+    let reportedID = req.params.reportedID
+    let reason = req.body.reason
+    let description = req.body.description
+    let isEvent = 0
+    let isBlocked = req.body.isBlocked
+    try {
+        await reportService.report(
+            name,
+            reporterID,
+            reportedID,
+            reason,
+            description,
+            isEvent,
+            isBlocked,
+            userStore
+        );
+        res.status(ERROR_CODES.SUCCESS).send("Successful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 app.post("/user/:reporterID/reportEvent/:reportedID", async (req, res) => {
-    let { reporterID, reportedID } = req.params;
-    let { reason, isBlocked } = req.body;
-    await reportService.reportEvent(
-        reportedID,
-        reporterID,
-        reason,
-        isBlocked,
-        userStore
-    );
-    res.status(200).send("Successful");
+    let name = req.body.name
+    let reporterID = req.params.reporterID
+    let reportedID = req.params.reportedID
+    let reason = req.body.reason
+    let description = req.body.description
+    let isEvent = 1
+    let isBlocked = req.body.isBlocked
+    try {
+        await reportService.report(
+            name,
+            reporterID,
+            reportedID,
+            reason,
+            description,
+            isEvent,
+            isBlocked,
+            userStore
+        );
+        res.status(ERROR_CODES.SUCCESS).send("Successful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 app.get("/reports", async (req, res) => {
-    let reports = await reportService.viewAllReports();
-    res.status(200).send(reports);
+    try {
+        let reports = await reportService.viewAllReports();
+        res.status(ERROR_CODES.SUCCESS).send(reports);
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
 app.post("/user/:id/ban", async (req, res) => {
-    let { id } = req.params;
-    await banService.banUser(id, userStore);
-    res.status(200).send("Successful");
+    let id = req.params.id;
+    try {
+        await banService.banUser(id, userStore);
+        res.status(ERROR_CODES.SUCCESS).send("Successful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });
 
-app.get("/user", async(req, res) => {
-    let userList = await userStore.findAllUsers();
-    res.status(200).send(userList)
+app.get("/user", async (req, res) => {
+    try {
+        let userListResponse = await userStore.findAllUsers();
+        res.status(userListResponse.status).send(userListResponse.data)
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 })
 
 app.post("/event/:id/ban", async (req, res) => {
-    let { id } = req.params;
-    await banService.banEvent(id, eventStore);
-    res.status(200).send("Successful");
+    let id = req.params.id;
+    try {
+        await banService.banEvent(id, eventStore);
+        res.status(ERROR_CODES.SUCCESS).send("Successful");
+    } catch (e) {
+        console.log(e)
+        res.status(ERROR_CODES.DBERROR).send(null)
+    }
 });

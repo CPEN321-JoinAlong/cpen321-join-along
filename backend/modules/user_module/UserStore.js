@@ -1,64 +1,86 @@
 const User = require("./../../models/User");
 const mongoose = require("mongoose");
-const CONFLICT = 409;
-const NOTFOUND = 404;
-const SUCCESS = 200;
-const INVALID = 422;
+const ERROR_CODES = require("./../../ErrorCodes.js")
+const ResponseObject = require("./../../ResponseObject")
 
 class UserStore {
-    async findUserByEvent(eventID) {
-        return await User.find({
-            events: { $in: [eventID] },
-        });
-    }
+    // async findUserByEvent(eventID) {
+    //     return await User.find({
+    //         events: { $in: [eventID] },
+    //     });
+    // }
 
     async findUserByID(userID) {
+        if (!mongoose.isObjectIdOrHexString(userID)) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        }
         console.log(userID);
-        return await User.findById(userID);
+        let foundUser = await User.findById(userID);
+        if(foundUser) return new ResponseObject(ERROR_CODES.SUCCESS, foundUser)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND)
     }
 
     async findAllUsers() {
         let userList = await User.find({});
-        return userList;
+        if(userList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, userList)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, userList)
     }
 
     async updateUserAccount(userID, userInfo) {
-        console.log("IN UPDATE USER ACCOUNT");
-        console.log(userID);
-        console.log(userInfo);
-        return await User.findByIdAndUpdate(userID, userInfo);
+        if (!mongoose.isObjectIdOrHexString(userID)) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        }
+        console.log("IN UPDATE USER ACCOUNT")
+        console.log(userID)
+        console.log(userInfo)
+        let foundUser = await User.findByIdAndUpdate(userID, userInfo, {new: true})
+        if(foundUser) return new ResponseObject(ERROR_CODES.SUCCESS, foundUser)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND)
     }
 
     async createUser(userInfo) {
-        return await new User(userInfo).save();
+        let newUser = await new User(userInfo).save();
+        return new ResponseObject(ERROR_CODES.SUCCESS, newUser)
     }
 
     async findFriendByIDList(friendIDList) {
-        return await User.find({
+        if(!friendIDList.every((id) => mongoose.isObjectIdOrHexString(id)))
+            return new ResponseObject(ERROR_CODES.INVALID, [])
+        let friendList = await User.find({
             _id: {
                 $in: friendIDList,
             },
         });
+        if(friendList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, friendList)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, friendList)
     }
 
     async findChatInvites(chatReqList, chatEngine) {
-        return await chatEngine.findChatByIDList(chatReqList);
+        if(!chatReqList.every((id) => mongoose.isObjectIdOrHexString(id)))
+            return new ResponseObject(ERROR_CODES.INVALID, [])
+        let response = await chatEngine.findChatByIDList(chatReqList);
+        return new ResponseObject(ERROR_CODES.SUCCESS, response)
     }
 
     async acceptChatInvite(userID, chatID, chatEngine) {
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(chatID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID, null)
+        }
         let chat = await chatEngine.findChatByID(chatID);
         let user = await this.findUserByID(userID);
-        if (chat && user) {
+        if (chat.data && user.data) {
             if (
-                chat.currCapacity < chat.numberOfPeople &&
-                !user.chats.includes(chatID) &&
-                !chat.participants.includes(userID)
+                chat.data.currCapacity < chat.data.numberOfPeople &&
+                !user.data.chats.includes(chatID) &&
+                !chat.data.participants.includes(userID)
             ) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { chat: chatID },
                     $pull: { chatInvites: chatID },
                 });
-                console.log();
                 await chatEngine.editChat(
                     chatID,
                     {
@@ -67,30 +89,53 @@ class UserStore {
                     },
                     this
                 );
-                return SUCCESS;
+                return new ResponseObject(ERROR_CODES.SUCCESS)
             } else {
-                return CONFLICT;
+                return new ResponseObject(ERROR_CODES.CONFLICT)
             }
         } else {
-            return NOTFOUND;
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
         }
     }
 
     async rejectChatInvite(userID, chatID) {
-        await User.findByIdAndUpdate(userID, {
-            $pull: { chatInvites: chatID },
-        });
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(chatID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID);
+        }
+        let user = await this.findUserByID(userID);
+        if(user.data){
+            if(user.data.chatInvites.includes(chatID)){
+                await User.findByIdAndUpdate(userID, {
+                    $pull: { chatInvites: chatID },
+                });
+                return new ResponseObject(ERROR_CODES.SUCCESS);
+            } else {
+                return new ResponseObject(ERROR_CODES.CONFLICT);
+            }
+        } else {
+            return new ResponseObject(ERROR_CODES.NOTFOUND);
+        }
     }
 
     async acceptEventInvite(userID, eventID, eventStore, chatEngine) {
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(chatID) ||
+            !mongoose.isObjectIdOrHexString(eventID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID);
+        }
         let event = await eventStore.findEventByID(eventID);
         let user = await this.findUserByID(userID);
         let chat = await chatEngine.findChatByID(event.chat);
-        if (event && user && chat) {
+        if (event.data && user.data && chat.data) {
             if (
-                event.currCapacity < event.numberOfPeople &&
-                !user.chats.includes(eventID) &&
-                !event.participants.includes(userID)
+                event.data.currCapacity < event.data.numberOfPeople &&
+                !user.data.chats.includes(eventID) &&
+                !event.data.participants.includes(userID)
             ) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { events: eventID },
@@ -105,24 +150,41 @@ class UserStore {
                     },
                     this
                 );
-                let r = await this.acceptChatInvite(
+                let acceptedChatInvite = await this.acceptChatInvite(
                     userID,
                     chat._id,
                     chatEngine
                 );
-                return SUCCESS;
+
+                return new ResponseObject(ERROR_CODES.SUCCESS, acceptedChatInvite)
             } else {
-                return CONFLICT;
+                return new ResponseObject(ERROR_CODES.CONFLICT);
             }
         } else {
-            return NOTFOUND;
+            return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
     }
 
     async rejectEventInvite(userID, eventID) {
-        await User.findByIdAndUpdate(userID, {
-            $pull: { eventInvites: eventID },
-        });
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(eventID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID);
+        }
+        let userResponse = await this.findUserByID(userID)
+        if(userResponse.data) {
+            if(!userResponse.data.eventInvites.includes(eventID)){
+                await User.findByIdAndUpdate(userID, {
+                    $pull: { eventInvites: eventID },
+                });
+                return new ResponseObject(ERROR_CODES.SUCCESS)
+            } else {
+                return new ResponseObject(ERROR_CODES.CONFLICT)
+            }
+        } else {
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
+        }
     }
 
     async sendFriendRequest(userID, otherUserID) {
@@ -131,56 +193,84 @@ class UserStore {
         let otherUser = await this.findUserByID(otherUserID);
         if (user && otherUser) {
             if (
-                !user.friends.includes(otherUserID) &&
-                !otherUser.friends.includes(userID) &&
-                !otherUser.friendRequest.includes(userID)
+                !user.data.friends.includes(otherUserID) &&
+                !otherUser.data.friends.includes(userID) &&
+                !otherUser.data.friendRequest.includes(userID)
             ) {
                 await User.findByIdAndUpdate(otherUserID, {
                     $push: { friendRequest: userID },
                 });
-                return SUCCESS;
+                return new ResponseObject(ERROR_CODES.SUCCESS);
             } else {
-                return CONFLICT;
+                return new ResponseObject(ERROR_CODES.CONFLICT);
             }
         } else {
-            return NOTFOUND;
+            return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
     }
 
     async rejectFriendRequest(userID, otherUserID) {
-        await User.findByIdAndUpdate(userID, {
-            $pull: { friendRequest: otherUserID },
-        });
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(otherUserID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID);
+        }
+        let userResponse = await this.findUserByID(userID)
+        if(userResponse.data) {
+            if (userResponse.data.friendRequest.includes(otherUserID)) {
+                await User.findByIdAndUpdate(userID, {
+                    $pull: { friendRequest: otherUserID },
+                });
+                return new ResponseObject(ERROR_CODES.SUCCESS)
+            } else {
+                return new ResponseObject(ERROR_CODES.CONFLICT)
+            }
+        } else {
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
+        }
     }
 
     async sendChatInvite(userID, chatID, chatEngine) {
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(chatID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        }
         let user = await this.findUserByID(userID);
         let chat = await chatEngine.findChatByID(chatID);
-        if (user && chat) {
+        if (user.data && chat.data) {
             if (
-                !user.chats.includes(chatID) &&
-                !chat.participants.includes(userID) &&
-                !user.chatInvites.includes(chatID)
+                !user.data.chats.includes(chatID) &&
+                !chat.data.participants.includes(userID) &&
+                !user.data.chatInvites.includes(chatID)
             ) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { chatInvites: chatID },
                 });
-                return SUCCESS;
+                return new ResponseObject(ERROR_CODES.SUCCESS);
             } else {
-                return CONFLICT;
+                return new ResponseObject(ERROR_CODES.CONFLICT);
             }
         } else {
-            return NOTFOUND;
+            return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
     }
 
     async acceptFriendRequest(userID, otherUserID) {
+       if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(otherUserID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID);
+        }
         let user = await this.findUserByID(userID);
         let otherUser = await this.findUserByID(otherUserID);
-        if (user && otherUser) {
+        if (user.data && otherUser.data) {
             if (
-                !user.friends.includes(otherUserID) &&
-                !otherUser.friends.includes(userID)
+                !user.data.friends.includes(otherUserID) &&
+                !otherUser.data.friends.includes(userID)
             ) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { friends: otherUserID },
@@ -189,23 +279,30 @@ class UserStore {
                 await User.findByIdAndUpdate(otherUserID, {
                     $push: { friends: userID },
                 });
-                return SUCCESS;
+                return new ResponseObject(ERROR_CODES.SUCCESS);
             } else {
-                return CONFLICT;
+                return new ResponseObject(ERROR_CODES.CONFLICT);
             }
         } else {
-            return NOTFOUND;
+            return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
     }
 
     async findUnblockedUsers(userID) {
+        if (
+            !mongoose.isObjectIdOrHexString(userID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID);
+        }
         let user = await this.findUserByID(userID);
         if (user) {
-            return await User.find({
+            let unblockedUsers = await User.find({
                 _id: { $nin: user.blockedUsers },
             });
+            if(eventList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, unblockedUsers);
+            else return new ResponseObject(ERROR_CODES.NOTFOUND, unblockedUsers)
         }
-        return null;
+        return new ResponseObject(ERROR_CODES.NOTFOUND);
     }
 
     async addChat(chatID, chatInfo) {
@@ -218,14 +315,18 @@ class UserStore {
             },
             { $push: { chats: chatID } }
         );
+
+        return new ResponseObject(ERROR_CODES.SUCCESS)
     }
 
     async findUserByName(userName) {
         let capName = titleCase(userName);
         console.log(capName);
-        return await User.find({
+        let foundUserList = await User.find({
             name: { $regex: capName, $options: "i" },
         });
+        if(foundUserList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, foundUserList)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, foundUserList)
     }
 
     async removeChat(chatID, chatInfo) {
@@ -238,6 +339,8 @@ class UserStore {
             },
             { $pull: { chats: chatID } }
         );
+
+        return new ResponseObject(ERROR_CODES.SUCCESS)
     }
 
     async addEvent(eventID, eventInfo) {
@@ -250,6 +353,8 @@ class UserStore {
             },
             { $push: { events: eventID } }
         );
+
+        return new ResponseObject(ERROR_CODES.SUCCESS)
     }
 
     async removeEvent(eventID, eventInfo) {
@@ -262,38 +367,93 @@ class UserStore {
             },
             { $pull: { events: eventID } }
         );
+
+        return new ResponseObject(ERROR_CODES.SUCCESS) 
     }
 
     async deleteUser(userID) {
-        return await User.findByIdAndDelete(userID);
+        if (!mongoose.isObjectIdOrHexString(userID))
+            return new ResponseObject(ERROR_CODES.INVALID)
+        let user = await User.findById(userID);
+        if (user) {
+            let friendList = user.friends.filter((id) =>
+                mongoose.isObjectIdOrHexString(id) 
+            ) 
+            friendList.forEach(
+                async (friendID) => {
+                    await this.updateUserAccount(friendID, {
+                        $pull: { friends: friendID}
+                    })
+                })
+            await User.findByIdAndDelete(userID)
+            return new ResponseObject(ERROR_CODES.SUCCESS)
+        } else {
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
+        }
     }
 
     async removeFriend(userID, otherUserID) {
-        await User.updateMany(
-            { _id: { $in: [userID, otherUserID] } },
-            { $pull: { friends: { $in: [userID, otherUserID] } } }
-        );
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(otherUserID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID);
+        }
+        let userResponse = await this.findUserByID(userID)
+        let otherUserResponse = await this.findUserByID(otherUserID)
+        if (userResponse.data && otherUserResponse.data) {
+            await User.updateMany(
+                { _id: { $in: [userID, otherUserID] } },
+                { $pull: { friends: { $in: [userID, otherUserID] } } }
+            )
+            return new ResponseObject(ERROR_CODES.SUCCESS)
+        } else {
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
+        }
     }
 
     async leaveEvent(userID, eventID, eventStore) {
-        await User.findByIdAndUpdate(userID, {
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(eventID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID);
+        }
+        let user = await User.findByIdAndUpdate(userID, {
             $pull: { $events: eventID },
         });
-        await eventStore.removeUser(userID, eventID, this);
+        if(user) {
+            let response = await eventStore.removeUser(userID, eventID, this);
+            return new ResponseObject(ERROR_CODES.SUCCESS, response)
+        } else {
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
+        }
     }
 
     async leaveChat(userID, chatID, chatEngine) {
-        await User.findByIdAndUpdate(userID, {
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(chatID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        }
+        let user = await User.findByIdAndUpdate(userID, {
             $pull: { $chat: chatID },
         });
-        await chatEngine.removeUser(chatID, userID, this);
+        if(user) {
+            let response = await chatEngine.removeUser(chatID, userID, this);
+            return new ResponseObject(ERROR_CODES.SUCCESS, response)
+        } else {
+            return new ResponseObject(ERROR_CODES.NOTFOUND)
+        }
     }
 
     async findUserForLogin(Token) {
         let user = await User.findOne({
             token: Token,
         });
-        return user;
+        if(user) return new ResponseObject(ERROR_CODES.SUCCESS, user)
+        else return new ResponseObject(ERROR_CODES.NOTFOUND)
     }
 }
 

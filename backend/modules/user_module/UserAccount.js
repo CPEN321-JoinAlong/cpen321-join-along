@@ -22,10 +22,6 @@ class UserAccount {
             : [];
         this.token = userInfo.token ? userInfo.token : null;
     }
-
-    async createUserAccount(userStore) {
-        return await userStore.createUser(this);
-    }
 }
 
 module.exports = UserAccount;

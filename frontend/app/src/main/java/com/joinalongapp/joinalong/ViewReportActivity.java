@@ -9,7 +9,6 @@ import android.widget.ImageButton;
 
 public class ViewReportActivity extends AppCompatActivity {
     private ImageButton backButton;
-    private RecyclerView reportRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +28,6 @@ public class ViewReportActivity extends AppCompatActivity {
 
     private void initDataset(){
         backButton = findViewById(R.id.reportBackButton);
-        reportRecyclerView = findViewById(R.id.reportRecyclerView);
+
     }
 }

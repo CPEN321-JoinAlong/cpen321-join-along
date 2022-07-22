@@ -1,11 +1,21 @@
+const ERROR_CODES = require("./../../ErrorCodes.js")
+
 class BanService {
     async banUser(userID, userStore) {
-        return await userStore.deleteUser(userID);
+        if (!mongoose.isObjectIdOrHexString(userID)) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        }
+        let response = await userStore.deleteUser(userID)
+        return response
     }
 
     async banEvent(eventID, eventStore) {
-        return await eventStore.deleteEvent(eventID);
+        if (!mongoose.isObjectIdOrHexString(eventID)) {
+            return new ResponseObject(ERROR_CODES.INVALID)
+        }
+        let response = await eventStore.deleteEvent(eventID)
+        return response
     }
 }
 
-module.exports = BanService;
+module.exports = BanService

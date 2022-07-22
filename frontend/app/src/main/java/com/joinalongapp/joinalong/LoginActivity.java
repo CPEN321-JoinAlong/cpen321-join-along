@@ -132,7 +132,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
 
-            } catch (JSONException | IOException e) {
+            } catch (JSONException e) {
+                createTokenParseError(e);
+            } catch (IOException e) {
                 createBackendAuthError(e);
             }
 
@@ -161,6 +163,7 @@ public class LoginActivity extends AppCompatActivity {
         i.putExtra("profilePic", account.getPhotoUrl().toString());
         i.putExtra("MODE", ManageProfileActivity.ManageProfileMode.PROFILE_CREATE);
         startActivity(i);
+        finish();
     }
 
     private void populateUserDetailsOnLogin(Response response) throws IOException, JSONException {
@@ -182,6 +185,12 @@ public class LoginActivity extends AppCompatActivity {
                 .setDescription(description)
                 .withActivity(LoginActivity.this)
                 .buildAsyncNeutralMessage();
+    }
+
+
+    private void createTokenParseError(JSONException e) {
+        createBadLoginError("Failed to encode data for backend authentication.\nPlease try again later.");
+        Log.e(TAG, "Failed to authenticate with backend server: " + e.getMessage());
     }
 
     private void createBackendAuthError(Exception e) {
@@ -210,5 +219,6 @@ public class LoginActivity extends AppCompatActivity {
     private void startMainActivity() {
         Intent i = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(i);
+        finish();
     }
 }

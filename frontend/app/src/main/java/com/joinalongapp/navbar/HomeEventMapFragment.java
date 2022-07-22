@@ -1,9 +1,9 @@
 package com.joinalongapp.navbar;
 
+import static com.joinalongapp.LocationUtils.getAddressFromString;
+
 import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +21,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
-import com.joinalongapp.maputils.MapClusterItem;
-import com.joinalongapp.maputils.MapInfoWindowAdapter;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
+import com.joinalongapp.maputils.MapClusterItem;
+import com.joinalongapp.maputils.MapInfoWindowAdapter;
 import com.joinalongapp.viewmodel.Event;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -148,7 +147,7 @@ public class HomeEventMapFragment extends Fragment {
     private void addEventsToMap() {
         for (Event event : eventList) {
             String eventLocation = event.getLocation();
-            Address address = getAddressFromString(eventLocation);
+            Address address = getAddressFromString(eventLocation, getActivity().getApplicationContext());
             if (address != null) {
                 addMapMarker(event, address);
             }
@@ -165,7 +164,7 @@ public class HomeEventMapFragment extends Fragment {
         UserApplicationInfo userInfo = ((UserApplicationInfo) getActivity().getApplication());
         String userLocation = userInfo.getProfile().getLocation();
 
-        Address address = getAddressFromString(userLocation);
+        Address address = getAddressFromString(userLocation, getActivity().getApplicationContext());
         if (address != null) {
             LatLng userLatLng = new LatLng(address.getLatitude(), address.getLongitude());
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, DEFAULT_ZOOM));
@@ -176,20 +175,6 @@ public class HomeEventMapFragment extends Fragment {
         //TODO: edit this
         LatLng defaultView = new LatLng(0, 0);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultView, DEFAULT_ZOOM));
-    }
-
-    private Address getAddressFromString(String address) {
-        Geocoder geocoder = new Geocoder(getActivity());
-        Address retVal = null;
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(address, 1);
-            if (addresses.size() > 0) {
-                retVal = addresses.get(0);
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to set location with error: " + e.getMessage());
-        }
-        return retVal;
     }
 
 }

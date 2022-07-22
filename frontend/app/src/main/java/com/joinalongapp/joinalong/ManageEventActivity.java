@@ -1,10 +1,12 @@
 package com.joinalongapp.joinalong;
 
+import static com.joinalongapp.LocationUtils.getAddressFromString;
+import static com.joinalongapp.LocationUtils.validateAddress;
+
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -136,16 +138,29 @@ public class ManageEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(checkInvalidFields()){
-                    Event event = new Event();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
-                    Date bDate = null;
-                    Date eDate = null;
+
+                    Date bDate;
                     try {
                         bDate = sdf.parse(beginningDate.getText().toString());
+                    } catch (ParseException e) {
+                        beginningDate.setError("Invalid date.");
+                        return;
+                    }
+
+                    Date eDate;
+                    try {
                         eDate = sdf.parse(endDate.getText().toString());
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        endDate.setError("Invalid date.");
+                        return;
                     }
+
+                    if (!checkDateRange(bDate, eDate)){
+                        return;
+                    }
+
+                    Event event = new Event();
                     event.setTitle(title.getText().toString());
                     event.setTags(getTagsFromChipGroup());
                     event.setLocation(location.getText().toString());
@@ -237,6 +252,28 @@ public class ManageEventActivity extends AppCompatActivity {
 
     }
 
+    private boolean checkDateRange(Date bDate, Date eDate) {
+        boolean isValid = true;
+        if (!bDate.before(eDate)){
+            isValid = false;
+            beginningDate.setError("End date cannot be before beginning date.");
+        }
+
+        Date now = new Date();
+
+        if (bDate.before(now)) {
+            isValid = false;
+            beginningDate.setError("Beginning date cannot be in the past.");
+        }
+
+        if (eDate.before(now)) {
+            isValid = false;
+            endDate.setError("End date cannot be in the past.");
+        }
+
+        return isValid;
+    }
+
     @Override
     public void onBackPressed() {
         Intent i = new Intent(ManageEventActivity.this, MainActivity.class);
@@ -277,9 +314,12 @@ public class ManageEventActivity extends AppCompatActivity {
         if(editTextEmpty(location)){
             flag = false;
             location.setError("Empty Location field");
-        }else if(getAddressFromString(location.getText().toString()) == null){
-            flag = false;
-            location.setError("Invalid Address");
+        } else {
+            Address address = getAddressFromString(location.getText().toString(), getApplicationContext());
+            if(!validateAddress(address)){
+                flag = false;
+                location.setError("Invalid Address");
+            }
         }
         if(editTextEmpty(beginningDate)){
             flag = false;
@@ -323,10 +363,13 @@ public class ManageEventActivity extends AppCompatActivity {
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
                 editText.setText(sdf.format(input.getTime()));
-
             }
 
         }, year, month, dayOfMonth);
+
+        long now = new Date().getTime();
+
+        datePicker.getDatePicker().setMinDate(now);
         datePicker.show();
     }
 
@@ -350,20 +393,5 @@ public class ManageEventActivity extends AppCompatActivity {
                 chipGroup.addView(chip);
             }
         });
-    }
-
-
-    private Address getAddressFromString(String address) {
-        Geocoder geocoder = new Geocoder(ManageEventActivity.this);
-        Address retVal = null;
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(address, 1);
-            if (addresses.size() > 0) {
-                retVal = addresses.get(0);
-            }
-        } catch(IOException e) {
-            Log.e(TAG, "Failed to set location with error: " + e.getMessage());
-        }
-        return retVal;
     }
 }

@@ -1,8 +1,11 @@
 package com.joinalongapp.joinalong;
 
+import static com.joinalongapp.LocationUtils.getAddressFromString;
+import static com.joinalongapp.LocationUtils.standardizeAddress;
+import static com.joinalongapp.LocationUtils.validateLocation;
+
 import android.content.Intent;
 import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -93,11 +96,10 @@ public class ManageProfileActivity extends AppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                modifyOriginalProfile(originalProfile);
-
                 UserApplicationInfo userInput = createUserObject();
 
-                if (validateElements(originalProfile)) {
+                if (validateElements()) {
+                    modifyOriginalProfile(originalProfile);
                     userInput.setProfile(originalProfile);
 
                     if (isCreatingProfile()) {
@@ -209,8 +211,7 @@ public class ManageProfileActivity extends AppCompatActivity {
     private void modifyOriginalProfile(UserProfile originalProfile) {
         originalProfile.setFirstName(firstNameEdit.getText().toString());
         originalProfile.setLastName(lastNameEdit.getText().toString());
-        originalProfile.setLocation(locationEdit.getText().toString());
-
+        originalProfile.setLocation(standardizeAddress(locationEdit.getText().toString(), getApplicationContext()));
 
         List<Tag> tags = getTagsFromChipGroup();
         originalProfile.setTags(tags);
@@ -343,20 +344,6 @@ public class ManageProfileActivity extends AppCompatActivity {
         confirm.setText(editConfirm);
     }
 
-    private Address getAddressFromString(String address) {
-        Geocoder geocoder = new Geocoder(ManageProfileActivity.this);
-        Address retVal = null;
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(address, 1);
-            if (addresses.size() > 0) {
-                retVal = addresses.get(0);
-            }
-        } catch(IOException e) {
-            Log.e(TAG, "Failed to set location with error: " + e.getMessage());
-        }
-        return retVal;
-    }
-
     private void initElements() {
         firstNameEdit = findViewById(R.id.profileFirstNameEdit);
         lastNameEdit = findViewById(R.id.profileLastNameEdit);
@@ -381,21 +368,23 @@ public class ManageProfileActivity extends AppCompatActivity {
         PROFILE_CREATE
     }
 
-    private boolean validateElements(UserProfile profile) {
+    private boolean validateElements() {
         boolean isValid = true;
 
-        if (profile.getFirstName().isEmpty()) {
+        if (firstNameEdit.getText().toString().isEmpty()) {
             firstNameEdit.setError("First name must not be blank.");
             isValid = false;
         }
 
-        if (profile.getLastName().isEmpty()) {
+        if (lastNameEdit.getText().toString().isEmpty()) {
             lastNameEdit.setError("Last name must not be blank.");
             isValid = false;
         }
 
-        if (getAddressFromString(profile.getLocation()) == null) {
-            locationEdit.setError("Unable to find address.");
+        Address address = getAddressFromString(locationEdit.getText().toString(), getApplicationContext());
+
+        if (!validateLocation(address)) {
+            locationEdit.setError("Unable to find location.");
             isValid = false;
         }
 

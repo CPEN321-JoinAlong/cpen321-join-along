@@ -82,8 +82,11 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
         JSONObject json = new JSONObject(jsonBody);
 
         profile.setId(json.getString("_id"));
-        profile.setFirstName(getFirstNameFromFull(json.getString("name")));
-        profile.setLastName(getLastNameFromFull(json.getString("name")));
+
+        String name = json.getString("name");
+        profile.setFirstName(getFirstNameFromFull(name));
+        profile.setLastName(getLastNameFromFull(name));
+
         profile.setLocation(json.getString("location"));
 
         JSONArray tags = json.getJSONArray("interests");
@@ -104,11 +107,23 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
         return this;
     }
 
+    private boolean validateName(String name) {
+        return name.contains(" ") && name.indexOf(" ") != (name.length() - 1);
+    }
+
     private String getFirstNameFromFull(String fullName) {
-        return fullName.substring(0, fullName.indexOf(" "));
+        if (validateName(fullName)) {
+            return fullName.substring(0, fullName.indexOf(" "));
+        } else {
+            return null;
+        }
     }
 
     private String getLastNameFromFull(String fullName) {
-        return fullName.substring(fullName.indexOf(" ") + 1);
+        if (validateName(fullName)) {
+            return fullName.substring(fullName.indexOf(" ") + 1);
+        } else {
+            return null;
+        }
     }
 }

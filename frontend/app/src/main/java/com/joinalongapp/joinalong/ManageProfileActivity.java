@@ -3,6 +3,7 @@ package com.joinalongapp.joinalong;
 import static com.joinalongapp.LocationUtils.getAddressFromString;
 import static com.joinalongapp.LocationUtils.standardizeAddress;
 import static com.joinalongapp.LocationUtils.validateLocation;
+import static com.joinalongapp.TextInputUtils.isValidNameTitle;
 
 import android.content.Intent;
 import android.location.Address;
@@ -376,8 +377,18 @@ public class ManageProfileActivity extends AppCompatActivity {
             isValid = false;
         }
 
+        if (isValidNameTitle(firstNameEdit.getText().toString())) {
+            firstNameEdit.setError("First name contains invalid character(s).");
+            isValid = false;
+        }
+
         if (lastNameEdit.getText().toString().isEmpty()) {
             lastNameEdit.setError("Last name must not be blank.");
+            isValid = false;
+        }
+
+        if (isValidNameTitle(lastNameEdit.getText().toString())) {
+            lastNameEdit.setError("Last name contains invalid character(s).");
             isValid = false;
         }
 

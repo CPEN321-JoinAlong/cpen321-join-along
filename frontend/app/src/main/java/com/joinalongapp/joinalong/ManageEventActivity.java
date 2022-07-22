@@ -2,6 +2,7 @@ package com.joinalongapp.joinalong;
 
 import static com.joinalongapp.LocationUtils.getAddressFromString;
 import static com.joinalongapp.LocationUtils.validateAddress;
+import static com.joinalongapp.TextInputUtils.isValidNameTitle;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -309,6 +310,10 @@ public class ManageEventActivity extends AppCompatActivity {
         if(editTextEmpty(title)){
             flag = false;
             title.setError("Empty Title field");
+        }
+        if (isValidNameTitle(title.getText().toString())) {
+            title.setError("First name contains invalid character(s).");
+            flag = false;
         }
         if(editTextEmpty(location)){
             flag = false;

@@ -1,5 +1,7 @@
 const ERROR_CODES = require("./../../ErrorCodes.js")
+const mongoose = require("mongoose")
 
+const ResponseObject = require("./../../ResponseObject")
 class BanService {
     async banUser(userID, userStore) {
         if (!mongoose.isObjectIdOrHexString(userID)) {

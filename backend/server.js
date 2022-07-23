@@ -23,7 +23,7 @@ function logRequest(req, res, next) {
     next();
 }
 
-mongoose.connect("mongodb://localhost:27017/joinalong", {
+mongoose.connect("mongodb://localhost:34542/joinalong", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
@@ -92,7 +92,7 @@ app.get("/test", async (req, res) => {
     let a = {};
     //await User.deleteMany({});
     //await Event.deleteMany({});
-    //await Chat.deleteMany({});
+    //await Report.deleteMany({});
     //await User.updateMany({},{ friends: [] })
     // console.log(await User.updateMany({location: "fsdhfkjshfsdh"},{ $push: {interests: "HEH"} }))
     // await User.findByIdAndUpdate("62cc914dcb4206428b972c28", {$pull: {events: "dslkfjl"}})
@@ -596,7 +596,6 @@ app.put("/user/leaveChat/:userID/:chatID", async (req, res) => {
 //* Report and Ban paths
 
 app.post("/user/:reporterID/reportUser/:reportedID", async (req, res) => {
-    let name = req.body.name
     let reporterID = req.params.reporterID
     let reportedID = req.params.reportedID
     let reason = req.body.reason
@@ -605,7 +604,6 @@ app.post("/user/:reporterID/reportUser/:reportedID", async (req, res) => {
     let isBlocked = req.body.isBlocked
     try {
         await reportService.report(
-            name,
             reporterID,
             reportedID,
             reason,
@@ -622,7 +620,6 @@ app.post("/user/:reporterID/reportUser/:reportedID", async (req, res) => {
 });
 
 app.post("/user/:reporterID/reportEvent/:reportedID", async (req, res) => {
-    let name = req.body.name
     let reporterID = req.params.reporterID
     let reportedID = req.params.reportedID
     let reason = req.body.reason
@@ -631,7 +628,6 @@ app.post("/user/:reporterID/reportEvent/:reportedID", async (req, res) => {
     let isBlocked = req.body.isBlocked
     try {
         await reportService.report(
-            name,
             reporterID,
             reportedID,
             reason,
@@ -650,7 +646,7 @@ app.post("/user/:reporterID/reportEvent/:reportedID", async (req, res) => {
 app.get("/reports", async (req, res) => {
     try {
         let reports = await reportService.viewAllReports();
-        res.status(ERROR_CODES.SUCCESS).send(reports);
+        res.status(ERROR_CODES.SUCCESS).send(reports.data);
     } catch (e) {
         console.log(e)
         res.status(ERROR_CODES.DBERROR).send(null)

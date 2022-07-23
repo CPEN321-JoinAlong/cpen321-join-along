@@ -28,7 +28,9 @@ import com.joinalongapp.maputils.MapInfoWindowAdapter;
 import com.joinalongapp.viewmodel.Event;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -145,17 +147,60 @@ public class HomeEventMapFragment extends Fragment {
     }
 
     private void addEventsToMap() {
+        List<LatLng> latLngList = new ArrayList<>();
+
         for (Event event : eventList) {
             String eventLocation = event.getLocation();
             Address address = getAddressFromString(eventLocation, getActivity().getApplicationContext());
-            if (address != null) {
-                addMapMarker(event, address);
+
+            double addressLat = roundToFiveSigFigs(address.getLatitude());
+            double addressLong = roundToFiveSigFigs(address.getLongitude());
+
+            LatLng eventLatLng = new LatLng(addressLat, addressLong);
+
+            while (latLngList.contains(eventLatLng)) {
+                addressLat += random();
+                addressLong += random();
+
+                eventLatLng = new LatLng(addressLat, addressLong);
+//                double randomMultiplier = generateRandomMultiplier();
+//
+//                addressLat += randomMultiplier;
+//                addressLat = roundToFiveSigFigs(addressLat);
+//                addressLong += randomMultiplier;
+//                addressLong = roundToFiveSigFigs(addressLong);
+//
+//                eventLatLng = new LatLng(addressLat, addressLong);
             }
+
+            addMapMarker(event, eventLatLng);
+
+            latLngList.add(eventLatLng);
         }
     }
 
-    private void addMapMarker(Event event, Address address) {
-        LatLng eventLatLng = new LatLng(address.getLatitude(), address.getLongitude());
+    private double random() {
+        List<Double> list = Arrays.asList(-4e-5, 0.0, 4e-5);
+        Random random = new Random();
+
+        return list.get(random.nextInt(list.size()));
+    }
+
+    private double generateRandomMultiplier() {
+        double random = Math.random();
+
+        if (random >= 0.5) {
+            return (random + 0.5) / 5000;
+        } else {
+            return (random - 1.0) / 5000;
+        }
+    }
+
+    private double roundToFiveSigFigs(double toRound) {
+        return Math.round(toRound * 1e5) / 1e5;
+    }
+
+    private void addMapMarker(Event event, LatLng eventLatLng) {
         MapClusterItem item = new MapClusterItem(eventLatLng.latitude, eventLatLng.longitude, event);
         clusterManager.addItem(item);
     }

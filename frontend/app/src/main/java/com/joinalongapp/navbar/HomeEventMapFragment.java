@@ -153,24 +153,16 @@ public class HomeEventMapFragment extends Fragment {
             String eventLocation = event.getLocation();
             Address address = getAddressFromString(eventLocation, getActivity().getApplicationContext());
 
-            double addressLat = roundToFiveSigFigs(address.getLatitude());
-            double addressLong = roundToFiveSigFigs(address.getLongitude());
+            double addressLat = roundToFiveDecimalPlaces(address.getLatitude());
+            double addressLong = roundToFiveDecimalPlaces(address.getLongitude());
 
             LatLng eventLatLng = new LatLng(addressLat, addressLong);
 
             while (latLngList.contains(eventLatLng)) {
-                addressLat += random();
-                addressLong += random();
+                addressLat += randomOffset();
+                addressLong += randomOffset();
 
                 eventLatLng = new LatLng(addressLat, addressLong);
-//                double randomMultiplier = generateRandomMultiplier();
-//
-//                addressLat += randomMultiplier;
-//                addressLat = roundToFiveSigFigs(addressLat);
-//                addressLong += randomMultiplier;
-//                addressLong = roundToFiveSigFigs(addressLong);
-//
-//                eventLatLng = new LatLng(addressLat, addressLong);
             }
 
             addMapMarker(event, eventLatLng);
@@ -179,24 +171,14 @@ public class HomeEventMapFragment extends Fragment {
         }
     }
 
-    private double random() {
-        List<Double> list = Arrays.asList(-4e-5, 0.0, 4e-5);
+    private double randomOffset() {
+        List<Double> list = Arrays.asList(-1e-4, 0.0, 1e-4);
         Random random = new Random();
 
         return list.get(random.nextInt(list.size()));
     }
 
-    private double generateRandomMultiplier() {
-        double random = Math.random();
-
-        if (random >= 0.5) {
-            return (random + 0.5) / 5000;
-        } else {
-            return (random - 1.0) / 5000;
-        }
-    }
-
-    private double roundToFiveSigFigs(double toRound) {
+    private double roundToFiveDecimalPlaces(double toRound) {
         return Math.round(toRound * 1e5) / 1e5;
     }
 

@@ -156,5 +156,5 @@
     <integer name="max_name_length">35</integer>
     <integer name="max_title_length">64</integer>
     <integer name="max_description_length">1250</integer>
-    <integer name="max_location_length">250</integer>
+    <integer name="max_location_length">500</integer>
 </resources>

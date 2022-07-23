@@ -1,6 +1,7 @@
 package com.joinalongapp.joinalong;
 
 import static com.joinalongapp.LocationUtils.getAddressFromString;
+import static com.joinalongapp.LocationUtils.standardizeAddress;
 import static com.joinalongapp.LocationUtils.validateAddress;
 import static com.joinalongapp.TextInputUtils.isValidNameTitle;
 
@@ -112,13 +113,18 @@ public class ManageEventActivity extends AppCompatActivity {
             // Must append pre-existing text due to editing of Event.
             Event userEvent = (Event) info.getSerializable("EVENT");
             manageEventTitle.setText("Edit Event");
-            //TODO: add event id to path builder
+            submitButton.setText("Edit");
+
+            pathBuilder.addNode(userEvent.getEventId());
             pathBuilder.addEdit();
 
             title.setText(userEvent.getTitle());
             location.setText(userEvent.getLocation());
-            beginningDate.setText(userEvent.getBeginningDate().toString());
-            endDate.setText(userEvent.getEndDate().toString());
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
+            beginningDate.setText(sdf.format(userEvent.getBeginningDate()));
+            endDate.setText(sdf.format(userEvent.getEndDate()));
+
             boolean publicVisibility = userEvent.getPublicVisibility();
             if(publicVisibility){
                 eventVisibilityTab.setSelectedTabIndicator(PUBLIC_VISIBILITY_INDEX);
@@ -129,6 +135,12 @@ public class ManageEventActivity extends AppCompatActivity {
 
             int position = arrayAdapter.getPosition(String.valueOf(userEvent.getNumberOfPeopleAllowed()));
             numberOfPeople.setSelection(position);
+
+            List<String> existingInterests = userEvent.getStringListOfTags();
+            for (String interest : existingInterests) {
+                initChipsForChipGroup(chipGroupTags, interest);
+            }
+
             description.setText(userEvent.getDescription());
         } else {
             pathBuilder.addCreate();
@@ -164,7 +176,7 @@ public class ManageEventActivity extends AppCompatActivity {
                     Event event = new Event();
                     event.setTitle(title.getText().toString());
                     event.setTags(getTagsFromChipGroup());
-                    event.setLocation(location.getText().toString());
+                    event.setLocation(standardizeAddress(location.getText().toString(), getApplicationContext()));
                     event.setNumberOfPeopleAllowed(Integer.valueOf(numberOfPeople.getSelectedItem().toString()));
                     event.setDescription(description.getText().toString());
                     event.setBeginningDate(bDate);
@@ -179,67 +191,131 @@ public class ManageEventActivity extends AppCompatActivity {
                         JSONObject json = event.toJson();
                         json.put("token", ((UserApplicationInfo) getApplication()).getUserToken());
 
-                        requestManager.post(pathBuilder.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
-                            @Override
-                            public void onSuccess(Call call, Response response) {
-                                Intent i = new Intent(v.getContext(), MainActivity.class);
-                                try {
-                                    Log.d(TAG, response.body().string());
-                                } catch (IOException e) {
-                                    Log.e(TAG, "error printing log");
+                        if (info != null && info.getSerializable("EVENT") != null) {
+                            requestManager.put(pathBuilder.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                                @Override
+                                public void onSuccess(Call call, Response response) {
+                                    Intent i = new Intent(v.getContext(), MainActivity.class);
+                                    try {
+                                        Log.d(TAG, response.body().string());
+                                    } catch (IOException e) {
+                                        Log.e(TAG, "error printing log");
+                                    }
+
+                                    new Timer().schedule(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            ManageEventActivity.this.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    new AlertDialog.Builder(ManageEventActivity.this)
+                                                            .setTitle("Event editted!")
+                                                            .setMessage("The " + title.getText().toString() + " has been successfully editted.")
+                                                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    dialog.dismiss();
+                                                                    startActivity(i);
+                                                                }
+                                                            })
+                                                            .create()
+                                                            .show();
+                                                }
+                                            });
+                                        }
+                                    }, 0);
+
+
                                 }
 
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        ManageEventActivity.this.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                new AlertDialog.Builder(ManageEventActivity.this)
-                                                        .setTitle("Event created!")
-                                                        .setMessage("The " + title.getText().toString() + " has been successfully created.")
-                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.dismiss();
-                                                                startActivity(i);
-                                                            }
-                                                        })
-                                                        .create()
-                                                        .show();
-                                            }
-                                        });
+                                @Override
+                                public void onError(Call call, IOException e) {
+                                    new Timer().schedule(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            ManageEventActivity.this.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    new AlertDialog.Builder(ManageEventActivity.this)
+                                                            .setTitle("Unable to edit event.")
+                                                            .setMessage("Unable to edit the " + title.getText().toString() + " chat. \n Please try again later.")
+                                                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    dialog.dismiss();
+                                                                }
+                                                            })
+                                                            .create()
+                                                            .show();
+                                                }
+                                            });
+                                        }
+                                    }, 0);
+                                }
+                            });
+                        } else {
+                            requestManager.post(pathBuilder.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                                @Override
+                                public void onSuccess(Call call, Response response) {
+                                    Intent i = new Intent(v.getContext(), MainActivity.class);
+                                    try {
+                                        Log.d(TAG, response.body().string());
+                                    } catch (IOException e) {
+                                        Log.e(TAG, "error printing log");
                                     }
-                                }, 0);
+
+                                    new Timer().schedule(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            ManageEventActivity.this.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    new AlertDialog.Builder(ManageEventActivity.this)
+                                                            .setTitle("Event created!")
+                                                            .setMessage("The " + title.getText().toString() + " has been successfully created.")
+                                                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    dialog.dismiss();
+                                                                    startActivity(i);
+                                                                }
+                                                            })
+                                                            .create()
+                                                            .show();
+                                                }
+                                            });
+                                        }
+                                    }, 0);
 
 
-                            }
+                                }
 
-                            @Override
-                            public void onError(Call call, IOException e) {
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        ManageEventActivity.this.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                new AlertDialog.Builder(ManageEventActivity.this)
-                                                        .setTitle("Unable to create event.")
-                                                        .setMessage("Unable to create the " + title.getText().toString() + " chat. \n Please try again later.")
-                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.dismiss();
-                                                            }
-                                                        })
-                                                        .create()
-                                                        .show();
-                                            }
-                                        });
-                                    }
-                                }, 0);
-                            }
-                        });
+                                @Override
+                                public void onError(Call call, IOException e) {
+                                    new Timer().schedule(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            ManageEventActivity.this.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    new AlertDialog.Builder(ManageEventActivity.this)
+                                                            .setTitle("Unable to create event.")
+                                                            .setMessage("Unable to create the " + title.getText().toString() + " chat. \n Please try again later.")
+                                                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    dialog.dismiss();
+                                                                }
+                                                            })
+                                                            .create()
+                                                            .show();
+                                                }
+                                            });
+                                        }
+                                    }, 0);
+                                }
+                            });
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (JSONException e) {
@@ -251,6 +327,18 @@ public class ManageEventActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public void initChipsForChipGroup(ChipGroup chipGroup, String chipText) {
+        Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, chipGroup, false);
+        chip.setText(chipText);
+        chip.setOnCloseIconClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chipGroup.removeView(chip);
+            }
+        });
+        chipGroup.addView(chip);
     }
 
     private boolean checkDateRange(Date bDate, Date eDate) {

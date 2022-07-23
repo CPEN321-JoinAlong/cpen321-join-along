@@ -12,18 +12,24 @@ class ReportService {
         let reporterInfo = await userStore.findUserByID(reporterID);
         if (reporterInfo.data == null) return new ResponseObject(ERROR_CODES.NOTFOUND);
         
-	if (isBlocked) {
+        let reportedInfo = await userStore.findUserByID(reportedID);
+        if (reportedInfo.data == null) return new ResponseObject(ERROR_CODES.NOTFOUND);
+	
+        if (isBlocked) {
             if(isEvent)
                 reporterInfo.blockedEvents.push(reportedID);
             else
                 reporterInfo.blockedUsers.push(reportedID)
             userStore.updateUserAccount(reporterID, reporterInfo);
         }
-	let name = reporterInfo.data.name
+	
+        let reporterName = reporterInfo.data.name
+        let reportedName = reportedInfo.data.name
 
         let report = await new Report({
-            name,
+            reporterName,
             reporterID,
+            reportedName,
             reportedID,
             reason,
             description,

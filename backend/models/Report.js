@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const ReportSchema = new Schema({
-    name: String,
+    reporterName: String,
     reporterID: String,
+    reportedName: String,
     reportedID: String,
     reason: String,
     description: String,

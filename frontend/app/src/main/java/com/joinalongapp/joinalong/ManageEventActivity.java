@@ -311,7 +311,7 @@ public class ManageEventActivity extends AppCompatActivity {
             flag = false;
             title.setError("Empty Title field");
         }
-        if (isValidNameTitle(title.getText().toString())) {
+        if (!isValidNameTitle(title.getText().toString())) {
             title.setError("First name contains invalid character(s).");
             flag = false;
         }

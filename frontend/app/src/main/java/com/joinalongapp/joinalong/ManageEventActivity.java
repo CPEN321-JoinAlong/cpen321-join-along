@@ -261,15 +261,16 @@ public class ManageEventActivity extends AppCompatActivity {
 
         Date now = new Date();
 
-        if (bDate.before(now)) {
-            isValid = false;
-            beginningDate.setError("Beginning date cannot be in the past.");
-        }
-
-        if (eDate.before(now)) {
-            isValid = false;
-            endDate.setError("End date cannot be in the past.");
-        }
+        //todo: maybe allow event time start select, etc?
+//        if (bDate.before(now)) {
+//            isValid = false;
+//            beginningDate.setError("Beginning date cannot be in the past.");
+//        }
+//
+//        if (eDate.before(now)) {
+//            isValid = false;
+//            endDate.setError("End date cannot be in the past.");
+//        }
 
         return isValid;
     }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -36,28 +37,33 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView individualReportName;
+        TextView individualReportedName;
         TextView individualReportType;
-        ImageButton reportOptions;
+        TextView individualReporterName;
+        Button reportOptions;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            individualReportName = itemView.findViewById(R.id.individualReportName);
+            individualReporterName = itemView.findViewById(R.id.individualReporterName);
+            individualReportedName = itemView.findViewById(R.id.individualReportName);
             individualReportType = itemView.findViewById(R.id.individualReportType);
             reportOptions = itemView.findViewById(R.id.reportOptions);
         }
 
-        public TextView getIndividualReportName() {
-            return individualReportName;
+        public TextView getIndividualReportedName() {
+            return individualReportedName;
         }
 
         public TextView getIndividualReportType() {
             return individualReportType;
         }
 
-        public ImageButton getReportOptions() {
+        public Button getReportOptions() {
             return reportOptions;
+        }
+
+        public TextView getIndividualReporterName() {
+            return individualReporterName;
         }
     }
 
@@ -70,8 +76,9 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ReportsAdapter.ViewHolder holder, int position) {
-        holder.getIndividualReportName().setText(datasetOfReports.get(position).getReportingName());
-        holder.getIndividualReportType().setText(datasetOfReports.get(position).getReportType());
+        holder.getIndividualReportedName().setText(datasetOfReports.get(position).getReportedName());
+        holder.getIndividualReportType().setText("Type: " + datasetOfReports.get(position).getReportType());
+        holder.getIndividualReporterName().setText("By: " + datasetOfReports.get(position).getReporterName());
         holder.getReportOptions().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,8 +113,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
                 viewReportFragment.setArguments(info);
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
-                fragmentTransaction.add(R.id.frame_layout, viewReportFragment);
+                fragmentTransaction.replace(R.id.constraintLayoutProfile, viewReportFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
@@ -133,7 +139,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
                 iterator.remove();
             }
         }
-
+        notifyDataSetChanged();
 
     }
 

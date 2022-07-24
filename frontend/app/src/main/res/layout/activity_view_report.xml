@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/constraintLayoutProfile"
     tools:context=".ViewReportActivity">
 
     <ImageButton
@@ -12,9 +13,11 @@
         android:layout_height="50dp"
         android:layout_gravity="top"
 
+        android:layout_marginStart="5dp"
+
+
+        android:layout_marginTop="5dp"
         android:layout_weight="1"
-
-
         android:background="@android:color/transparent"
         android:src="?attr/actionModeCloseDrawable"
         app:layout_constraintBottom_toTopOf="@+id/guideline37"
@@ -32,7 +35,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="@string/default_view_reports"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline37"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,6 +46,7 @@
         android:id="@+id/reportRecyclerView"
         android:layout_width="409dp"
         android:layout_height="679dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

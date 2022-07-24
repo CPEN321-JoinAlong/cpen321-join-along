@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     GoogleSignInClient mGoogleSignInClient;
     private final int RC_SIGN_IN = 1;
-    private SignInButton signInButton;
+    private Button signInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

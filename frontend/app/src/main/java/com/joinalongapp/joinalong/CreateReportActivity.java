@@ -1,5 +1,6 @@
 package com.joinalongapp.joinalong;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -52,7 +53,7 @@ public class CreateReportActivity extends AppCompatActivity {
         String reportEntityName;
 
         if(reportType){
-            UserProfile reportingPerson = ((UserApplicationInfo) getApplication()).getProfile();
+            UserProfile reportingPerson = (UserProfile) info.getSerializable("REPORTING_PERSON");
             String reportingName = " " + reportingPerson.getFullName();
             reportEntityName = reportingPerson.getFullName();
             reportingSubtitle.append(reportingName);
@@ -126,7 +127,7 @@ public class CreateReportActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+                CreateReportActivity.this.finish();
             }
         });
     }

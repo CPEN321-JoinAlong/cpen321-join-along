@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="166dp" />
+        app:layout_constraintGuide_begin="168dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/underTitleGuideLine2"
@@ -106,7 +106,7 @@
     <EditText
         android:id="@+id/profileFirstNameEdit"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:ems="10"
         android:hint="@string/first_name_default"
         android:inputType="textPersonName"
@@ -118,7 +118,7 @@
         app:layout_constraintHorizontal_bias="0.209"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileTitle"
-        app:layout_constraintVertical_bias="0.064" />
+        app:layout_constraintVertical_bias="0.058" />
 
     <TextView
         android:id="@+id/profileFirstNameTitle"
@@ -126,9 +126,10 @@
         android:layout_height="wrap_content"
         android:text="@string/first_name_title"
         android:textColor="#F44336"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/profileFirstNameEdit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.137"
+        app:layout_constraintHorizontal_bias="0.141"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileTitle"
         app:layout_constraintVertical_bias="1.0" />
@@ -152,17 +153,18 @@
         android:layout_height="wrap_content"
         android:text="@string/last_name_title"
         android:textColor="#F44336"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.137"
+        app:layout_constraintHorizontal_bias="0.144"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileFirstNameEdit"
-        app:layout_constraintVertical_bias="0.274" />
+        app:layout_constraintVertical_bias="0.071" />
 
     <EditText
         android:id="@+id/profileLastNameEdit"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:ems="10"
         android:hint="@string/last_name_default"
         android:inputType="textPersonName"
@@ -182,17 +184,18 @@
         android:layout_height="wrap_content"
         android:text="@string/location_title"
         android:textColor="#F44336"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.134"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline3"
-        app:layout_constraintVertical_bias="0.036" />
+        app:layout_constraintVertical_bias="0.015" />
 
     <EditText
         android:id="@+id/profileLocationEdit"
         android:layout_width="312dp"
-        android:layout_height="42dp"
+        android:layout_height="50dp"
         android:ems="10"
         android:hint="@string/location_default"
         android:inputType="textPostalAddress"
@@ -239,17 +242,18 @@
         android:layout_height="wrap_content"
         android:text="@string/interests_title"
         android:textColor="#F44336"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline12"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
+        app:layout_constraintHorizontal_bias="0.156"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline11"
-        app:layout_constraintVertical_bias="0.086" />
+        app:layout_constraintVertical_bias="0.056" />
 
     <EditText
         android:id="@+id/profileDescription"
         android:layout_width="313dp"
-        android:layout_height="41dp"
+        android:layout_height="50dp"
         android:ems="10"
         android:hint="@string/description_default"
         android:inputType="textPersonName"
@@ -269,12 +273,13 @@
         android:layout_height="wrap_content"
         android:text="@string/description_title"
         android:textColor="#F44336"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.141"
+        app:layout_constraintHorizontal_bias="0.145"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline12"
-        app:layout_constraintVertical_bias="0.065" />
+        app:layout_constraintVertical_bias="0.011" />
 
     <ImageButton
         android:id="@+id/profileCloseButton"
@@ -299,12 +304,13 @@
         android:layout_height="wrap_content"
         android:text="@string/upload_profile_picture"
         android:textColor="#F44336"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline13"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
+        app:layout_constraintHorizontal_bias="0.282"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline14"
-        app:layout_constraintVertical_bias="0.352" />
+        app:layout_constraintVertical_bias="0.191" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/useGoogleProfilePicToggle"

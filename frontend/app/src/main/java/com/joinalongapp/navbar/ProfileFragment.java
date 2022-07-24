@@ -26,6 +26,7 @@ import com.joinalongapp.joinalong.ManageProfileActivity;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.SearchScreenActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
+import com.joinalongapp.joinalong.ViewReportActivity;
 import com.joinalongapp.viewmodel.UserProfile;
 import com.squareup.picasso.Picasso;
 
@@ -105,9 +106,8 @@ public class ProfileFragment extends Fragment {
         viewReportsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent searchUsers = new Intent(getActivity(), SearchScreenActivity.class);
-                searchUsers.putExtra("mode", SearchScreenActivity.SearchMode.USER_MODE);
-                startActivity(searchUsers);
+                Intent viewReports = new Intent(getActivity(), ViewReportActivity.class);
+                startActivity(viewReports);
             }
         });
 

@@ -23,6 +23,7 @@ public class ViewReportFragment extends Fragment {
     TextView reportTarget;
     TextView reportReason;
     TextView reportDescription;
+    TextView reporterName;
     ImageButton backButton;
     ReportDetails reportDetails;
 
@@ -68,8 +69,8 @@ public class ViewReportFragment extends Fragment {
         else{
             reportType.setText("User");
         }
-
-        reportTarget.setText(reportDetails.getReportingName());
+        reporterName.setText(reportDetails.getReporterName());
+        reportTarget.setText(reportDetails.getReportedName());
         reportReason.setText(reportDetails.getReason());
         reportDescription.setText(reportDetails.getDescription());
 
@@ -84,6 +85,7 @@ public class ViewReportFragment extends Fragment {
     }
 
     private void initElements(View view){
+        reporterName = view.findViewById(R.id.reporterName);
         reportType = view.findViewById(R.id.reportType);
         reportTarget = view.findViewById(R.id.reportTarget);
         reportReason = view.findViewById(R.id.viewReportReason);

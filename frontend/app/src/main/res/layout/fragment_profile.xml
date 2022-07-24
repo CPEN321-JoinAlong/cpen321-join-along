@@ -3,56 +3,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#BEDD2C00"
     android:outlineAmbientShadowColor="#FFFFFF"
     tools:context="com.joinalongapp.navbar.ProfileFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
+    <FrameLayout
+        android:id="@+id/testLayout"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_corners"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileName"/>
+
     <TextView
         android:id="@+id/profileName"
         android:layout_width="175dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="84dp"
+        android:gravity="center"
         android:text="@string/default_empty_string"
+        android:textColor="@color/white"
         android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline16"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.089" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
 
     <ImageView
         android:id="@+id/profilePicture"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginEnd="4dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:src="@drawable/ic_baseline_person_24"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
-        app:layout_constraintEnd_toStartOf="@+id/profileName"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/guideline16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline20"
-        app:layout_constraintVertical_bias="0.531" />
+        app:layout_constraintVertical_bias="0.467" />
 
     <ImageButton
         android:id="@+id/editButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginStart="1dp"
         android:backgroundTint="#0000"
         android:outlineAmbientShadowColor="#000000"
         android:src="@android:drawable/ic_menu_edit"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
-        app:layout_constraintEnd_toStartOf="@+id/logoutButton"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/profileName"
+        app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toTopOf="@+id/guideline20"
-        app:layout_constraintVertical_bias="0.516" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="13dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/default_interests"
         android:textColor="@color/orange"
         android:textSize="20sp"
@@ -68,42 +77,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="132dp" />
+        app:layout_constraintGuide_begin="250dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="31dp" />
+        app:layout_constraintGuide_begin="48dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline17"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="262dp" />
+        app:layout_constraintGuide_begin="398dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline18"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="526dp" />
+        app:layout_constraintGuide_begin="639dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline19"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="379dp" />
+        app:layout_constraintGuide_begin="362dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="20dp" />
+        app:layout_constraintGuide_begin="48dp" />
 
     <TextView
         android:id="@+id/textView4"
@@ -118,7 +127,7 @@
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/interestsChipGroup"
-        android:layout_width="345dp"
+        android:layout_width="314dp"
         android:layout_height="62dp"
         android:layout_marginTop="32dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline17"
@@ -135,24 +144,23 @@
         android:id="@+id/logoutButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="12dp"
         android:layout_weight="1"
 
         android:background="@android:color/transparent"
         android:src="@drawable/ic_baseline_exit_to_app_24"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:tint="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/guideline19"
+        app:layout_constraintTop_toTopOf="@+id/guideline20" />
 
     <TextView
         android:id="@+id/logoutCaption"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="12dp"
+        android:gravity="center"
         android:text="@string/logout_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/logoutButton" />
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/guideline19"
+        app:layout_constraintTop_toBottomOf="@+id/logoutButton" />
 
     <TextView
         android:id="@+id/userDescription"
@@ -160,8 +168,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="TextView"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        app:layout_constraintWidth_max="314dp" />
 
     <Button
         android:id="@+id/viewReportsButton"

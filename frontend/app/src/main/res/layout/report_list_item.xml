@@ -39,6 +39,14 @@
         android:id="@+id/individualReportType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="235dp"
+        android:layout_marginTop="25dp"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/individualReporterName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="35dp"
         android:layout_marginTop="50dp"
         android:text="TextView" />

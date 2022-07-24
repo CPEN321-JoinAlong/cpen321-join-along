@@ -3,6 +3,7 @@ package com.joinalongapp.navbar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,7 +12,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -63,6 +63,7 @@ public class ViewEventFragment extends Fragment {
     private Event event;
     private ImageButton options;
     private PopupMenu menu;
+    private Chip userChip;
 
     public ViewEventFragment() {
         // Required empty public constructor
@@ -119,94 +120,94 @@ public class ViewEventFragment extends Fragment {
                 menu = new PopupMenu(getActivity(), getActivity().findViewById(R.id.eventOptions));
                 menu.inflate(R.menu.events_options_menu);
                 initMenuOptionsVisibility();
+                FragmentActivity activity = getActivity();
 
                 menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.eventLeave:
-                                Toast.makeText(getActivity(), "TODO FIX ME", Toast.LENGTH_LONG).show();
-                                //TODO: see if endpoint is broken
-//                                UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
-//                                String userId = userApplicationInfo.getProfile().getId();
-//                                String eventId = event.getEventId();
-//                                String path = "user/leaveEvent/" + userId + "/" + eventId;
-//                                RequestManager requestManager = new RequestManager();
-//
-//                                try {
-//                                    String path = new PathBuilder()
-//                                            .addUser()
-//                                            .addNode("leaveEvent")
-//                                            .addNode(userId)
-//                                            .addNode(eventId)
-//                                            .build();
-//                                    String userToken = userApplicationInfo.tokenToJsonString();
-//                                    requestManager.put(path, userToken, new RequestManager.OnRequestCompleteListener() {
-//                                        @Override
-//                                        public void onSuccess(Call call, Response response) {
-//                                            new Timer().schedule(new TimerTask() {
-//                                                @Override
-//                                                public void run() {
-//                                                    activity.runOnUiThread(new Runnable() {
-//                                                        @Override
-//                                                        public void run() {
-//                                                            joinButton.setVisibility(View.VISIBLE);
-//                                                            rideshareButton.setVisibility(View.GONE);
-//                                                            menu.getMenu().findItem(R.id.eventLeave).setVisible(false);
-//
-//                                                            new AlertDialog.Builder(activity)
-//                                                                    .setTitle("Successfully Left Event")
-//                                                                    .setMessage("You have now left " + event.getTitle())
-//                                                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-//                                                                        @Override
-//                                                                        public void onClick(DialogInterface dialog, int which) {
-//                                                                            dialog.dismiss();
-//                                                                        }
-//                                                                    })
-//                                                                    .create()
-//                                                                    .show();
-//
-//                                                            String userName = userApplicationInfo.getProfile().getFullName();
-//                                                            Chip chip = new Chip(activity);
-//                                                            chip.setText(userName);
-//                                                            members.removeView(chip);
-//                                                        }
-//                                                    });
-//
-//
-//
-//                                                }
-//                                            }, 0);
-//                                        }
-//
-//                                        @Override
-//                                        public void onError(Call call, IOException e) {
-//                                            new Timer().schedule(new TimerTask() {
-//                                                @Override
-//                                                public void run() {
-//                                                    activity.runOnUiThread(new Runnable() {
-//                                                        @Override
-//                                                        public void run() {
-//                                                            new AlertDialog.Builder(activity)
-//                                                                    .setTitle("Unable to leave event.")
-//                                                                    .setMessage("You were unable to leave this event.\nPlease try again later.")
-//                                                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-//                                                                        @Override
-//                                                                        public void onClick(DialogInterface dialog, int which) {
-//                                                                            dialog.dismiss();
-//                                                                        }
-//                                                                    })
-//                                                                    .create()
-//                                                                    .show();
-//                                                        }
-//                                                    });
-//                                                }
-//                                            }, 0);
-//                                        }
-//                                    });
-//                                } catch (JSONException | IOException e) {
-//                                    e.printStackTrace();
-//                                }
+                                UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
+                                String userId = userApplicationInfo.getProfile().getId();
+                                String eventId = event.getEventId();
+                                RequestManager requestManager = new RequestManager();
+
+                                try {
+                                    String path = new PathBuilder()
+                                            .addUser()
+                                            .addNode("leaveEvent")
+                                            .addNode(userId)
+                                            .addNode(eventId)
+                                            .build();
+                                    String userToken = userApplicationInfo.tokenToJsonString();
+                                    requestManager.put(path, userToken, new RequestManager.OnRequestCompleteListener() {
+                                        @Override
+                                        public void onSuccess(Call call, Response response) {
+                                            new Timer().schedule(new TimerTask() {
+                                                @Override
+                                                public void run() {
+                                                    activity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            joinButton.setVisibility(View.VISIBLE);
+                                                            rideshareButton.setVisibility(View.GONE);
+                                                            menu.getMenu().findItem(R.id.eventLeave).setVisible(false);
+
+                                                            new AlertDialog.Builder(activity)
+                                                                    .setTitle("Successfully Left Event")
+                                                                    .setMessage("You have now left " + event.getTitle())
+                                                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(DialogInterface dialog, int which) {
+                                                                            dialog.dismiss();
+                                                                        }
+                                                                    })
+                                                                    .create()
+                                                                    .show();
+
+                                                            String userName = userApplicationInfo.getProfile().getFullName();
+                                                            Chip chip = new Chip(activity);
+                                                            chip.setText(userName);
+                                                            members.removeView(chip);
+
+                                                            modifyViewOnLeaveEvent(userApplicationInfo, activity);
+                                                        }
+                                                    });
+
+
+
+                                                }
+                                            }, 0);
+                                        }
+
+                                        @Override
+                                        public void onError(Call call, IOException e) {
+                                            new Timer().schedule(new TimerTask() {
+                                                @Override
+                                                public void run() {
+                                                    activity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            new AlertDialog.Builder(activity)
+                                                                    .setTitle("Unable to leave event.")
+                                                                    .setMessage("You were unable to leave this event.\nPlease try again later.")
+                                                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(DialogInterface dialog, int which) {
+                                                                            dialog.dismiss();
+                                                                        }
+                                                                    })
+                                                                    .create()
+                                                                    .show();
+                                                        }
+                                                    });
+                                                }
+                                            }, 0);
+                                        }
+                                    });
+                                } catch (JSONException | IOException e) {
+                                    e.printStackTrace();
+                                }
 
                                 return true;
 
@@ -232,6 +233,21 @@ public class ViewEventFragment extends Fragment {
                 menu.show();
             }
         });
+    }
+
+    private void modifyViewOnLeaveEvent(UserApplicationInfo userApplicationInfo, FragmentActivity activity) {
+        joinButton.setVisibility(View.VISIBLE);
+        rideshareButton.setVisibility(View.GONE);
+//        String userName = userApplicationInfo.getProfile().getFullName();
+//        Chip chip = new Chip(activity);
+//        chip.setText(userName);
+        members.removeView(userChip);
+        userChip = null;
+        event.setCurrentNumPeopleRegistered(event.getCurrentNumPeopleRegistered() - 1);
+        String numPeopleInEventString = " (" + event.getCurrentNumPeopleRegistered() + "/" + event.getNumberOfPeopleAllowed() + ")";
+        numPeople.setText(numPeopleInEventString);
+        event.removeMemberFromList(userApplicationInfo.getProfile().getId());
+
     }
 
     private void initRideshareButton() {
@@ -282,12 +298,14 @@ public class ViewEventFragment extends Fragment {
                                 }, 0);
                             } else {
                                 createJoinEventErrorMessage(activity);
+                                Log.d("JoinEvent", "Code: " + response.code());
                             }
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
                             createJoinEventErrorMessage(activity);
+                            e.printStackTrace();
                         }
                     });
                 } catch (JSONException | IOException e) {
@@ -302,9 +320,13 @@ public class ViewEventFragment extends Fragment {
         joinButton.setVisibility(View.GONE);
         rideshareButton.setVisibility(View.VISIBLE);
         String userName = userApplicationInfo.getProfile().getFullName();
-        Chip chip = new Chip(activity);
-        chip.setText(userName);
-        members.addView(chip);
+        userChip = new Chip(activity);
+        userChip.setText(userName);
+        members.addView(userChip);
+        event.setCurrentNumPeopleRegistered(event.getCurrentNumPeopleRegistered() + 1);
+        String numPeopleInEventString = " (" + event.getCurrentNumPeopleRegistered() + "/" + event.getNumberOfPeopleAllowed() + ")";
+        numPeople.setText(numPeopleInEventString);
+        event.addMemberToList(userApplicationInfo.getProfile().getId());
     }
 
     private void createJoinEventSuccessMessage(FragmentActivity activity) {
@@ -402,6 +424,10 @@ public class ViewEventFragment extends Fragment {
         if (isPartOfEvent(userId)) {
             joinButton.setVisibility(View.GONE);
             rideshareButton.setVisibility(View.VISIBLE);
+        } else if (event.getCurrentNumPeopleRegistered() == event.getNumberOfPeopleAllowed()) {
+            joinButton.setEnabled(false);
+            joinButton.setText("Event full!");
+            rideshareButton.setVisibility(View.GONE);
         } else {
             joinButton.setVisibility(View.VISIBLE);
             rideshareButton.setVisibility(View.GONE);
@@ -539,7 +565,7 @@ public class ViewEventFragment extends Fragment {
 //        }
 
         //TODO: update with numPeople/capacity
-        String numPeopleInEventString = "(" + event.getCurrentNumPeopleRegistered() + "/" + event.getNumberOfPeopleAllowed() + ")";
+        String numPeopleInEventString = " (" + event.getCurrentNumPeopleRegistered() + "/" + event.getNumberOfPeopleAllowed() + ")";
         numPeople.setText(numPeopleInEventString);
 
 

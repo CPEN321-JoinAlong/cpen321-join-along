@@ -377,7 +377,7 @@ public class ManageProfileActivity extends AppCompatActivity {
             isValid = false;
         }
 
-        if (isValidNameTitle(firstNameEdit.getText().toString())) {
+        if (!isValidNameTitle(firstNameEdit.getText().toString())) {
             firstNameEdit.setError("First name contains invalid character(s).");
             isValid = false;
         }
@@ -387,7 +387,7 @@ public class ManageProfileActivity extends AppCompatActivity {
             isValid = false;
         }
 
-        if (isValidNameTitle(lastNameEdit.getText().toString())) {
+        if (!isValidNameTitle(lastNameEdit.getText().toString())) {
             lastNameEdit.setError("Last name contains invalid character(s).");
             isValid = false;
         }

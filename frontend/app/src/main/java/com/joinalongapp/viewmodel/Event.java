@@ -87,6 +87,10 @@ public class Event implements Serializable, IDetailsModel {
         this.members.add(member);
     }
 
+    public void removeMemberFromList(String member) {
+        this.members.remove(member);
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }

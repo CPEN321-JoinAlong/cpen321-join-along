@@ -160,9 +160,11 @@ public class MessageActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     JSONArray jsonArray = (JSONArray) jsonObject.get("messages");
                     List<Message> outputMessages = new ArrayList<>();
+                    String userId = ((UserApplicationInfo) getApplication()).getProfile().getId();
                     for(int i = 0; i < jsonArray.length(); i++){
                         Message message = new Message();
                         message.populateDetailsFromJson(jsonArray.get(i).toString());
+                        message.setOwner(message.getId().equals(userId));
                         System.out.println(message.getMessage());
                         outputMessages.add(message);
                     }

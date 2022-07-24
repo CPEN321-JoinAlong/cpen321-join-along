@@ -112,6 +112,7 @@ public class MessageActivity extends AppCompatActivity {
                                     }
                                     messageList.add(message);
                                     messageAdapter.notifyDataSetChanged();
+                                    messageRecycler.scrollToPosition(messages.size() - 1);
                                 }
                             });
                         }
@@ -177,6 +178,7 @@ public class MessageActivity extends AppCompatActivity {
                                 public void run() {
                                     messages = outputMessages;
                                     messageAdapter.changeDataset(outputMessages);
+                                    messageRecycler.scrollToPosition(messages.size() - 1);
                                 }
                             });
                         }

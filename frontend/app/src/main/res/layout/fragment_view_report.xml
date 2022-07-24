@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/create_report_text"
-        android:textSize="20sp"
+        android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline38"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -40,6 +40,7 @@
         android:layout_height="wrap_content"
         android:text="@string/default_report_type_subtitle"
         android:textColor="@color/orange"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline39"
         app:layout_constraintStart_toStartOf="@+id/guideline40"
         app:layout_constraintTop_toTopOf="@+id/guideline38" />
@@ -49,6 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/default_empty_string"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline41"
         app:layout_constraintStart_toStartOf="@+id/guideline40"
         app:layout_constraintTop_toTopOf="@+id/guideline39"
@@ -59,6 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/default_empty_string"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline44"
         app:layout_constraintStart_toStartOf="@+id/guideline40"
         app:layout_constraintTop_toTopOf="@+id/guideline42"
@@ -69,6 +72,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/default_empty_string"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline47"
         app:layout_constraintStart_toStartOf="@+id/guideline40"
         app:layout_constraintTop_toTopOf="@+id/guideline46"
@@ -80,6 +84,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/default_empty_string"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline49"
         app:layout_constraintStart_toStartOf="@+id/guideline40"
         app:layout_constraintTop_toTopOf="@+id/guideline48"
@@ -92,6 +97,7 @@
         android:layout_height="wrap_content"
         android:text="@string/default_report_target_subtitle"
         android:textColor="@color/orange"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline42"
         app:layout_constraintStart_toStartOf="@+id/guideline40"
         app:layout_constraintTop_toTopOf="@+id/guideline43" />
@@ -165,6 +171,7 @@
         android:layout_height="wrap_content"
         android:text="@string/reason_subtitle"
         android:textColor="@color/orange"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline46"
         app:layout_constraintStart_toStartOf="@+id/guideline40"
         app:layout_constraintTop_toTopOf="@+id/guideline45" />
@@ -189,6 +196,7 @@
         android:layout_height="wrap_content"
         android:text="@string/default_description"
         android:textColor="@color/orange"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline48"
         app:layout_constraintStart_toStartOf="@+id/guideline40"
         app:layout_constraintTop_toTopOf="@+id/guideline47" />
@@ -207,6 +215,7 @@
         android:layout_marginTop="20dp"
         android:text="@string/reporter_name"
         android:textColor="@color/orange"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline40"
         app:layout_constraintTop_toTopOf="@+id/guideline49" />
 
@@ -216,6 +225,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:text="@string/default_empty_string"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline40"
         app:layout_constraintTop_toBottomOf="@+id/textView9"
         app:layout_constraintWidth_max="300dp" />

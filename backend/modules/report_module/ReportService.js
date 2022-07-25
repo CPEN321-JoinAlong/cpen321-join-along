@@ -1,30 +1,46 @@
 const Report = require("./../../models/Report");
-const ERROR_CODES = require("./../../ErrorCodes.js")
-const mongoose = require("mongoose")
-const ResponseObject = require("./../../ResponseObject")
+const ERROR_CODES = require("./../../ErrorCodes.js");
+const mongoose = require("mongoose");
+const ResponseObject = require("./../../ResponseObject");
 
 class ReportService {
-    async report(reporterID, reportedID, reason, description, isEvent, isBlocked, userStore, eventStore) {
-        if (!mongoose.isObjectIdOrHexString(reporterID) || !mongoose.isObjectIdOrHexString(reportedID)) {
-            return new ResponseObject(ERROR_CODES.INVALID)
+    async report(
+        reporterID,
+        reportedID,
+        reason,
+        description,
+        isEvent,
+        isBlocked,
+        userStore,
+        eventStore
+    ) {
+        if (
+            !mongoose.isObjectIdOrHexString(reporterID) ||
+            !mongoose.isObjectIdOrHexString(reportedID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID);
         }
 
         let reporterInfo = await userStore.findUserByID(reporterID);
-        if (reporterInfo.data == null) return new ResponseObject(ERROR_CODES.NOTFOUND);
-        
-        let reportedInfo = isEvent ? await eventStore.findEventByID(reportedID) : await userStore.findUserByID(reportedID);
-        if (reportedInfo.data == null) return new ResponseObject(ERROR_CODES.NOTFOUND);
-	
+        if (reporterInfo.data == null)
+            return new ResponseObject(ERROR_CODES.NOTFOUND);
+
+        let reportedInfo = isEvent
+            ? await eventStore.findEventByID(reportedID)
+            : await userStore.findUserByID(reportedID);
+        if (reportedInfo.data == null)
+            return new ResponseObject(ERROR_CODES.NOTFOUND);
+
         if (isBlocked) {
-            if(isEvent)
-                reporterInfo.blockedEvents.push(reportedID);
-            else
-                reporterInfo.blockedUsers.push(reportedID)
+            if (isEvent) reporterInfo.blockedEvents.push(reportedID);
+            else reporterInfo.blockedUsers.push(reportedID);
             userStore.updateUserAccount(reporterID, reporterInfo);
         }
-	
-        let reporterName = reporterInfo.data.name
-        let reportedName = isEvent? reportedInfo.data.title : reportedInfo.data.name
+
+        let reporterName = reporterInfo.data.name;
+        let reportedName = isEvent
+            ? reportedInfo.data.title
+            : reportedInfo.data.name;
 
         let report = await new Report({
             reporterName,
@@ -34,7 +50,7 @@ class ReportService {
             reason,
             description,
             isEvent,
-            isBlocked
+            isBlocked,
         }).save();
 
         return new ResponseObject(ERROR_CODES.SUCCESS, report);

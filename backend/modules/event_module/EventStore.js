@@ -1,11 +1,11 @@
 const Event = require("./../../models/Event");
 const mongoose = require("mongoose");
-const ERROR_CODES = require("./../../ErrorCodes.js")
-const ResponseObject = require("./../../ResponseObject")
+const ERROR_CODES = require("./../../ErrorCodes.js");
+const ResponseObject = require("./../../ResponseObject");
 
 class EventStore {
     async findUnblockedEvents(userID, userStore) {
-        if (!mongoose.isObjectIdOrHexString(userID)) 
+        if (!mongoose.isObjectIdOrHexString(userID))
             return new ResponseObject(ERROR_CODES.INVALID, []);
         let user = await userStore.findUserByID(userID);
         if (user) {
@@ -15,8 +15,9 @@ class EventStore {
                     { _id: { $nin: user.blockedEvents } },
                 ],
             });
-            if(eventList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, eventList);
-            else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList)
+            if (eventList.length !== 0)
+                return new ResponseObject(ERROR_CODES.SUCCESS, eventList);
+            else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList);
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND, []);
         }
@@ -40,9 +41,9 @@ class EventStore {
                 },
                 userStore
             );
-            return new ResponseObject(ERROR_CODES.SUCCESS)
+            return new ResponseObject(ERROR_CODES.SUCCESS);
         } else {
-            return new ResponseObject(ERROR_CODES.NOTFOUND)
+            return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
     }
 
@@ -50,18 +51,20 @@ class EventStore {
         let foundEventList = await Event.find({
             title: { $regex: searchEvent, $options: "i" },
         });
-        if(foundEventList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, foundEventList)
-        else return new ResponseObject(ERROR_CODES.NOTFOUND, foundEventList)
+        if (foundEventList.length !== 0)
+            return new ResponseObject(ERROR_CODES.SUCCESS, foundEventList);
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, foundEventList);
     }
 
     async findEventByUser(userID) {
-        if (!mongoose.isObjectIdOrHexString(userID)) 
-            return new ResponseObject(ERROR_CODES.INVALID); 
+        if (!mongoose.isObjectIdOrHexString(userID))
+            return new ResponseObject(ERROR_CODES.INVALID);
         let eventList = await Event.find({
             participants: userID,
         });
-        if(eventList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, eventList)
-        else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList)
+        if (eventList.length !== 0)
+            return new ResponseObject(ERROR_CODES.SUCCESS, eventList);
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList);
     }
 
     // async findEventByDetails(filters) {
@@ -82,17 +85,19 @@ class EventStore {
 
     async findAllEvents() {
         let eventList = await Event.find({});
-        if(eventList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, eventList)
-        else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList)
+        if (eventList.length !== 0)
+            return new ResponseObject(ERROR_CODES.SUCCESS, eventList);
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList);
     }
 
     async findEventByID(eventID) {
-        if (!mongoose.isObjectIdOrHexString(eventID)) 
+        if (!mongoose.isObjectIdOrHexString(eventID))
             return new ResponseObject(ERROR_CODES.INVALID);
-        console.log(eventID)
+        console.log(eventID);
         let foundEvent = await Event.findById(eventID);
-        if(foundEvent) return new ResponseObject(ERROR_CODES.SUCCESS, foundEvent)
-        else return new ResponseObject(ERROR_CODES.NOTFOUND)
+        if (foundEvent)
+            return new ResponseObject(ERROR_CODES.SUCCESS, foundEvent);
+        else return new ResponseObject(ERROR_CODES.NOTFOUND);
     }
 
     async findEventByIDList(eventIDList) {
@@ -103,17 +108,18 @@ class EventStore {
                 $in: eventIDList,
             },
         });
-        if(eventList.length !== 0) return new ResponseObject(ERROR_CODES.SUCCESS, eventList)
-        else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList)
+        if (eventList.length !== 0)
+            return new ResponseObject(ERROR_CODES.SUCCESS, eventList);
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList);
     }
 
     //add the event to the database and adds it into users' event list and send event object to frontend
     async createEvent(eventInfo, userStore) {
         let eventObject = await new Event(eventInfo).save();
         eventObject.participants.forEach(async (participant) => {
-            if(mongoose.isObjectIdOrHexString(participant)) {
+            if (mongoose.isObjectIdOrHexString(participant)) {
                 await userStore.updateUserAccount(participant, {
-                    $push: {events: eventObject._id}
+                    $push: { events: eventObject._id },
                 });
             }
         });
@@ -121,7 +127,7 @@ class EventStore {
     }
 
     async updateEvent(eventID, eventInfo, userStore) {
-        if (!mongoose.isObjectIdOrHexString(eventID)) 
+        if (!mongoose.isObjectIdOrHexString(eventID))
             return new ResponseObject(ERROR_CODES.INVALID);
         let event = await Event.findByIdAndUpdate(eventID, eventInfo, {
             new: true,
@@ -136,7 +142,7 @@ class EventStore {
     }
 
     async deleteEvent(eventID, userStore) {
-        if (!mongoose.isObjectIdOrHexString(eventID)) 
+        if (!mongoose.isObjectIdOrHexString(eventID))
             return new ResponseObject(ERROR_CODES.INVALID);
         let event = await Event.findById(eventID);
         if (event) {

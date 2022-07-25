@@ -9,7 +9,7 @@ const ReportSchema = new Schema({
     reason: String,
     description: String,
     isEvent: Boolean,
-    isBlocked: Boolean
+    isBlocked: Boolean,
 });
 
 module.exports = mongoose.model("Report", ReportSchema);

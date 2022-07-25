@@ -4,7 +4,7 @@ const mongoose = require("mongoose")
 const ResponseObject = require("./../../ResponseObject")
 
 class ReportService {
-    async report(reporterID, reportedID, reason, description, isEvent, isBlocked, userStore) {
+    async report(reporterID, reportedID, reason, description, isEvent, isBlocked, userStore, eventStore) {
         if (!mongoose.isObjectIdOrHexString(reporterID) || !mongoose.isObjectIdOrHexString(reportedID)) {
             return new ResponseObject(ERROR_CODES.INVALID)
         }
@@ -12,7 +12,7 @@ class ReportService {
         let reporterInfo = await userStore.findUserByID(reporterID);
         if (reporterInfo.data == null) return new ResponseObject(ERROR_CODES.NOTFOUND);
         
-        let reportedInfo = await userStore.findUserByID(reportedID);
+        let reportedInfo = isEvent ? await eventStore.findEventByID(reportedID) : await userStore.findUserByID(reportedID);
         if (reportedInfo.data == null) return new ResponseObject(ERROR_CODES.NOTFOUND);
 	
         if (isBlocked) {
@@ -24,7 +24,7 @@ class ReportService {
         }
 	
         let reporterName = reporterInfo.data.name
-        let reportedName = reportedInfo.data.name
+        let reportedName = isEvent? reportedInfo.data.title : reportedInfo.data.name
 
         let report = await new Report({
             reporterName,

@@ -614,7 +614,8 @@ app.post("/user/:reporterID/reportUser/:reportedID", async (req, res) => {
             description,
             isEvent,
             isBlocked,
-            userStore
+            userStore,
+	    eventStore
         );
         res.status(ERROR_CODES.SUCCESS).send("Successful");
     } catch (e) {
@@ -638,7 +639,8 @@ app.post("/user/:reporterID/reportEvent/:reportedID", async (req, res) => {
             description,
             isEvent,
             isBlocked,
-            userStore
+            userStore,
+	    eventStore
         );
         res.status(ERROR_CODES.SUCCESS).send("Successful");
     } catch (e) {

@@ -17,7 +17,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: ./backend/
+        working-directory: ./backend
     
     strategy:
       matrix:
@@ -32,5 +32,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: ./backend/package-lock.json
-    - run: npm ci jest
+    - run: npm i jest
     - run: npm test

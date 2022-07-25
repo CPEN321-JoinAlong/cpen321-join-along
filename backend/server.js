@@ -72,7 +72,6 @@ app.use(async (req, res, next) => {
     else token = req.headers.token;
     try {
         let userResponse = await userStore.findUserForLogin(token);
-
         if (
             userResponse.status === ERROR_CODES.SUCCESS ||
             req.path.includes("/login") || req.path.includes("/user/create") || req.path == "/test"
@@ -335,7 +334,7 @@ app.get("/user/:id/chatInvites", async (req, res) => {
         let userResponse = await userStore.findUserByID(id);
         if (userResponse.status !== ERROR_CODES.SUCCESS) res.status(userResponse.status).send([]);
         else {
-            let chatInvResponse = await userStore.findChatInvites(foundUser.chatInvites, chatEngine);
+            let chatInvResponse = await userStore.findChatInvites(userResponse.data.chatInvites, chatEngine);
             res.status(chatInvResponse.status).send(chatInvResponse.data);
         }
     } catch (e) {
@@ -567,11 +566,16 @@ app.put("/user/removeFriend/:userID/:otherUserID", async (req, res) => {
 app.put("/user/leaveEvent/:userID/:eventID", async (req, res) => {
     let userID = req.params.userID
     let eventID = req.params.eventID
-    let event = eventStore.findEventByID(eventID);
+    let event = await eventStore.findEventByID(eventID);
+    console.log("IN THE ENDPOINT")
+    console.log(event);
     if (event.status !== ERROR_CODES.SUCCESS) return res.status(event.status).send("Event not found")
+    console.log("EVENT FOUND")
     try {
         let eventResponse = await userStore.leaveEvent(userID, eventID, eventStore);
-        await userStore.leaveChat(userID, event.chat, chatEngine);
+        console.log("THIS IS EVENT RESPONSE")
+        console.log(eventResponse)
+	await userStore.leaveChat(userID, event.data.chat, chatEngine);
         if (eventResponse.status === ERROR_CODES.SUCCESS) res.status(eventResponse.status).send("Successful");
         else res.status(eventResponse.status).send("Unsuccessful");
     } catch (e) {

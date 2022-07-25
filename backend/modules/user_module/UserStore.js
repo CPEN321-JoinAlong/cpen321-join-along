@@ -71,7 +71,9 @@ class UserStore {
         }
         let chat = await chatEngine.findChatByID(chatID);
         let user = await this.findUserByID(userID);
-        if (chat.data && user.data) {
+        console.log(chat)
+	console.log(user)
+	if (chat.data && user.data) {
             if (
                 chat.data.currCapacity < chat.data.numberOfPeople &&
                 !user.data.chats.includes(chatID) &&
@@ -123,14 +125,13 @@ class UserStore {
     async acceptEventInvite(userID, eventID, eventStore, chatEngine) {
         if (
             !mongoose.isObjectIdOrHexString(userID) ||
-            !mongoose.isObjectIdOrHexString(chatID) ||
             !mongoose.isObjectIdOrHexString(eventID)
         ) {
             return new ResponseObject(ERROR_CODES.INVALID);
         }
         let event = await eventStore.findEventByID(eventID);
         let user = await this.findUserByID(userID);
-        let chat = await chatEngine.findChatByID(event.chat);
+        let chat = await chatEngine.findChatByID(event.data.chat);
         if (event.data && user.data && chat.data) {
             if (
                 event.data.currCapacity < event.data.numberOfPeople &&
@@ -150,17 +151,22 @@ class UserStore {
                     },
                     this
                 );
+
+		console.log("GOING INTO JOINING CHAT")
+
                 let acceptedChatInvite = await this.acceptChatInvite(
                     userID,
-                    chat._id,
+                    chat.data._id,
                     chatEngine
                 );
+		console.log(acceptedChatInvite);
 
                 return new ResponseObject(ERROR_CODES.SUCCESS, acceptedChatInvite)
             } else {
                 return new ResponseObject(ERROR_CODES.CONFLICT);
             }
         } else {
+	    console.log("NOT FOUND")
             return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
     }
@@ -419,11 +425,14 @@ class UserStore {
         ) {
             return new ResponseObject(ERROR_CODES.INVALID);
         }
+	    console.log("IN LEAVE EVENT")
         let user = await User.findByIdAndUpdate(userID, {
             $pull: { $events: eventID },
         });
         if(user) {
-            let response = await eventStore.removeUser(userID, eventID, this);
+	    console.log("IN LEAVE EVENT")
+            let response = await eventStore.removeUser(eventID, userID, this);
+	    console.log(response)
             return new ResponseObject(ERROR_CODES.SUCCESS, response)
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND)
@@ -442,6 +451,8 @@ class UserStore {
         });
         if(user) {
             let response = await chatEngine.removeUser(chatID, userID, this);
+	    console.log("IN LEAVE CHAT")
+	    console.log(response)
             return new ResponseObject(ERROR_CODES.SUCCESS, response)
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND)

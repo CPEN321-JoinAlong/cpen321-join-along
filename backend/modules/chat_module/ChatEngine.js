@@ -94,7 +94,7 @@ class ChatEngine {
                 chatID,
                 {
                     $pull: { participants: userID },
-                    $dec: { currCapacity: 1 },
+                    $inc: { currCapacity: -1 },
                 },
                 userStore
             );

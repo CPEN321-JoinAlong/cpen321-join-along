@@ -1,5 +1,8 @@
 package com.joinalongapp.joinalong;
 
+import static com.joinalongapp.FeedbackMessageBuilder.createParseError;
+import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
+import static com.joinalongapp.FeedbackMessageBuilder.createServerInternalError;
 import static com.joinalongapp.LocationUtils.getAddressFromString;
 import static com.joinalongapp.LocationUtils.standardizeAddress;
 import static com.joinalongapp.LocationUtils.validateLocation;
@@ -18,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
@@ -54,7 +57,8 @@ import okhttp3.Response;
  * add a first and last name string for autofill in the Extras.
  */
 public class ManageProfileActivity extends AppCompatActivity {
-    private final static String TAG ="ManageProfileActivity";
+    private final static String CREATE_TAG ="create profile";
+    private final static String EDIT_TAG ="edit profile";
     private EditText firstNameEdit;
     private EditText lastNameEdit;
     private EditText locationEdit;
@@ -83,7 +87,7 @@ public class ManageProfileActivity extends AppCompatActivity {
         try {
             initUseGoogleProfilePicToggle(originalProfile);
         } catch (IOException e) {
-            Log.e(TAG, "Failed to set profile pic: " + e.getMessage());
+            Log.e(EDIT_TAG, "Failed to set profile pic: " + e.getMessage());
         }
 
         if (getIntent().getExtras() != null) {
@@ -138,26 +142,34 @@ public class ManageProfileActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Call call, Response response) {
 
-                    if (response.code() == HttpStatusConstants.STATUS_HTTP_200) {
-                        ((UserApplicationInfo) getApplication()).updateApplicationInfo(userInput);
-                    } else {
-                        Log.e(TAG, "Unable to update user profile");
-                    }
+                    switch (response.code()) {
+                        case HttpStatusConstants.STATUS_HTTP_200:
+                            ((UserApplicationInfo) getApplication()).updateApplicationInfo(userInput);
+                            Intent i = new Intent(ManageProfileActivity.this, MainActivity.class);
 
-                    //todo: should go to profile?
-                    //      success message
-                    startMainActivity();
+                            new FeedbackMessageBuilder()
+                                    .setTitle("Update profile")
+                                    .setDescription("Successfully updated user profile!")
+                                    .withActivity(ManageProfileActivity.this)
+                                    .buildAsyncNeutralMessageAndStartActivity(i);
+                            break;
+
+                        case HttpStatusConstants.STATUS_HTTP_500:
+                        default:
+                            FeedbackMessageBuilder.createServerInternalError("update profile", ManageProfileActivity.this);
+                            break;
+                    }
                 }
 
                 @Override
                 public void onError(Call call, IOException e) {
-                    Log.e(TAG, "Unable to update profile" + e.getMessage());
-                    Toast.makeText(ManageProfileActivity.this, "Unable to update profile. Please try again later.", Toast.LENGTH_LONG).show();
+                    FeedbackMessageBuilder.createServerConnectionError(e, "update profile", ManageProfileActivity.this);
                 }
             });
-        } catch (JSONException | IOException e) {
-            Log.e(TAG, "Failed to update user profile");
-            Toast.makeText(ManageProfileActivity.this, "Unable to update profile. Please try again later.", Toast.LENGTH_LONG).show();
+        } catch (JSONException e){
+            FeedbackMessageBuilder.createParseError(e, "update profile", ManageProfileActivity.this);
+        } catch (IOException e) {
+            FeedbackMessageBuilder.createServerConnectionError(e, "update profile", ManageProfileActivity.this);
         }
     }
 
@@ -175,25 +187,35 @@ public class ManageProfileActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Call call, Response response) {
                     UserApplicationInfo newUserInfo = new UserApplicationInfo();
-                    try {
-                        newUserInfo.populateDetailsFromJson(response.body().string());
-                        ((UserApplicationInfo) getApplication()).updateApplicationInfo(newUserInfo);
-                        startMainActivity();
+                    switch (response.code()) {
+                        case HttpStatusConstants.STATUS_HTTP_200:
+                            try {
+                                newUserInfo.populateDetailsFromJson(response.body().string());
+                                ((UserApplicationInfo) getApplication()).updateApplicationInfo(newUserInfo);
+                                startMainActivity();
 
-                    } catch (IOException | JSONException e) {
-                        Log.e(TAG, "Unable to load user profile");
+                            } catch (IOException | JSONException e) {
+                                createParseError(e, CREATE_TAG, ManageProfileActivity.this);
+                            }
+                            break;
+                        case HttpStatusConstants.STATUS_HTTP_500:
+                        default:
+                            createServerInternalError(CREATE_TAG, ManageProfileActivity.this);
+                            break;
+
                     }
+
                 }
 
                 @Override
                 public void onError(Call call, IOException e) {
-                    Log.e(TAG, "Unable to create profile");
-                    Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
+                    createServerConnectionError(e, CREATE_TAG, ManageProfileActivity.this);
                 }
             });
-        } catch (JSONException | IOException e) {
-            Log.e(TAG, "Failed to create user profile");
-            Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
+        } catch (JSONException e) {
+            createParseError(e, CREATE_TAG, ManageProfileActivity.this);
+        } catch (IOException e) {
+            createServerConnectionError(e, CREATE_TAG, ManageProfileActivity.this);
         }
     }
 

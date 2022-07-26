@@ -6,11 +6,9 @@ import static com.joinalongapp.LocationUtils.validateAddress;
 import static com.joinalongapp.TextInputUtils.isValidNameTitle;
 
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,12 +20,13 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.tabs.TabLayout;
+import com.joinalongapp.FeedbackMessageBuilder;
+import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.Event;
@@ -44,8 +43,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -169,6 +166,7 @@ public class ManageEventActivity extends AppCompatActivity {
                     }
 
                     //todo: enable time pick
+                    // disabling date checking for now
 //                    if (!checkDateRange(bDate, eDate)){
 //                        return;
 //                    }
@@ -192,141 +190,61 @@ public class ManageEventActivity extends AppCompatActivity {
                         json.put("token", ((UserApplicationInfo) getApplication()).getUserToken());
 
                         if (info != null && info.getSerializable("EVENT") != null) {
+                            // EDIT EVENT
                             requestManager.put(pathBuilder.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
                                 @Override
                                 public void onSuccess(Call call, Response response) {
                                     Intent i = new Intent(v.getContext(), MainActivity.class);
-                                    try {
-                                        Log.d(TAG, response.body().string());
-                                    } catch (IOException e) {
-                                        Log.e(TAG, "error printing log");
-                                    }
 
-                                    new Timer().schedule(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            ManageEventActivity.this.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    new AlertDialog.Builder(ManageEventActivity.this)
-                                                            .setTitle("Event editted!")
-                                                            .setMessage("The " + title.getText().toString() + " has been successfully editted.")
-                                                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialog, int which) {
-                                                                    dialog.dismiss();
-                                                                    startActivity(i);
-                                                                }
-                                                            })
-                                                            .create()
-                                                            .show();
-                                                }
-                                            });
-                                        }
-                                    }, 0);
-
-
+                                    new FeedbackMessageBuilder()
+                                            .setTitle("Event Edited!")
+                                            .setDescription("The " + title.getText().toString() + " has been successfully edited.")
+                                            .withActivity(ManageEventActivity.this)
+                                            .buildAsyncNeutralMessageAndStartActivity(i);
                                 }
 
                                 @Override
                                 public void onError(Call call, IOException e) {
-                                    new Timer().schedule(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            ManageEventActivity.this.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    new AlertDialog.Builder(ManageEventActivity.this)
-                                                            .setTitle("Unable to edit event.")
-                                                            .setMessage("Unable to edit the " + title.getText().toString() + " chat. \n Please try again later.")
-                                                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialog, int which) {
-                                                                    dialog.dismiss();
-                                                                }
-                                                            })
-                                                            .create()
-                                                            .show();
-                                                }
-                                            });
-                                        }
-                                    }, 0);
+                                    FeedbackMessageBuilder.createServerConnectionError(e, "edit event", ManageEventActivity.this);
                                 }
                             });
+
                         } else {
+                            // CREATE EVENT
                             requestManager.post(pathBuilder.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
                                 @Override
                                 public void onSuccess(Call call, Response response) {
-                                    Intent i = new Intent(v.getContext(), MainActivity.class);
-                                    try {
-                                        Log.d(TAG, response.body().string());
-                                    } catch (IOException e) {
-                                        Log.e(TAG, "error printing log");
+                                    switch(response.code()) {
+                                        case HttpStatusConstants.STATUS_HTTP_200:
+                                            Intent i = new Intent(v.getContext(), MainActivity.class);
+                                            new FeedbackMessageBuilder()
+                                                    .setTitle("Event Created!")
+                                                    .setDescription("The " + title.getText().toString() + " event has been successfully created.")
+                                                    .withActivity(ManageEventActivity.this)
+                                                    .buildAsyncNeutralMessageAndStartActivity(i);
+                                            break;
+
+                                        case HttpStatusConstants.STATUS_HTTP_500:
+                                        default:
+                                            FeedbackMessageBuilder.createServerInternalError("create event", ManageEventActivity.this);
+                                            break;
                                     }
-
-                                    new Timer().schedule(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            ManageEventActivity.this.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    new AlertDialog.Builder(ManageEventActivity.this)
-                                                            .setTitle("Event created!")
-                                                            .setMessage("The " + title.getText().toString() + " has been successfully created.")
-                                                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialog, int which) {
-                                                                    dialog.dismiss();
-                                                                    startActivity(i);
-                                                                }
-                                                            })
-                                                            .create()
-                                                            .show();
-                                                }
-                                            });
-                                        }
-                                    }, 0);
-
-
                                 }
 
                                 @Override
                                 public void onError(Call call, IOException e) {
-                                    new Timer().schedule(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            ManageEventActivity.this.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    new AlertDialog.Builder(ManageEventActivity.this)
-                                                            .setTitle("Unable to create event.")
-                                                            .setMessage("Unable to create the " + title.getText().toString() + " chat. \n Please try again later.")
-                                                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialog, int which) {
-                                                                    dialog.dismiss();
-                                                                }
-                                                            })
-                                                            .create()
-                                                            .show();
-                                                }
-                                            });
-                                        }
-                                    }, 0);
+                                    FeedbackMessageBuilder.createServerConnectionError(e, "create event", ManageEventActivity.this);
                                 }
                             });
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        FeedbackMessageBuilder.createServerConnectionError(e, "create event", ManageEventActivity.this);
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        FeedbackMessageBuilder.createParseError(e, "create event", ManageEventActivity.this);
                     }
                 }
-
             }
         });
-
-
     }
 
     public void initChipsForChipGroup(ChipGroup chipGroup, String chipText) {

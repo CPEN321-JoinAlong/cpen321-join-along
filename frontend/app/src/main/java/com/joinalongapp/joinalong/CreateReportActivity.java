@@ -1,5 +1,6 @@
 package com.joinalongapp.joinalong;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -52,11 +53,11 @@ public class CreateReportActivity extends AppCompatActivity {
         String reportEntityName;
 
         if(reportType){
-            UserProfile reportingPerson = ((UserApplicationInfo) getApplication()).getProfile();
+            UserProfile reportingPerson = (UserProfile) info.getSerializable("REPORTING_PERSON");
             String reportingName = " " + reportingPerson.getFullName();
             reportEntityName = reportingPerson.getFullName();
             reportingSubtitle.append(reportingName);
-            reportDetails.setReportPerson(true);
+            reportDetails.setIsEvent(false);
             path = "reportUser";
             reportingId = reportingPerson.getId();
         }
@@ -67,7 +68,7 @@ public class CreateReportActivity extends AppCompatActivity {
             reportingSubtitle.append(reportingEventName);
             //TODO: warning: get owner name always return empty string
             reportBlockSubtitle.append(" " + reportingEvent.getOwnerName());
-            reportDetails.setReportPerson(false);
+            reportDetails.setIsEvent(true);
             path = "reportEvent";
             reportingId = reportingEvent.getEventId();
         }
@@ -91,6 +92,8 @@ public class CreateReportActivity extends AppCompatActivity {
                 reportDetails.setReason(reportReason.getText().toString());
                 reportDetails.setDescription(reportDescription.getText().toString());
                 reportDetails.setBlockStatus(blockSelectionTab.getSelectedTabPosition() == BLOCK_INDEX);
+                reportDetails.setReporterId(user.getId());
+                reportDetails.setReportedId(reportingId);
 
                 JSONObject json = null;
                 try {
@@ -124,7 +127,7 @@ public class CreateReportActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+                CreateReportActivity.this.finish();
             }
         });
     }

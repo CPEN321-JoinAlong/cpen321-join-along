@@ -1,9 +1,9 @@
 package com.joinalongapp.navbar;
 
+import static com.joinalongapp.LocationUtils.getAddressFromString;
+
 import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,15 +21,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
-import com.joinalongapp.maputils.MapClusterItem;
-import com.joinalongapp.maputils.MapInfoWindowAdapter;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
+import com.joinalongapp.maputils.MapClusterItem;
+import com.joinalongapp.maputils.MapInfoWindowAdapter;
 import com.joinalongapp.viewmodel.Event;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -146,17 +147,42 @@ public class HomeEventMapFragment extends Fragment {
     }
 
     private void addEventsToMap() {
+        List<LatLng> latLngList = new ArrayList<>();
+
         for (Event event : eventList) {
             String eventLocation = event.getLocation();
-            Address address = getAddressFromString(eventLocation);
-            if (address != null) {
-                addMapMarker(event, address);
+            Address address = getAddressFromString(eventLocation, getActivity().getApplicationContext());
+
+            double addressLat = roundToFiveDecimalPlaces(address.getLatitude());
+            double addressLong = roundToFiveDecimalPlaces(address.getLongitude());
+
+            LatLng eventLatLng = new LatLng(addressLat, addressLong);
+
+            while (latLngList.contains(eventLatLng)) {
+                addressLat += randomOffset();
+                addressLong += randomOffset();
+
+                eventLatLng = new LatLng(addressLat, addressLong);
             }
+
+            addMapMarker(event, eventLatLng);
+
+            latLngList.add(eventLatLng);
         }
     }
 
-    private void addMapMarker(Event event, Address address) {
-        LatLng eventLatLng = new LatLng(address.getLatitude(), address.getLongitude());
+    private double randomOffset() {
+        List<Double> list = Arrays.asList(-1e-4, 0.0, 1e-4);
+        Random random = new Random();
+
+        return list.get(random.nextInt(list.size()));
+    }
+
+    private double roundToFiveDecimalPlaces(double toRound) {
+        return Math.round(toRound * 1e5) / 1e5;
+    }
+
+    private void addMapMarker(Event event, LatLng eventLatLng) {
         MapClusterItem item = new MapClusterItem(eventLatLng.latitude, eventLatLng.longitude, event);
         clusterManager.addItem(item);
     }
@@ -165,7 +191,7 @@ public class HomeEventMapFragment extends Fragment {
         UserApplicationInfo userInfo = ((UserApplicationInfo) getActivity().getApplication());
         String userLocation = userInfo.getProfile().getLocation();
 
-        Address address = getAddressFromString(userLocation);
+        Address address = getAddressFromString(userLocation, getActivity().getApplicationContext());
         if (address != null) {
             LatLng userLatLng = new LatLng(address.getLatitude(), address.getLongitude());
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, DEFAULT_ZOOM));
@@ -176,20 +202,6 @@ public class HomeEventMapFragment extends Fragment {
         //TODO: edit this
         LatLng defaultView = new LatLng(0, 0);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultView, DEFAULT_ZOOM));
-    }
-
-    private Address getAddressFromString(String address) {
-        Geocoder geocoder = new Geocoder(getActivity());
-        Address retVal = null;
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(address, 1);
-            if (addresses.size() > 0) {
-                retVal = addresses.get(0);
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to set location with error: " + e.getMessage());
-        }
-        return retVal;
     }
 
 }

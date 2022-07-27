@@ -26,6 +26,7 @@
         android:layout_height="wrap_content"
         android:text="@string/description_subtitle"
         android:textColor="@color/orange"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline29" />
 
@@ -33,6 +34,8 @@
         android:id="@+id/viewEventTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxWidth="314dp"
+        android:maxHeight="64dp"
         android:text="@string/view_events_default_title"
         android:textColor="@color/black"
         android:textSize="24sp"
@@ -47,6 +50,7 @@
         android:layout_height="wrap_content"
         android:text="@string/tags_subtitle"
         android:textColor="@color/orange"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline25" />
 
@@ -123,7 +127,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline25"
-        app:layout_constraintVertical_bias="0.513">
+        app:layout_constraintVertical_bias="0.594">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/viewEventAddTags"
@@ -147,7 +151,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline30"
-        app:layout_constraintVertical_bias="0.513">
+        app:layout_constraintVertical_bias="0.594">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/viewEventOrganizers"
@@ -188,6 +192,7 @@
         android:layout_height="wrap_content"
         android:text="@string/view_events_organizers_title"
         android:textColor="@color/orange"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline30" />
 
@@ -201,7 +206,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline29"
-        app:layout_constraintVertical_bias="0.513" />
+        app:layout_constraintVertical_bias="0.594" />
 
     <TextView
         android:id="@+id/eventViewLocationTitle"
@@ -209,6 +214,7 @@
         android:layout_height="wrap_content"
         android:text="@string/view_events_location_title"
         android:textColor="@color/orange_prim"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline30"
         app:layout_constraintEnd_toStartOf="@+id/guideline27"
         app:layout_constraintHorizontal_bias="0.0"
@@ -226,7 +232,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline32"
-        app:layout_constraintVertical_bias="0.513" />
+        app:layout_constraintVertical_bias="0.594" />
 
     <TextView
         android:id="@+id/eventViewBeginDateTitle"
@@ -234,6 +240,7 @@
         android:layout_height="wrap_content"
         android:text="@string/view_events_begin_date_title"
         android:textColor="@color/orange_prim"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline30"
         app:layout_constraintEnd_toStartOf="@+id/guideline27"
         app:layout_constraintHorizontal_bias="0.0"
@@ -247,6 +254,7 @@
         android:layout_height="wrap_content"
         android:text="@string/view_events_end_date_title"
         android:textColor="@color/orange_prim"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline30"
         app:layout_constraintEnd_toStartOf="@+id/guideline27"
         app:layout_constraintHorizontal_bias="0.0"
@@ -288,7 +296,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline31"
-        app:layout_constraintVertical_bias="0.513">
+        app:layout_constraintVertical_bias="0.594">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/viewEventMembers"
@@ -308,6 +316,7 @@
         android:layout_height="wrap_content"
         android:text="@string/view_events_members_title"
         android:textColor="@color/orange_prim"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline31" />
 
@@ -316,6 +325,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
+        android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/eventViewMembersTitle"
         app:layout_constraintTop_toTopOf="@+id/guideline31" />
 

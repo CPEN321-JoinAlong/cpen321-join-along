@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:text="@string/description_subtitle"
         android:textColor="@color/orange"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline29" />
 
@@ -44,6 +45,7 @@
         android:layout_height="wrap_content"
         android:text="@string/tags_subtitle"
         android:textColor="@color/orange"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline25" />
 
@@ -165,6 +167,7 @@
         android:layout_height="wrap_content"
         android:text="@string/default_friends"
         android:textColor="@color/orange"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline30" />
 </androidx.constraintlayout.widget.ConstraintLayout>

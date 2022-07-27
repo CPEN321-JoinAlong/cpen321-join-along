@@ -100,6 +100,7 @@ public class ViewProfileFragment extends Fragment {
             public void onClick(View v) {
                 Intent reportIntent = new Intent(getActivity(), CreateReportActivity.class);
                 reportIntent.putExtra("REPORT_PERSON", true);
+                reportIntent.putExtra("REPORTING_PERSON", userProfile);
                 startActivity(reportIntent);
             }
         });

@@ -1,12 +1,14 @@
 package com.joinalongapp.joinalong;
 
+import static com.joinalongapp.LocationUtils.getAddressFromString;
+import static com.joinalongapp.LocationUtils.standardizeAddress;
+import static com.joinalongapp.LocationUtils.validateAddress;
+import static com.joinalongapp.TextInputUtils.isValidNameTitle;
+
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,14 +19,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.tabs.TabLayout;
+import com.joinalongapp.FeedbackMessageBuilder;
+import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.Event;
@@ -41,8 +43,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -110,13 +110,18 @@ public class ManageEventActivity extends AppCompatActivity {
             // Must append pre-existing text due to editing of Event.
             Event userEvent = (Event) info.getSerializable("EVENT");
             manageEventTitle.setText("Edit Event");
-            //TODO: add event id to path builder
+            submitButton.setText("Edit");
+
+            pathBuilder.addNode(userEvent.getEventId());
             pathBuilder.addEdit();
 
             title.setText(userEvent.getTitle());
             location.setText(userEvent.getLocation());
-            beginningDate.setText(userEvent.getBeginningDate().toString());
-            endDate.setText(userEvent.getEndDate().toString());
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
+            beginningDate.setText(sdf.format(userEvent.getBeginningDate()));
+            endDate.setText(sdf.format(userEvent.getEndDate()));
+
             boolean publicVisibility = userEvent.getPublicVisibility();
             if(publicVisibility){
                 eventVisibilityTab.setSelectedTabIndicator(PUBLIC_VISIBILITY_INDEX);
@@ -127,6 +132,12 @@ public class ManageEventActivity extends AppCompatActivity {
 
             int position = arrayAdapter.getPosition(String.valueOf(userEvent.getNumberOfPeopleAllowed()));
             numberOfPeople.setSelection(position);
+
+            List<String> existingInterests = userEvent.getStringListOfTags();
+            for (String interest : existingInterests) {
+                initChipsForChipGroup(chipGroupTags, interest);
+            }
+
             description.setText(userEvent.getDescription());
         } else {
             pathBuilder.addCreate();
@@ -136,19 +147,34 @@ public class ManageEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(checkInvalidFields()){
-                    Event event = new Event();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
-                    Date bDate = null;
-                    Date eDate = null;
+
+                    Date bDate;
                     try {
                         bDate = sdf.parse(beginningDate.getText().toString());
+                    } catch (ParseException e) {
+                        beginningDate.setError("Invalid date.");
+                        return;
+                    }
+
+                    Date eDate;
+                    try {
                         eDate = sdf.parse(endDate.getText().toString());
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        endDate.setError("Invalid date.");
+                        return;
                     }
+
+                    //todo: enable time pick
+                    // disabling date checking for now
+//                    if (!checkDateRange(bDate, eDate)){
+//                        return;
+//                    }
+
+                    Event event = new Event();
                     event.setTitle(title.getText().toString());
                     event.setTags(getTagsFromChipGroup());
-                    event.setLocation(location.getText().toString());
+                    event.setLocation(standardizeAddress(location.getText().toString(), getApplicationContext()));
                     event.setNumberOfPeopleAllowed(Integer.valueOf(numberOfPeople.getSelectedItem().toString()));
                     event.setDescription(description.getText().toString());
                     event.setBeginningDate(bDate);
@@ -163,78 +189,96 @@ public class ManageEventActivity extends AppCompatActivity {
                         JSONObject json = event.toJson();
                         json.put("token", ((UserApplicationInfo) getApplication()).getUserToken());
 
-                        requestManager.post(pathBuilder.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
-                            @Override
-                            public void onSuccess(Call call, Response response) {
-                                Intent i = new Intent(v.getContext(), MainActivity.class);
-                                try {
-                                    Log.d(TAG, response.body().string());
-                                } catch (IOException e) {
-                                    Log.e(TAG, "error printing log");
+                        if (info != null && info.getSerializable("EVENT") != null) {
+                            // EDIT EVENT
+                            requestManager.put(pathBuilder.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                                @Override
+                                public void onSuccess(Call call, Response response) {
+                                    Intent i = new Intent(v.getContext(), MainActivity.class);
+
+                                    new FeedbackMessageBuilder()
+                                            .setTitle("Event Edited!")
+                                            .setDescription("The " + title.getText().toString() + " has been successfully edited.")
+                                            .withActivity(ManageEventActivity.this)
+                                            .buildAsyncNeutralMessageAndStartActivity(i);
                                 }
 
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        ManageEventActivity.this.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                new AlertDialog.Builder(ManageEventActivity.this)
-                                                        .setTitle("Event created!")
-                                                        .setMessage("The " + title.getText().toString() + " has been successfully created.")
-                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.dismiss();
-                                                                startActivity(i);
-                                                            }
-                                                        })
-                                                        .create()
-                                                        .show();
-                                            }
-                                        });
+                                @Override
+                                public void onError(Call call, IOException e) {
+                                    FeedbackMessageBuilder.createServerConnectionError(e, "edit event", ManageEventActivity.this);
+                                }
+                            });
+
+                        } else {
+                            // CREATE EVENT
+                            requestManager.post(pathBuilder.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                                @Override
+                                public void onSuccess(Call call, Response response) {
+                                    switch(response.code()) {
+                                        case HttpStatusConstants.STATUS_HTTP_200:
+                                            Intent i = new Intent(v.getContext(), MainActivity.class);
+                                            new FeedbackMessageBuilder()
+                                                    .setTitle("Event Created!")
+                                                    .setDescription("The " + title.getText().toString() + " event has been successfully created.")
+                                                    .withActivity(ManageEventActivity.this)
+                                                    .buildAsyncNeutralMessageAndStartActivity(i);
+                                            break;
+
+                                        case HttpStatusConstants.STATUS_HTTP_500:
+                                        default:
+                                            FeedbackMessageBuilder.createServerInternalError("create event", ManageEventActivity.this);
+                                            break;
                                     }
-                                }, 0);
+                                }
 
-
-                            }
-
-                            @Override
-                            public void onError(Call call, IOException e) {
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        ManageEventActivity.this.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                new AlertDialog.Builder(ManageEventActivity.this)
-                                                        .setTitle("Unable to create event.")
-                                                        .setMessage("Unable to create the " + title.getText().toString() + " chat. \n Please try again later.")
-                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.dismiss();
-                                                            }
-                                                        })
-                                                        .create()
-                                                        .show();
-                                            }
-                                        });
-                                    }
-                                }, 0);
-                            }
-                        });
+                                @Override
+                                public void onError(Call call, IOException e) {
+                                    FeedbackMessageBuilder.createServerConnectionError(e, "create event", ManageEventActivity.this);
+                                }
+                            });
+                        }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        FeedbackMessageBuilder.createServerConnectionError(e, "create event", ManageEventActivity.this);
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        FeedbackMessageBuilder.createParseError(e, "create event", ManageEventActivity.this);
                     }
                 }
-
             }
         });
+    }
 
+    public void initChipsForChipGroup(ChipGroup chipGroup, String chipText) {
+        Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, chipGroup, false);
+        chip.setText(chipText);
+        chip.setOnCloseIconClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chipGroup.removeView(chip);
+            }
+        });
+        chipGroup.addView(chip);
+    }
 
+    private boolean checkDateRange(Date bDate, Date eDate) {
+        boolean isValid = true;
+        if (!bDate.before(eDate)){
+            isValid = false;
+            beginningDate.setError("End date cannot be before beginning date.");
+        }
+
+        Date now = new Date();
+
+        if (bDate.before(now)) {
+            isValid = false;
+            beginningDate.setError("Beginning date cannot be in the past.");
+        }
+
+        if (eDate.before(now)) {
+            isValid = false;
+            endDate.setError("End date cannot be in the past.");
+        }
+
+        return isValid;
     }
 
     @Override
@@ -274,12 +318,19 @@ public class ManageEventActivity extends AppCompatActivity {
             flag = false;
             title.setError("Empty Title field");
         }
+        if (!isValidNameTitle(title.getText().toString())) {
+            title.setError("First name contains invalid character(s).");
+            flag = false;
+        }
         if(editTextEmpty(location)){
             flag = false;
             location.setError("Empty Location field");
-        }else if(getAddressFromString(location.getText().toString()) == null){
-            flag = false;
-            location.setError("Invalid Address");
+        } else {
+            Address address = getAddressFromString(location.getText().toString(), getApplicationContext());
+            if(!validateAddress(address)){
+                flag = false;
+                location.setError("Invalid Address");
+            }
         }
         if(editTextEmpty(beginningDate)){
             flag = false;
@@ -291,8 +342,7 @@ public class ManageEventActivity extends AppCompatActivity {
         }
         if(chipGroupTags.getChildCount() == 0){
             flag = false;
-            Toast toast = Toast.makeText(this, "Empty Tag field", Toast.LENGTH_SHORT);
-            toast.show();
+            autoCompleteChipTags.setError("No interest tags selected.");
         }
         if(editTextEmpty(description)){
             flag = false;
@@ -323,10 +373,13 @@ public class ManageEventActivity extends AppCompatActivity {
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
                 editText.setText(sdf.format(input.getTime()));
-
             }
 
         }, year, month, dayOfMonth);
+
+        long now = new Date().getTime();
+
+        datePicker.getDatePicker().setMinDate(now);
         datePicker.show();
     }
 
@@ -350,20 +403,5 @@ public class ManageEventActivity extends AppCompatActivity {
                 chipGroup.addView(chip);
             }
         });
-    }
-
-
-    private Address getAddressFromString(String address) {
-        Geocoder geocoder = new Geocoder(ManageEventActivity.this);
-        Address retVal = null;
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(address, 1);
-            if (addresses.size() > 0) {
-                retVal = addresses.get(0);
-            }
-        } catch(IOException e) {
-            Log.e(TAG, "Failed to set location with error: " + e.getMessage());
-        }
-        return retVal;
     }
 }

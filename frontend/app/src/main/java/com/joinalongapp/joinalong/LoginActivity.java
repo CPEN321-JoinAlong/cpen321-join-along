@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +13,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     GoogleSignInClient mGoogleSignInClient;
     private final int RC_SIGN_IN = 1;
-    private SignInButton signInButton;
+    private Button signInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +132,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
 
-            } catch (JSONException | IOException e) {
+            } catch (JSONException e) {
+                createTokenParseError(e);
+            } catch (IOException e) {
                 createBackendAuthError(e);
             }
 
@@ -161,6 +163,7 @@ public class LoginActivity extends AppCompatActivity {
         i.putExtra("profilePic", account.getPhotoUrl().toString());
         i.putExtra("MODE", ManageProfileActivity.ManageProfileMode.PROFILE_CREATE);
         startActivity(i);
+        finish();
     }
 
     private void populateUserDetailsOnLogin(Response response) throws IOException, JSONException {
@@ -182,6 +185,12 @@ public class LoginActivity extends AppCompatActivity {
                 .setDescription(description)
                 .withActivity(LoginActivity.this)
                 .buildAsyncNeutralMessage();
+    }
+
+
+    private void createTokenParseError(JSONException e) {
+        createBadLoginError("Failed to encode data for backend authentication.\nPlease try again later.");
+        Log.e(TAG, "Failed to authenticate with backend server: " + e.getMessage());
     }
 
     private void createBackendAuthError(Exception e) {
@@ -210,5 +219,6 @@ public class LoginActivity extends AppCompatActivity {
     private void startMainActivity() {
         Intent i = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(i);
+        finish();
     }
 }

@@ -1,7 +1,7 @@
 package com.joinalongapp.joinalong;
 
 import android.app.Activity;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,11 +13,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.FeedbackMessageBuilder;
+import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.viewmodel.ChatDetails;
@@ -42,6 +43,7 @@ import okhttp3.Response;
 
 public class ManageChatActivity extends AppCompatActivity {
 
+    private static final String CREATE_TAG = "create chat";
     private TextView title;
     private EditText chatTitle;
     private AutoCompleteTextView tagAutoComplete;
@@ -100,30 +102,40 @@ public class ManageChatActivity extends AppCompatActivity {
             requestManager.get(path, token, new RequestManager.OnRequestCompleteListener() {
                 @Override
                 public void onSuccess(Call call, Response response) {
-                    try {
-                        JSONArray jsonArray = new JSONArray(response.body().string());
-                        for(int i = 0; i < jsonArray.length(); i++){
-                            UserProfile userProfile = new UserProfile();
-                            userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                    switch (response.code()) {
+                        case HttpStatusConstants.STATUS_HTTP_200:
+                            try {
+                                JSONArray jsonArray = new JSONArray(response.body().string());
+                                for(int i = 0; i < jsonArray.length(); i++){
+                                    UserProfile userProfile = new UserProfile();
+                                    userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
 
-                            friends[i] = userProfile.getFullName();
-                        }
+                                    friends[i] = userProfile.getFullName();
+                                }
 
-                        new Timer().schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                activity.runOnUiThread(new Runnable() {
+                                new Timer().schedule(new TimerTask() {
                                     @Override
                                     public void run() {
-                                        initAutoCompleteChipGroup(friendAutoComplete, friendChipGroup, friends);
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                initAutoCompleteChipGroup(friendAutoComplete, friendChipGroup, friends);
+                                            }
+                                        });
                                     }
-                                });
-                            }
-                        }, 0);
+                                }, 0);
 
-                    } catch(JSONException | IOException e){
-                        e.printStackTrace();
+                            } catch(JSONException | IOException e){
+                                e.printStackTrace();
+                            }
+                            break;
+
+                        case HttpStatusConstants.STATUS_HTTP_500:
+                        default:
+                            FeedbackMessageBuilder.createServerInternalError("get friends", ManageChatActivity.this);
+                            break;
                     }
+
                 }
 
                 @Override
@@ -169,61 +181,33 @@ public class ManageChatActivity extends AppCompatActivity {
                         submitManager.post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                             @Override
                             public void onSuccess(Call call, Response response) {
-                                System.out.println(response.body());
+                                switch (response.code()) {
+                                    case HttpStatusConstants.STATUS_HTTP_200:
+                                        Intent i = new Intent(ManageChatActivity.this, MainActivity.class);
+                                        new FeedbackMessageBuilder()
+                                                .setTitle("Chat Created!")
+                                                .setDescription("The " + chatTitle.getText().toString() + " has been successfully created.")
+                                                .withActivity(ManageChatActivity.this)
+                                                .buildAsyncNeutralMessageAndStartActivity(i);
+                                        break;
 
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        ManageChatActivity.this.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                new AlertDialog.Builder(ManageChatActivity.this)
-                                                        .setTitle("Chat created!")
-                                                        .setMessage("The " + chatTitle.getText().toString() + " has been successfully created.")
-                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.dismiss();
-                                                                finish();
-                                                            }
-                                                        })
-                                                        .create()
-                                                        .show();
-                                            }
-                                        });
-                                    }
-                                }, 0);
 
+                                    case HttpStatusConstants.STATUS_HTTP_500:
+                                    default:
+                                        FeedbackMessageBuilder.createServerInternalError(CREATE_TAG, ManageChatActivity.this);
+                                        break;
+                                }
                             }
 
                             @Override
                             public void onError(Call call, IOException e) {
-                                System.out.println(call.toString());
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        ManageChatActivity.this.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                new AlertDialog.Builder(ManageChatActivity.this)
-                                                        .setTitle("Unable to create chat.")
-                                                        .setMessage("Unable to create the " + chatTitle.getText().toString() + " chat. \n Please try again later.")
-                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.dismiss();
-                                                            }
-                                                        })
-                                                        .create()
-                                                        .show();
-                                            }
-                                        });
-                                    }
-                                }, 0);
+                                FeedbackMessageBuilder.createServerConnectionError(e, CREATE_TAG, ManageChatActivity.this);
                             }
                         });
-                    } catch(IOException | JSONException e){
-
+                    } catch(IOException e) {
+                        FeedbackMessageBuilder.createServerConnectionError(e, CREATE_TAG, ManageChatActivity.this);
+                    } catch (JSONException e){
+                        FeedbackMessageBuilder.createParseError(e, CREATE_TAG, ManageChatActivity.this);
                     }
 
 

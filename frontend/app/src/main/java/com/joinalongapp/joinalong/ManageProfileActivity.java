@@ -1,8 +1,15 @@
 package com.joinalongapp.joinalong;
 
+import static com.joinalongapp.FeedbackMessageBuilder.createParseError;
+import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
+import static com.joinalongapp.FeedbackMessageBuilder.createServerInternalError;
+import static com.joinalongapp.LocationUtils.getAddressFromString;
+import static com.joinalongapp.LocationUtils.standardizeAddress;
+import static com.joinalongapp.LocationUtils.validateLocation;
+import static com.joinalongapp.TextInputUtils.isValidNameTitle;
+
 import android.content.Intent;
 import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
@@ -50,7 +57,8 @@ import okhttp3.Response;
  * add a first and last name string for autofill in the Extras.
  */
 public class ManageProfileActivity extends AppCompatActivity {
-    private final static String TAG ="ManageProfileActivity";
+    private final static String CREATE_TAG ="create profile";
+    private final static String EDIT_TAG ="edit profile";
     private EditText firstNameEdit;
     private EditText lastNameEdit;
     private EditText locationEdit;
@@ -79,7 +87,7 @@ public class ManageProfileActivity extends AppCompatActivity {
         try {
             initUseGoogleProfilePicToggle(originalProfile);
         } catch (IOException e) {
-            Log.e(TAG, "Failed to set profile pic: " + e.getMessage());
+            Log.e(EDIT_TAG, "Failed to set profile pic: " + e.getMessage());
         }
 
         if (getIntent().getExtras() != null) {
@@ -93,11 +101,10 @@ public class ManageProfileActivity extends AppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                modifyOriginalProfile(originalProfile);
-
                 UserApplicationInfo userInput = createUserObject();
 
-                if (validateElements(originalProfile)) {
+                if (validateElements()) {
+                    modifyOriginalProfile(originalProfile);
                     userInput.setProfile(originalProfile);
 
                     if (isCreatingProfile()) {
@@ -135,26 +142,34 @@ public class ManageProfileActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Call call, Response response) {
 
-                    if (response.code() == HttpStatusConstants.STATUS_HTTP_200) {
-                        ((UserApplicationInfo) getApplication()).updateApplicationInfo(userInput);
-                    } else {
-                        Log.e(TAG, "Unable to update user profile");
-                    }
+                    switch (response.code()) {
+                        case HttpStatusConstants.STATUS_HTTP_200:
+                            ((UserApplicationInfo) getApplication()).updateApplicationInfo(userInput);
+                            Intent i = new Intent(ManageProfileActivity.this, MainActivity.class);
 
-                    //todo: should go to profile?
-                    //      success message
-                    startMainActivity();
+                            new FeedbackMessageBuilder()
+                                    .setTitle("Update profile")
+                                    .setDescription("Successfully updated user profile!")
+                                    .withActivity(ManageProfileActivity.this)
+                                    .buildAsyncNeutralMessageAndStartActivity(i);
+                            break;
+
+                        case HttpStatusConstants.STATUS_HTTP_500:
+                        default:
+                            FeedbackMessageBuilder.createServerInternalError("update profile", ManageProfileActivity.this);
+                            break;
+                    }
                 }
 
                 @Override
                 public void onError(Call call, IOException e) {
-                    Log.e(TAG, "Unable to update profile" + e.getMessage());
-                    Toast.makeText(ManageProfileActivity.this, "Unable to update profile. Please try again later.", Toast.LENGTH_LONG).show();
+                    FeedbackMessageBuilder.createServerConnectionError(e, "update profile", ManageProfileActivity.this);
                 }
             });
-        } catch (JSONException | IOException e) {
-            Log.e(TAG, "Failed to update user profile");
-            Toast.makeText(ManageProfileActivity.this, "Unable to update profile. Please try again later.", Toast.LENGTH_LONG).show();
+        } catch (JSONException e){
+            FeedbackMessageBuilder.createParseError(e, "update profile", ManageProfileActivity.this);
+        } catch (IOException e) {
+            FeedbackMessageBuilder.createServerConnectionError(e, "update profile", ManageProfileActivity.this);
         }
     }
 
@@ -172,25 +187,35 @@ public class ManageProfileActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Call call, Response response) {
                     UserApplicationInfo newUserInfo = new UserApplicationInfo();
-                    try {
-                        newUserInfo.populateDetailsFromJson(response.body().string());
-                        ((UserApplicationInfo) getApplication()).updateApplicationInfo(newUserInfo);
-                        startMainActivity();
+                    switch (response.code()) {
+                        case HttpStatusConstants.STATUS_HTTP_200:
+                            try {
+                                newUserInfo.populateDetailsFromJson(response.body().string());
+                                ((UserApplicationInfo) getApplication()).updateApplicationInfo(newUserInfo);
+                                startMainActivity();
 
-                    } catch (IOException | JSONException e) {
-                        Log.e(TAG, "Unable to load user profile");
+                            } catch (IOException | JSONException e) {
+                                createParseError(e, CREATE_TAG, ManageProfileActivity.this);
+                            }
+                            break;
+                        case HttpStatusConstants.STATUS_HTTP_500:
+                        default:
+                            createServerInternalError(CREATE_TAG, ManageProfileActivity.this);
+                            break;
+
                     }
+
                 }
 
                 @Override
                 public void onError(Call call, IOException e) {
-                    Log.e(TAG, "Unable to create profile");
-                    Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
+                    createServerConnectionError(e, CREATE_TAG, ManageProfileActivity.this);
                 }
             });
-        } catch (JSONException | IOException e) {
-            Log.e(TAG, "Failed to create user profile");
-            Toast.makeText(ManageProfileActivity.this, "Unable to create profile. Please try again later.", Toast.LENGTH_LONG).show();
+        } catch (JSONException e) {
+            createParseError(e, CREATE_TAG, ManageProfileActivity.this);
+        } catch (IOException e) {
+            createServerConnectionError(e, CREATE_TAG, ManageProfileActivity.this);
         }
     }
 
@@ -209,8 +234,7 @@ public class ManageProfileActivity extends AppCompatActivity {
     private void modifyOriginalProfile(UserProfile originalProfile) {
         originalProfile.setFirstName(firstNameEdit.getText().toString());
         originalProfile.setLastName(lastNameEdit.getText().toString());
-        originalProfile.setLocation(locationEdit.getText().toString());
-
+        originalProfile.setLocation(standardizeAddress(locationEdit.getText().toString(), getApplicationContext()));
 
         List<Tag> tags = getTagsFromChipGroup();
         originalProfile.setTags(tags);
@@ -343,20 +367,6 @@ public class ManageProfileActivity extends AppCompatActivity {
         confirm.setText(editConfirm);
     }
 
-    private Address getAddressFromString(String address) {
-        Geocoder geocoder = new Geocoder(ManageProfileActivity.this);
-        Address retVal = null;
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(address, 1);
-            if (addresses.size() > 0) {
-                retVal = addresses.get(0);
-            }
-        } catch(IOException e) {
-            Log.e(TAG, "Failed to set location with error: " + e.getMessage());
-        }
-        return retVal;
-    }
-
     private void initElements() {
         firstNameEdit = findViewById(R.id.profileFirstNameEdit);
         lastNameEdit = findViewById(R.id.profileLastNameEdit);
@@ -381,21 +391,33 @@ public class ManageProfileActivity extends AppCompatActivity {
         PROFILE_CREATE
     }
 
-    private boolean validateElements(UserProfile profile) {
+    private boolean validateElements() {
         boolean isValid = true;
 
-        if (profile.getFirstName().isEmpty()) {
+        if (firstNameEdit.getText().toString().isEmpty()) {
             firstNameEdit.setError("First name must not be blank.");
             isValid = false;
         }
 
-        if (profile.getLastName().isEmpty()) {
+        if (!isValidNameTitle(firstNameEdit.getText().toString())) {
+            firstNameEdit.setError("First name contains invalid character(s).");
+            isValid = false;
+        }
+
+        if (lastNameEdit.getText().toString().isEmpty()) {
             lastNameEdit.setError("Last name must not be blank.");
             isValid = false;
         }
 
-        if (getAddressFromString(profile.getLocation()) == null) {
-            locationEdit.setError("Unable to find address.");
+        if (!isValidNameTitle(lastNameEdit.getText().toString())) {
+            lastNameEdit.setError("Last name contains invalid character(s).");
+            isValid = false;
+        }
+
+        Address address = getAddressFromString(locationEdit.getText().toString(), getApplicationContext());
+
+        if (!validateLocation(address)) {
+            locationEdit.setError("Unable to find location.");
             isValid = false;
         }
 

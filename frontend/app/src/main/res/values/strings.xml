@@ -11,6 +11,7 @@
     <string name="enter_reason_hint">Enter Reason</string>
     <string name="block_user_option">Block User</string>
     <string name="block_option">Block </string>
+    <string name="reporter_name">Reporter Name</string>
     <string name="report_dont_block">Don\'t Block</string>
     <!--Subtitle Strings-->
     <string name="title_subtitle">Title</string>
@@ -49,6 +50,9 @@
     <string name="default_search">Search</string>
     <string name="default_description">Description</string>
     <string name="default_view_reports">View Reports</string>
+    <string name="default_report_type_subtitle">Report Type</string>
+    <string name="default_report_target_subtitle">Report Target</string>
+
     <string-array name="number_of_people_array">
         <item>1</item>
         <item>2</item>
@@ -149,5 +153,9 @@
     <!--Rideshare Select-->
     <string name="rideshare_select_title">Select Rideshare</string>
 
-
+    <!--Character Limits-->
+    <integer name="max_name_length">35</integer>
+    <integer name="max_title_length">64</integer>
+    <integer name="max_description_length">1250</integer>
+    <integer name="max_location_length">500</integer>
 </resources>

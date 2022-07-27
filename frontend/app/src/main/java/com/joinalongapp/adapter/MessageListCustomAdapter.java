@@ -154,5 +154,6 @@ public class MessageListCustomAdapter extends RecyclerView.Adapter {
     public void changeDataset(List<Message> inputMessages){
         messages = inputMessages;
         notifyDataSetChanged();
+
     }
 }

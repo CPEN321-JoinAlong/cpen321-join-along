@@ -1,20 +1,32 @@
 package com.joinalongapp.adapter;
 
+import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.joinalong.R;
+import com.joinalongapp.navbar.ViewProfileFragment;
+import com.joinalongapp.navbar.ViewReportFragment;
 import com.joinalongapp.viewmodel.ReportDetails;
+import com.joinalongapp.viewmodel.UserProfile;
 
 
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHolder> {
@@ -25,28 +37,33 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView individualReportName;
+        TextView individualReportedName;
         TextView individualReportType;
-        ImageButton reportOptions;
+        TextView individualReporterName;
+        Button reportOptions;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            individualReportName = itemView.findViewById(R.id.individualReportName);
+            individualReporterName = itemView.findViewById(R.id.individualReporterName);
+            individualReportedName = itemView.findViewById(R.id.individualReportName);
             individualReportType = itemView.findViewById(R.id.individualReportType);
             reportOptions = itemView.findViewById(R.id.reportOptions);
         }
 
-        public TextView getIndividualReportName() {
-            return individualReportName;
+        public TextView getIndividualReportedName() {
+            return individualReportedName;
         }
 
         public TextView getIndividualReportType() {
             return individualReportType;
         }
 
-        public ImageButton getReportOptions() {
+        public Button getReportOptions() {
             return reportOptions;
+        }
+
+        public TextView getIndividualReporterName() {
+            return individualReporterName;
         }
     }
 
@@ -59,8 +76,9 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ReportsAdapter.ViewHolder holder, int position) {
-        holder.getIndividualReportName().setText(datasetOfReports.get(position).getReportingName());
-        // Set the type
+        holder.getIndividualReportedName().setText(datasetOfReports.get(position).getReportedName());
+        holder.getIndividualReportType().setText("Type: " + datasetOfReports.get(position).getReportType());
+        holder.getIndividualReporterName().setText("By: " + datasetOfReports.get(position).getReporterName());
         holder.getReportOptions().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,11 +87,39 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        return false;
+                        switch(item.getItemId()){
+                            case R.id.menu1:
+                                try{
+                                    deleteReport(datasetOfReports.get(holder.getBindingAdapterPosition()).getId(), v.getContext());
+                                } catch (JSONException | IOException e) {
+                                    e.printStackTrace();
+                                }
+                                return true;
+                            default:
+                                return false;
+                        }
                     }
                 });
+                popup.show();
             }
         });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewReportFragment viewReportFragment = new ViewReportFragment();
+                Bundle info = new Bundle();
+                info.putSerializable("REPORT_DETAILS", datasetOfReports.get(holder.getBindingAdapterPosition()));
+                viewReportFragment.setArguments(info);
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.constraintLayoutProfile, viewReportFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
+
+
     }
 
     @Override
@@ -86,6 +132,21 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
         }
     }
 
+    private void deleteReport(String uuid, Context context) throws JSONException, IOException {
+        for (Iterator<ReportDetails> iterator = datasetOfReports.iterator(); iterator.hasNext(); ) {
+            ReportDetails value = iterator.next();
+            if (value.getId() == uuid) {
+                iterator.remove();
+            }
+        }
+        notifyDataSetChanged();
+
+    }
+
+    public void changeDataset(List<ReportDetails> reports){
+        datasetOfReports = reports;
+        notifyDataSetChanged();
+    }
 
 
 }

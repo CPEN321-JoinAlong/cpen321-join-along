@@ -76,16 +76,8 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
                         switch(item.getItemId()){
                             case R.id.menu1:
                                 Log.d("FriendsAdapter", chatDetailsList.get(holder.getBindingAdapterPosition()).getTitle());
-
-                                Log.d("FriendsAdapter", "MENU1");
                                 deleteMessage(chatDetailsList.get(holder.getAdapterPosition()).getId());
                                 return true;
-
-                            case R.id.menu2:
-                                Log.d("FriendsAdapter", chatDetailsList.get(holder.getBindingAdapterPosition()).getTitle());
-                                Log.d("FriendsAdapter", "MENU2");
-                                return true;
-
 
                             default:
                                 return false;

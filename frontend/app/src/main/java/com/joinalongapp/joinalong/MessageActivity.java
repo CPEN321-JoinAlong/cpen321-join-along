@@ -70,70 +70,75 @@ public class MessageActivity extends AppCompatActivity {
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String messageContent;
                 if (messageField.getText().toString().isEmpty()) {
                     messageField.setError("Empty message");
                     return;
+                } else {
+                    messageContent = messageField.getText().toString();
                 }
-                Date date = new Date();
-                Message message = new Message();
-                message.setMessage(messageField.getText().toString());
-                messageField.setText("");
-                message.setOwner(true);
-                message.setCreatedAt(date.getTime());
+//                Date date = new Date();
+//                Message message = new Message();
+//                message.setMessage(messageField.getText().toString());
+//                messageField.setText("");
+//                message.setOwner(true);
+//                message.setCreatedAt(date.getTime());
+//
+//                JSONObject json = null;
+//                try {
+//                    json = message.toJson();
+//                    json.put("token", token);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+                String userId = user.getId();
+                String chatId = chatDetails.getId();
+                long timestamp = new Date().getTime();
 
-                JSONObject json = null;
-                try {
-                    json = message.toJson();
-                    json.put("token", token);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                socket.emit("messageDetection", userId, chatId, timestamp, messageContent);
 
-                socket.emit("messageDetection",user.getFullName(),message.getMessage());
-
-
-                RequestManager requestManager = new RequestManager();
-                try {
-                    String path = new PathBuilder()
-                            .addChat()
-                            .addNode("sendChat")
-                            .addNode(user.getId())
-                            .addNode(chatDetails.getId())
-                            .build();
-
-                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
-                        @Override
-                        public void onSuccess(Call call, Response response) {
-                            // TODO: add messages
-
-                        }
-
-                        @Override
-                        public void onError(Call call, IOException e) {
-                            System.out.println("");
-                        }
-                    });
-
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    List<Message> messageList = messageAdapter.getMessages();
-                                    if(messageList == null){
-                                        messageList = new ArrayList<>();
-                                    }
-                                    messageList.add(message);
-                                    messageAdapter.notifyDataSetChanged();
-                                    messageRecycler.scrollToPosition(messages.size() - 1);
-                                }
-                            });
-                        }
-                    }, 0);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                RequestManager requestManager = new RequestManager();
+//                try {
+//                    String path = new PathBuilder()
+//                            .addChat()
+//                            .addNode("sendChat")
+//                            .addNode(user.getId())
+//                            .addNode(chatDetails.getId())
+//                            .build();
+//
+//                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+//                        @Override
+//                        public void onSuccess(Call call, Response response) {
+//                            // TODO: add messages
+//
+//                        }
+//
+//                        @Override
+//                        public void onError(Call call, IOException e) {
+//                            System.out.println("");
+//                        }
+//                    });
+//
+//                    new Timer().schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            activity.runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    List<Message> messageList = messageAdapter.getMessages();
+//                                    if(messageList == null){
+//                                        messageList = new ArrayList<>();
+//                                    }
+//                                    messageList.add(message);
+//                                    messageAdapter.notifyDataSetChanged();
+//                                    messageRecycler.scrollToPosition(messages.size() - 1);
+//                                }
+//                            });
+//                        }
+//                    }, 0);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
 
@@ -159,6 +164,7 @@ public class MessageActivity extends AppCompatActivity {
             System.out.println("socket io error");
         }
 
+        //UPDATE ON RECEIVE MESSAGE
         socket.on("message", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -177,8 +183,9 @@ public class MessageActivity extends AppCompatActivity {
                             m.setMessage(message);
 
                             messages.add(m);
-                            messageAdapter.notifyDataSetChanged();
 
+                            messageRecycler.scrollToPosition(messages.size() - 1);
+                            messageAdapter.notifyDataSetChanged();
                         } catch (JSONException e){
                             e.printStackTrace();
                         }

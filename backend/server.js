@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 // const admin = require("firebase-admin");
 // const serviceAccount = require("/home/azureuser/serviceAccountKey.json");
+const socketio = require('socket.io');
 const User = require("./models/User");
 const Event = require("./models/Event");
 const Chat = require("./models/Chat");
@@ -60,7 +61,7 @@ app.use(
 ); // to parse application/x-www-form-urlencoded
 app.use(logRequest); // logging for debug
 
-app.listen(port, () => {
+let server = app.listen(port, () => {
     console.log(
         `${new Date()}  App Started. Listening on ${host}:${port}, serving ${clientApp}`
     );
@@ -761,3 +762,19 @@ app.post("/event/:id/ban", async (req, res) => {
         res.status(ERROR_CODES.DBERROR).send(null);
     }
 });
+
+//*  Socket.io connection
+let io = socketio.listen(server)
+io.on('connection', (socket) => {
+    socket.on('join', (userName) => {
+        socket.broadcast.emit('user', userName + 'joined the chat')
+    })
+
+    socket.on('messageDetection', (userName, message) => {
+        io.emit('message', { participantName: userName, text: message})
+    })
+
+    socket.on('disconnect', () => {
+        socket.broadcast.emit('disconnected', 'socket disconnected')
+    })
+})

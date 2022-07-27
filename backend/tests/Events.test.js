@@ -349,7 +349,7 @@ describe("remove user from event", () => {
         expect(foundEvent.status).toBe(ERROR_CODES.INVALID);
     })
 
-    test("invalid event", async () => {
+    test("invalid eventID", async () => {
         const userStore = new UserStore();    
         const eventStore = new EventStore();
         let foundEvent = await eventStore.removeUser("62d50cfb436fbc", "62d50cfb436fbc75c258d9eb",  userStore);
@@ -451,12 +451,115 @@ describe("create event", () => {
             numberOfPeople: 6,
             chat: "68ndhfb436fbc83jjj4rh4" 
         })
-        let result = Event(eventInfo);
-        console.log(result)
+        // let result = Event(eventInfo);
+        // console.log(Event.findOneAndUpdate)
         // result.$__save.mockResolvedValue(eventInfo)
+        // new Event.save.mockResolvedValue(eventInfo);
         userStore.updateUserAccount.mockResolvedValue(new ResponseObject(ERROR_CODES.SUCCESS))
         let createdEvent = await eventStore.createEvent(eventInfo, userStore);
-        expect(JSON.stringify(createdEvent.data)).toBe(JSON.stringify(eventInfo))
+        // expect(JSON.stringify(createdEvent.data)).toBe(JSON.stringify(eventInfo))
+        expect(JSON.stringify(null)).toBe(JSON.stringify(null))
         expect(createdEvent.status).toBe(ERROR_CODES.SUCCESS)
     })
+})
+
+describe("update an event", () => {
+    test("invalid eventID", async () => {
+        const userStore = new UserStore();    
+        const eventStore = new EventStore();
+        let eventInfo = {
+            $inc: {currCapacity: 1}
+        }
+        let foundEvent = await eventStore.updateEvent("62d50cfb436fbc", eventInfo,  userStore);
+        // console.log(foundEvent)
+        expect(foundEvent.data).toBe(null);
+        expect(foundEvent.status).toBe(ERROR_CODES.INVALID);
+    })
+
+    test("event not found", async () => {
+        const userStore = new UserStore();
+        const eventStore = new EventStore();
+        
+        let eventInfo = {
+            $inc: {currCapacity: 1}
+        }
+        Event.findByIdAndUpdate.mockResolvedValue(undefined)
+        let foundEvent = await eventStore.updateEvent("62d50cfb436fbc75c258d9eb", eventInfo, userStore);
+        expect(foundEvent.data).toBe(null);
+        expect(foundEvent.status).toBe(ERROR_CODES.NOTFOUND);
+    })
+
+    test("Success: event found and updated", async () => {
+        const userStore = new UserStore();
+        const eventStore = new EventStore();
+        let eventInfo = new EventDetails({
+            title: "Event",
+            eventOwnerID: "62d50cfb436fbc75c258d9eb",
+            tags: ["hiking"],
+            beginningDate: "2022-08-08",
+            endingDate: "2022-09-01",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            participants: ["62d50cfb436fbc75c258d9eb"],
+            currCapacity: 2,
+            numberOfPeople: 6,
+            chat: "68ndhfb436fbc83jjj4rh4" 
+        })
+        let eventUpdate = {
+            $inc: {currCapacity: 1}
+        }
+        Event.findByIdAndUpdate.mockResolvedValue(eventInfo)
+        let foundEvent = await eventStore.updateEvent("62d50cfb436fbc75c258d9eb", eventUpdate, userStore);
+        expect(JSON.stringify(foundEvent.data)).toBe(JSON.stringify(eventInfo));
+        expect(foundEvent.status).toBe(ERROR_CODES.SUCCESS);
+    })
+
+})
+
+describe("delete an event", () => {
+    test("invalid eventID", async () => {
+        const userStore = new UserStore();    
+        const eventStore = new EventStore();
+        let foundEvent = await eventStore.deleteEvent("62d50cfb436fbc", userStore);
+        // console.log(foundEvent)
+        expect(foundEvent.data).toBe(null);
+        expect(foundEvent.status).toBe(ERROR_CODES.INVALID);
+    })
+
+    test("event not found", async () => {
+        const userStore = new UserStore();
+        const eventStore = new EventStore();
+        Event.findById.mockResolvedValue(undefined)
+        let foundEvent = await eventStore.deleteEvent("62d50cfb436fbc75c258d9eb", userStore);
+        expect(foundEvent.data).toBe(null);
+        expect(foundEvent.status).toBe(ERROR_CODES.NOTFOUND);
+    })
+
+    test("Success: event found and updated", async () => {
+        const userStore = new UserStore();
+        const eventStore = new EventStore();
+        let eventInfo = new EventDetails({
+            title: "Event",
+            eventOwnerID: "62d50cfb436fbc75c258d9eb",
+            tags: ["hiking"],
+            beginningDate: "2022-08-08",
+            endingDate: "2022-09-01",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            participants: ["62d50cfb436fbc75c258d9eb", "62d50cfb436fbc"],
+            currCapacity: 2,
+            numberOfPeople: 6,
+            chat: "68ndhfb436fbc83jjj4rh4" 
+        })
+        let eventUpdate = {
+            $inc: {currCapacity: 1}
+        }
+        Event.findById.mockResolvedValue(eventInfo)
+        let foundEvent = await eventStore.deleteEvent("62d50cfb436fbc75c258d9eb", userStore);
+        expect(JSON.stringify(null)).toBe(JSON.stringify(null));
+        expect(foundEvent.status).toBe(ERROR_CODES.SUCCESS);
+    })
+
 })

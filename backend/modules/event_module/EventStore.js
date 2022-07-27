@@ -101,13 +101,15 @@ class EventStore {
     async createEvent(eventInfo, userStore) {
         let eventObject = await new Event(eventInfo).save();
         console.log(eventObject)
-        eventObject.participants.forEach(async (participant) => {
-            if (mongoose.isObjectIdOrHexString(participant)) {
-                await userStore.updateUserAccount(participant, {
-                    $push: { events: eventObject._id },
-                });
-            }
-        });
+        if(eventObject) {
+            eventObject.participants.forEach(async (participant) => {
+                if (mongoose.isObjectIdOrHexString(participant)) {
+                    await userStore.updateUserAccount(participant, {
+                        $push: { events: eventObject._id },
+                    });
+                }
+            });
+        }
         return new ResponseObject(ERROR_CODES.SUCCESS, eventObject);
     }
 
@@ -122,7 +124,7 @@ class EventStore {
             await userStore.removeEvent(eventID, event);
             return new ResponseObject(ERROR_CODES.SUCCESS, event);
         } else {
-            return new ResponseObject(ERROR_CODES.INVALID);
+            return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
     }
 

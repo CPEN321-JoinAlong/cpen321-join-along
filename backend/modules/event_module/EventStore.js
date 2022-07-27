@@ -8,11 +8,11 @@ class EventStore {
         if (!mongoose.isObjectIdOrHexString(userID))
             return new ResponseObject(ERROR_CODES.INVALID, []);
         let user = await userStore.findUserByID(userID);
-        if (user) {
+        if (user.data) {
             let eventList = await Event.find({
                 $and: [
-                    { _id: { $in: user.events } },
-                    { _id: { $nin: user.blockedEvents } },
+                    { _id: { $in: user.data.events } },
+                    { _id: { $nin: user.data.blockedEvents } },
                 ],
             });
             if (eventList.length !== 0)
@@ -58,7 +58,7 @@ class EventStore {
 
     async findEventByUser(userID) {
         if (!mongoose.isObjectIdOrHexString(userID))
-            return new ResponseObject(ERROR_CODES.INVALID);
+            return new ResponseObject(ERROR_CODES.INVALID, []);
         let eventList = await Event.find({
             participants: userID,
         });
@@ -66,22 +66,6 @@ class EventStore {
             return new ResponseObject(ERROR_CODES.SUCCESS, eventList);
         else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList);
     }
-
-    // async findEventByDetails(filters) {
-    //     return await Event.find({
-    //         $or: [
-    //             {
-    //                 title: filters.title,
-    //                 eventOwnerID: filters.eventOwnerID,
-    //                 tags: {
-    //                     $in: filters.tags,
-    //                 },
-    //                 location: filters.location,
-    //                 description: filters.description,
-    //             },
-    //         ],
-    //     });
-    // }
 
     async findAllEvents() {
         let eventList = await Event.find({});
@@ -116,6 +100,7 @@ class EventStore {
     //add the event to the database and adds it into users' event list and send event object to frontend
     async createEvent(eventInfo, userStore) {
         let eventObject = await new Event(eventInfo).save();
+        console.log(eventObject)
         eventObject.participants.forEach(async (participant) => {
             if (mongoose.isObjectIdOrHexString(participant)) {
                 await userStore.updateUserAccount(participant, {
@@ -161,18 +146,6 @@ class EventStore {
         }
     }
 
-    // async addUserToEvent(userID, eventID) {
-    //     let eventInfo = await Event.findById(eventID);
-    //     if (eventInfo == null) return;
-    //     eventInfo.participants.push(userID);
-    //     Event.findByIdAndUpdate(eventID, eventInfo);
-    // }
-
-    // async findEventInterest(userID) {
-    //     let user = await User.findById(userID);
-    //     if (user == null) return;
-    //     return user.events;
-    // }
 }
 
 module.exports = EventStore;

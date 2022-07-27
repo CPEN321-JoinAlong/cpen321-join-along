@@ -44,6 +44,7 @@ public class ViewProfileFragment extends Fragment {
     private TextView description;
     private Button report;
     private Button addFriend;
+    private Button ban;
     private boolean hide;
 
     public ViewProfileFragment() {
@@ -146,6 +147,44 @@ public class ViewProfileFragment extends Fragment {
             }
         });
 
+        if(!globalUserProfile.isAdmin()){
+            ban.setVisibility(View.INVISIBLE);
+        }
+
+        ban.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ban.setVisibility(View.INVISIBLE);
+                RequestManager requestManager = new RequestManager();
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("token", token);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    String path = new PathBuilder()
+                            .addUser()
+                            .addNode(otherUserId)
+                            .addNode("ban")
+                            .build();
+                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                        @Override
+                        public void onSuccess(Call call, Response response) {
+                            System.out.println(response.toString());
+                        }
+
+                        @Override
+                        public void onError(Call call, IOException e) {
+                            System.out.println(call.toString());
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,6 +234,7 @@ public class ViewProfileFragment extends Fragment {
         description = view.findViewById(R.id.description);
         report = view.findViewById(R.id.blockUserButton);
         addFriend = view.findViewById(R.id.addFriendButton);
+        ban = view.findViewById(R.id.banButton);
     }
 
     private void addTagsToChipGroup(){

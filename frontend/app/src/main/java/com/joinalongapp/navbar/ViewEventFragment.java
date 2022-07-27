@@ -30,6 +30,7 @@ import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.SelectRideshareActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
+import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,6 +65,7 @@ public class ViewEventFragment extends Fragment {
     private ImageButton options;
     private PopupMenu menu;
     private Chip userChip;
+    private Button ban;
 
     public ViewEventFragment() {
         // Required empty public constructor
@@ -109,8 +111,52 @@ public class ViewEventFragment extends Fragment {
         initJoinButton();
         initRideshareButton();
         initEventMenu();
+        initBanButton();
 
         return view;
+    }
+
+    private void initBanButton(){
+        String token = ((UserApplicationInfo) (getActivity().getApplication())).getUserToken();
+        UserProfile globalUserProfile = ((UserApplicationInfo) (getActivity().getApplication())).getProfile();
+
+        if(!globalUserProfile.isAdmin()){
+            ban.setVisibility(View.INVISIBLE);
+        }
+
+        ban.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ban.setVisibility(View.INVISIBLE);
+                RequestManager requestManager = new RequestManager();
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("token", token);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    String path = new PathBuilder()
+                            .addEvent()
+                            .addNode(event.getEventId())
+                            .addNode("ban")
+                            .build();
+                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                        @Override
+                        public void onSuccess(Call call, Response response) {
+                            System.out.println(response.toString());
+                        }
+
+                        @Override
+                        public void onError(Call call, IOException e) {
+                            System.out.println(call.toString());
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void initEventMenu() {
@@ -452,6 +498,7 @@ public class ViewEventFragment extends Fragment {
         joinButton = view.findViewById(R.id.joinEventButton);
         rideshareButton = view.findViewById(R.id.viewEventBookRideshareButton);
         options = view.findViewById(R.id.eventOptions);
+        ban = view.findViewById(R.id.eventBanButton);
     }
 
     private void initEventDetails(Event event) {

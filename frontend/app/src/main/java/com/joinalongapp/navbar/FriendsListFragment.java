@@ -1,6 +1,7 @@
 package com.joinalongapp.navbar;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.joinalongapp.adapter.FriendsListCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
@@ -37,6 +39,7 @@ public class FriendsListFragment extends Fragment {
     private RecyclerView friendsListRecyclerView;
     private FriendsListCustomAdapter friendsListCustomAdapter;
     protected List<UserProfile> dataset;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public FriendsListFragment() {
         // Required empty public constructor
@@ -78,6 +81,23 @@ public class FriendsListFragment extends Fragment {
         initElements(rootView);
         initAdapter();
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    initDataset();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000);
+            }
+        });
+
         return rootView;
     }
 
@@ -89,6 +109,7 @@ public class FriendsListFragment extends Fragment {
 
     private void initElements(View rootView) {
         friendsListRecyclerView = (RecyclerView) rootView.findViewById(R.id.friendsListRecyclerView);
+        swipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
     }
 
     private void initDataset() throws IOException{

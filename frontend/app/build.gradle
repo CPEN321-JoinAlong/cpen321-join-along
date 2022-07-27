@@ -68,6 +68,7 @@ dependencies {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
     }
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
 
     implementation 'com.squareup.okhttp3:okhttp:4.1.0'

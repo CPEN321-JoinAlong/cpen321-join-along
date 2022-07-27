@@ -18,6 +18,7 @@ public class UserProfile implements Serializable, IDetailsModel {
     private String profilePictureUrl;
     //TODO: probably should make constructor instantiate these, or modify the existing setters to null check them
     private List<String> friends = new ArrayList<>();
+    private boolean isAdmin;
 
     public UserProfile(String id, String firstName, String lastName) {
         this.id = id;
@@ -101,6 +102,14 @@ public class UserProfile implements Serializable, IDetailsModel {
         return description;
     }
 
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    private void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -160,6 +169,8 @@ public class UserProfile implements Serializable, IDetailsModel {
         for (int i = 0; i < jsonFriendsList.length(); i++) {
             addFriendToList(jsonFriendsList.getString(i));
         }
+
+        // TODO: add parsing for admin
 
         return this;
     }

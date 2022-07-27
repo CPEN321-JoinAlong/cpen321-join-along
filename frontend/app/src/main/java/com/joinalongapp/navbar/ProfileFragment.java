@@ -103,6 +103,10 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        if(!user.isAdmin()){
+            viewReportsButton.setVisibility(View.INVISIBLE);
+        }
+
         viewReportsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

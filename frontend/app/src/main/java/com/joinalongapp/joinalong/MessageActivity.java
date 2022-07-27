@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 import com.joinalongapp.adapter.MessageListCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
@@ -23,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +44,7 @@ public class MessageActivity extends AppCompatActivity {
     private EditText messageField;
     private TextView chatTitle;
     private ImageButton backButton;
+    private Socket socket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,10 @@ public class MessageActivity extends AppCompatActivity {
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (messageField.getText().toString().isEmpty()) {
+                    messageField.setError("Empty message");
+                    return;
+                }
                 Date date = new Date();
                 Message message = new Message();
                 message.setMessage(messageField.getText().toString());
@@ -77,7 +86,36 @@ public class MessageActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                System.out.println(json.toString());
+                socket.emit("messageDetection",user.getFullName(),message.getMessage());
+                socket.on("message", new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    JSONObject json = (JSONObject) args[0];
+
+                                    //todo maybe call populate details from json
+                                    String sender = json.getString("participantName");
+                                    String message = json.getString("text");
+
+                                    Message m = new Message();
+                                    m.setName(sender);
+                                    m.setMessage(message);
+
+                                    messages.add(m);
+                                    messageAdapter.notifyDataSetChanged();
+
+                                } catch (JSONException e){
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        });
+                    }
+                });
 
                 RequestManager requestManager = new RequestManager();
                 try {
@@ -92,6 +130,7 @@ public class MessageActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             // TODO: add messages
+
                         }
 
                         @Override
@@ -132,6 +171,16 @@ public class MessageActivity extends AppCompatActivity {
 
         messageRecycler.setLayoutManager(new LinearLayoutManager(this));
         messageRecycler.setAdapter(messageAdapter);
+
+        try {
+            //TODO: change endpoint
+            socket = IO.socket("http://54.200.52.211:3000/");
+
+            socket.connect();
+            socket.emit("join", user.getFullName());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -186,8 +235,6 @@ public class MessageActivity extends AppCompatActivity {
                 } catch(IOException | JSONException e){
                     e.printStackTrace();
                 }
-
-
             }
 
             @Override

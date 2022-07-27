@@ -101,7 +101,7 @@ public class FriendsRequestFragment extends Fragment {
                 .addUser()
                 .addNode(id)
                 .addNode("friendRequest")
-                .build();
+                .build(); //TODO: HTTP 200, 422, 404, 500
 
         requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
             @Override

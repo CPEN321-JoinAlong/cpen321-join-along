@@ -340,12 +340,12 @@ public class SearchScreenActivity extends AppCompatActivity {
 
         if (theMode == SearchMode.EVENT_MODE) {
             searchView.setQueryHint("Search Events");
-            myUrlPath = "event/title/";
+            myUrlPath = "event/title/"; //TODO: HTTP 200, 404, 500
 
         }
         if (theMode == SearchMode.USER_MODE) {
             searchView.setQueryHint("Search Users");
-            myUrlPath = "user/name/";
+            myUrlPath = "user/name/"; //TODO: HTTP 200, 404, 500
         }
     }
 

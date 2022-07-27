@@ -2,6 +2,7 @@ package com.joinalongapp.joinalong;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -11,9 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 import com.joinalongapp.adapter.MessageListCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
@@ -33,6 +31,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import io.socket.client.IO;
+import io.socket.client.Manager;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import io.socket.engineio.client.Transport;
 import okhttp3.Call;
 import okhttp3.Response;
 
@@ -87,35 +90,7 @@ public class MessageActivity extends AppCompatActivity {
                 }
 
                 socket.emit("messageDetection",user.getFullName(),message.getMessage());
-                socket.on("message", new Emitter.Listener() {
-                    @Override
-                    public void call(Object... args) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    JSONObject json = (JSONObject) args[0];
 
-                                    //todo maybe call populate details from json
-                                    String sender = json.getString("participantName");
-                                    String message = json.getString("text");
-
-                                    Message m = new Message();
-                                    m.setName(sender);
-                                    m.setMessage(message);
-
-                                    messages.add(m);
-                                    messageAdapter.notifyDataSetChanged();
-
-                                } catch (JSONException e){
-                                    e.printStackTrace();
-                                }
-
-
-                            }
-                        });
-                    }
-                });
 
                 RequestManager requestManager = new RequestManager();
                 try {
@@ -174,13 +149,70 @@ public class MessageActivity extends AppCompatActivity {
 
         try {
             //TODO: change endpoint
-            socket = IO.socket("http://54.200.52.211:3000/");
+            socket = IO.socket("http://54.200.52.211:3000");
 
             socket.connect();
+            System.out.println("successful socket connect");
             socket.emit("join", user.getFullName());
         } catch (URISyntaxException e) {
             e.printStackTrace();
+            System.out.println("socket io error");
         }
+
+        socket.on("message", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONObject json = (JSONObject) args[0];
+
+                            //todo maybe call populate details from json
+                            String sender = json.getString("participantName");
+                            String message = json.getString("text");
+
+                            Message m = new Message();
+                            m.setName(sender);
+                            m.setMessage(message);
+
+                            messages.add(m);
+                            messageAdapter.notifyDataSetChanged();
+
+                        } catch (JSONException e){
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                });
+            }
+        });
+
+        //DEBUG
+        socket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Transport transport = (Transport) args[0];
+                transport.on(Transport.EVENT_ERROR, new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        Exception e = (Exception) args[0];
+                        Log.e("socketio", "Transport error " + e);
+                        e.printStackTrace();
+                        e.getCause().printStackTrace();
+                    }
+                });
+            }
+        });
+
+        //DEBUG
+        socket.io().on(Manager.EVENT_RECONNECT_ERROR, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.e("socketio", "connectError" + args[0]);
+            }
+        });
     }
 
 
@@ -215,7 +247,6 @@ public class MessageActivity extends AppCompatActivity {
                         Message message = new Message();
                         message.populateDetailsFromJson(jsonArray.get(i).toString());
                         message.setOwner(message.getId().equals(userId));
-                        System.out.println(message.getMessage());
                         outputMessages.add(message);
                     }
 

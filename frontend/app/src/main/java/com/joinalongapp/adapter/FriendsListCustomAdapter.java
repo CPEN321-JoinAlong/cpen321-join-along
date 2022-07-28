@@ -1,5 +1,14 @@
 package com.joinalongapp.adapter;
 
+import static com.joinalongapp.FeedbackMessageBuilder.createDefaultNeutralInvalidErrorOnHttp422;
+import static com.joinalongapp.FeedbackMessageBuilder.createDefaultNeutralNotFoundErrorOnHttp404;
+import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
+import static com.joinalongapp.FeedbackMessageBuilder.createServerInternalError;
+import static com.joinalongapp.HttpStatusConstants.STATUS_HTTP_200;
+import static com.joinalongapp.HttpStatusConstants.STATUS_HTTP_404;
+import static com.joinalongapp.HttpStatusConstants.STATUS_HTTP_422;
+import static com.joinalongapp.HttpStatusConstants.STATUS_HTTP_500;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -17,7 +26,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
@@ -140,7 +148,6 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
     private void deleteFriend(String uuid, Context context) throws JSONException, IOException {
         UserProfile user = ((UserApplicationInfo) context.getApplicationContext()).getProfile();
         String token = ((UserApplicationInfo) context.getApplicationContext()).getUserToken();
-        String otherUserId = uuid;
         String userId = user.getId();
 
         JSONObject json = new JSONObject();
@@ -150,8 +157,8 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                 .addUser()
                 .addNode("removeFriend")
                 .addNode(userId)
-                .addNode(otherUserId)
-                .build(); //TODO: HTTP 200, 404, 422, 500
+                .addNode(uuid)
+                .build();
 
         RequestManager requestManager = new RequestManager();
         new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
@@ -159,26 +166,27 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
             public void onSuccess(Call call, Response response) {
                 //Toast.makeText(context, "Deleted Friend!", Toast.LENGTH_SHORT).show();
                 switch(response.code()) {
-                    case HttpStatusConstants.STATUS_HTTP_200:
+                    case STATUS_HTTP_200:
                         removeFriendFromViewList(uuid, (Activity) context);
                         break;
-                    case HttpStatusConstants.STATUS_HTTP_404:
+                    case STATUS_HTTP_404:
+                        createDefaultNeutralNotFoundErrorOnHttp404("Remove Friend", "user", (Activity) context);
                         break;
-                    case HttpStatusConstants.STATUS_HTTP_422:
+                    case STATUS_HTTP_422:
+                        createDefaultNeutralInvalidErrorOnHttp422("Remove Friend", (Activity) context);
                         break;
-                    case HttpStatusConstants.STATUS_HTTP_500:
+                    case STATUS_HTTP_500:
                     default:
+                        createServerInternalError("Remove Friend", (Activity) context);
                         break;
                 }
             }
 
             @Override
             public void onError(Call call, IOException e) {
-                //Toast.makeText(context, "Error Occured", Toast.LENGTH_SHORT).show();
+                createServerConnectionError(e, "Remove Friend", (Activity) context);
             }
         });
-
-
     }
 
     private void removeFriendFromViewList(String uuid, Activity activity) {

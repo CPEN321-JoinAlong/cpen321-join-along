@@ -115,15 +115,26 @@ public class FeedbackMessageBuilder {
         Log.i(operation, new Date().toString());
     }
 
+    /**
+     *
+     * @param operation the operation in present tense
+     * @param object the object action is performed on (user, event...)
+     * @param activity activity context
+     */
     public static void createDefaultNeutralNotFoundErrorOnHttp404(String operation, String object, Activity activity) {
         new FeedbackMessageBuilder()
-                .setTitle("Not Found " + operation)
-                .setDescription(object + " was not found.\n")
+                .setTitle("Not Found during " + operation)
+                .setDescription("Unable to " + operation + ".\n" + object + " was not found.\n")
                 .withActivity(activity)
                 .buildAsyncNeutralMessage();
         Log.d(operation, new Date().toString());
     }
 
+    /**
+     *
+     * @param operation the operation in present tense
+     * @param activity activity context
+     */
     public static void createDefaultNeutralInvalidErrorOnHttp422(String operation, Activity activity) {
         new FeedbackMessageBuilder()
                 .setTitle("Invalid Request")

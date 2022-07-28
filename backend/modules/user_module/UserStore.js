@@ -32,9 +32,9 @@ class UserStore {
         if (!mongoose.isObjectIdOrHexString(userID)) {
             return new ResponseObject(ERROR_CODES.INVALID);
         }
-        console.log("IN UPDATE USER ACCOUNT");
-        console.log(userID);
-        console.log(userInfo);
+        // console.log("IN UPDATE USER ACCOUNT");
+        // console.log(userID);
+        // console.log(userInfo);
         let foundUser = await User.findByIdAndUpdate(userID, userInfo, {
             new: true,
         });
@@ -77,8 +77,8 @@ class UserStore {
         }
         let chat = await chatEngine.findChatByID(chatID);
         let user = await this.findUserByID(userID);
-        console.log(chat);
-        console.log(user);
+        // console.log(chat);
+        // console.log(user);
         if (chat.data && user.data) {
             if (
                 chat.data.currCapacity < chat.data.numberOfPeople &&
@@ -214,8 +214,8 @@ class UserStore {
         // console.log("IN THE SEND FRIEND REQUEST FUNCTION");
         let user = await this.findUserByID(userID);
         let otherUser = await this.findUserByID(otherUserID);
-        console.log(user)
-        console.log(otherUser)
+        // console.log(user)
+        // console.log(otherUser)
         if (user.data && otherUser.data) {
             if (
                 !user.data.friends.includes(otherUserID) &&
@@ -319,7 +319,7 @@ class UserStore {
             return new ResponseObject(ERROR_CODES.INVALID);
         }
         let user = await this.findUserByID(userID);
-        if (user) {
+        if (user.data) {
             let unblockedUsers = await User.find({
                 _id: { $nin: user.blockedUsers },
             });
@@ -347,7 +347,7 @@ class UserStore {
 
     async findUserByName(userName) {
         let capName = titleCase(userName);
-        console.log(capName);
+        // console.log(capName);
         let foundUserList = await User.find({
             name: { $regex: capName, $options: "i" },
         });
@@ -445,14 +445,14 @@ class UserStore {
         ) {
             return new ResponseObject(ERROR_CODES.INVALID);
         }
-        console.log("IN LEAVE EVENT");
+        // console.log("IN LEAVE EVENT");
         let user = await User.findByIdAndUpdate(userID, {
             $pull: { $events: eventID },
         });
         if (user) {
-            console.log("IN LEAVE EVENT");
+            // console.log("IN LEAVE EVENT");
             let response = await eventStore.removeUser(eventID, userID, this);
-            console.log(response);
+            // console.log(response);
             return new ResponseObject(ERROR_CODES.SUCCESS);
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND);
@@ -469,11 +469,11 @@ class UserStore {
         let user = await User.findByIdAndUpdate(userID, {
             $pull: { $chat: chatID },
         });
-        console.log(user)
+        // console.log(user)
         if (user) {
             let response = await chatEngine.removeUser(chatID, userID, this);
-            console.log("IN LEAVE CHAT");
-            console.log(response);
+            // console.log("IN LEAVE CHAT");
+            // console.log(response);
             return new ResponseObject(ERROR_CODES.SUCCESS);
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND);

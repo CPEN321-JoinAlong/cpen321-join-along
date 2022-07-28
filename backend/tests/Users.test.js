@@ -17,6 +17,7 @@ jest.mock("./../modules/event_module/EventStore");
 
 afterEach(() => {
     User.findById.mockReset();
+    User.find.mockReset();
 });
 
 describe("find user by ID", () => {
@@ -167,7 +168,21 @@ test("Success: user with given ID found and updated", async () => {
 });
 
 describe("create user", () => {
-    test("Success: user created", async () => {});
+    test("Success: user created", async () => {
+        const userStore = new UserStore();
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+        });
+        let result = new User(userInfo);
+        result.save.mockResolvedValue(userInfo);
+        let createdUser = await userStore.createUser(userInfo);
+        expect(JSON.stringify(createdUser.data)).toBe(JSON.stringify(userInfo));
+        expect(createdUser.status).toBe(ERROR_CODES.SUCCESS)
+    });
 });
 
 describe("find friends from ID list", () => {
@@ -863,11 +878,11 @@ describe("accept friend request", () => {
         const userStore = new UserStore();
         User.findById.mockResolvedValue(undefined);
         let sentRequest = await userStore.acceptFriendRequest(
-            "sdfsd0cfb436fbc",
-            "df0cfb436fbc75c648d9eb"
+            "62d63248010a82beb388af87",
+            "64c50cfb436fbc75c648d9eb"
         );
         expect(sentRequest.data).toBe(null);
-        expect(sentRequest.status).toBe(ERROR_CODES.INVALID);
+        expect(sentRequest.status).toBe(ERROR_CODES.NOTFOUND);
     });
 
     test("Users are already friends", async () => {
@@ -1252,10 +1267,9 @@ describe("find unblocked users", () => {
 
     test("No user with given ID found", async () => {
         const userStore = new UserStore();
-        User.find.mockResolvedValue([]);
+        User.findById.mockResolvedValue(undefined);
         let foundUsers = await userStore.findUnblockedUsers(
-            "62d50cfb436fbc75c258d9eb",
-            userStore
+            "62d50cfb436fbc75c258d9eb"
         );
         expect(foundUsers.data).toBe(null);
         expect(foundUsers.status).toBe(ERROR_CODES.NOTFOUND);
@@ -1263,10 +1277,19 @@ describe("find unblocked users", () => {
 
     test("No unblocked users found", async () => {
         const userStore = new UserStore();
-        User.findById.mockResolvedValue(undefined);
+        let userInfo = new UserAccount({
+            id: "62d63248010a82beb388af87",
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            friends: [],
+        });
+        User.findById.mockResolvedValue(userInfo);
+        User.find.mockResolvedValue([]);
         let foundUsers = await userStore.findUnblockedUsers(
-            "62d50cfb436fbc75c258d9eb",
-            userStore
+            "62d50cfb436fbc75c258d9eb"
         );
         expect(foundUsers.data).toBe(null);
         expect(foundUsers.status).toBe(ERROR_CODES.NOTFOUND);
@@ -1447,15 +1470,78 @@ describe("remove event", () => {
 });
 
 describe("remove friend", () => {
-    test("Invalid user ID", async () => {});
+    let userStore = new UserStore();
+    let userInfo = new UserAccount({
+        id: "62d63248010a82beb388af87",
+        name: "Rob Robber",
+        interests: ["Swimming"],
+        location: "2423 Montreal Mall, Vancouver",
+        description: "Test description",
+        profilePicture: "picture",
+        friends: [],
+    });
+    let friendInfo = new UserAccount({
+        id: "64c50cfb436fbc75c648d9eb",
+        name: "Jack Jackson",
+        interests: ["Reading"],
+        location: "1970 South Avenue, Vancouver",
+        description: "Test description",
+        profilePicture: "picture",
+        friends: [],
+    });
+    test("Invalid user ID", async () => {
+        let sentRequest = await userStore.removeFriend(
+            "sdfsd0cfb436fbc",
+            "64c50cfb436fbc75c648d9eb"
+        );
+        expect(sentRequest.data).toBe(null);
+        expect(sentRequest.status).toBe(ERROR_CODES.INVALID);
+    });
 
-    test("Invalid user ID for friend", async () => {});
+    test("Invalid user ID for friend", async () => {
+        let sentRequest = await userStore.removeFriend(
+            "62d63248010a82beb388af87",
+            "sdfsd0cfb436fbc"
+        );
+        expect(sentRequest.data).toBe(null);
+        expect(sentRequest.status).toBe(ERROR_CODES.INVALID);
+    });
 
-    test("No user with given ID found", async () => {});
+    test("No user with given ID found", async () => {
+        User.findById
+            .mockResolvedValueOnce(undefined)
+            .mockResolvedValueOnce(friendInfo);
+        let sentRequest = await userStore.removeFriend(
+            "62d63248010a82beb388af87",
+            "64c50cfb436fbc75c648d9eb"
+        );
+        expect(sentRequest.data).toBe(null);
+        expect(sentRequest.status).toBe(ERROR_CODES.NOTFOUND);
+    });
 
-    test("No user with given ID for friend found", async () => {});
+    test("No user with given ID for friend found", async () => {
+        User.findById
+            .mockResolvedValueOnce(userInfo)
+            .mockResolvedValueOnce(undefined);
+        let sentRequest = await userStore.removeFriend(
+            "62d63248010a82beb388af87",
+            "64c50cfb436fbc75c648d9eb"
+        );
+        expect(sentRequest.data).toBe(null);
+        expect(sentRequest.status).toBe(ERROR_CODES.NOTFOUND);
+    });
 
-    test("Success: users have been removed from each others' friend list", async () => {});
+    test("Success: users have been removed from each others' friend list", async () => {
+        User.findById
+            .mockResolvedValueOnce(userInfo)
+            .mockResolvedValueOnce(friendInfo);
+        let sentRequest = await userStore.removeFriend(
+            "62d63248010a82beb388af87",
+            "64c50cfb436fbc75c648d9eb"
+        );
+        expect(sentRequest.data).toBe(null);
+        expect(sentRequest.status).toBe(ERROR_CODES.SUCCESS);
+    });
 });
 
 describe("delete user", () => {
@@ -1468,7 +1554,7 @@ describe("delete user", () => {
     });
 
     test("No user with given ID found", async () => {
-        User.findById.mockResolvedValue(undefined)
+        User.findById.mockResolvedValue(undefined);
         let response = await userStore.deleteUser("64c50cfb436fbc75c648d9eb");
         // console.log(foundEvent)
         expect(response.data).toBe(null);
@@ -1483,9 +1569,9 @@ describe("delete user", () => {
             location: "2423 Toronto Mall, Montreal",
             description: "Test description",
             profilePicture: "picture",
-            friends: []
+            friends: ["62c50cfb436fbc75c624d9eb"],
         });
-        User.findById.mockResolvedValue(userInfo)
+        User.findById.mockResolvedValue(userInfo);
         let response = await userStore.deleteUser("64c50cfb436fbc75c648d9eb");
         // console.log(foundEvent)
         expect(response.data).toBe(null);

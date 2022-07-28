@@ -77,7 +77,7 @@ class EventStore {
     async findEventByID(eventID) {
         if (!mongoose.isObjectIdOrHexString(eventID))
             return new ResponseObject(ERROR_CODES.INVALID);
-        console.log(eventID);
+        // console.log(eventID);
         let foundEvent = await Event.findById(eventID);
         if (foundEvent)
             return new ResponseObject(ERROR_CODES.SUCCESS, foundEvent);
@@ -100,8 +100,7 @@ class EventStore {
     //add the event to the database and adds it into users' event list and send event object to frontend
     async createEvent(eventInfo, userStore) {
         let eventObject = await new Event(eventInfo).save();
-        console.log(eventObject)
-        if(eventObject) {
+        // console.log(eventObject)
             eventObject.participants.forEach(async (participant) => {
                 if (mongoose.isObjectIdOrHexString(participant)) {
                     await userStore.updateUserAccount(participant, {
@@ -109,7 +108,6 @@ class EventStore {
                     });
                 }
             });
-        }
         return new ResponseObject(ERROR_CODES.SUCCESS, eventObject);
     }
 

@@ -319,7 +319,7 @@ class UserStore {
             return new ResponseObject(ERROR_CODES.INVALID);
         }
         let user = await this.findUserByID(userID);
-        if (user) {
+        if (user.data) {
             let unblockedUsers = await User.find({
                 _id: { $nin: user.blockedUsers },
             });
@@ -445,14 +445,14 @@ class UserStore {
         ) {
             return new ResponseObject(ERROR_CODES.INVALID);
         }
-        console.log("IN LEAVE EVENT");
+        // console.log("IN LEAVE EVENT");
         let user = await User.findByIdAndUpdate(userID, {
             $pull: { $events: eventID },
         });
         if (user) {
-            console.log("IN LEAVE EVENT");
+            // console.log("IN LEAVE EVENT");
             let response = await eventStore.removeUser(eventID, userID, this);
-            console.log(response);
+            // console.log(response);
             return new ResponseObject(ERROR_CODES.SUCCESS);
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND);
@@ -469,11 +469,11 @@ class UserStore {
         let user = await User.findByIdAndUpdate(userID, {
             $pull: { $chat: chatID },
         });
-        console.log(user)
+        // console.log(user)
         if (user) {
             let response = await chatEngine.removeUser(chatID, userID, this);
-            console.log("IN LEAVE CHAT");
-            console.log(response);
+            // console.log("IN LEAVE CHAT");
+            // console.log(response);
             return new ResponseObject(ERROR_CODES.SUCCESS);
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND);

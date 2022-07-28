@@ -187,8 +187,6 @@ public class LoginActivity extends AppCompatActivity {
                 .buildAsyncNeutralMessage();
     }
 
-
-    //TODO: HTTP
     private void createTokenParseError(JSONException e) {
         createBadLoginError("Failed to encode data for backend authentication.\nPlease try again later.");
         Log.e(TAG, "Failed to authenticate with backend server: " + e.getMessage());

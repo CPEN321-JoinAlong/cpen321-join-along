@@ -1,5 +1,7 @@
 package com.joinalongapp.joinalong;
 
+import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,8 +12,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.tabs.TabLayout;
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.ReportDetails;
 import com.joinalongapp.viewmodel.UserProfile;
@@ -57,7 +61,7 @@ public class CreateReportActivity extends AppCompatActivity {
             reportEntityName = reportingPerson.getFullName();
             reportingSubtitle.append(reportingName);
             reportDetails.setIsEvent(false);
-            path = "reportUser"; // TODO: HTTPhmm 200, 500
+            path = "reportUser";
             reportingId = reportingPerson.getId();
         }
         else{
@@ -68,7 +72,7 @@ public class CreateReportActivity extends AppCompatActivity {
             //TODO: warning: get owner name always return empty string
             reportBlockSubtitle.append(" " + reportingEvent.getOwnerName());
             reportDetails.setIsEvent(true);
-            path = "reportEvent"; //TODO: HTTPhmm 200, 500
+            path = "reportEvent";
             reportingId = reportingEvent.getEventId();
         }
 
@@ -102,6 +106,7 @@ public class CreateReportActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                String operation = "Create Report";
                 RequestManager requestManager = new RequestManager();
                 try {
                     String path = new PathBuilder()
@@ -114,18 +119,22 @@ public class CreateReportActivity extends AppCompatActivity {
                     requestManager.post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            // TODO: add success and error messages.
-                            System.out.println("Success!");
+                            if (response.isSuccessful()) {
+                                FeedbackMessageBuilder.createDefaultNeutralSuccessOnHttp200("Created Report", CreateReportActivity.this);
+                            } else {
+                                ResponseErrorHandler.createErrorMessage(response, operation, "Report", CreateReportActivity.this);
+                            }
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-                            System.out.println("Error!");
+                            createServerConnectionError(e, operation, CreateReportActivity.this);
                         }
                     });
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    createServerConnectionError(e, operation, CreateReportActivity.this);
                 }
+
                 CreateReportActivity.this.finish();
             }
         });

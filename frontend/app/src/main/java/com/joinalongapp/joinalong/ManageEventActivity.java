@@ -26,9 +26,9 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.tabs.TabLayout;
 import com.joinalongapp.FeedbackMessageBuilder;
-import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.Tag;
 
@@ -194,14 +194,19 @@ public class ManageEventActivity extends AppCompatActivity {
                             requestManager.put(pathBuilder.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
                                 @Override
                                 public void onSuccess(Call call, Response response) {
-                                    Intent i = new Intent(v.getContext(), MainActivity.class);
 
-                                    //TODO: HTTP
-                                    new FeedbackMessageBuilder()
-                                            .setTitle("Event Edited!")
-                                            .setDescription("The " + title.getText().toString() + " has been successfully edited.")
-                                            .withActivity(ManageEventActivity.this)
-                                            .buildAsyncNeutralMessageAndStartActivity(i);
+                                    if (response.isSuccessful()) {
+                                        Intent i = new Intent(v.getContext(), MainActivity.class);
+
+                                        new FeedbackMessageBuilder()
+                                                .setTitle("Event Edited!")
+                                                .setDescription("The " + title.getText().toString() + " has been successfully edited.")
+                                                .withActivity(ManageEventActivity.this)
+                                                .buildAsyncNeutralMessageAndStartActivity(i);
+                                    } else {
+                                        ResponseErrorHandler.createErrorMessage(response, "Edit Event", "event", ManageEventActivity.this);
+                                    }
+
                                 }
 
                                 @Override
@@ -215,20 +220,18 @@ public class ManageEventActivity extends AppCompatActivity {
                             requestManager.post(pathBuilder.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
                                 @Override
                                 public void onSuccess(Call call, Response response) {
-                                    switch(response.code()) {
-                                        case HttpStatusConstants.STATUS_HTTP_200:
-                                            Intent i = new Intent(v.getContext(), MainActivity.class);
-                                            new FeedbackMessageBuilder()
-                                                    .setTitle("Event Created!")
-                                                    .setDescription("The " + title.getText().toString() + " event has been successfully created.")
-                                                    .withActivity(ManageEventActivity.this)
-                                                    .buildAsyncNeutralMessageAndStartActivity(i);
-                                            break;
 
-                                        case HttpStatusConstants.STATUS_HTTP_500:
-                                        default:
-                                            FeedbackMessageBuilder.createServerInternalError("create event", ManageEventActivity.this);
-                                            break;
+                                    if (response.isSuccessful()) {
+                                        Intent i = new Intent(v.getContext(), MainActivity.class);
+
+                                        new FeedbackMessageBuilder()
+                                                .setTitle("Event Created!")
+                                                .setDescription("The " + title.getText().toString() + " event has been successfully created.")
+                                                .withActivity(ManageEventActivity.this)
+                                                .buildAsyncNeutralMessageAndStartActivity(i);
+                                    } else {
+                                        ResponseErrorHandler.createErrorMessage(response, "Create Event", "event", ManageEventActivity.this);
+
                                     }
                                 }
 

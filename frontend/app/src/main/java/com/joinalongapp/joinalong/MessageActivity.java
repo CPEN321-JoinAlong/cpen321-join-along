@@ -70,70 +70,20 @@ public class MessageActivity extends AppCompatActivity {
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String messageContent;
                 if (messageField.getText().toString().isEmpty()) {
                     messageField.setError("Empty message");
                     return;
+                } else {
+                    messageContent = messageField.getText().toString();
                 }
-                Date date = new Date();
-                Message message = new Message();
-                message.setMessage(messageField.getText().toString());
+
+                String userId = user.getId();
+                String chatId = chatDetails.getId();
+                long timestamp = new Date().getTime();
+
+                socket.emit("messageDetection", userId, chatId, timestamp, messageContent);
                 messageField.setText("");
-                message.setOwner(true);
-                message.setCreatedAt(date.getTime());
-
-                JSONObject json = null;
-                try {
-                    json = message.toJson();
-                    json.put("token", token);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                socket.emit("messageDetection",user.getFullName(),message.getMessage());
-
-
-                RequestManager requestManager = new RequestManager();
-                try {
-                    String path = new PathBuilder()
-                            .addChat()
-                            .addNode("sendChat")
-                            .addNode(user.getId())
-                            .addNode(chatDetails.getId())
-                            .build(); //TODO: HTTPhmm 200, 404, 422, 500
-
-                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
-                        @Override
-                        public void onSuccess(Call call, Response response) {
-                            // TODO: add messages
-
-                        }
-
-                        @Override
-                        public void onError(Call call, IOException e) {
-                            System.out.println("");
-                        }
-                    });
-
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    List<Message> messageList = messageAdapter.getMessages();
-                                    if(messageList == null){
-                                        messageList = new ArrayList<>();
-                                    }
-                                    messageList.add(message);
-                                    messageAdapter.notifyDataSetChanged();
-                                    messageRecycler.scrollToPosition(messages.size() - 1);
-                                }
-                            });
-                        }
-                    }, 0);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         });
 
@@ -148,8 +98,7 @@ public class MessageActivity extends AppCompatActivity {
         messageRecycler.setAdapter(messageAdapter);
 
         try {
-            //TODO: change endpoint
-            socket = IO.socket("http://54.200.52.211:3000");
+            socket = IO.socket(RequestManager.getBaseUrl());
 
             socket.connect();
             System.out.println("successful socket connect");
@@ -159,6 +108,7 @@ public class MessageActivity extends AppCompatActivity {
             System.out.println("socket io error");
         }
 
+        //UPDATE ON RECEIVE MESSAGE
         socket.on("message", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -168,28 +118,24 @@ public class MessageActivity extends AppCompatActivity {
                         try {
                             JSONObject json = (JSONObject) args[0];
 
-                            //todo maybe call populate details from json
-                            String sender = json.getString("participantName");
-                            String message = json.getString("text");
+                            Message incomingMessage = new Message();
+                            incomingMessage.populateDetailsFromJson(json.toString());
+                            incomingMessage.setOwner(incomingMessage.getId().equals(user.getId()));
 
-                            Message m = new Message();
-                            m.setName(sender);
-                            m.setMessage(message);
+                            messages.add(incomingMessage);
 
-                            messages.add(m);
                             messageAdapter.notifyDataSetChanged();
 
+                            messageRecycler.scrollToPosition(messages.size() - 1);
                         } catch (JSONException e){
                             e.printStackTrace();
                         }
-
-
                     }
                 });
             }
         });
 
-        //DEBUG
+        // FOR DEBUG
         socket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -206,7 +152,7 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        //DEBUG
+        // FOR DEBUG
         socket.io().on(Manager.EVENT_RECONNECT_ERROR, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -233,7 +179,7 @@ public class MessageActivity extends AppCompatActivity {
         String path = new PathBuilder()
                 .addChat()
                 .addNode(id)
-                .build(); //TODO: HTTP 200, 404, 422, 500
+                .build();
 
         requestManager.get(path, token, new RequestManager.OnRequestCompleteListener() {
             @Override

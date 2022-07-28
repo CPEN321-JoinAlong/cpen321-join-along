@@ -22,6 +22,15 @@ public class RequestManager implements Callback {
     private static final int PORT = 3000;
     private OnRequestCompleteListener onRequestCompleteListener;
 
+    public static String getBaseUrl() {
+        return new HttpUrl.Builder()
+                .scheme(SCHEME)
+                .host(BASE_URL)
+                .port(PORT)
+                .build()
+                .toString();
+    }
+
     /**
      * Read from the given path
      * @param path path of URL to read from

@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.joinalong.R;
@@ -152,12 +153,23 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                 .addNode("removeFriend")
                 .addNode(userId)
                 .addNode(otherUserId)
-                .build();
+                .build(); //TODO: HTTP 200, 404, 422, 500
 
         requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
                 //Toast.makeText(context, "Deleted Friend!", Toast.LENGTH_SHORT).show();
+                switch(response.code()) {
+                    case HttpStatusConstants.STATUS_HTTP_200:
+                        break;
+                    case HttpStatusConstants.STATUS_HTTP_404:
+                        break;
+                    case HttpStatusConstants.STATUS_HTTP_422:
+                        break;
+                    case HttpStatusConstants.STATUS_HTTP_500:
+                    default:
+                        break;
+                }
             }
 
             @Override

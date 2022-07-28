@@ -196,6 +196,7 @@ public class ManageEventActivity extends AppCompatActivity {
                                 public void onSuccess(Call call, Response response) {
                                     Intent i = new Intent(v.getContext(), MainActivity.class);
 
+                                    //TODO: HTTP
                                     new FeedbackMessageBuilder()
                                             .setTitle("Event Edited!")
                                             .setDescription("The " + title.getText().toString() + " has been successfully edited.")

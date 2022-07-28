@@ -136,7 +136,7 @@ public class ManageProfileActivity extends AppCompatActivity {
                     .addUser()
                     .addNode(userId)
                     .addEdit()
-                    .build();
+                    .build(); //TODO: 200, 404, 422, 500
 
             requestManager.put(path, jsonBody, new RequestManager.OnRequestCompleteListener() {
                 @Override
@@ -181,7 +181,7 @@ public class ManageProfileActivity extends AppCompatActivity {
             String path = new PathBuilder()
                     .addUser()
                     .addCreate()
-                    .build();
+                    .build(); //TODO: HTTP 200, 500
 
             requestManager.post(path, jsonBody, new RequestManager.OnRequestCompleteListener() {
                 @Override

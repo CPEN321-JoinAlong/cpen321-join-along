@@ -183,11 +183,11 @@ public class HomeFragment extends Fragment {
 
         switch (filter) {
             case "My Events":
-                path = new PathBuilder().addUser().addNode(userId).addEvent().build();
+                path = new PathBuilder().addUser().addNode(userId).addEvent().build(); //TODO: HTTP 200, 404, 422, 500
                 break;
             case "Recommended":
             default:
-                path = new PathBuilder().addEvent().build();
+                path = new PathBuilder().addEvent().build(); //TODO: 200, 404, 500
                 break;
         }
 

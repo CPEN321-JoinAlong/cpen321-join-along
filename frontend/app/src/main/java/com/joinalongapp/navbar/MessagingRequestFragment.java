@@ -97,7 +97,7 @@ public class MessagingRequestFragment extends Fragment {
                 .addUser()
                 .addNode(id)
                 .addNode("chatInvites")
-                .build();
+                .build(); //TODO: HTTP 200, 404, 422, 500
 
         requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
             @Override

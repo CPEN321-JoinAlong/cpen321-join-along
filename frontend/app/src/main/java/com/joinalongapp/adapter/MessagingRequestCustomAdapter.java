@@ -103,7 +103,7 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
                             .addNode("acceptChat")
                             .addNode(user.getId())
                             .addNode(otherChat.getId())
-                            .build();
+                            .build(); //TODO: HTTP 200, 404, 409, 422, 500
 
                     requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
@@ -151,7 +151,7 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
                             .addNode("rejectChat")
                             .addNode(user.getId())
                             .addNode(otherChat.getId())
-                            .build();
+                            .build(); //TODO: HTTP 200, 404, 409, 422, 500
 
                     requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override

@@ -1,13 +1,13 @@
 package com.joinalongapp.joinalong;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.adapter.ReportsAdapter;
 import com.joinalongapp.controller.PathBuilder;
@@ -74,7 +74,7 @@ public class ViewReportActivity extends AppCompatActivity {
         RequestManager requestManager = new RequestManager();
         String path = new PathBuilder()
                 .addNode("reports")
-                .build();
+                .build();//TODO: HTTP 200, 500
 
         requestManager.get(path, token, new RequestManager.OnRequestCompleteListener() {
             @Override

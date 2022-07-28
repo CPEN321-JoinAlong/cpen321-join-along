@@ -97,7 +97,7 @@ public class ManageChatActivity extends AppCompatActivity {
                     .addUser()
                     .addNode(user.getId())
                     .addNode("friends")
-                    .build();
+                    .build(); //TODO: HTTP 200, 422, 404, 500
 
             requestManager.get(path, token, new RequestManager.OnRequestCompleteListener() {
                 @Override
@@ -177,7 +177,7 @@ public class ManageChatActivity extends AppCompatActivity {
                         String path = new PathBuilder()
                                 .addChat()
                                 .addCreate()
-                                .build();
+                                .build(); //TODO: HTTP 200, 500
                         submitManager.post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                             @Override
                             public void onSuccess(Call call, Response response) {
@@ -244,7 +244,7 @@ public class ManageChatActivity extends AppCompatActivity {
                 String path = new PathBuilder()
                     .addUser()
                     .addNode(friendId)
-                    .build(); //FIXME: HTTP 200, 500, 422, 404
+                    .build(); //TODO: HTTP 200, 500, 422, 404
 
                 requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
                     @Override

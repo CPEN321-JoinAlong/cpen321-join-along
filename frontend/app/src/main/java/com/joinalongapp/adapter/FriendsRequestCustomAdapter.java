@@ -102,7 +102,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                             .addNode("acceptUser")
                             .addNode(user.getId())
                             .addNode(otherUser.getId())
-                            .build();
+                            .build(); //TODO: 200, 404, 409, 422, 500
 
                     requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
@@ -152,7 +152,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                             .addNode("rejectUser")
                             .addNode(user.getId())
                             .addNode(otherUser.getId())
-                            .build();
+                            .build(); //TODO: HTTP 200, 404, 409, 422, 500
 
                     requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override

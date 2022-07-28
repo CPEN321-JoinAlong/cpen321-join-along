@@ -220,6 +220,8 @@ public class SearchScreenActivity extends AppCompatActivity {
                                         public void onSuccess(Call call, Response response) {
                                             List<UserProfile> outputFriends = new ArrayList<>();
 
+                                            //TODO: HTTP
+
                                             try {
                                                 JSONArray jsonArray = new JSONArray(response.body().string());
                                                 for(int i = 0; i < jsonArray.length(); i++){
@@ -256,6 +258,8 @@ public class SearchScreenActivity extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Call call, Response response) {
                                             List<Event> events = new ArrayList<>();
+
+                                            //TODO: HTTP
 
                                             try {
                                                 JSONArray jsonArray = new JSONArray(response.body().string());
@@ -363,6 +367,9 @@ public class SearchScreenActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Call call, Response response) {
                     List<UserProfile> outputFriends = new ArrayList<>();
+
+                    //TODO: HTTP
+
                     try{
                         JSONArray jsonArray = new JSONArray(response.body().string());
                         for(int i = 0; i < jsonArray.length(); i++){
@@ -407,6 +414,9 @@ public class SearchScreenActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Call call, Response response) {
                     List<Event> events = new ArrayList<>();
+
+                    //TODO: HTTP
+
                     try{
                         JSONArray jsonArray = new JSONArray(response.body().string());
                         for(int i = 0; i < jsonArray.length(); i++){

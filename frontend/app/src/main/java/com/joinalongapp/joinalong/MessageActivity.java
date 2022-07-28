@@ -99,7 +99,7 @@ public class MessageActivity extends AppCompatActivity {
                             .addNode("sendChat")
                             .addNode(user.getId())
                             .addNode(chatDetails.getId())
-                            .build();
+                            .build(); //TODO: HTTPhmm 200, 404, 422, 500
 
                     requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
@@ -233,7 +233,7 @@ public class MessageActivity extends AppCompatActivity {
         String path = new PathBuilder()
                 .addChat()
                 .addNode(id)
-                .build();
+                .build(); //TODO: HTTP 200, 404, 422, 500
 
         requestManager.get(path, token, new RequestManager.OnRequestCompleteListener() {
             @Override

@@ -1,6 +1,5 @@
 package com.joinalongapp.joinalong;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -58,7 +57,7 @@ public class CreateReportActivity extends AppCompatActivity {
             reportEntityName = reportingPerson.getFullName();
             reportingSubtitle.append(reportingName);
             reportDetails.setIsEvent(false);
-            path = "reportUser";
+            path = "reportUser"; // TODO: HTTPhmm 200, 500
             reportingId = reportingPerson.getId();
         }
         else{
@@ -69,7 +68,7 @@ public class CreateReportActivity extends AppCompatActivity {
             //TODO: warning: get owner name always return empty string
             reportBlockSubtitle.append(" " + reportingEvent.getOwnerName());
             reportDetails.setIsEvent(true);
-            path = "reportEvent";
+            path = "reportEvent"; //TODO: HTTPhmm 200, 500
             reportingId = reportingEvent.getEventId();
         }
 

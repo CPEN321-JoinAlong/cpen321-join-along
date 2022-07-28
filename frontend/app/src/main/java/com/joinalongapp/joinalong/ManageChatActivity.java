@@ -186,8 +186,21 @@ public class ManageChatActivity extends AppCompatActivity {
                                                 .setDescription("The " + chatTitle.getText().toString() + " has been successfully created.")
                                                 .withActivity(ManageChatActivity.this)
                                                 .buildAsyncNeutralMessageAndStartActivity(i);
-                                        break;
 
+                                        new Timer().schedule(new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                ManageChatActivity.this.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        submitButton.setEnabled(false);
+                                                        submitButton.setVisibility(View.GONE);
+                                                    }
+                                                });
+                                            }
+                                        }, 0);
+
+                                        break;
 
                                     case HttpStatusConstants.STATUS_HTTP_500:
                                     default:

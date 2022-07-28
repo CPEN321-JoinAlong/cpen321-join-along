@@ -39,6 +39,13 @@ public class RequestManager implements Callback {
      * @throws IOException
      */
     public void get(String path, String tokenHeader, OnRequestCompleteListener callback) throws IOException {
+
+        if (tokenHeader == null) {
+            //TODO: could change to another exception
+            //      for some reason the token is sometimes null, maybe concurrency issue?
+            throw new IOException();
+        }
+
         onRequestCompleteListener = callback;
         OkHttpClient client = new OkHttpClient();
 

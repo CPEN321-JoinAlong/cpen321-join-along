@@ -43,6 +43,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -229,9 +231,22 @@ public class ManageEventActivity extends AppCompatActivity {
                                                 .setDescription("The " + title.getText().toString() + " event has been successfully created.")
                                                 .withActivity(ManageEventActivity.this)
                                                 .buildAsyncNeutralMessageAndStartActivity(i);
+
+                                        new Timer().schedule(new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                ManageEventActivity.this.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        submitButton.setEnabled(false);
+                                                        submitButton.setVisibility(View.GONE);
+                                                    }
+                                                });
+                                            }
+                                        }, 0);
+
                                     } else {
                                         ResponseErrorHandler.createErrorMessage(response, "Create Event", "event", ManageEventActivity.this);
-
                                     }
                                 }
 

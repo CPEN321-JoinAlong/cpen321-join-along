@@ -14,7 +14,7 @@ class UserStore {
         if (!mongoose.isObjectIdOrHexString(userID)) {
             return new ResponseObject(ERROR_CODES.INVALID);
         }
-        console.log(userID);
+        // console.log(userID);
         let foundUser = await User.findById(userID);
         if (foundUser)
             return new ResponseObject(ERROR_CODES.SUCCESS, foundUser);
@@ -65,7 +65,7 @@ class UserStore {
         if (!chatReqList.every((id) => mongoose.isObjectIdOrHexString(id)))
             return new ResponseObject(ERROR_CODES.INVALID, []);
         let response = await chatEngine.findChatByIDList(chatReqList);
-        return new ResponseObject(ERROR_CODES.SUCCESS, response);
+        return response;
     }
 
     async acceptChatInvite(userID, chatID, chatEngine) {
@@ -136,12 +136,13 @@ class UserStore {
             return new ResponseObject(ERROR_CODES.INVALID);
         }
         let event = await eventStore.findEventByID(eventID);
+        // console.log(event)
         let user = await this.findUserByID(userID);
-        let chat = await chatEngine.findChatByID(event.data.chat);
+        let chat = event.data ? await chatEngine.findChatByID(event.data.chat) : null;
         if (event.data && user.data && chat.data) {
             if (
                 event.data.currCapacity < event.data.numberOfPeople &&
-                !user.data.chats.includes(eventID) &&
+                !user.data.events.includes(eventID) &&
                 !event.data.participants.includes(userID)
             ) {
                 await User.findByIdAndUpdate(userID, {
@@ -158,24 +159,25 @@ class UserStore {
                     this
                 );
 
-                console.log("GOING INTO JOINING CHAT");
+                // console.log("GOING INTO JOINING CHAT");
 
                 let acceptedChatInvite = await this.acceptChatInvite(
                     userID,
                     chat.data._id,
                     chatEngine
                 );
-                console.log(acceptedChatInvite);
+                // console.log(acceptedChatInvite);
 
                 return new ResponseObject(
                     ERROR_CODES.SUCCESS,
-                    acceptedChatInvite
+                    acceptedChatInvite.data
                 );
+                
             } else {
                 return new ResponseObject(ERROR_CODES.CONFLICT);
             }
         } else {
-            console.log("NOT FOUND");
+            // console.log("NOT FOUND");
             return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
     }
@@ -189,7 +191,7 @@ class UserStore {
         }
         let userResponse = await this.findUserByID(userID);
         if (userResponse.data) {
-            if (!userResponse.data.eventInvites.includes(eventID)) {
+            if (userResponse.data.eventInvites.includes(eventID)) {
                 await User.findByIdAndUpdate(userID, {
                     $pull: { eventInvites: eventID },
                 });
@@ -203,10 +205,18 @@ class UserStore {
     }
 
     async sendFriendRequest(userID, otherUserID) {
-        console.log("IN THE SEND FRIEND REQUEST FUNCTION");
+        if (
+            !mongoose.isObjectIdOrHexString(userID) ||
+            !mongoose.isObjectIdOrHexString(otherUserID)
+        ) {
+            return new ResponseObject(ERROR_CODES.INVALID);
+        }
+        // console.log("IN THE SEND FRIEND REQUEST FUNCTION");
         let user = await this.findUserByID(userID);
         let otherUser = await this.findUserByID(otherUserID);
-        if (user && otherUser) {
+        console.log(user)
+        console.log(otherUser)
+        if (user.data && otherUser.data) {
             if (
                 !user.data.friends.includes(otherUserID) &&
                 !otherUser.data.friends.includes(userID) &&
@@ -232,6 +242,7 @@ class UserStore {
             return new ResponseObject(ERROR_CODES.INVALID);
         }
         let userResponse = await this.findUserByID(userID);
+        // console.log(userResponse)
         if (userResponse.data) {
             if (userResponse.data.friendRequest.includes(otherUserID)) {
                 await User.findByIdAndUpdate(userID, {
@@ -312,10 +323,10 @@ class UserStore {
             let unblockedUsers = await User.find({
                 _id: { $nin: user.blockedUsers },
             });
-            if (eventList.length !== 0)
+            if (unblockedUsers.length !== 0)
                 return new ResponseObject(ERROR_CODES.SUCCESS, unblockedUsers);
             else
-                return new ResponseObject(ERROR_CODES.NOTFOUND, unblockedUsers);
+                return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
         return new ResponseObject(ERROR_CODES.NOTFOUND);
     }
@@ -442,7 +453,7 @@ class UserStore {
             console.log("IN LEAVE EVENT");
             let response = await eventStore.removeUser(eventID, userID, this);
             console.log(response);
-            return new ResponseObject(ERROR_CODES.SUCCESS, response);
+            return new ResponseObject(ERROR_CODES.SUCCESS);
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
@@ -458,11 +469,12 @@ class UserStore {
         let user = await User.findByIdAndUpdate(userID, {
             $pull: { $chat: chatID },
         });
+        console.log(user)
         if (user) {
             let response = await chatEngine.removeUser(chatID, userID, this);
             console.log("IN LEAVE CHAT");
             console.log(response);
-            return new ResponseObject(ERROR_CODES.SUCCESS, response);
+            return new ResponseObject(ERROR_CODES.SUCCESS);
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND);
         }

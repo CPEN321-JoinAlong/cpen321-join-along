@@ -140,7 +140,7 @@ public class ViewEventFragment extends Fragment {
                             .addEvent()
                             .addNode(event.getEventId())
                             .addNode("ban")
-                            .build();
+                            .build(); //TODO: HTTP 200, 500
                     requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
@@ -184,7 +184,7 @@ public class ViewEventFragment extends Fragment {
                                             .addNode("leaveEvent")
                                             .addNode(userId)
                                             .addNode(eventId)
-                                            .build();
+                                            .build(); //TODO: HTTP 200, 404, 422, 500
                                     String userToken = userApplicationInfo.tokenToJsonString();
                                     requestManager.put(path, userToken, new RequestManager.OnRequestCompleteListener() {
                                         @Override
@@ -322,7 +322,7 @@ public class ViewEventFragment extends Fragment {
                         .addNode("acceptEvent")
                         .addNode(userId)
                         .addNode(eventId)
-                        .build();
+                        .build(); //TODO: HTTP 200, 404, 409, 422, 500
 
                 try {
                     String userToken = userApplicationInfo.tokenToJsonString();
@@ -521,7 +521,7 @@ public class ViewEventFragment extends Fragment {
         Chip ownerChip = new Chip(getActivity());
 
         FragmentActivity fragmentActivity = getActivity();
-        String path = "user/" + event.getEventOwnerId();
+        String path = "user/" + event.getEventOwnerId(); //TODO: HTTP
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         RequestManager organizerRequestManager = new RequestManager();
         try {
@@ -566,6 +566,9 @@ public class ViewEventFragment extends Fragment {
             RequestManager membersRequestManager = new RequestManager();
             Chip memberChip = new Chip(fragmentActivity);
             String memberPath = "user/" + memberId;
+
+            //TODO: HTTP
+
             try {
                 membersRequestManager.get(memberPath, userToken, new RequestManager.OnRequestCompleteListener() {
                     @Override

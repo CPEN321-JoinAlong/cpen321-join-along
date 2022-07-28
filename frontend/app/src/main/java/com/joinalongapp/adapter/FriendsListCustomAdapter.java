@@ -1,5 +1,8 @@
 package com.joinalongapp.adapter;
 
+import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
+
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.navbar.ViewProfileFragment;
@@ -30,6 +34,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -134,39 +140,57 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
     }
 
     private void deleteFriend(String uuid, Context context) throws JSONException, IOException {
-        for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
-            UserProfile value = iterator.next();
-            if (value.getId() == uuid) {
-                iterator.remove();
-            }
-        }
         UserProfile user = ((UserApplicationInfo) context.getApplicationContext()).getProfile();
         String token = ((UserApplicationInfo) context.getApplicationContext()).getUserToken();
-        RequestManager requestManager = new RequestManager();
-        String otherUserId = uuid;
         String userId = user.getId();
+        String operation = "Remove Friend";
+
         JSONObject json = new JSONObject();
         json.put("token", token);
+
         String path = new PathBuilder()
                 .addUser()
                 .addNode("removeFriend")
                 .addNode(userId)
-                .addNode(otherUserId)
+                .addNode(uuid)
                 .build();
 
-        requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+        new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
-                //Toast.makeText(context, "Deleted Friend!", Toast.LENGTH_SHORT).show();
+
+                if (response.isSuccessful()) {
+                    removeFriendFromViewList(uuid, (Activity) context);
+                } else {
+                    ResponseErrorHandler.createErrorMessage(response, operation, "user", (Activity) context);
+                }
             }
 
             @Override
             public void onError(Call call, IOException e) {
-                //Toast.makeText(context, "Error Occured", Toast.LENGTH_SHORT).show();
+                createServerConnectionError(e, operation, (Activity) context);
             }
         });
-        notifyDataSetChanged();
+    }
 
+    private void removeFriendFromViewList(String uuid, Activity activity) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
+                            UserProfile value = iterator.next();
+                            if (value.getId() == uuid) {
+                                iterator.remove();
+                            }
+                        }
+                        notifyDataSetChanged();
+                    }
+                });
+            }
+        }, 0);
     }
 
     public void changeDataset(List<UserProfile> input){

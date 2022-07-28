@@ -128,7 +128,7 @@ public class ViewProfileFragment extends Fragment {
                             .addNode("sendFriendRequest")
                             .addNode(userId)
                             .addNode(otherUserId)
-                            .build();
+                            .build(); //TODO: HTTP 200, 404, 409, 500
                     requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
@@ -167,7 +167,7 @@ public class ViewProfileFragment extends Fragment {
                             .addUser()
                             .addNode(otherUserId)
                             .addNode("ban")
-                            .build();
+                            .build(); //TODO: HTTP 200, 500
                     requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {

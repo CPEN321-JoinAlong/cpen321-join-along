@@ -115,7 +115,7 @@ public class ViewChatFragment extends Fragment {
                 String path = new PathBuilder()
                         .addUser()
                         .addNode(friendId)
-                        .build(); //FIXME: HTTP 200, 500, 422, 404
+                        .build(); //TODO: HTTP 200, 500, 422, 404
 
                 requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
                     @Override

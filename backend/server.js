@@ -802,7 +802,7 @@ io.on('connection', (socket) => {
 			// }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
 
 			res.status(updatedChatResponse.status).send(updatedChatResponse.data);
-			io.emit('message', updatedChatResponse.data)
+			io.emit('message', updatedChatResponse.data.messages)
 		} catch (e) {
 			console.log(e);
 			res.status(ERROR_CODES.DBERROR).send(null);

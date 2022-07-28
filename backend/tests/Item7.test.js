@@ -10,3 +10,9 @@ const ChatEngine = require("./../modules/chat_module/ChatEngine");
 
 const ERROR_CODES = require("./../ErrorCodes.js");
 const ResponseObject = require("./../ResponseObject");
+
+describe("login tests", () => {
+    test("Token not valid", async() => {
+        
+    })
+})

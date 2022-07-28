@@ -32,9 +32,9 @@ class UserStore {
         if (!mongoose.isObjectIdOrHexString(userID)) {
             return new ResponseObject(ERROR_CODES.INVALID);
         }
-        console.log("IN UPDATE USER ACCOUNT");
-        console.log(userID);
-        console.log(userInfo);
+        // console.log("IN UPDATE USER ACCOUNT");
+        // console.log(userID);
+        // console.log(userInfo);
         let foundUser = await User.findByIdAndUpdate(userID, userInfo, {
             new: true,
         });
@@ -77,8 +77,8 @@ class UserStore {
         }
         let chat = await chatEngine.findChatByID(chatID);
         let user = await this.findUserByID(userID);
-        console.log(chat);
-        console.log(user);
+        // console.log(chat);
+        // console.log(user);
         if (chat.data && user.data) {
             if (
                 chat.data.currCapacity < chat.data.numberOfPeople &&
@@ -214,8 +214,8 @@ class UserStore {
         // console.log("IN THE SEND FRIEND REQUEST FUNCTION");
         let user = await this.findUserByID(userID);
         let otherUser = await this.findUserByID(otherUserID);
-        console.log(user)
-        console.log(otherUser)
+        // console.log(user)
+        // console.log(otherUser)
         if (user.data && otherUser.data) {
             if (
                 !user.data.friends.includes(otherUserID) &&
@@ -347,7 +347,7 @@ class UserStore {
 
     async findUserByName(userName) {
         let capName = titleCase(userName);
-        console.log(capName);
+        // console.log(capName);
         let foundUserList = await User.find({
             name: { $regex: capName, $options: "i" },
         });

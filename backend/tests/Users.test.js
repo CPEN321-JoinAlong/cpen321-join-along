@@ -168,7 +168,21 @@ test("Success: user with given ID found and updated", async () => {
 });
 
 describe("create user", () => {
-    test("Success: user created", async () => {});
+    test("Success: user created", async () => {
+        const userStore = new UserStore();
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+        });
+        let result = new User(userInfo);
+        result.save.mockResolvedValue(userInfo);
+        let createdUser = await userStore.createUser(userInfo);
+        expect(JSON.stringify(createdUser.data)).toBe(JSON.stringify(userInfo));
+        expect(createdUser.status).toBe(ERROR_CODES.SUCCESS)
+    });
 });
 
 describe("find friends from ID list", () => {

@@ -24,6 +24,11 @@ function logRequest(req, res, next) {
 	next();
 }
 
+// mongoose.connect("mongodb://useradmin:MTnCBEI9nIx6L6F@localhost:34542/joinalong", {
+// 	useNewUrlParser: true,
+// 	useUnifiedTopology: true,
+// });
+
 mongoose.connect("mongodb://localhost:34542/joinalong", {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,

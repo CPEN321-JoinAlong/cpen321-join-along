@@ -130,6 +130,15 @@ public class FeedbackMessageBuilder {
         Log.d(operation, new Date().toString());
     }
 
+    public static void createDefaultNeutralConflictErrorOnHttp409(String operation, Activity activity) {
+        new FeedbackMessageBuilder()
+                .setTitle("Conflict during " + operation)
+                .setDescription("Unable to " + operation + "due to request conflict.\nPlease try again later.")
+                .withActivity(activity)
+                .buildAsyncNeutralMessage();
+        Log.d(operation, new Date().toString());
+    }
+
     /**
      *
      * @param operation the operation in present tense

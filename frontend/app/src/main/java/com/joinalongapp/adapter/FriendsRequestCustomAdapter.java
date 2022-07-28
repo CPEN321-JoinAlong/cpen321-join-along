@@ -1,5 +1,7 @@
 package com.joinalongapp.adapter;
 
+import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.navbar.ViewProfileFragment;
@@ -89,96 +92,106 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                 UserProfile otherUser = users.get(holder.getBindingAdapterPosition());
                 UserProfile user = ((UserApplicationInfo) v.getContext().getApplicationContext()).getProfile();
                 String userToken = ((UserApplicationInfo) v.getContext().getApplicationContext()).getUserToken();
+                String operation = "Accept Friend Request";
+
                 JSONObject json = new JSONObject();
                 try {
                     json.put("token", userToken);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                RequestManager requestManager = new RequestManager();
+
                 try {
                     String path = new PathBuilder()
                             .addUser()
                             .addNode("acceptUser")
                             .addNode(user.getId())
                             .addNode(otherUser.getId())
-                            .build(); //TODO: 200, 404, 409, 422, 500
+                            .build();
 
-                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            System.out.println("Success!");
+                            if (response.isSuccessful()) {
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                deleteRequest(users.get(holder.getBindingAdapterPosition()).getId());
+                                            }
+                                        });
+                                    }
+                                }, 0);
+                            } else {
+                                ResponseErrorHandler.createErrorMessage(response, operation, "user", activity);
+                            }
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-                            System.out.println("Failure!");
+                            createServerConnectionError(e, operation, activity);
                         }
                     });
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    deleteRequest(users.get(holder.getBindingAdapterPosition()).getId());
-                                }
-                            });
-                        }
-                    }, 0);
+
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    createServerConnectionError(e, operation, activity);
                 }
-
             }
         });
+
         holder.getReject().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 UserProfile otherUser = users.get(holder.getBindingAdapterPosition());
                 UserProfile user = ((UserApplicationInfo) v.getContext().getApplicationContext()).getProfile();
                 String userToken = ((UserApplicationInfo) v.getContext().getApplicationContext()).getUserToken();
+                String operation = "Reject Friend Request";
+
                 JSONObject json = new JSONObject();
                 try {
                     json.put("token", userToken);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                RequestManager requestManager = new RequestManager();
+
                 try {
                     String path = new PathBuilder()
                             .addUser()
                             .addNode("rejectUser")
                             .addNode(user.getId())
                             .addNode(otherUser.getId())
-                            .build(); //TODO: HTTP 200, 404, 409, 422, 500
+                            .build();
 
-                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            System.out.println("Success!");
+                            if (response.isSuccessful()) {
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                deleteRequest(users.get(holder.getBindingAdapterPosition()).getId());
+                                            }
+                                        });
+                                    }
+                                }, 0);
+                            } else {
+                                ResponseErrorHandler.createErrorMessage(response, operation, "user", activity);
+                            }
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-                            System.out.println("Failure!");
+                            createServerConnectionError(e, operation, activity);
                         }
                     });
-
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    deleteRequest(users.get(holder.getBindingAdapterPosition()).getId());
-                                }
-                            });
-                        }
-                    }, 0);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    createServerConnectionError(e, operation, activity);
                 }
             }
         });

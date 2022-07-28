@@ -1,5 +1,6 @@
 package com.joinalongapp.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -31,6 +32,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -135,19 +138,14 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
     }
 
     private void deleteFriend(String uuid, Context context) throws JSONException, IOException {
-        for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
-            UserProfile value = iterator.next();
-            if (value.getId() == uuid) {
-                iterator.remove();
-            }
-        }
         UserProfile user = ((UserApplicationInfo) context.getApplicationContext()).getProfile();
         String token = ((UserApplicationInfo) context.getApplicationContext()).getUserToken();
-        RequestManager requestManager = new RequestManager();
         String otherUserId = uuid;
         String userId = user.getId();
+
         JSONObject json = new JSONObject();
         json.put("token", token);
+
         String path = new PathBuilder()
                 .addUser()
                 .addNode("removeFriend")
@@ -155,12 +153,14 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                 .addNode(otherUserId)
                 .build(); //TODO: HTTP 200, 404, 422, 500
 
-        requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+        RequestManager requestManager = new RequestManager();
+        new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
                 //Toast.makeText(context, "Deleted Friend!", Toast.LENGTH_SHORT).show();
                 switch(response.code()) {
                     case HttpStatusConstants.STATUS_HTTP_200:
+                        removeFriendFromViewList(uuid, (Activity) context);
                         break;
                     case HttpStatusConstants.STATUS_HTTP_404:
                         break;
@@ -177,8 +177,28 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                 //Toast.makeText(context, "Error Occured", Toast.LENGTH_SHORT).show();
             }
         });
-        notifyDataSetChanged();
 
+
+    }
+
+    private void removeFriendFromViewList(String uuid, Activity activity) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (Iterator<UserProfile> iterator = users.iterator(); iterator.hasNext(); ) {
+                            UserProfile value = iterator.next();
+                            if (value.getId() == uuid) {
+                                iterator.remove();
+                            }
+                        }
+                        notifyDataSetChanged();
+                    }
+                });
+            }
+        }, 0);
     }
 
     public void changeDataset(List<UserProfile> input){

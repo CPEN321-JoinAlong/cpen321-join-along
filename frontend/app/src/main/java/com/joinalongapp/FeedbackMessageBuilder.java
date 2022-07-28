@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -103,5 +104,32 @@ public class FeedbackMessageBuilder {
     public static void createParseError(Exception e, String operation, Activity activity) {
         createDefaultNeutralError("Unable to parse data during " + operation + "." + "\nPlease try again later.", activity, operation);
         Log.e(operation, "Create profile error. Unable to parse user input data: " + e.getMessage());
+    }
+
+    public static void createDefaultNeutralSuccessOnHttp200(String operation, Activity activity) {
+        new FeedbackMessageBuilder()
+                .setTitle("Successfully " + operation)
+                .setDescription("Successfully " + operation)
+                .withActivity(activity)
+                .buildAsyncNeutralMessage();
+        Log.i(operation, new Date().toString());
+    }
+
+    public static void createDefaultNeutralNotFoundErrorOnHttp404(String operation, String object, Activity activity) {
+        new FeedbackMessageBuilder()
+                .setTitle("Not Found " + operation)
+                .setDescription(object + " was not found.\n")
+                .withActivity(activity)
+                .buildAsyncNeutralMessage();
+        Log.d(operation, new Date().toString());
+    }
+
+    public static void createDefaultNeutralInvalidErrorOnHttp422(String operation, Activity activity) {
+        new FeedbackMessageBuilder()
+                .setTitle("Invalid Request")
+                .setDescription("Unable to " + operation)
+                .withActivity(activity)
+                .buildAsyncNeutralMessage();
+        Log.d(operation, new Date().toString());
     }
 }

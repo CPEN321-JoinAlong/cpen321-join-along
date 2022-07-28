@@ -188,6 +188,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    //TODO: HTTP
     private void createTokenParseError(JSONException e) {
         createBadLoginError("Failed to encode data for backend authentication.\nPlease try again later.");
         Log.e(TAG, "Failed to authenticate with backend server: " + e.getMessage());
@@ -212,7 +213,7 @@ public class LoginActivity extends AppCompatActivity {
         if (account == null) {
             Log.d(TAG, "There is no user signed in!");
         } else {
-            Log.d(TAG, account.getGivenName() + account.getFamilyName() + " has successfully sign in.");
+            Log.i(TAG, account.getGivenName() + account.getFamilyName() + " has successfully sign in with Google.");
         }
     }
 

@@ -343,7 +343,7 @@ public class SearchScreenActivity extends AppCompatActivity {
         searchView = findViewById(R.id.searchBar);
         returnButton = findViewById(R.id.reportBackButton);
         recyclerView = findViewById(R.id.searchPeopleRecyclerView);
-
+        noResults = findViewById(R.id.searchNoResults);
     }
 
     public enum SearchMode {
@@ -378,38 +378,52 @@ public class SearchScreenActivity extends AppCompatActivity {
             requestManager.get(myUrlPath + query, token, new RequestManager.OnRequestCompleteListener() {
                 @Override
                 public void onSuccess(Call call, Response response) {
-                    List<UserProfile> outputFriends = new ArrayList<>();
-                    try{
-                        JSONArray jsonArray = new JSONArray(response.body().string());
-                        for(int i = 0; i < jsonArray.length(); i++){
-                            UserProfile userProfile = new UserProfile();
-                            userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
-                            outputFriends.add(userProfile);
-                        }
-                        new Timer().schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                activity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        searchPeopleCustomAdapter.changeDataset(outputFriends);
-                                    }
-                                });
+
+                    if (response.isSuccessful()) {
+                        List<UserProfile> outputFriends = new ArrayList<>();
+                        try {
+                            JSONArray jsonArray = new JSONArray(response.body().string());
+
+                            if (jsonArray.length() == 0) {
+                                makeNoResultsMessage();
+                            } else {
+                                removeNoResultsMessage();
                             }
-                        }, 0);
-                        System.out.println("efwa");
-                    } catch(JSONException | IOException e){
-                        e.printStackTrace();
+
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                UserProfile userProfile = new UserProfile();
+                                userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                                outputFriends.add(userProfile);
+                            }
+
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            searchPeopleCustomAdapter.changeDataset(outputFriends);
+                                        }
+                                    });
+                                }
+                            }, 0);
+
+                        } catch(JSONException | IOException e){
+                            makeNoResultsMessage();
+                            FeedbackMessageBuilder.createParseError(e, "Search Events", SearchScreenActivity.this);
+                        }
+                    } else {
+                        makeNoResultsMessage();
                     }
                 }
 
                 @Override
                 public void onError(Call call, IOException e) {
-                    System.out.println(call.toString());
+                    makeNoResultsMessage();
                 }
             });
         } catch (IOException e) {
-            e.printStackTrace();
+            makeNoResultsMessage();
         }
         
     }
@@ -422,38 +436,83 @@ public class SearchScreenActivity extends AppCompatActivity {
             requestManager.get(myUrlPath + query, token, new RequestManager.OnRequestCompleteListener() {
                 @Override
                 public void onSuccess(Call call, Response response) {
-                    List<Event> events = new ArrayList<>();
-                    try{
-                        JSONArray jsonArray = new JSONArray(response.body().string());
-                        for(int i = 0; i < jsonArray.length(); i++){
-                            Event event = new Event();
-                            event.populateDetailsFromJson(jsonArray.get(i).toString());
-                            events.add(event);
-                        }
-                        new Timer().schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                activity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        searchEventCustomAdapter.changeDataset(events);
-                                    }
-                                });
+
+                    if (response.isSuccessful()) {
+                        List<Event> events = new ArrayList<>();
+
+                        try{
+                            JSONArray jsonArray = new JSONArray(response.body().string());
+
+                            if (jsonArray.length() == 0) {
+                                makeNoResultsMessage();
+                            } else {
+                                removeNoResultsMessage();
                             }
-                        }, 0);
-                        System.out.println("efwa");
-                    } catch(JSONException | IOException e){
-                        e.printStackTrace();
+
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                Event event = new Event();
+                                event.populateDetailsFromJson(jsonArray.get(i).toString());
+                                events.add(event);
+                            }
+
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            searchEventCustomAdapter.changeDataset(events);
+                                        }
+                                    });
+                                }
+                            }, 0);
+
+                        } catch(JSONException | IOException e){
+                            makeNoResultsMessage();
+                            FeedbackMessageBuilder.createParseError(e, "Search Events", SearchScreenActivity.this);
+                        }
+                    } else {
+                        makeNoResultsMessage();
                     }
                 }
 
                 @Override
                 public void onError(Call call, IOException e) {
-                    System.out.println(call.toString());
+                    makeNoResultsMessage();
                 }
             });
         } catch (IOException e) {
-            e.printStackTrace();
+            makeNoResultsMessage();
         }
+    }
+
+    private void makeNoResultsMessage() {
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                SearchScreenActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        noResults.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        }, 0);
+    }
+
+    private void removeNoResultsMessage() {
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                SearchScreenActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        noResults.setVisibility(View.GONE);
+                    }
+                });
+            }
+        }, 0);
     }
 }

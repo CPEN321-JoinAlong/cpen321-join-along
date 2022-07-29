@@ -109,7 +109,7 @@ app.get("/test", async (req, res) => {
 		a["chat"] = await Chat.find({});
 		a["event"] = await Event.find({});
 		a["report"] = await Report.find({});
-		res.send(a);
+		res.status(ERROR_CODES.SUCCESS).send(a);
 	} catch (e) {
 		console.log(e);
 		res.status(ERROR_CODES.DBERROR).send(null);
@@ -820,4 +820,6 @@ io.on('connection', (socket) => {
 		socket.broadcast.emit('disconnected', 'socket disconnected')
 	})
 })
+
+module.exports = {app, server};
 

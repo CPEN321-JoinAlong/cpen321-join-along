@@ -107,11 +107,6 @@ public class SearchScreenActivityTest {
     }
 
     @Test
-    public void testBackButtonAndPersistence() throws InterruptedException {
-
-    }
-
-    @Test
     public void testOnQueryTextChange(){
 
     }
@@ -125,7 +120,7 @@ public class SearchScreenActivityTest {
         // Then
         Thread.sleep(1000);
         checkNumberOfElements(1);
-        onView(withId(R.id.searchPeopleRecyclerView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        //onView(withId(R.id.searchPeopleRecyclerView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
     }
 
     public boolean checkNumberOfElements(int target){

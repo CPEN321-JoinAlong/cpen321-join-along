@@ -43,6 +43,368 @@ afterAll((done) => {
     done();
 });
 
+describe("Use Case 1: Event Management (Create + Edit Events", () => {    
+    describe("create event", () => {
+        let eventInfo = new EventDetails({
+            //id : 62d50cfb436fbc75c258d9eb
+            title: "tester event",
+            eventOwnerID: "62d63248860a82beb388af87",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            numberOfPeople: 6,
+            currCapacity: 1,
+            participants: ["62d63248860a82beb388af87"],
+        });
+        test("Success: event and its chat created", async () => {
+            let response = await request(app)
+                .post("/event/create")
+                .send({ ...eventInfo, token });
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            await Chat.findByIdAndDelete(response._body.chat)
+            await Event.findByIdAndDelete(id);
+            ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
+            ["chat"].forEach((key) => delete eventInfo[key]);
+            console.log(response._body);
+            console.log(eventInfo);
+            expect(response._body).toMatchObject(eventInfo);
+        });
+    });
+
+    describe("edit event", () => {
+        let eventInfo = new EventDetails({
+            //id : 62d50cfb436fbc75c258d9eb
+            title: "tester event",
+            eventOwnerID: "62d63248860a82beb388af87",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            numberOfPeople: 6,
+            currCapacity: 1,
+            participants: ["62d63248860a82beb388af87"],
+        });
+        let updatedEventInfo = new EventDetails({
+            //id : 62d50cfb436fbc75c258d9eb
+            title: "tester event 2",
+            eventOwnerID: "62d63248860a82beb388af87",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            numberOfPeople: 6,
+            currCapacity: 1,
+            participants: ["62d63248860a82beb388af87"],
+        });
+        test("invalid event ID", async () => {
+            let response = await request(app)
+                .put("/event/dfjsdfks/edit")
+                .send({ ...eventInfo, token });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        })
+        test("Event with ID not found", async () => {
+            let response = await request(app)
+                .put("/event/64d31ae677f7ad9a56ab89c6/edit")
+                .send({ ...eventInfo, token });
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        })
+        test("Success: event is edited", async () => {
+            let response = await request(app)
+                .post("/event/create")
+                .send({ ...eventInfo, token });
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            let chat = response._body.chat;
+            ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
+            ["chat"].forEach((key) => delete eventInfo[key]);
+            expect(response._body).toMatchObject(eventInfo);
+
+            let updatedResponse = await request(app)
+                .put(`/event/${id}/edit`)
+                .send({ ...updatedEventInfo, token });
+            await Chat.findByIdAndDelete(chat);
+            await Event.findByIdAndDelete(id);
+            ["_id", "__v", "chat"].forEach((key) => delete updatedResponse._body[key]);
+            ["chat"].forEach((key) => delete updatedEventInfo[key]);
+            expect(updatedResponse._body).toMatchObject(updatedEventInfo)
+        });
+    });
+    describe("view Event page", () => {
+        let eventInfo = new EventDetails({
+            //id : 62d50cfb436fbc75c258d9eb
+            title: "tester event",
+            eventOwnerID: "62d63248860a82beb388af87",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            numberOfPeople: 6,
+            currCapacity: 1,
+            participants: ["62d63248860a82beb388af87"],
+        });
+        test("Invalid event ID", async () => {
+            let response = await request(app)
+                .get("/event/dfjsdfks")
+                .set({ token });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        });
+        test("Event with event ID not found", async () => {
+            let response = await request(app)
+                .get("/event/64d31ae677f7ad9a56ab89c6")
+                .set({ token });
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        });
+        test("Success: Event is viewed", async () => {
+            let response = await request(app)
+                .post("/event/create")
+                .send({ ...eventInfo, token });
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            let chat = response._body.chat;
+            ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
+            ["chat"].forEach((key) => delete eventInfo[key]);
+            expect(response._body).toMatchObject(eventInfo);
+
+
+            let eventResponse = await request(app)
+                .get(`/event/${id}`)
+                .set({ token });
+            await Chat.findByIdAndDelete(chat);
+            await Event.findByIdAndDelete(id);
+            expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
+            ["_id", "__v", "chat"].forEach((key) => delete eventResponse._body[key]);
+            expect(eventResponse._body).toMatchObject(eventInfo);
+        })
+    })
+    describe("view events which a user is In", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let eventInfo = new EventDetails({
+            //id : 62d50cfb436fbc75c258d9eb
+            title: "tester event",
+            eventOwnerID: "62d63248860a82beb388af87",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            numberOfPeople: 6,
+            currCapacity: 1,
+            participants: ["62d63248860a82beb388af87"],
+        });
+        test("Invalid User ID", async () => {
+            let response = await request(app)
+                .get("/user/dfjsdfks/event")
+                .set({ token });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toEqual([]);
+        })
+        test("No events found", async () => {
+            let response = await request(app)
+                .post("/user/create")
+                .send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let eventResponse = await request(app)
+                .get(`/user/${id}/event`)
+                .set({ token });
+            await User.findByIdAndDelete(id);
+            expect(eventResponse.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(eventResponse._body).toEqual([]);
+        })
+        test("No events found", async () => {
+            let response = await request(app)
+                .post("/user/create")
+                .send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            eventInfo.participants.push(id);
+
+            let eventResponse = await request(app)
+                .post("/event/create")
+                .send({ ...eventInfo, token });
+            expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let eventId = eventResponse._body._id;
+            let chat = eventResponse._body.chat;
+            ["_id", "__v", "chat"].forEach((key) => delete eventResponse._body[key]);
+            ["chat"].forEach((key) => delete eventInfo[key]);
+            expect(eventResponse._body).toMatchObject(eventInfo);
+
+
+            let eventListResponse = await request(app)
+                .get(`/user/${id}/event`)
+                .set({ token });
+            await User.findByIdAndDelete(id);
+            await Event.findByIdAndDelete(eventId);
+            await Chat.findByIdAndDelete(chat);
+            expect(eventListResponse.status).toBe(ERROR_CODES.SUCCESS);
+            ["_id", "__v", "chat"].forEach((key) => delete eventListResponse._body[0][key]);
+            expect(eventListResponse._body[0]).toMatchObject(eventInfo);
+            // expect(eventListResponse._body).toEqual([]);
+            eventInfo.participants = ["62d63248860a82beb388af87"];
+        })
+    })
+})
+
+describe("Use Case 2: Join Event", () => {
+    //accept EventInvite, rejectEventInvite, leaveEvent
+    describe("Accept EventInvite (join event)", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let eventInfo = new EventDetails({
+            //id : 62d50cfb436fbc75c258d9eb
+            title: "tester event",
+            eventOwnerID: "62d63248860a82beb388af87",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            numberOfPeople: 6,
+            currCapacity: 1,
+            participants: ["62d63248860a82beb388af87"],
+        });
+        test("IDs of user or event are invalid", async () => {
+            let response = await request(app)
+                .put("/user/acceptEvent/sdfsdf/sdfdf")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        })
+        test("Event nor User found", async () => {
+            let response = await request(app)
+                .put("/user/acceptEvent/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        })
+        test("Event capacity reached", async () => {
+            let response = await request(app)
+                .post("/user/create")
+                .send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            eventInfo.currCapacity = 6;
+
+            let eventResponse = await request(app)
+                .post("/event/create")
+                .send({ ...eventInfo, token });
+            expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let eventId = eventResponse._body._id;
+            let chat = eventResponse._body.chat;
+            ["_id", "__v", "chat"].forEach((key) => delete eventResponse._body[key]);
+            ["chat"].forEach((key) => delete eventInfo[key]);
+            expect(eventResponse._body).toMatchObject(eventInfo);
+
+            let joinResponse = await request(app)
+                .put(`/user/acceptEvent/${id}/${eventId}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await Event.findByIdAndDelete(eventId);
+            await Chat.findByIdAndDelete(chat);
+            expect(joinResponse.status).toBe(ERROR_CODES.CONFLICT);
+            expect(joinResponse._body).toBe(undefined);
+            eventInfo.currCapacity = 1;
+        })
+        test("User Already in Event", async () => {
+            let response = await request(app)
+                .post("/user/create")
+                .send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            eventInfo.participants.push(id)
+
+            let eventResponse = await request(app)
+                .post("/event/create")
+                .send({ ...eventInfo, token });
+            expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let eventId = eventResponse._body._id;
+            let chat = eventResponse._body.chat;
+            ["_id", "__v", "chat"].forEach((key) => delete eventResponse._body[key]);
+            ["chat"].forEach((key) => delete eventInfo[key]);
+            expect(eventResponse._body).toMatchObject(eventInfo);
+
+            let joinResponse = await request(app)
+                .put(`/user/acceptEvent/${id}/${eventId}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await Event.findByIdAndDelete(eventId);
+            await Chat.findByIdAndDelete(chat);
+            expect(joinResponse.status).toBe(ERROR_CODES.CONFLICT);
+            expect(joinResponse._body).toBe(undefined);
+            // eventInfo.currCapacity = 1;
+            eventInfo.participants = ["62d63248860a82beb388af87"]
+        })
+        test("Success: Joined Event and its chat ", async () => {
+            let response = await request(app)
+                .post("/user/create")
+                .send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let eventResponse = await request(app)
+                .post("/event/create")
+                .send({ ...eventInfo, token });
+            expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let eventId = eventResponse._body._id;
+            let chat = eventResponse._body.chat;
+            ["_id", "__v", "chat"].forEach((key) => delete eventResponse._body[key]);
+            ["chat"].forEach((key) => delete eventInfo[key]);
+            expect(eventResponse._body).toMatchObject(eventInfo);
+
+            let joinResponse = await request(app)
+                .put(`/user/acceptEvent/${id}/${eventId}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await Event.findByIdAndDelete(eventId);
+            await Chat.findByIdAndDelete(chat);
+            expect(joinResponse.status).toBe(ERROR_CODES.SUCCESS);
+            expect(joinResponse._body).toBe(undefined);
+        })
+    })
+})
 
 
 describe("create chat", () => {
@@ -65,38 +427,108 @@ describe("create chat", () => {
         console.log(response._body);
         expect(response._body).toMatchObject(chatInfo);
     });
-});
+    describe("Reject Event Invite", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let eventInfo = new EventDetails({
+            //id : 62d50cfb436fbc75c258d9eb
+            title: "tester event",
+            eventOwnerID: "62d63248860a82beb388af87",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            numberOfPeople: 6,
+            currCapacity: 1,
+            participants: ["62d63248860a82beb388af87"],
+        });
+        test("IDs of user or event are invalid", async () => {
+            let response = await request(app)
+                .put("/user/rejectEvent/sdfsdf/sdfdf")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        })
+        test("Event nor User found", async () => {
+            let response = await request(app)
+                .put("/user/rejectEvent/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        })
+        test("eventInvite not present", async () => {
+            let response = await request(app)
+                .post("/user/create")
+                .send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
 
-describe("create event", () => {
-    let eventInfo = new EventDetails({
-        //id : 62d50cfb436fbc75c258d9eb
-        title: "tester event",
-        eventOwnerID: "62d63248860a82beb388af87",
-        tags: ["Hiking"],
-        beginningDate: "2022-08-08T00:00:00.000Z",
-        endDate: "2022-09-01T00:00:00.000Z",
-        publicVisibility: true,
-        location: "2205 West Mall Toronto",
-        description: "test description",
-        numberOfPeople: 6,
-        currCapacity: 1,
-        participants: ["62d63248860a82beb388af87"],
-    });
-    test("Success: event and its chat created", async () => {
-        let response = await request(app)
+            let eventResponse = await request(app)
+                .post("/event/create")
+                .send({ ...eventInfo, token });
+            expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let eventId = eventResponse._body._id;
+            let chat = eventResponse._body.chat;
+            ["_id", "__v", "chat"].forEach((key) => delete eventResponse._body[key]);
+            ["chat"].forEach((key) => delete eventInfo[key]);
+            expect(eventResponse._body).toMatchObject(eventInfo);
+
+            let joinResponse = await request(app)
+                .put(`/user/rejectEvent/${id}/${eventId}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await Event.findByIdAndDelete(eventId);
+            await Chat.findByIdAndDelete(chat);
+            expect(joinResponse.status).toBe(ERROR_CODES.CONFLICT);
+            expect(joinResponse._body).toBe(undefined);
+        })
+        test("Success: Event Invite rejected", async () => {
+            
+            
+            let eventResponse = await request(app)
             .post("/event/create")
             .send({ ...eventInfo, token });
-        expect(response.status).toBe(ERROR_CODES.SUCCESS);
-        let id = response._body._id;
-        await Chat.findByIdAndDelete(response._body.chat)
-        await Event.findByIdAndDelete(id);
-        ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
-        ["chat"].forEach((key) => delete eventInfo[key]);
-        console.log(response._body);
-        console.log(eventInfo);
-        expect(response._body).toMatchObject(eventInfo);
-    });
+            expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let eventId = eventResponse._body._id;
+            let chat = eventResponse._body.chat;
+            ["_id", "__v", "chat"].forEach((key) => delete eventResponse._body[key]);
+            ["chat"].forEach((key) => delete eventInfo[key]);
+            expect(eventResponse._body).toMatchObject(eventInfo);
+            
+            userInfo.eventInvites = [eventId]
+            
+            let response = await request(app)
+                .post("/user/create")
+                .send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let joinResponse = await request(app)
+                .put(`/user/rejectEvent/${id}/${eventId}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await Event.findByIdAndDelete(eventId);
+            await Chat.findByIdAndDelete(chat);
+            expect(joinResponse.status).toBe(ERROR_CODES.SUCCESS);
+            expect(joinResponse._body).toBe(undefined);
+
+            eventInfo.eventInvites = []
+        })
+    })
 });
+
 
 
 
@@ -153,70 +585,6 @@ describe("edit chat", () => {
     })
 });
 
-describe("edit event", () => {
-    let eventInfo = new EventDetails({
-        //id : 62d50cfb436fbc75c258d9eb
-        title: "tester event",
-        eventOwnerID: "62d63248860a82beb388af87",
-        tags: ["Hiking"],
-        beginningDate: "2022-08-08T00:00:00.000Z",
-        endDate: "2022-09-01T00:00:00.000Z",
-        publicVisibility: true,
-        location: "2205 West Mall Toronto",
-        description: "test description",
-        numberOfPeople: 6,
-        currCapacity: 1,
-        participants: ["62d63248860a82beb388af87"],
-    });
-    let updatedEventInfo = new EventDetails({
-        //id : 62d50cfb436fbc75c258d9eb
-        title: "tester event 2",
-        eventOwnerID: "62d63248860a82beb388af87",
-        tags: ["Hiking"],
-        beginningDate: "2022-08-08T00:00:00.000Z",
-        endDate: "2022-09-01T00:00:00.000Z",
-        publicVisibility: true,
-        location: "2205 West Mall Toronto",
-        description: "test description",
-        numberOfPeople: 6,
-        currCapacity: 1,
-        participants: ["62d63248860a82beb388af87"],
-    });
-    test("invalid event ID", async () => {
-        let response = await request(app)
-            .put("/event/dfjsdfks/edit")
-            .send({...eventInfo, token});
-        expect(response.status).toBe(ERROR_CODES.INVALID);
-        expect(response._body).toBe(undefined);
-    })
-    test("Event with ID not found", async () => {
-        let response = await request(app)
-            .put("/event/64d31ae677f7ad9a56ab89c6/edit")
-            .send({...eventInfo, token});
-        expect(response.status).toBe(ERROR_CODES.NOTFOUND);
-        expect(response._body).toBe(undefined);
-    })
-    test("Success: event is edited", async () => {
-        let response = await request(app)
-            .post("/event/create")
-            .send({ ...eventInfo, token });
-        expect(response.status).toBe(ERROR_CODES.SUCCESS);
-        let id = response._body._id;
-        let chat = response._body.chat;
-        ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
-        ["chat"].forEach((key) => delete eventInfo[key]);
-        expect(response._body).toMatchObject(eventInfo);
-        
-        let updatedResponse = await request(app)
-        .put(`/event/${id}/edit`)
-        .send({...updatedEventInfo, token});
-        await Chat.findByIdAndDelete(chat);
-        await Event.findByIdAndDelete(id);
-        ["_id", "__v", "chat"].forEach((key) => delete updatedResponse._body[key]);
-        ["chat"].forEach((key) => delete updatedEventInfo[key]);
-        expect(updatedResponse._body).toMatchObject(updatedEventInfo)
-    });
-});
 
 describe("Profile Management Use Case", () => {
     describe("create user", () => {
@@ -445,7 +813,7 @@ describe("Profile Management Use Case", () => {
             token,
         });
 
-        test("IDs of friend requests are invalid", async () => {
+        test("IDs of friend are invalid", async () => {
             userInfo.friends = ["sdflkjsdf"]
 
             let response = await request(app).post("/user/create").send(userInfo);
@@ -465,7 +833,7 @@ describe("Profile Management Use Case", () => {
             userInfo.friends = [];
         });
         
-        test("No friend requests for user found", async () => {
+        test("No friend for user found", async () => {
             userInfo.friends = ["64d31ae677f7ad9a56ab89c6"]
 
             let response = await request(app).post("/user/create").send(userInfo);
@@ -485,7 +853,7 @@ describe("Profile Management Use Case", () => {
             userInfo.friends = [];
         });
         
-        test("Success: list of friend requests of user viewed", async () => {
+        test("Success: list of friend of user viewed", async () => {
             let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
             expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
             let otherUserID = otherResponse._body._id;
@@ -518,24 +886,326 @@ describe("Profile Management Use Case", () => {
         });
     })
 
-    describe("send friend request", () => {})
-    describe("accept friend request", () => {})
-    describe("reject friend request", () => {})
-    describe("remove friend", () => {})
+    describe("send friend request", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let otherUserInfo = new UserAccount({
+            name: "Bob Bobber",
+            interests: ["Hiking"],
+            location: "4223 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        test("IDs of user or otherUser are invalid", async () => {
+            let response = await request(app)
+                .put("/user/sendFriendRequest/sdfsdf/sdfdf")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        })
+        test("No users found", async () => {
+            let response = await request(app)
+                .put("/user/sendFriendRequest/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        })
+        test("Users already friends", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            otherUserInfo.friends = [id];
+
+            let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
+            expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let otherUserID = otherResponse._body._id;
+            ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
+            expect(otherResponse._body).toMatchObject(otherUserInfo);
+
+            await User.findByIdAndUpdate(id, {$push: {friends: otherUserID}});
+
+            let friendReqResponse = await request(app)
+                .put(`/user/sendFriendRequest/${id}/${otherUserID}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await User.findByIdAndDelete(otherUserID);
+            expect(friendReqResponse.status).toBe(ERROR_CODES.CONFLICT);
+            expect(friendReqResponse._body).toBe(undefined);
+            otherUserInfo.friends = []
+        })
+        test("friend request already sent before", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            otherUserInfo.friendRequest = [id];
+
+            let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
+            expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let otherUserID = otherResponse._body._id;
+            ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
+            expect(otherResponse._body).toMatchObject(otherUserInfo);
 
 
-    test("IDs of friends are invalid", async () => {});
-    test("No friends found", async () => {});
-    test("Success: list of users with given name viewed", async () => {});
+            let friendReqResponse = await request(app)
+                .put(`/user/sendFriendRequest/${id}/${otherUserID}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await User.findByIdAndDelete(otherUserID);
+            expect(friendReqResponse.status).toBe(ERROR_CODES.CONFLICT);
+            expect(friendReqResponse._body).toBe(undefined);
+            otherUserInfo.friendRequest = []
+        })
+        test("Success: friend request send", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
 
-    
-    
+            let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
+            expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let otherUserID = otherResponse._body._id;
+            ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
+            expect(otherResponse._body).toMatchObject(otherUserInfo);
 
-    test("No friends for user found", async () => {});
-    test("Success: list of friends of user viewed", async () => {});
 
-    test("No users found", async () => {});
-    test("Success: all users are viewed", async () => {});
+            let friendReqResponse = await request(app)
+                .put(`/user/sendFriendRequest/${id}/${otherUserID}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await User.findByIdAndDelete(otherUserID);
+            expect(friendReqResponse.status).toBe(ERROR_CODES.SUCCESS);
+            expect(friendReqResponse._body).toBe(undefined);
+        })
+    })
+    describe("accept friend request", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let otherUserInfo = new UserAccount({
+            name: "Bob Bobber",
+            interests: ["Hiking"],
+            location: "4223 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        test("IDs of user or otherUser are invalid", async () => {
+            let response = await request(app)
+                .put("/user/acceptUser/sdfsdf/sdfdf")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        })
+        test("No users found", async () => {
+            let response = await request(app)
+                .put("/user/acceptUser/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        })
+        test("Users already friends", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            otherUserInfo.friends = [id];
+
+            let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
+            expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let otherUserID = otherResponse._body._id;
+            ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
+            expect(otherResponse._body).toMatchObject(otherUserInfo);
+
+            await User.findByIdAndUpdate(id, {$push: {friends: otherUserID}});
+
+            let friendReqResponse = await request(app)
+                .put(`/user/acceptUser/${id}/${otherUserID}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await User.findByIdAndDelete(otherUserID);
+            expect(friendReqResponse.status).toBe(ERROR_CODES.CONFLICT);
+            expect(friendReqResponse._body).toBe(undefined);
+            otherUserInfo.friends = []
+        })
+        test("Success: friend request accepted", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
+            expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let otherUserID = otherResponse._body._id;
+            ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
+            expect(otherResponse._body).toMatchObject(otherUserInfo);
+
+
+            let friendReqResponse = await request(app)
+                .put(`/user/acceptUser/${id}/${otherUserID}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await User.findByIdAndDelete(otherUserID);
+            expect(friendReqResponse.status).toBe(ERROR_CODES.SUCCESS);
+            expect(friendReqResponse._body).toBe(undefined);
+        })
+    })
+    describe("reject friend request", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let otherUserInfo = new UserAccount({
+            name: "Bob Bobber",
+            interests: ["Hiking"],
+            location: "4223 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        test("IDs of user or otherUser are invalid", async () => {
+            let response = await request(app)
+                .put("/user/rejectUser/sdfsdf/sdfdf")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        })
+        test("No users found", async () => {
+            let response = await request(app)
+                .put("/user/rejectUser/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        })
+        test("No friend request present", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
+            expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let otherUserID = otherResponse._body._id;
+            ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
+            expect(otherResponse._body).toMatchObject(otherUserInfo);
+
+            let friendReqResponse = await request(app)
+                .put(`/user/rejectUser/${id}/${otherUserID}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await User.findByIdAndDelete(otherUserID);
+            expect(friendReqResponse.status).toBe(ERROR_CODES.CONFLICT);
+            expect(friendReqResponse._body).toBe(undefined);
+            otherUserInfo.friends = []
+        })
+        test("Success: friend request rejected", async () => {
+            let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
+            expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let otherUserID = otherResponse._body._id;
+            ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
+            expect(otherResponse._body).toMatchObject(otherUserInfo);
+
+            userInfo.friendRequest = [otherUserID]
+
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let friendReqResponse = await request(app)
+                .put(`/user/rejectUser/${id}/${otherUserID}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await User.findByIdAndDelete(otherUserID);
+            expect(friendReqResponse.status).toBe(ERROR_CODES.SUCCESS);
+            expect(friendReqResponse._body).toBe(undefined);
+        })
+    })
+    describe("remove friend", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let otherUserInfo = new UserAccount({
+            name: "Bob Bobber",
+            interests: ["Hiking"],
+            location: "4223 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        test("IDs of user or otherUser are invalid", async () => {
+            let response = await request(app)
+                .put("/user/removeFriend/sdfsdf/sdfdf")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        })
+        test("No users found", async () => {
+            let response = await request(app)
+                .put("/user/removeFriend/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        })
+        test("Success: friend removed", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            otherUserInfo.friends = [id];
+
+            let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
+            expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let otherUserID = otherResponse._body._id;
+            ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
+            expect(otherResponse._body).toMatchObject(otherUserInfo);
+
+            await User.findByIdAndUpdate(id, {$push: {friends: otherUserID}});
+
+            let friendReqResponse = await request(app)
+                .put(`/user/removeFriend/${id}/${otherUserID}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await User.findByIdAndDelete(otherUserID);
+            expect(friendReqResponse.status).toBe(ERROR_CODES.SUCCESS);
+            expect(friendReqResponse._body).toBe(undefined);
+            otherUserInfo.friends = []
+        })
+    })
 });
 
 describe("view event", () => {
@@ -568,7 +1238,17 @@ describe("view chat", () => {
 });
 
 describe("send chat", () => {
+    test("Invalid user ID", async () => {});
+    test("Invalid chat ID", async () => {});
+    test("No user found", async () => {});
+    test("No chat found", async () => {});
     test("Success: chat is sent to single user", async () => {});
+    
+    
+    test("Invalid user ID", async () => {});
+    test("Invalid chat ID", async () => {});
+    test("No user found", async () => {});
+    test("No chat found", async () => {});
     test("Success: chat is sent to chat group", async () => {});
 });
 

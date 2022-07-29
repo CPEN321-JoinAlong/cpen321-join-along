@@ -62,6 +62,7 @@ class EventStore {
         let eventList = await Event.find({
             participants: userID,
         });
+        console.log("AREEE YOU HERE")
         if (eventList.length !== 0)
             return new ResponseObject(ERROR_CODES.SUCCESS, eventList);
         else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList);

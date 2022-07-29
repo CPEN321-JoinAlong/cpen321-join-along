@@ -29,10 +29,11 @@ function logRequest(req, res, next) {
 // 	useUnifiedTopology: true,
 // });
 
-mongoose.connect("mongodb://localhost:34542/joinalong", {
+mongoose.connect("mongodb://useradmin:MTnCBEI9nIx6L6F@54.200.52.211:34542/joinalong", {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 });
+
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));

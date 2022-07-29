@@ -56,6 +56,8 @@ public class SearchScreenActivity extends AppCompatActivity {
     private static List<UserProfile> theUserSuggestionList = new ArrayList<>();
     private static List<Event> theEventSuggestionList = new ArrayList<>();
 
+    private String token;
+
 
 
     private enum LayoutManagerType {
@@ -66,7 +68,12 @@ public class SearchScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
 
-        String userToken = ((UserApplicationInfo) getApplication()).getUserToken();
+        token = ((UserApplicationInfo) getApplication()).getUserToken();
+
+        if(token == null){
+            token = getIntent().getStringExtra("testingToken");
+        }
+
 
         Activity activity = this;
         initElements();
@@ -89,7 +96,7 @@ public class SearchScreenActivity extends AppCompatActivity {
             recyclerView.setAdapter(searchEventCustomAdapter);
         }
 
-        fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(userToken, activity, getSearchMode());
+        fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(token, activity, getSearchMode());
 
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
@@ -135,9 +142,9 @@ public class SearchScreenActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (getSearchMode() == SearchMode.USER_MODE) {
-                    onSearchButtonPressedUser(activity, userToken, query);
+                    onSearchButtonPressedUser(activity, token, query);
                 } else {
-                    onSearchButtonPressedEvent(activity, userToken, query);
+                    onSearchButtonPressedEvent(activity, token, query);
                 }
 
                 return false;
@@ -156,7 +163,7 @@ public class SearchScreenActivity extends AppCompatActivity {
 
                     if (fetchSearchTermSuggestionsTask.getStatus() != AsyncTask.Status.RUNNING) {
                         if (fetchSearchTermSuggestionsTask.getStatus() == AsyncTask.Status.FINISHED) {
-                            fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(userToken, activity, getSearchMode());
+                            fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(token, activity, getSearchMode());
                             System.out.println("reset");
                         }
                         fetchSearchTermSuggestionsTask.execute(newText);

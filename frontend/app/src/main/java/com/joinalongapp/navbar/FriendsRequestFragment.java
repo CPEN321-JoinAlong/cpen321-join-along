@@ -10,9 +10,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.FriendsRequestCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.UserProfile;
@@ -96,50 +98,51 @@ public class FriendsRequestFragment extends Fragment {
         UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         String id = user.getId();
-        RequestManager requestManager = new RequestManager();
+        String operation = "Get Friend Requests";
+
         String path = new PathBuilder()
                 .addUser()
                 .addNode(id)
                 .addNode("friendRequest")
-                .build(); //TODO: HTTP 200, 422, 404, 500
+                .build();
 
-        requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
+        new RequestManager().get(path, userToken, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
 
-                List<UserProfile> outputFriends = new ArrayList<>();
-                try{
-                    //System.out.println(response.body().string());
-                    JSONArray jsonArray = new JSONArray(response.body().string());
-                    for(int i = 0; i < jsonArray.length(); i++){
-                        UserProfile userProfile = new UserProfile();
-                        userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
-                        outputFriends.add(userProfile);
-                    }
-
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    friendsRequestCustomAdapter.changeDataset(outputFriends);
-                                }
-                            });
+                if (response.isSuccessful()) {
+                    List<UserProfile> outputFriends = new ArrayList<>();
+                    try {
+                        JSONArray jsonArray = new JSONArray(response.body().string());
+                        for(int i = 0; i < jsonArray.length(); i++){
+                            UserProfile userProfile = new UserProfile();
+                            userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                            outputFriends.add(userProfile);
                         }
-                    }, 0);
 
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        friendsRequestCustomAdapter.changeDataset(outputFriends);
+                                    }
+                                });
+                            }
+                        }, 0);
 
-                } catch(JSONException | IOException e){
-                    e.printStackTrace();
+                    } catch(JSONException | IOException e){
+                        FeedbackMessageBuilder.createParseError(e, operation, activity);
+                    }
+                } else {
+                    ResponseErrorHandler.createErrorMessage(response, operation, "User", activity);
                 }
-
-
             }
 
             @Override
             public void onError(Call call, IOException e) {
-                System.out.println(call.toString());
+                FeedbackMessageBuilder.createServerConnectionError(e, operation, activity);
             }
         });
 

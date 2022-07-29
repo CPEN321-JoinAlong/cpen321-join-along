@@ -9,9 +9,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.MessagingListCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.ChatDetails;
@@ -99,45 +101,50 @@ public class MessagingListFragment extends Fragment {
         UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         String id = user.getId();
+        String operation = "Load Chats";
         RequestManager requestManager = new RequestManager();
 
         String path = new PathBuilder()
                 .addUser()
                 .addNode(id)
                 .addChat()
-                .build(); //TODO: HTTP 200, 404, 422, 500
+                .build();
 
         requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
-                System.out.println(response.toString());
-                List<ChatDetails> outputChats = new ArrayList<>();
-                try{
-                    JSONArray jsonArray = new JSONArray(response.body().string());
-                    for(int i = 0; i < jsonArray.length(); i++){
-                        ChatDetails chatDetails = new ChatDetails();
-                        chatDetails.populateDetailsFromJson(jsonArray.get(i).toString());
-                        outputChats.add(chatDetails);
-                    }
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    messagingListCustomAdapter.changeDataset(outputChats);
-                                }
-                            });
+
+                if (response.isSuccessful()) {
+                    List<ChatDetails> outputChats = new ArrayList<>();
+                    try{
+                        JSONArray jsonArray = new JSONArray(response.body().string());
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            ChatDetails chatDetails = new ChatDetails();
+                            chatDetails.populateDetailsFromJson(jsonArray.get(i).toString());
+                            outputChats.add(chatDetails);
                         }
-                    }, 0);
-                } catch(JSONException | IOException e){
-                    e.printStackTrace();
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        messagingListCustomAdapter.changeDataset(outputChats);
+                                    }
+                                });
+                            }
+                        }, 0);
+                    } catch(JSONException | IOException e){
+                        FeedbackMessageBuilder.createParseError(e, operation, getActivity());
+                    }
+                } else {
+                    ResponseErrorHandler.createErrorMessage(response, operation, "Chat", getActivity());
                 }
             }
 
             @Override
             public void onError(Call call, IOException e) {
-                System.out.println(call.toString());
+                FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
             }
         });
     }

@@ -2,6 +2,7 @@ package com.joinalongapp.navbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,10 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.CreateReportActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
@@ -26,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -112,38 +116,43 @@ public class ViewProfileFragment extends Fragment {
         }
 
         addFriend.setOnClickListener(new View.OnClickListener() {
+            String operation = "Send Friend Request";
+
             @Override
             public void onClick(View v) {
-                addFriend.setVisibility(View.INVISIBLE);
-                RequestManager requestManager = new RequestManager();
                 JSONObject json = new JSONObject();
                 try {
                     json.put("token", token);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
                 try {
                     String path = new PathBuilder()
                             .addUser()
                             .addNode("sendFriendRequest")
                             .addNode(userId)
                             .addNode(otherUserId)
-                            .build(); //TODO: HTTP 200, 404, 409, 500
-                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                            .build();
+
+                    new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            System.out.println(response.toString());
+                            if (response.isSuccessful()) {
+                                addFriend.setVisibility(View.INVISIBLE);
+                            } else {
+                                ResponseErrorHandler.createErrorMessage(response, operation, "User", getActivity());
+                            }
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-                            System.out.println(call.toString());
+                            FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
                         }
                     });
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
                 }
-
             }
         });
 
@@ -154,33 +163,48 @@ public class ViewProfileFragment extends Fragment {
         ban.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String operation = "Ban User";
+
                 ban.setVisibility(View.INVISIBLE);
-                RequestManager requestManager = new RequestManager();
+
                 JSONObject json = new JSONObject();
                 try {
                     json.put("token", token);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
                 try {
                     String path = new PathBuilder()
                             .addUser()
                             .addNode(otherUserId)
                             .addNode("ban")
-                            .build(); //TODO: HTTP 200, 500
-                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                            .build();
+
+                    new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            System.out.println(response.toString());
+                            if (response.isSuccessful()) {
+                                new FeedbackMessageBuilder()
+                                        .setTitle("Successful Ban")
+                                        .setDescription("Successfully banned event with title " + userProfile.getFullName())
+                                        .withActivity(getActivity())
+                                        .buildAsyncNeutralMessage();
+
+                                Log.i("banEvent", globalUserProfile.getId() + " banned " + userProfile.getFullName() + " at " + new Date());
+                                ban.setVisibility(View.INVISIBLE);
+                            } else {
+                                ResponseErrorHandler.createErrorMessage(response, operation, "Event", getActivity());
+                            }
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-                            System.out.println(call.toString());
+                            FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
                         }
                     });
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
                 }
             }
         });
@@ -201,30 +225,6 @@ public class ViewProfileFragment extends Fragment {
     private boolean shouldHideAddFriendButton(UserProfile theGlobalUserProfile, String theOtherUserId) {
         return theGlobalUserProfile.getFriends().contains(theOtherUserId);
     }
-
-//    private boolean shouldHideAddFriendButton(String token, String userId, String theOtherUserId) {
-//        RequestManager requestManager = new RequestManager();
-//        String path = "user/" + userId + "/friends";
-//
-////        try {
-////            requestManager.get(path, token, new RequestManager.OnRequestCompleteListener() {
-////                @Override
-////                public void onSuccess(Call call, Response response) {
-////                    JSONArray friendsArray = new JSONArray();
-////                    friendsArray.getString(0);
-////                }
-////
-////                @Override
-////                public void onError(Call call, IOException e) {
-////
-////                }
-////            });
-////        } catch (IOException | JSONException e) {
-////
-////        }
-//        return true;
-//
-//    }
 
     private void initDataset(View view){
         backButton = view.findViewById(R.id.chatBackButton);

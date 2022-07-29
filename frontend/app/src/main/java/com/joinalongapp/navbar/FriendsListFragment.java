@@ -11,9 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.FriendsListCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.UserProfile;
@@ -94,7 +96,7 @@ public class FriendsListFragment extends Fragment {
                     public void run() {
                         swipeRefreshLayout.setRefreshing(false);
                     }
-                }, 2000);
+                }, 2000); //TODO: FIXME: a delay seems kinda hacky here
             }
         });
 
@@ -116,47 +118,53 @@ public class FriendsListFragment extends Fragment {
         UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         String id = user.getId();
-        RequestManager requestManager = new RequestManager();
+        String operation = "Load Friends List";
+
         String path = new PathBuilder()
                 .addUser()
                 .addNode(id)
                 .addNode("friends")
-                .build(); //TODO: HTTP 200, 404, 422, 500
+                .build();
 
-        requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
+        new RequestManager().get(path, userToken, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
 
-                List<UserProfile> outputFriends = new ArrayList<>();
-                try{
-                    System.out.println(response);
-                    JSONArray jsonArray = new JSONArray(response.body().string());
-                    for(int i = 0; i < jsonArray.length(); i++){
-                        UserProfile userProfile = new UserProfile();
-                        userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
-                        outputFriends.add(userProfile);
-                    }
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    friendsListCustomAdapter.changeDataset(outputFriends);
-                                }
-                            });
+                if (response.isSuccessful()) {
+                    List<UserProfile> outputFriends = new ArrayList<>();
+                    try{
+                        System.out.println(response);
+                        JSONArray jsonArray = new JSONArray(response.body().string());
+                        for(int i = 0; i < jsonArray.length(); i++){
+                            UserProfile userProfile = new UserProfile();
+                            userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                            outputFriends.add(userProfile);
                         }
-                    }, 0);
-                    System.out.println("efwa");
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        friendsListCustomAdapter.changeDataset(outputFriends);
+                                    }
+                                });
+                            }
+                        }, 0);
+                        System.out.println("efwa");
 
-                } catch(JSONException | IOException e){
-                    e.printStackTrace();
+                    } catch(JSONException | IOException e){
+                        FeedbackMessageBuilder.createParseError(e, operation, getActivity());
+                    }
+                } else {
+                    ResponseErrorHandler.createErrorMessage(response, operation, "User", getActivity());
                 }
+
             }
 
             @Override
             public void onError(Call call, IOException e) {
-                System.out.println(call.toString());
+                FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
             }
         });
 

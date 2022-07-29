@@ -110,31 +110,37 @@ public class ViewChatFragment extends Fragment {
         List<String> friendNames = new ArrayList<>();
         RequestManager requestManager = new RequestManager();
         String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
+
+        //TODO: FIXME hacky loop of gets
         for (String friendId : peopleIds) {
             try {
                 String path = new PathBuilder()
                         .addUser()
                         .addNode(friendId)
-                        .build(); //FIXME: HTTP 200, 500, 422, 404
+                        .build();
 
                 requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
                     @Override
                     public void onSuccess(Call call, Response response) {
-                        try {
-                            JSONObject userJson = new JSONObject(response.body().string());
-                            friendNames.add(userJson.getString("name"));
-                        } catch (IOException | JSONException e) {
-                            //todo
+
+                        if (response.isSuccessful()) {
+                            try {
+                                JSONObject userJson = new JSONObject(response.body().string());
+                                friendNames.add(userJson.getString("name"));
+                            } catch (IOException | JSONException e) {
+                                //Do nothing: Just don't load the member chip
+                            }
                         }
+
                     }
 
                     @Override
                     public void onError(Call call, IOException e) {
-                        System.out.println("Error!");
+                        //Do nothing: Just don't load the member chip
                     }
                 });
             } catch (IOException e) {
-                //todo
+                //Do nothing: Just don't load the member chip
             }
 
         }

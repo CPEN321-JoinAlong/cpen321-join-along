@@ -1,19 +1,20 @@
 package com.joinalongapp.joinalong;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.ReportsAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.viewmodel.ReportDetails;
-import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,45 +68,48 @@ public class ViewReportActivity extends AppCompatActivity {
     }
 
     private void initDataset(Activity activity) throws IOException {
-        UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
         String token = ((UserApplicationInfo) getApplication()).getUserToken();
-        String id = user.getId();
+        String operation = "Retrieve Reports";
 
-        RequestManager requestManager = new RequestManager();
         String path = new PathBuilder()
                 .addNode("reports")
                 .build();
 
-        requestManager.get(path, token, new RequestManager.OnRequestCompleteListener() {
+        new RequestManager().get(path, token, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
-                List<ReportDetails> outputReports = new ArrayList<>();
-                try{
-                    JSONArray jsonArray = new JSONArray(response.body().string());
-                    for(int i = 0; i < jsonArray.length(); i++){
-                        ReportDetails reportDetails = new ReportDetails();
-                        reportDetails.populateDetailsFromJson(jsonArray.get(i).toString());
-                        outputReports.add(reportDetails);
-                    }
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    reportsAdapter.changeDataset(outputReports);
-                                }
-                            });
+
+                if (response.isSuccessful()) {
+                    List<ReportDetails> outputReports = new ArrayList<>();
+                    try{
+                        JSONArray jsonArray = new JSONArray(response.body().string());
+                        for(int i = 0; i < jsonArray.length(); i++){
+                            ReportDetails reportDetails = new ReportDetails();
+                            reportDetails.populateDetailsFromJson(jsonArray.get(i).toString());
+                            outputReports.add(reportDetails);
                         }
-                    }, 0);
-                } catch(JSONException | IOException e){
-                    e.printStackTrace();
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        reportsAdapter.changeDataset(outputReports);
+                                    }
+                                });
+                            }
+                        }, 0);
+                    } catch(JSONException | IOException e){
+                        FeedbackMessageBuilder.createParseError(e, operation, activity);
+                    }
+                } else {
+                    ResponseErrorHandler.createErrorMessage(response, operation, "report", activity);
                 }
             }
 
             @Override
             public void onError(Call call, IOException e) {
-                System.out.println(call.toString());
+                FeedbackMessageBuilder.createServerConnectionError(e, operation, activity);
             }
         });
 

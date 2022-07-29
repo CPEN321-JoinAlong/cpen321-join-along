@@ -5,7 +5,6 @@ const EventDetails = require("./../modules/event_module/EventDetails");
 const EventStore = require("./../modules/event_module/EventStore");
 const Event =  require("./../models/Event")
 
-const ChatDetails = require("./../modules/chat_module/ChatDetails");
 const ChatEngine = require("./../modules/chat_module/ChatEngine");
 
 const ERROR_CODES = require("./../ErrorCodes.js");
@@ -294,7 +293,7 @@ describe("find all UnblockedEvents", () => {
     test("Success: Events found", async () => {
         const userStore = new UserStore();
         const eventStore = new EventStore();
-        userStore.findUserByID.mockResolvedValue(new ResponseObject(ERROR_CODES.NOTFOUND, new UserAccount({
+        userStore.findUserByID.mockResolvedValue(new ResponseObject(ERROR_CODES.SUCCESS, new UserAccount({
             name: "Bob Bobber",
             interests: ["Hiking"],
             location: "2423 Toronto Mall, Montreal",
@@ -313,7 +312,6 @@ describe("find all UnblockedEvents", () => {
                 location: "2205 West Mall Toronto",
                 description: "test description",
                 participants: ["62d50cfb436fbc75c258d9eb"],
-                currCapacity: 1,
                 numberOfPeople: 6,
                 chat: "68ndhfb436fbc83jjj4rh4" 
             }),
@@ -446,19 +444,16 @@ describe("create event", () => {
             publicVisibility: true,
             location: "2205 West Mall Toronto",
             description: "test description",
-            participants: ["62d50cfb436fbc75c258d9eb"],
+            participants: ["62d50cfb436fbc75c258d9eb", "sdffdsfsd"],
             currCapacity: 1,
             numberOfPeople: 6,
             chat: "68ndhfb436fbc83jjj4rh4" 
         })
-        // let result = Event(eventInfo);
-        // console.log(Event.findOneAndUpdate)
-        // result.$__save.mockResolvedValue(eventInfo)
-        // new Event.save.mockResolvedValue(eventInfo);
+        let result = new Event(eventInfo);
+        result.save.mockResolvedValue(eventInfo);
         userStore.updateUserAccount.mockResolvedValue(new ResponseObject(ERROR_CODES.SUCCESS))
         let createdEvent = await eventStore.createEvent(eventInfo, userStore);
-        // expect(JSON.stringify(createdEvent.data)).toBe(JSON.stringify(eventInfo))
-        expect(JSON.stringify(null)).toBe(JSON.stringify(null))
+        expect(JSON.stringify(createdEvent.data)).toBe(JSON.stringify(eventInfo))
         expect(createdEvent.status).toBe(ERROR_CODES.SUCCESS)
     })
 })

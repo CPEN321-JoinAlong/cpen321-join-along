@@ -13,12 +13,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.SearchEventCustomAdapter;
 import com.joinalongapp.adapter.SearchPeopleCustomAdapter;
 import com.joinalongapp.controller.RequestManager;
@@ -55,9 +57,9 @@ public class SearchScreenActivity extends AppCompatActivity {
     private FetchSearchTermSuggestionsTask fetchSearchTermSuggestionsTask;
     private static List<UserProfile> theUserSuggestionList = new ArrayList<>();
     private static List<Event> theEventSuggestionList = new ArrayList<>();
-
+    private TextView noResults;
+    private static final int MAX_SUGGESTIONS = 8;
     private String token;
-
 
 
     private enum LayoutManagerType {
@@ -221,77 +223,84 @@ public class SearchScreenActivity extends AppCompatActivity {
                         public void run() {
                             try {
                                 if (mode == SearchMode.USER_MODE) {
-                                    RequestManager requestManager = new RequestManager();
-                                    requestManager.get(myUrlPath + params[0], userToken, new RequestManager.OnRequestCompleteListener() {
+                                    new RequestManager().get(myUrlPath + params[0], userToken, new RequestManager.OnRequestCompleteListener() {
                                         @Override
                                         public void onSuccess(Call call, Response response) {
-                                            List<UserProfile> outputFriends = new ArrayList<>();
 
-                                            try {
-                                                JSONArray jsonArray = new JSONArray(response.body().string());
-                                                for(int i = 0; i < jsonArray.length(); i++){
-                                                    UserProfile userProfile = new UserProfile();
-                                                    userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
-                                                    outputFriends.add(userProfile);
+                                            if (response.isSuccessful()) {
 
-                                                    String userName = userProfile.getFullName();
+                                                List<UserProfile> outputFriends = new ArrayList<>();
 
-                                                    Object[] row = new Object[] { i, userName };
+                                                try {
+                                                    JSONArray jsonArray = new JSONArray(response.body().string());
 
-                                                    cursor.addRow(row);
+                                                    for (int i = 0; i < Math.min(jsonArray.length(), MAX_SUGGESTIONS); i++) {
+                                                        UserProfile userProfile = new UserProfile();
+                                                        userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
+                                                        outputFriends.add(userProfile);
+
+                                                        String userName = userProfile.getFullName();
+
+                                                        Object[] row = new Object[] { i, userName };
+
+                                                        cursor.addRow(row);
+                                                    }
+
+                                                    updateSuggestions();
+
+                                                } catch (IOException | JSONException e) {
+                                                    Log.e("Search Event Suggestions", e.getMessage());
                                                 }
 
-                                                updateSuggestions();
-
-                                            } catch (IOException | JSONException e) {
-                                                //TODO: make error message
-                                                Log.d("Search", "error");
+                                                theUserSuggestionList.clear();
+                                                theUserSuggestionList = outputFriends;
                                             }
+                                            // ELSE: don't update the list of suggestions
 
-                                            theUserSuggestionList.clear();
-                                            theUserSuggestionList = outputFriends;
                                         }
 
                                         @Override
                                         public void onError(Call call, IOException e) {
-                                            System.out.println(call.toString());
+                                            Log.e("Search User Suggestions", e.getMessage());
                                         }
                                     });
                                 } else {
-                                    RequestManager requestManager = new RequestManager();
-                                    requestManager.get(myUrlPath + params[0], userToken, new RequestManager.OnRequestCompleteListener() {
+                                    new RequestManager().get(myUrlPath + params[0], userToken, new RequestManager.OnRequestCompleteListener() {
                                         @Override
                                         public void onSuccess(Call call, Response response) {
-                                            List<Event> events = new ArrayList<>();
+                                            if (response.isSuccessful()) {
+                                                List<Event> events = new ArrayList<>();
 
-                                            try {
-                                                JSONArray jsonArray = new JSONArray(response.body().string());
-                                                for(int i = 0; i < jsonArray.length(); i++){
-                                                    Event event = new Event();
-                                                    event.populateDetailsFromJson(jsonArray.get(i).toString());
-                                                    events.add(event);
+                                                try {
+                                                    JSONArray jsonArray = new JSONArray(response.body().string());
+                                                    for(int i = 0; i < Math.min(jsonArray.length(), MAX_SUGGESTIONS); i++){
+                                                        Event event = new Event();
+                                                        event.populateDetailsFromJson(jsonArray.get(i).toString());
+                                                        events.add(event);
 
-                                                    String eventTitle = event.getTitle();
+                                                        String eventTitle = event.getTitle();
 
-                                                    Object[] row = new Object[] { i, eventTitle };
+                                                        Object[] row = new Object[] { i, eventTitle };
 
-                                                    cursor.addRow(row);
+                                                        cursor.addRow(row);
+                                                    }
+
+                                                    updateSuggestions();
+
+                                                } catch (IOException | JSONException e) {
+                                                    Log.e("Search Event Suggestions", e.getMessage());
                                                 }
 
-                                                updateSuggestions();
-
-                                            } catch (IOException | JSONException e) {
-                                                //TODO: make error message
-                                                Log.d("Eventsearch", "error");
+                                                theEventSuggestionList.clear();
+                                                theEventSuggestionList = events;
                                             }
+                                            //ELSE: don't update the suggestions list
 
-                                            theEventSuggestionList.clear();
-                                            theEventSuggestionList = events;
                                         }
 
                                         @Override
                                         public void onError(Call call, IOException e) {
-                                            System.out.println(call.toString());
+                                            Log.e("Search Event Suggestions", e.getMessage());
                                         }
                                     });
                                 }

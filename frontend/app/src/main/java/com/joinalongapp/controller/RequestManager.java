@@ -22,6 +22,15 @@ public class RequestManager implements Callback {
     private static final int PORT = 3000;
     private OnRequestCompleteListener onRequestCompleteListener;
 
+    public static String getBaseUrl() {
+        return new HttpUrl.Builder()
+                .scheme(SCHEME)
+                .host(BASE_URL)
+                .port(PORT)
+                .build()
+                .toString();
+    }
+
     /**
      * Read from the given path
      * @param path path of URL to read from
@@ -30,6 +39,13 @@ public class RequestManager implements Callback {
      * @throws IOException
      */
     public void get(String path, String tokenHeader, OnRequestCompleteListener callback) throws IOException {
+
+        if (tokenHeader == null) {
+            //TODO: could change to another exception
+            //      for some reason the token is sometimes null, maybe concurrency issue?
+            throw new IOException();
+        }
+
         onRequestCompleteListener = callback;
         OkHttpClient client = new OkHttpClient();
 

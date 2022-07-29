@@ -2,7 +2,6 @@ package com.joinalongapp.joinalong;
 
 import static com.joinalongapp.FeedbackMessageBuilder.createParseError;
 import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
-import static com.joinalongapp.FeedbackMessageBuilder.createServerInternalError;
 import static com.joinalongapp.LocationUtils.getAddressFromString;
 import static com.joinalongapp.LocationUtils.standardizeAddress;
 import static com.joinalongapp.LocationUtils.validateLocation;
@@ -29,9 +28,9 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.FeedbackMessageBuilder;
-import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 import com.squareup.picasso.Picasso;
@@ -57,8 +56,8 @@ import okhttp3.Response;
  * add a first and last name string for autofill in the Extras.
  */
 public class ManageProfileActivity extends AppCompatActivity {
-    private final static String CREATE_TAG ="create profile";
-    private final static String EDIT_TAG ="edit profile";
+    private final static String CREATE_TAG ="Create Profile";
+    private final static String EDIT_TAG ="Edit Profile";
     private EditText firstNameEdit;
     private EditText lastNameEdit;
     private EditText locationEdit;
@@ -142,34 +141,29 @@ public class ManageProfileActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Call call, Response response) {
 
-                    switch (response.code()) {
-                        case HttpStatusConstants.STATUS_HTTP_200:
-                            ((UserApplicationInfo) getApplication()).updateApplicationInfo(userInput);
-                            Intent i = new Intent(ManageProfileActivity.this, MainActivity.class);
+                    if (response.isSuccessful()) {
+                        ((UserApplicationInfo) getApplication()).updateApplicationInfo(userInput);
+                        Intent i = new Intent(ManageProfileActivity.this, MainActivity.class);
 
-                            new FeedbackMessageBuilder()
-                                    .setTitle("Update profile")
-                                    .setDescription("Successfully updated user profile!")
-                                    .withActivity(ManageProfileActivity.this)
-                                    .buildAsyncNeutralMessageAndStartActivity(i);
-                            break;
-
-                        case HttpStatusConstants.STATUS_HTTP_500:
-                        default:
-                            FeedbackMessageBuilder.createServerInternalError("update profile", ManageProfileActivity.this);
-                            break;
+                        new FeedbackMessageBuilder()
+                                .setTitle("Update profile")
+                                .setDescription("Successfully updated user profile!")
+                                .withActivity(ManageProfileActivity.this)
+                                .buildAsyncNeutralMessageAndStartActivity(i);
+                    } else {
+                        ResponseErrorHandler.createErrorMessage(response, EDIT_TAG, "user", ManageProfileActivity.this);
                     }
                 }
 
                 @Override
                 public void onError(Call call, IOException e) {
-                    FeedbackMessageBuilder.createServerConnectionError(e, "update profile", ManageProfileActivity.this);
+                    FeedbackMessageBuilder.createServerConnectionError(e, EDIT_TAG, ManageProfileActivity.this);
                 }
             });
         } catch (JSONException e){
-            FeedbackMessageBuilder.createParseError(e, "update profile", ManageProfileActivity.this);
+            FeedbackMessageBuilder.createParseError(e, EDIT_TAG, ManageProfileActivity.this);
         } catch (IOException e) {
-            FeedbackMessageBuilder.createServerConnectionError(e, "update profile", ManageProfileActivity.this);
+            FeedbackMessageBuilder.createServerConnectionError(e, EDIT_TAG, ManageProfileActivity.this);
         }
     }
 
@@ -187,24 +181,19 @@ public class ManageProfileActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Call call, Response response) {
                     UserApplicationInfo newUserInfo = new UserApplicationInfo();
-                    switch (response.code()) {
-                        case HttpStatusConstants.STATUS_HTTP_200:
-                            try {
-                                newUserInfo.populateDetailsFromJson(response.body().string());
-                                ((UserApplicationInfo) getApplication()).updateApplicationInfo(newUserInfo);
-                                startMainActivity();
 
-                            } catch (IOException | JSONException e) {
-                                createParseError(e, CREATE_TAG, ManageProfileActivity.this);
-                            }
-                            break;
-                        case HttpStatusConstants.STATUS_HTTP_500:
-                        default:
-                            createServerInternalError(CREATE_TAG, ManageProfileActivity.this);
-                            break;
+                    if (response.isSuccessful()) {
+                        try {
+                            newUserInfo.populateDetailsFromJson(response.body().string());
+                            ((UserApplicationInfo) getApplication()).updateApplicationInfo(newUserInfo);
+                            startMainActivity();
 
+                        } catch (IOException | JSONException e) {
+                            createParseError(e, CREATE_TAG, ManageProfileActivity.this);
+                        }
+                    } else {
+                        ResponseErrorHandler.createErrorMessage(response, CREATE_TAG, "user", ManageProfileActivity.this);
                     }
-
                 }
 
                 @Override

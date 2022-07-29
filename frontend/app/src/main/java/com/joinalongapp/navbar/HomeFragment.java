@@ -2,7 +2,6 @@ package com.joinalongapp.navbar;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +17,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.adapter.EventViewAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.SearchScreenActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
@@ -194,27 +195,37 @@ public class HomeFragment extends Fragment {
         FragmentActivity fragmentActivity = getActivity();
 
         RequestManager requestManager = new RequestManager();
+        String operation = "Load Events";
 
         try {
             requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
                 @Override
                 public void onSuccess(Call call, Response response) {
-                    try {
-                        List<Event> eventList = getEventListFromResponse(response);
-                        updateEventLists(eventList, fragmentActivity, curr);
-                    } catch (IOException | JSONException e) {
-                        Log.e(TAG, "Unable to parse events from server.");
+
+                    if (response.isSuccessful()) {
+                        try {
+                            List<Event> eventList = getEventListFromResponse(response);
+                            updateEventLists(eventList, fragmentActivity, curr);
+                        } catch (IOException | JSONException e) {
+                            FeedbackMessageBuilder.createParseError(e, operation, fragmentActivity);
+                            //TODO: add no events found message
+                        }
+                    } else {
+                        ResponseErrorHandler.createErrorMessage(response, operation, "Event", fragmentActivity);
+                        //TODO: add no events found message
                     }
+
                 }
                 @Override
                 public void onError(Call call, IOException e) {
-                    Log.e(TAG, "Unable to get events from server.");
+                    FeedbackMessageBuilder.createServerConnectionError(e, operation, fragmentActivity);
+                    //TODO: add no events found message
                 }
-
             });
 
         } catch (IOException e) {
-            Log.e(TAG, "Unable to get events from server.");
+            FeedbackMessageBuilder.createServerConnectionError(e, operation, fragmentActivity);
+            //TODO: add no events found message
         }
     }
 

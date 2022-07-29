@@ -21,9 +21,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.joinalongapp.HttpStatusConstants;
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.joinalong.CreateReportActivity;
 import com.joinalongapp.joinalong.ManageEventActivity;
 import com.joinalongapp.joinalong.R;
@@ -37,6 +38,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -141,19 +143,31 @@ public class ViewEventFragment extends Fragment {
                             .addNode(event.getEventId())
                             .addNode("ban")
                             .build();
+
                     requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            System.out.println(response.toString());
+                            if (response.isSuccessful()) {
+                                new FeedbackMessageBuilder()
+                                        .setTitle("Successful Ban")
+                                        .setDescription("Successfully banned event with title " + event.getTitle())
+                                        .withActivity(getActivity())
+                                        .buildAsyncNeutralMessage();
+
+                                Log.i("banEvent", globalUserProfile.getId() + " banned " + event.getTitle() + " at " + new Date());
+                                ban.setVisibility(View.INVISIBLE);
+                            } else {
+                                ResponseErrorHandler.createErrorMessage(response, "Ban Event", "Event", getActivity());
+                            }
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-                            System.out.println(call.toString());
+                            FeedbackMessageBuilder.createServerConnectionError(e, "Ban Event", getActivity());
                         }
                     });
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    FeedbackMessageBuilder.createServerConnectionError(e, "Ban Event", getActivity());
                 }
             }
         });
@@ -176,7 +190,7 @@ public class ViewEventFragment extends Fragment {
                                 UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
                                 String userId = userApplicationInfo.getProfile().getId();
                                 String eventId = event.getEventId();
-                                RequestManager requestManager = new RequestManager();
+                                String operation = "Leave Event";
 
                                 try {
                                     String path = new PathBuilder()
@@ -186,73 +200,60 @@ public class ViewEventFragment extends Fragment {
                                             .addNode(eventId)
                                             .build();
                                     String userToken = userApplicationInfo.tokenToJsonString();
-                                    requestManager.put(path, userToken, new RequestManager.OnRequestCompleteListener() {
+                                    new RequestManager().put(path, userToken, new RequestManager.OnRequestCompleteListener() {
                                         @Override
                                         public void onSuccess(Call call, Response response) {
-                                            new Timer().schedule(new TimerTask() {
-                                                @Override
-                                                public void run() {
-                                                    activity.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            joinButton.setVisibility(View.VISIBLE);
-                                                            rideshareButton.setVisibility(View.GONE);
-                                                            menu.getMenu().findItem(R.id.eventLeave).setVisible(false);
 
-                                                            new AlertDialog.Builder(activity)
-                                                                    .setTitle("Successfully Left Event")
-                                                                    .setMessage("You have now left " + event.getTitle())
-                                                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                                        @Override
-                                                                        public void onClick(DialogInterface dialog, int which) {
-                                                                            dialog.dismiss();
-                                                                        }
-                                                                    })
-                                                                    .create()
-                                                                    .show();
+                                            if (response.isSuccessful()) {
+                                                new Timer().schedule(new TimerTask() {
+                                                    @Override
+                                                    public void run() {
+                                                        activity.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                joinButton.setVisibility(View.VISIBLE);
+                                                                rideshareButton.setVisibility(View.GONE);
+                                                                menu.getMenu().findItem(R.id.eventLeave).setVisible(false);
 
-                                                            String userName = userApplicationInfo.getProfile().getFullName();
-                                                            Chip chip = new Chip(activity);
-                                                            chip.setText(userName);
-                                                            members.removeView(chip);
+                                                                new AlertDialog.Builder(activity)
+                                                                        .setTitle("Successfully Left Event")
+                                                                        .setMessage("You have now left " + event.getTitle())
+                                                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                                dialog.dismiss();
+                                                                            }
+                                                                        })
+                                                                        .create()
+                                                                        .show();
 
-                                                            modifyViewOnLeaveEvent(userApplicationInfo, activity);
-                                                        }
-                                                    });
+                                                                String userName = userApplicationInfo.getProfile().getFullName();
+                                                                Chip chip = new Chip(activity);
+                                                                chip.setText(userName);
+                                                                members.removeView(chip);
+
+                                                                modifyViewOnLeaveEvent(userApplicationInfo, activity);
+                                                            }
+                                                        });
 
 
 
-                                                }
-                                            }, 0);
+                                                    }
+                                                }, 0);
+                                            } else {
+                                                ResponseErrorHandler.createErrorMessage(response, operation, "Event", getActivity());
+                                            }
                                         }
 
                                         @Override
                                         public void onError(Call call, IOException e) {
-                                            new Timer().schedule(new TimerTask() {
-                                                @Override
-                                                public void run() {
-                                                    activity.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            new AlertDialog.Builder(activity)
-                                                                    .setTitle("Unable to leave event.")
-                                                                    .setMessage("You were unable to leave this event.\nPlease try again later.")
-                                                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                                                        @Override
-                                                                        public void onClick(DialogInterface dialog, int which) {
-                                                                            dialog.dismiss();
-                                                                        }
-                                                                    })
-                                                                    .create()
-                                                                    .show();
-                                                        }
-                                                    });
-                                                }
-                                            }, 0);
+                                            FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
                                         }
                                     });
-                                } catch (JSONException | IOException e) {
-                                    e.printStackTrace();
+                                } catch (JSONException e) {
+                                    FeedbackMessageBuilder.createParseError(e, operation, getActivity());
+                                } catch (IOException e) {
+                                    FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
                                 }
 
                                 return true;
@@ -284,9 +285,6 @@ public class ViewEventFragment extends Fragment {
     private void modifyViewOnLeaveEvent(UserApplicationInfo userApplicationInfo, FragmentActivity activity) {
         joinButton.setVisibility(View.VISIBLE);
         rideshareButton.setVisibility(View.GONE);
-//        String userName = userApplicationInfo.getProfile().getFullName();
-//        Chip chip = new Chip(activity);
-//        chip.setText(userName);
         members.removeView(userChip);
         userChip = null;
         event.setCurrentNumPeopleRegistered(event.getCurrentNumPeopleRegistered() - 1);
@@ -311,11 +309,12 @@ public class ViewEventFragment extends Fragment {
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo call the back
+
                 RequestManager requestManager = new RequestManager();
                 UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
                 String userId = userApplicationInfo.getProfile().getId();
                 String eventId = event.getEventId();
+                String operation = "Join Event";
 
                 String path = new PathBuilder()
                         .addUser()
@@ -329,7 +328,7 @@ public class ViewEventFragment extends Fragment {
                     requestManager.put(path, userToken, new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            if (response.code() == HttpStatusConstants.STATUS_HTTP_200) {
+                            if (response.isSuccessful()) {
                                 new Timer().schedule(new TimerTask() {
                                     @Override
                                     public void run() {
@@ -343,19 +342,19 @@ public class ViewEventFragment extends Fragment {
                                     }
                                 }, 0);
                             } else {
-                                createJoinEventErrorMessage(activity);
-                                Log.d("JoinEvent", "Code: " + response.code());
+                                ResponseErrorHandler.createErrorMessage(response, operation, "Event", activity);
                             }
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-                            createJoinEventErrorMessage(activity);
-                            e.printStackTrace();
+                            FeedbackMessageBuilder.createServerConnectionError(e, operation, activity);
                         }
                     });
-                } catch (JSONException | IOException e) {
-                    e.printStackTrace();
+                } catch (JSONException e) {
+                    FeedbackMessageBuilder.createParseError(e, operation, getActivity());
+                } catch (IOException e) {
+                    FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
                 }
 
             }
@@ -387,30 +386,6 @@ public class ViewEventFragment extends Fragment {
                 })
                 .create()
                 .show();
-    }
-
-    private void createJoinEventErrorMessage(FragmentActivity activity) {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        new AlertDialog.Builder(activity)
-                                .setTitle("Unable to join event.")
-                                .setMessage("You were unable to join this event.\nPlease try again later.")
-                                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .create()
-                                .show();
-                    }
-                });
-            }
-        }, 0);
     }
 
     private void initBackButton() {
@@ -528,34 +503,35 @@ public class ViewEventFragment extends Fragment {
             organizerRequestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
                 @Override
                 public void onSuccess(Call call, Response response) {
-                    try {
-                        JSONObject json = new JSONObject(response.body().string());
-                        String organizerName = json.getString("name");
-                        new Timer().schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                fragmentActivity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ownerChip.setText(organizerName);
-                                    }
-                                });
-                            }
-                        }, 0);
+                    if (response.isSuccessful()) {
+                        try {
+                            JSONObject json = new JSONObject(response.body().string());
+                            String organizerName = json.getString("name");
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    fragmentActivity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ownerChip.setText(organizerName);
+                                        }
+                                    });
+                                }
+                            }, 0);
 
-                    } catch (IOException | JSONException e) {
-                        //todo
+                        } catch (IOException | JSONException e) {
+                            // Do nothing: Just don't load the owner chip
+                        }
                     }
-
                 }
 
                 @Override
                 public void onError(Call call, IOException e) {
-                    //todo
+                    // Do nothing:  don't load the owner chip
                 }
             });
         } catch (IOException e) {
-            //todo
+            // Do nothing: Just don't load the owner chip
         }
 
         organizer.addView(ownerChip);
@@ -566,52 +542,46 @@ public class ViewEventFragment extends Fragment {
             RequestManager membersRequestManager = new RequestManager();
             Chip memberChip = new Chip(fragmentActivity);
             String memberPath = "user/" + memberId;
+
             try {
                 membersRequestManager.get(memberPath, userToken, new RequestManager.OnRequestCompleteListener() {
                     @Override
                     public void onSuccess(Call call, Response response) {
-                        try {
-                            JSONObject json = new JSONObject(response.body().string());
-                            String memberName = json.getString("name");
-                            new Timer().schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    fragmentActivity.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            memberChip.setText(memberName);
+                        if (response.isSuccessful()) {
+                            try {
+                                JSONObject json = new JSONObject(response.body().string());
+                                String memberName = json.getString("name");
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        fragmentActivity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                memberChip.setText(memberName);
+                                                members.addView(memberChip);
+                                            }
+                                        });
+                                    }
+                                }, 0);
 
-                                        }
-                                    });
-                                }
-                            }, 0);
-
-                        } catch (IOException | JSONException e) {
-                            //todo
+                            } catch (IOException | JSONException e) {
+                                // Do nothing: Just don't load the member chip
+                            }
                         }
-
+                        // ELSE: Do nothing: Just don't load the member chip
                     }
 
                     @Override
                     public void onError(Call call, IOException e) {
-                        //todo
+                        // Do nothing: Just don't load the member chip
                     }
                 });
             } catch (IOException e) {
-                //todo
+                // Do nothing: Just don't load the member chip
             }
-            members.addView(memberChip);
+
         }
 
-
-//        for (UserProfile member : event.getMembers()) {
-//            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, members, false);
-//            String personName = member.getFirstName() + " " + member.getLastName();
-//            chip.setText(personName);
-//            members.addView(chip);
-//        }
-
-        //TODO: update with numPeople/capacity
         String numPeopleInEventString = " (" + event.getCurrentNumPeopleRegistered() + "/" + event.getNumberOfPeopleAllowed() + ")";
         numPeople.setText(numPeopleInEventString);
 

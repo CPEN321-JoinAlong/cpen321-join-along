@@ -1,5 +1,7 @@
 package com.joinalongapp.adapter;
 
+import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.navbar.ViewChatFragment;
@@ -90,13 +93,15 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
                 ChatDetails otherChat = chatDetails.get(holder.getBindingAdapterPosition());
                 UserProfile user = ((UserApplicationInfo) v.getContext().getApplicationContext()).getProfile();
                 String userToken = ((UserApplicationInfo) v.getContext().getApplicationContext()).getUserToken();
+                String operation = "Accept Chat";
+
                 JSONObject json = new JSONObject();
                 try {
                     json.put("token", userToken);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                RequestManager requestManager = new RequestManager();
+
                 try {
                     String path = new PathBuilder()
                             .addUser()
@@ -105,46 +110,54 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
                             .addNode(otherChat.getId())
                             .build();
 
-                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            new Timer().schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    activity.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());
-                                        }
-                                    });
-                                }
-                            }, 0);
+
+                            if (response.isSuccessful()) {
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());
+                                            }
+                                        });
+                                    }
+                                }, 0);
+                            } else {
+                                ResponseErrorHandler.createErrorMessage(response, operation, "chat", activity);
+                            }
+
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-                            e.printStackTrace();
-                            //todo better error message
+                            createServerConnectionError(e, operation, activity);
                         }
                     });
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    createServerConnectionError(e, operation, activity);
                 }
             }
         });
+
         holder.getReject().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ChatDetails otherChat = chatDetails.get(holder.getBindingAdapterPosition());
                 UserProfile user = ((UserApplicationInfo) v.getContext().getApplicationContext()).getProfile();
                 String userToken = ((UserApplicationInfo) v.getContext().getApplicationContext()).getUserToken();
+                String operation = "Reject Chat Request";
+
                 JSONObject json = new JSONObject();
                 try {
                     json.put("token", userToken);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                RequestManager requestManager = new RequestManager();
+
                 try {
                     String path = new PathBuilder()
                             .addUser()
@@ -153,19 +166,23 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
                             .addNode(otherChat.getId())
                             .build();
 
-                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
-                            deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());
+                            if (response.isSuccessful()) {
+                                deleteRequest(chatDetails.get(holder.getBindingAdapterPosition()).getId());
+                            } else {
+                                ResponseErrorHandler.createErrorMessage(response, operation, "chat", activity);
+                            }
                         }
 
                         @Override
                         public void onError(Call call, IOException e) {
-                            System.out.println("Error!");
+                            createServerConnectionError(e, operation, activity);
                         }
                     });
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    createServerConnectionError(e, operation, activity);
                 }
             }
         });

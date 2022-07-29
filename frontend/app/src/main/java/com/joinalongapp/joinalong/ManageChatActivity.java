@@ -1,5 +1,7 @@
 package com.joinalongapp.joinalong;
 
+import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
@@ -69,7 +72,6 @@ public class ManageChatActivity extends AppCompatActivity {
 
         Bundle info = getIntent().getExtras();
         Boolean manageOption = info.getBoolean("EDIT_OPTION");
-        //UserProfile user = (UserProfile) info.getSerializable("USER");
 
         if(manageOption){
             ChatDetails chatDetails = (ChatDetails) info.getSerializable("CHAT_DETAILS");
@@ -99,57 +101,52 @@ public class ManageChatActivity extends AppCompatActivity {
                     .addNode("friends")
                     .build();
 
+            String operation = "Get Friends";
+
             requestManager.get(path, token, new RequestManager.OnRequestCompleteListener() {
                 @Override
                 public void onSuccess(Call call, Response response) {
-                    switch (response.code()) {
-                        case HttpStatusConstants.STATUS_HTTP_200:
-                            try {
-                                JSONArray jsonArray = new JSONArray(response.body().string());
-                                for(int i = 0; i < jsonArray.length(); i++){
-                                    UserProfile userProfile = new UserProfile();
-                                    userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
 
-                                    friends[i] = userProfile.getFullName();
-                                }
+                    if (response.isSuccessful()) {
+                        try {
+                            JSONArray jsonArray = new JSONArray(response.body().string());
+                            for(int i = 0; i < jsonArray.length(); i++){
+                                UserProfile userProfile = new UserProfile();
+                                userProfile.populateDetailsFromJson(jsonArray.get(i).toString());
 
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        activity.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                initAutoCompleteChipGroup(friendAutoComplete, friendChipGroup, friends);
-                                            }
-                                        });
-                                    }
-                                }, 0);
-
-                            } catch(JSONException | IOException e){
-                                e.printStackTrace();
+                                friends[i] = userProfile.getFullName();
                             }
-                            break;
 
-                        case HttpStatusConstants.STATUS_HTTP_500:
-                        default:
-                            FeedbackMessageBuilder.createServerInternalError("get friends", ManageChatActivity.this);
-                            break;
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            initAutoCompleteChipGroup(friendAutoComplete, friendChipGroup, friends);
+                                        }
+                                    });
+                                }
+                            }, 0);
+
+                        } catch(JSONException | IOException e){
+                            FeedbackMessageBuilder.createParseError(e, operation, activity);
+                        }
+                    } else {
+                        ResponseErrorHandler.createErrorMessage(response, operation, "user", activity);
                     }
-
                 }
 
                 @Override
                 public void onError(Call call, IOException e) {
-                    System.out.println("ERROR");
+                    createServerConnectionError(e, operation, activity);
                 }
             });
         } catch (IOException e) {
-            e.printStackTrace();
+            createServerConnectionError(e, "Get Friends", activity);
         }
 
-
         initAutoCompleteChipGroup(tagAutoComplete, tagChipGroup, tags);
-
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,8 +186,21 @@ public class ManageChatActivity extends AppCompatActivity {
                                                 .setDescription("The " + chatTitle.getText().toString() + " has been successfully created.")
                                                 .withActivity(ManageChatActivity.this)
                                                 .buildAsyncNeutralMessageAndStartActivity(i);
-                                        break;
 
+                                        new Timer().schedule(new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                ManageChatActivity.this.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        submitButton.setEnabled(false);
+                                                        submitButton.setVisibility(View.GONE);
+                                                    }
+                                                });
+                                            }
+                                        }, 0);
+
+                                        break;
 
                                     case HttpStatusConstants.STATUS_HTTP_500:
                                     default:
@@ -237,35 +247,40 @@ public class ManageChatActivity extends AppCompatActivity {
 
         List<String> peopleIds = chatDetails.getPeople();
         List<String> people = new ArrayList<>();
-        RequestManager requestManager = new RequestManager();
         String userToken = ((UserApplicationInfo) getApplication()).getUserToken();
+        String operation = "Get Friends";
+
+        //TODO FIXME hacky loop of GETs, maybe combine with the other get friends by extracting a method
         for (String friendId : peopleIds) {
             try {
                 String path = new PathBuilder()
                     .addUser()
                     .addNode(friendId)
-                    .build(); //FIXME: HTTP 200, 500, 422, 404
+                    .build();
 
-                requestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {
+                new RequestManager().get(path, userToken, new RequestManager.OnRequestCompleteListener() {
                     @Override
                     public void onSuccess(Call call, Response response) {
-                        try {
-                            JSONObject userJson = new JSONObject(response.body().string());
-                            people.add(userJson.getString("name"));
-                        } catch (IOException | JSONException e) {
-                            //todo
+                        if (response.isSuccessful()) {
+                            try {
+                                JSONObject userJson = new JSONObject(response.body().string());
+                                people.add(userJson.getString("name"));
+                            } catch (IOException | JSONException e) {
+                                FeedbackMessageBuilder.createParseError(e, operation, ManageChatActivity.this);
+                            }
+                        } else {
+                            ResponseErrorHandler.createErrorMessage(response, operation, "user", ManageChatActivity.this);
                         }
                     }
 
                     @Override
                     public void onError(Call call, IOException e) {
-                        //todo
+                        createServerConnectionError(e, operation, ManageChatActivity.this);
                     }
                 });
             } catch (IOException e) {
-                //todo
+                createServerConnectionError(e, operation, ManageChatActivity.this);
             }
-
         }
 
         for(String tag : tags){

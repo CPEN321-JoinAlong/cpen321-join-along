@@ -130,7 +130,7 @@
     <!-- this also allows room for a title :) -->
     <Spinner
         android:id="@+id/homepageEventsFilter"
-        android:layout_width="163dp"
+        android:layout_width="175dp"
         android:layout_height="36dp"
         android:elevation="10dp"
         app:layout_constraintBottom_toTopOf="@+id/aboveTitleGuideline3"

@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -103,5 +104,52 @@ public class FeedbackMessageBuilder {
     public static void createParseError(Exception e, String operation, Activity activity) {
         createDefaultNeutralError("Unable to parse data during " + operation + "." + "\nPlease try again later.", activity, operation);
         Log.e(operation, "Create profile error. Unable to parse user input data: " + e.getMessage());
+    }
+
+    public static void createDefaultNeutralSuccessOnHttp200(String operation, Activity activity) {
+        new FeedbackMessageBuilder()
+                .setTitle("Successfully " + operation)
+                .setDescription("Successfully " + operation)
+                .withActivity(activity)
+                .buildAsyncNeutralMessage();
+        Log.i(operation, new Date().toString());
+    }
+
+    /**
+     *
+     * @param operation the operation in present tense
+     * @param object the object action is performed on (user, event...)
+     * @param activity activity context
+     */
+    public static void createDefaultNeutralNotFoundErrorOnHttp404(String operation, String object, Activity activity) {
+        new FeedbackMessageBuilder()
+                .setTitle("Not Found during " + operation)
+                .setDescription("Unable to " + operation + ".\n" + object + " was not found.\n")
+                .withActivity(activity)
+                .buildAsyncNeutralMessage();
+        Log.d(operation, new Date().toString());
+    }
+
+    public static void createDefaultNeutralConflictErrorOnHttp409(String operation, Activity activity) {
+        new FeedbackMessageBuilder()
+                .setTitle("Conflict during " + operation)
+                .setDescription("Unable to " + operation + "due to request conflict.\nPlease try again later.")
+                .withActivity(activity)
+                .buildAsyncNeutralMessage();
+        Log.d(operation, new Date().toString());
+    }
+
+    /**
+     *
+     * @param operation the operation in present tense
+     * @param activity activity context
+     */
+    public static void createDefaultNeutralInvalidErrorOnHttp422(String operation, Activity activity) {
+        new FeedbackMessageBuilder()
+                .setTitle("Invalid Request")
+                .setDescription("Unable to " + operation)
+                .withActivity(activity)
+                .buildAsyncNeutralMessage();
+        Log.d(operation, new Date().toString());
     }
 }

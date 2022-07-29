@@ -48,6 +48,7 @@
     <string name="default_messaging">Messaging</string>
     <string name="default_messages">Messages</string>
     <string name="default_search">Search</string>
+    <string name="default_search_no_results">No Results Found</string>
     <string name="default_description">Description</string>
     <string name="default_view_reports">View Reports</string>
     <string name="default_report_type_subtitle">Report Type</string>

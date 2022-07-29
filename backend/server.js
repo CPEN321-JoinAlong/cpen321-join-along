@@ -29,10 +29,11 @@ function logRequest(req, res, next) {
 // 	useUnifiedTopology: true,
 // });
 
-mongoose.connect("mongodb://localhost:34542/joinalong", {
+mongoose.connect("mongodb://useradmin:MTnCBEI9nIx6L6F@54.200.52.211:34542/joinalong", {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 });
+
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -108,7 +109,7 @@ app.get("/test", async (req, res) => {
 		a["chat"] = await Chat.find({});
 		a["event"] = await Event.find({});
 		a["report"] = await Report.find({});
-		res.send(a);
+		res.status(ERROR_CODES.SUCCESS).send(a);
 	} catch (e) {
 		console.log(e);
 		res.status(ERROR_CODES.DBERROR).send(null);
@@ -819,4 +820,6 @@ io.on('connection', (socket) => {
 		socket.broadcast.emit('disconnected', 'socket disconnected')
 	})
 })
+
+module.exports = {app, server};
 

@@ -60,6 +60,7 @@ public class SearchScreenActivity extends AppCompatActivity {
     private TextView noResults;
     private static final int MAX_SUGGESTIONS = 8;
     private String token;
+    private String testingId;
 
 
     private enum LayoutManagerType {
@@ -74,6 +75,10 @@ public class SearchScreenActivity extends AppCompatActivity {
 
         if(token == null){
             token = getIntent().getStringExtra("testingToken");
+        }
+
+        if(getIntent().getExtras() != null){
+            testingId = getIntent().getStringExtra("testingId");
         }
 
 
@@ -128,6 +133,8 @@ public class SearchScreenActivity extends AppCompatActivity {
                     Bundle info = new Bundle();
                     info.putSerializable("event", theSelectedEvent);
                     info.putString("theFrom", "search");
+                    info.putString("testingId", testingId);
+                    info.putString("testingToken", token);
                     viewEventFragment.setArguments(info);
 
                     AppCompatActivity activity = SearchScreenActivity.this;

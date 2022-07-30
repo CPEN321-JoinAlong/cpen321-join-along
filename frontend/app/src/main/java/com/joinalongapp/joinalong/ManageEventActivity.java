@@ -211,7 +211,7 @@ public class ManageEventActivity extends AppCompatActivity {
 
                                         new FeedbackMessageBuilder()
                                                 .setTitle("Event Edited!")
-                                                .setDescription("The " + title.getText().toString() + " has been successfully edited.")
+                                                .setDescription("The " + title.getText().toString() + " event has been successfully edited.")
                                                 .withActivity(ManageEventActivity.this)
                                                 .buildAsyncNeutralMessageAndStartActivity(i);
                                     } else {

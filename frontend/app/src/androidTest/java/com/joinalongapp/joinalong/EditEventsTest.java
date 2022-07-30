@@ -257,7 +257,7 @@ public class EditEventsTest extends BaseManageEventActivityTest {
         fillTitle();
         fillLocation();
         fillBeginEndDates();
-        setIsPublic(false);
+        setIsPublic(true);
         fillTags();
         setNumberPeople(1);
         fillDescription();

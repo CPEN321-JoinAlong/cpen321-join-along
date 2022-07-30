@@ -214,11 +214,7 @@ public class EditEventsTest extends BaseManageEventActivityTest {
     @Test
     public void testEditEvent_WithEmptyTagsList_ShowsEmptyTagsError() {
         //Given
-        ActivityScenario activityScenario = activityRule.getScenario();
-        activityScenario.onActivity(activity -> {
-            Chip chip = (Chip) ((ChipGroup) activity.findViewById(R.id.eventManagementTagChipGroup)).getChildAt(0);
-            chip.performCloseIconClick();
-        });
+        clearTagChipGroup();
 
         //When
         onView(withId(R.id.submitManageEventButton)).perform(click());
@@ -230,11 +226,7 @@ public class EditEventsTest extends BaseManageEventActivityTest {
     @Test
     public void testEditEvent_WithTagTextButEmptyList_ShowsEmptyTagsError() {
         //Given
-        ActivityScenario activityScenario = activityRule.getScenario();
-        activityScenario.onActivity(activity -> {
-            Chip chip = (Chip) ((ChipGroup) activity.findViewById(R.id.eventManagementTagChipGroup)).getChildAt(0);
-            chip.performCloseIconClick();
-        });
+        clearTagChipGroup();
 
         onView(withId(R.id.autoCompleteChipTextView)).perform(typeText("Hiking"), closeSoftKeyboard());
 
@@ -285,13 +277,16 @@ public class EditEventsTest extends BaseManageEventActivityTest {
         clearText(R.id.editTextEventManagementBeginningDate);
         clearText(R.id.editTextEventManagementEndDate);
 
+        clearTagChipGroup();
+
+        clearText(R.id.eventManagementEditTextDescription);
+    }
+
+    private void clearTagChipGroup() {
         ActivityScenario activityScenario = activityRule.getScenario();
         activityScenario.onActivity(activity -> {
             Chip chip = (Chip) ((ChipGroup) activity.findViewById(R.id.eventManagementTagChipGroup)).getChildAt(0);
             chip.performCloseIconClick();
         });
-
-        clearText(R.id.eventManagementEditTextDescription);
     }
-
 }

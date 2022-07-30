@@ -142,8 +142,7 @@ class UserStore {
         if (event.data && user.data && chat.data) {
             if (
                 event.data.currCapacity < event.data.numberOfPeople &&
-                !user.data.events.includes(eventID) &&
-                !event.data.participants.includes(userID)
+                !user.data.events.includes(eventID) && !event.data.participants.includes(userID)
             ) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { events: eventID },

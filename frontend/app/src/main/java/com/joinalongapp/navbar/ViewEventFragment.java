@@ -69,6 +69,8 @@ public class ViewEventFragment extends Fragment {
     private PopupMenu menu;
     private Chip userChip;
     private Button ban;
+    private String token;
+    private String userId;
 
     public ViewEventFragment() {
         // Required empty public constructor
@@ -102,10 +104,19 @@ public class ViewEventFragment extends Fragment {
         initElements(view);
 
         Bundle bundle = getArguments();
-
+        token = ((UserApplicationInfo) (getActivity().getApplication())).getUserToken();
+        userId = ((UserApplicationInfo) (getActivity().getApplication())).getProfile().getId();
         if (bundle != null) {
             event = (Event) bundle.getSerializable("event");
             initEventDetails(event);
+        }
+
+        if(token == null){
+            token = (String) bundle.getString("testingToken");
+        }
+
+        if(userId == null){
+            userId = (String) bundle.getString("testingId");
         }
 
         initButtonVisibility();
@@ -120,7 +131,7 @@ public class ViewEventFragment extends Fragment {
     }
 
     private void initBanButton(){
-        String token = ((UserApplicationInfo) (getActivity().getApplication())).getUserToken();
+
         UserProfile globalUserProfile = ((UserApplicationInfo) (getActivity().getApplication())).getProfile();
 
         if(!globalUserProfile.isAdmin()){
@@ -189,7 +200,7 @@ public class ViewEventFragment extends Fragment {
                         switch (item.getItemId()) {
                             case R.id.eventLeave:
                                 UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
-                                String userId = userApplicationInfo.getProfile().getId();
+                                //String userId = userApplicationInfo.getProfile().getId();
                                 String eventId = event.getEventId();
                                 String operation = "Leave Event";
 
@@ -200,8 +211,8 @@ public class ViewEventFragment extends Fragment {
                                             .addNode(userId)
                                             .addNode(eventId)
                                             .build();
-                                    String userToken = userApplicationInfo.tokenToJsonString();
-                                    new RequestManager().put(path, userToken, new RequestManager.OnRequestCompleteListener() {
+
+                                    new RequestManager().put(path, token, new RequestManager.OnRequestCompleteListener() {
                                         @Override
                                         public void onSuccess(Call call, Response response) {
 
@@ -251,8 +262,6 @@ public class ViewEventFragment extends Fragment {
                                             FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
                                         }
                                     });
-                                } catch (JSONException e) {
-                                    FeedbackMessageBuilder.createParseError(e, operation, getActivity());
                                 } catch (IOException e) {
                                     FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
                                 }
@@ -313,7 +322,7 @@ public class ViewEventFragment extends Fragment {
 
                 RequestManager requestManager = new RequestManager();
                 UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
-                String userId = userApplicationInfo.getProfile().getId();
+                //String userId = userApplicationInfo.getProfile().getId();
                 String eventId = event.getEventId();
                 String operation = "Join Event";
 
@@ -325,7 +334,9 @@ public class ViewEventFragment extends Fragment {
                         .build();
 
                 try {
-                    String userToken = userApplicationInfo.tokenToJsonString();
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("token", token);
+                    String userToken = jsonObject.toString();
                     requestManager.put(path, userToken, new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
@@ -422,7 +433,7 @@ public class ViewEventFragment extends Fragment {
 
     private void initMenuOptionsVisibility() {
         UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
-        String userId = userApplicationInfo.getProfile().getId();
+        //String userId = userApplicationInfo.getProfile().getId();
 
         if (isEventOwner(userId)) {
             shouldAllowMenuItem(R.id.eventLeave, false);
@@ -448,7 +459,7 @@ public class ViewEventFragment extends Fragment {
 
     private void initButtonVisibility() {
         UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
-        String userId = userApplicationInfo.getProfile().getId();
+        //String userId = userApplicationInfo.getProfile().getId();
         if (isPartOfEvent(userId)) {
             joinButton.setVisibility(View.GONE);
             rideshareButton.setVisibility(View.VISIBLE);
@@ -504,7 +515,7 @@ public class ViewEventFragment extends Fragment {
 
         FragmentActivity fragmentActivity = getActivity();
         String path = "user/" + event.getEventOwnerId();
-        String userToken = ((UserApplicationInfo) getActivity().getApplication()).getUserToken();
+        String userToken = token; //((UserApplicationInfo) getActivity().getApplication()).getUserToken();
         RequestManager organizerRequestManager = new RequestManager();
         try {
             organizerRequestManager.get(path, userToken, new RequestManager.OnRequestCompleteListener() {

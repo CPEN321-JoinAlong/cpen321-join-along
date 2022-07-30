@@ -182,8 +182,10 @@ public class ManageEventActivity extends AppCompatActivity {
                     event.setPublicVisibility(eventVisibilityTab.getSelectedTabPosition() == PUBLIC_VISIBILITY_INDEX);
 
                     //TODO: fix this later
-                    if (getIntent().getExtras().getString("testingId") != null) {
-                        event.setEventOwnerId(getIntent().getExtras().getString("testingId"));
+                    if (getIntent().getExtras() != null) {
+                        if (getIntent().getExtras().getString("testingId") != null) {
+                            event.setEventOwnerId(getIntent().getExtras().getString("testingId"));
+                        }
                     } else {
                         String ownerId = ((UserApplicationInfo) getApplication()).getProfile().getId();
                         event.setEventOwnerId(ownerId);
@@ -251,19 +253,6 @@ public class ManageEventActivity extends AppCompatActivity {
                                                 });
                                             }
                                         }, 0);
-
-                                        if (getIntent().getStringExtra("testingToken") != null) {
-                                            try {
-                                                JSONObject json = new JSONObject(response.body().string());
-                                                Event eventForTest = new Event();
-                                                eventForTest.populateDetailsFromJson(json.toString());
-                                                getIntent().putExtra("createdTestEvent", eventForTest);
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
 
                                     } else {
                                         ResponseErrorHandler.createErrorMessage(response, "Create Event", "event", ManageEventActivity.this);

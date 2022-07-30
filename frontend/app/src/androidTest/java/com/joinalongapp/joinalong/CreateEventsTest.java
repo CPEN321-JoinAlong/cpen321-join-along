@@ -289,6 +289,5 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
         //Then
         onView(withText("Event Created!")).check(matches(isDisplayed()));
         onView(withText("The Test Event event has been successfully created.")).check(matches(isDisplayed()));
-        onView(withText("OK")).perform(click());
     }
 }

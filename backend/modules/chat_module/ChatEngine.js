@@ -39,7 +39,7 @@ class ChatEngine {
     }
 
     //send Message to a chat object
-    async sendChatMessage(userID, chatID, text, name, date, userStore) {
+    async sendChatMessage(userID, chatID, text, date, userStore) {
         if (
             !mongoose.isObjectIdOrHexString(userID) ||
             !mongoose.isObjectIdOrHexString(chatID)
@@ -48,6 +48,8 @@ class ChatEngine {
         }
         let chat = await Chat.findById(chatID);
         let userResponse = await userStore.findUserByID(userID);
+        // console.log(chat)
+        // console.log(userResponse)
         if (userResponse.data && chat) {
             let response = await Chat.findByIdAndUpdate(
                 chatID,
@@ -55,7 +57,7 @@ class ChatEngine {
                     $push: {
                         messages: {
                             participantID: userID,
-                            participantName: name,
+                            participantName: userResponse.data.name,
                             timeStamp: date,
                             text,
                         },

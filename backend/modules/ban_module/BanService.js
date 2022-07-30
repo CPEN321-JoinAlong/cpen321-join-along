@@ -11,11 +11,11 @@ class BanService {
         return response;
     }
 
-    async banEvent(eventID, eventStore) {
+    async banEvent(eventID, eventStore, userStore) {
         if (!mongoose.isObjectIdOrHexString(eventID)) {
             return new ResponseObject(ERROR_CODES.INVALID);
         }
-        let response = await eventStore.deleteEvent(eventID);
+        let response = await eventStore.deleteEvent(eventID, userStore);
         return response;
     }
 }

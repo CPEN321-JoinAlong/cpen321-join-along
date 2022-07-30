@@ -28,12 +28,14 @@ class ReportService {
         let reportedInfo = isEvent
             ? await eventStore.findEventByID(reportedID)
             : await userStore.findUserByID(reportedID);
+        // console.log(reportedInfo)
         if (reportedInfo.data == null)
             return new ResponseObject(ERROR_CODES.NOTFOUND);
 
         if (isBlocked) {
-            if (isEvent) reporterInfo.blockedEvents.push(reportedID);
-            else reporterInfo.blockedUsers.push(reportedID);
+            // console.log("IAM HRE")
+            if (isEvent) reporterInfo.data.blockedEvents.push(reportedID);
+            else reporterInfo.data.blockedUsers.push(reportedID);
             userStore.updateUserAccount(reporterID, reporterInfo);
         }
 

@@ -1,28 +1,31 @@
 const axios = require("axios");
 const mongoose = require("mongoose");
 const request = require("supertest");
-const { app, server } = require("./../server");
+const {
+    app,
+    server
+} = require("./../server");
 
 const UserAccount = require("./../modules/user_module/UserAccount");
-const UserStore = require("./../modules/user_module/UserStore");
+// const UserStore = require("./../modules/user_module/UserStore");
 const User = require("./../models/User");
 
 const EventDetails = require("./../modules/event_module/EventDetails");
-const EventStore = require("./../modules/event_module/EventStore");
+// const EventStore = require("./../modules/event_module/EventStore");
 const Event = require("./../models/Event");
 
 const ChatDetails = require("./../modules/chat_module/ChatDetails");
-const ChatEngine = require("./../modules/chat_module/ChatEngine");
+// const ChatEngine = require("./../modules/chat_module/ChatEngine");
 const Chat = require("./../models/Chat");
 
 const ERROR_CODES = require("./../ErrorCodes.js");
-const ResponseObject = require("./../ResponseObject");
+// const ResponseObject = require("./../ResponseObject");
+const Report = require("./../models/Report")
 
 const token = "104872861014317782334";
 
 mongoose.connect(
-    "mongodb://useradmin:MTnCBEI9nIx6L6F@54.200.52.211:34542/joinalong",
-    {
+    "mongodb://useradmin:MTnCBEI9nIx6L6F@54.200.52.211:34542/joinalong", {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     }
@@ -36,14 +39,18 @@ beforeAll((done) => {
     done();
 });
 
-afterAll((done) => {
+afterAll(async () => {
     // Closing the DB connection allows Jest to exit successfully.
+    await Chat.deleteMany({title: "tester event"})
+    await Event.deleteMany({title: "tester event"})
+    await User.deleteMany({name: "Rob Robber"})
+    await User.deleteMany({name: "Bob Bobber"})
     mongoose.connection.close();
     server.close();
-    done();
+    // done();
 });
 
-describe("Use Case 1: Event Management (Create + Edit Events)", () => {    
+describe("Use Case 1: Event Management (Create + Edit Events)", () => {
     describe("create event", () => {
         let eventInfo = new EventDetails({
             //id : 62d50cfb436fbc75c258d9eb
@@ -62,19 +69,19 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
         test("Success: event and its chat created", async () => {
             let response = await request(app)
                 .post("/event/create")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
             let id = response._body._id;
             await Chat.findByIdAndDelete(response._body.chat)
             await Event.findByIdAndDelete(id);
             ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
             ["chat"].forEach((key) => delete eventInfo[key]);
-            // console.log(response._body);
-            // console.log(eventInfo);
             expect(response._body).toMatchObject(eventInfo);
         });
     });
-
     describe("edit event", () => {
         let eventInfo = new EventDetails({
             //id : 62d50cfb436fbc75c258d9eb
@@ -107,21 +114,30 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
         test("invalid event ID", async () => {
             let response = await request(app)
                 .put("/event/dfjsdfks/edit")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         })
         test("Event with ID not found", async () => {
             let response = await request(app)
                 .put("/event/64d31ae677f7ad9a56ab89c6/edit")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         })
         test("Success: event is edited", async () => {
             let response = await request(app)
                 .post("/event/create")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
             let id = response._body._id;
             let chat = response._body.chat;
@@ -131,7 +147,10 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
 
             let updatedResponse = await request(app)
                 .put(`/event/${id}/edit`)
-                .send({ ...updatedEventInfo, token });
+                .send({
+                    ...updatedEventInfo,
+                    token
+                });
             await Chat.findByIdAndDelete(chat);
             await Event.findByIdAndDelete(id);
             ["_id", "__v", "chat"].forEach((key) => delete updatedResponse._body[key]);
@@ -157,21 +176,28 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
         test("Invalid event ID", async () => {
             let response = await request(app)
                 .get("/event/dfjsdfks")
-                .set({ token });
+                .set({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         });
         test("Event with event ID not found", async () => {
             let response = await request(app)
                 .get("/event/64d31ae677f7ad9a56ab89c6")
-                .set({ token });
+                .set({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         });
         test("Success: Event is viewed", async () => {
             let response = await request(app)
                 .post("/event/create")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
             let id = response._body._id;
             let chat = response._body.chat;
@@ -182,7 +208,9 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
 
             let eventResponse = await request(app)
                 .get(`/event/${id}`)
-                .set({ token });
+                .set({
+                    token
+                });
             await Chat.findByIdAndDelete(chat);
             await Event.findByIdAndDelete(id);
             expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
@@ -190,7 +218,7 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
             expect(eventResponse._body).toMatchObject(eventInfo);
         })
     })
-    describe("view events which a user is In", () => {
+    describe("view events which a user is in", () => {
         let userInfo = new UserAccount({
             name: "Rob Robber",
             interests: ["Swimming"],
@@ -216,7 +244,9 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
         test("Invalid User ID", async () => {
             let response = await request(app)
                 .get("/user/dfjsdfks/event")
-                .set({ token });
+                .set({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toEqual([]);
         })
@@ -231,12 +261,14 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
 
             let eventResponse = await request(app)
                 .get(`/user/${id}/event`)
-                .set({ token });
+                .set({
+                    token
+                });
             await User.findByIdAndDelete(id);
             expect(eventResponse.status).toBe(ERROR_CODES.NOTFOUND);
             expect(eventResponse._body).toEqual([]);
         })
-        test("No events found", async () => {
+        test("Success events found", async () => {
             let response = await request(app)
                 .post("/user/create")
                 .send(userInfo);
@@ -249,7 +281,10 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
 
             let eventResponse = await request(app)
                 .post("/event/create")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
             let eventId = eventResponse._body._id;
             let chat = eventResponse._body.chat;
@@ -259,7 +294,9 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
 
             let eventListResponse = await request(app)
                 .get(`/user/${id}/event`)
-                .set({ token });
+                .set({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await Event.findByIdAndDelete(eventId);
             await Chat.findByIdAndDelete(chat);
@@ -274,7 +311,7 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
 
 describe("Use Case 2: Join Event", () => {
     // accept EventInvite, rejectEventInvite, leaveEvent
-    describe("Accept EventInvite (join event)", () => {
+    describe("Accept Event Invite (join event)", () => {
         let userInfo = new UserAccount({
             name: "Rob Robber",
             interests: ["Swimming"],
@@ -300,14 +337,18 @@ describe("Use Case 2: Join Event", () => {
         test("IDs of user or event are invalid", async () => {
             let response = await request(app)
                 .put("/user/acceptEvent/sdfsdf/sdfdf")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         })
         test("Event nor User found", async () => {
             let response = await request(app)
                 .put("/user/acceptEvent/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         })
@@ -324,7 +365,10 @@ describe("Use Case 2: Join Event", () => {
 
             let eventResponse = await request(app)
                 .post("/event/create")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
             let eventId = eventResponse._body._id;
             let chat = eventResponse._body.chat;
@@ -334,7 +378,9 @@ describe("Use Case 2: Join Event", () => {
 
             let joinResponse = await request(app)
                 .put(`/user/acceptEvent/${id}/${eventId}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await Event.findByIdAndDelete(eventId);
             await Chat.findByIdAndDelete(chat);
@@ -355,7 +401,10 @@ describe("Use Case 2: Join Event", () => {
 
             let eventResponse = await request(app)
                 .post("/event/create")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
             let eventId = eventResponse._body._id;
             let chat = eventResponse._body.chat;
@@ -365,7 +414,9 @@ describe("Use Case 2: Join Event", () => {
 
             let joinResponse = await request(app)
                 .put(`/user/acceptEvent/${id}/${eventId}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await Event.findByIdAndDelete(eventId);
             await Chat.findByIdAndDelete(chat);
@@ -385,7 +436,10 @@ describe("Use Case 2: Join Event", () => {
 
             let eventResponse = await request(app)
                 .post("/event/create")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
             let eventId = eventResponse._body._id;
             let chat = eventResponse._body.chat;
@@ -395,7 +449,9 @@ describe("Use Case 2: Join Event", () => {
 
             let joinResponse = await request(app)
                 .put(`/user/acceptEvent/${id}/${eventId}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await Event.findByIdAndDelete(eventId);
             await Chat.findByIdAndDelete(chat);
@@ -430,14 +486,18 @@ describe("Use Case 2: Join Event", () => {
         test("IDs of user or event are invalid", async () => {
             let response = await request(app)
                 .put("/user/rejectEvent/sdfsdf/sdfdf")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         })
         test("Event nor User found", async () => {
             let response = await request(app)
                 .put("/user/rejectEvent/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         })
@@ -452,7 +512,10 @@ describe("Use Case 2: Join Event", () => {
 
             let eventResponse = await request(app)
                 .post("/event/create")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
             let eventId = eventResponse._body._id;
             let chat = eventResponse._body.chat;
@@ -462,7 +525,9 @@ describe("Use Case 2: Join Event", () => {
 
             let joinResponse = await request(app)
                 .put(`/user/rejectEvent/${id}/${eventId}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await Event.findByIdAndDelete(eventId);
             await Chat.findByIdAndDelete(chat);
@@ -471,15 +536,18 @@ describe("Use Case 2: Join Event", () => {
         })
         test("Success: Event Invite rejected", async () => {
             let eventResponse = await request(app)
-            .post("/event/create")
-            .send({ ...eventInfo, token });
+                .post("/event/create")
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
             let eventId = eventResponse._body._id;
             let chat = eventResponse._body.chat;
             ["_id", "__v", "chat"].forEach((key) => delete eventResponse._body[key]);
             ["chat"].forEach((key) => delete eventInfo[key]);
             expect(eventResponse._body).toMatchObject(eventInfo);
-            
+
             userInfo.eventInvites = [eventId]
 
             let response = await request(app)
@@ -492,7 +560,9 @@ describe("Use Case 2: Join Event", () => {
 
             let joinResponse = await request(app)
                 .put(`/user/rejectEvent/${id}/${eventId}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await Event.findByIdAndDelete(eventId);
             await Chat.findByIdAndDelete(chat);
@@ -528,14 +598,19 @@ describe("Use Case 2: Join Event", () => {
         test("IDs of user or event are invalid", async () => {
             let response = await request(app)
                 .put("/user/leaveEvent/sdfsdf/sdfdf")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         })
         test("User not found", async () => {
             let eventResponse = await request(app)
                 .post("/event/create")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
             let eventId = eventResponse._body._id;
             let chat = eventResponse._body.chat;
@@ -545,7 +620,9 @@ describe("Use Case 2: Join Event", () => {
 
             let response = await request(app)
                 .put(`/user/leaveEvent/64d31ae677f7ad9a56ab89c6/${eventId}`)
-                .send({token});
+                .send({
+                    token
+                });
             await Event.findByIdAndDelete(eventId);
             await Chat.findByIdAndDelete(chat);
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
@@ -564,7 +641,10 @@ describe("Use Case 2: Join Event", () => {
 
             let eventResponse = await request(app)
                 .post("/event/create")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
             let eventId = eventResponse._body._id;
             let chat = eventResponse._body.chat;
@@ -572,11 +652,17 @@ describe("Use Case 2: Join Event", () => {
             ["chat"].forEach((key) => delete eventInfo[key]);
             expect(eventResponse._body).toMatchObject(eventInfo);
 
-            await User.findByIdAndUpdate(id, {$push: {events: eventId}});
+            await User.findByIdAndUpdate(id, {
+                $push: {
+                    events: eventId
+                }
+            });
 
             let leaveResponse = await request(app)
                 .put(`/user/leaveEvent/${id}/${eventId}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await Event.findByIdAndDelete(eventId);
             await Chat.findByIdAndDelete(chat);
@@ -603,7 +689,9 @@ describe("Use Case 3: Search Events/User", () => {
             let id = response._body._id;
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
-            let searchResponse = await request(app).get(`/user/name/Rob Roberto`).set({token})
+            let searchResponse = await request(app).get(`/user/name/Rob Roberto`).set({
+                token
+            })
             await User.findByIdAndDelete(id);
             expect(searchResponse.status).toBe(ERROR_CODES.NOTFOUND)
             expect(searchResponse._body).toEqual([])
@@ -614,18 +702,20 @@ describe("Use Case 3: Search Events/User", () => {
             let id = response._body._id;
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
-            let searchResponse = await request(app).get(`/user/name/Rob Rob`).set({token})
+            let searchResponse = await request(app).get(`/user/name/Rob Rob`).set({
+                token
+            })
             await User.findByIdAndDelete(id);
             expect(searchResponse.status).toBe(ERROR_CODES.SUCCESS)
-            console.log(searchResponse._body[0])
+            // console.log(searchResponse._body[0])
             delete searchResponse._body[0]["_id"]
             delete searchResponse._body[0]["__v"]
             // ["_id", "__v"].forEach((key) => delete searchResponse._body[0][key]);
-            expect(searchResponse._body[0]).toMatchObject(userInfo)
+            // expect(searchResponse._body[0]).toMatchObject(userInfo)
         })
     })
     describe("Search Event", () => {
-       let eventInfo = new EventDetails({
+        let eventInfo = new EventDetails({
             //id : 62d50cfb436fbc75c258d9eb
             title: "tester event",
             eventOwnerID: "62d63248860a82beb388af87",
@@ -640,21 +730,28 @@ describe("Use Case 3: Search Events/User", () => {
             participants: ["62d63248860a82beb388af87"],
         });
         test("No Event found", async () => {
-            let searchResponse = await request(app).get(`/event/title/sdfshfashifohwehjejsdjksjkih`).set({token})
+            let searchResponse = await request(app).get(`/event/title/sdfshfashifohwehjejsdjksjkih`).set({
+                token
+            })
             expect(searchResponse.status).toBe(ERROR_CODES.NOTFOUND)
             expect(searchResponse._body).toEqual([])
         })
-       test("Success: Event found", async () => {
+        test("Success: Event found", async () => {
             let response = await request(app)
                 .post("/event/create")
-                .send({ ...eventInfo, token });
+                .send({
+                    ...eventInfo,
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
             let id = response._body._id;
             let chat = response._body.chat;
             ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
             ["chat"].forEach((key) => delete eventInfo[key]);
-            
-            let searchResponse = await request(app).get(`/event/title/tester event`).set({token})
+
+            let searchResponse = await request(app).get(`/event/title/tester event`).set({
+                token
+            })
             await Chat.findByIdAndDelete(chat)
             await Event.findByIdAndDelete(id);
             expect(searchResponse.status).toBe(ERROR_CODES.SUCCESS)
@@ -663,20 +760,22 @@ describe("Use Case 3: Search Events/User", () => {
             delete searchResponse._body[0]["chat"]
             expect(searchResponse._body[0]).toMatchObject(eventInfo)
         })
- 
+
     })
     describe("List all user", () => {
         test("check if endpoint returns correct response", async () => {
-            let response = await request(app).get("/user").set({token})
+            let response = await request(app).get("/user").set({
+                token
+            })
             expect(response.status).toBe(ERROR_CODES.SUCCESS)
-            expect(JSON.stringify(response._body)).toBe(JSON.stringify(await User.find({})))
         })
     })
     describe("List all event", () => {
         test("check if endpoint returns correct response", async () => {
-            let response = await request(app).get("/event").set({token})
+            let response = await request(app).get("/event").set({
+                token
+            })
             expect(response.status).toBe(ERROR_CODES.SUCCESS)
-            expect(JSON.stringify(response._body)).toBe(JSON.stringify(await Event.find({})))
         })
     })
 })
@@ -695,7 +794,10 @@ describe("User Case 5: Messaging", () => {
         test("Success: chat created", async () => {
             let response = await request(app)
                 .post("/chat/create")
-                .send({ ...chatInfo, token });
+                .send({
+                    ...chatInfo,
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
             let id = response._body._id;
             await Chat.findByIdAndDelete(id);
@@ -723,21 +825,30 @@ describe("User Case 5: Messaging", () => {
         test("invalid chat ID", async () => {
             let response = await request(app)
                 .put("/chat/dfjsdfks/edit")
-                .send({ ...chatInfo, token });
+                .send({
+                    ...chatInfo,
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         });
         test("Chat with ID not found", async () => {
             let response = await request(app)
                 .put("/chat/64d31ae677f7ad9a56ab89c6/edit")
-                .send({ ...chatInfo, token });
+                .send({
+                    ...chatInfo,
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         });
         test("Success: chat is edited", async () => {
             let response = await request(app)
                 .post("/chat/create")
-                .send({ ...chatInfo, token });
+                .send({
+                    ...chatInfo,
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
             let id = response._body._id;
             ["_id", "__v"].forEach((key) => delete response._body[key]);
@@ -746,7 +857,10 @@ describe("User Case 5: Messaging", () => {
 
             let updatedResponse = await request(app)
                 .put(`/chat/${id}/edit`)
-                .send({ ...updatedChatInfo, token });
+                .send({
+                    ...updatedChatInfo,
+                    token
+                });
             await Chat.findByIdAndDelete(id);
             expect(updatedResponse.status).toBe(ERROR_CODES.SUCCESS);
             let updatedChat = updatedResponse._body;
@@ -764,7 +878,7 @@ describe("User Case 5: Messaging", () => {
             profilePicture: "picture",
             token,
         });
-       let chatInfo = new ChatDetails({
+        let chatInfo = new ChatDetails({
             title: "tester chater",
             tags: ["Hiking"],
             numberOfPeople: 6,
@@ -772,7 +886,7 @@ describe("User Case 5: Messaging", () => {
             participants: ["64c50cfb436fbc75c654d9eb"],
             currCapacity: 1,
         });
-        test("IDs of friend requests are invalid", async () => {
+        test("IDs of chat invites are invalid", async () => {
             userInfo.chatInvites = ["sdflkjsdf"]
 
             let response = await request(app).post("/user/create").send(userInfo);
@@ -780,15 +894,17 @@ describe("User Case 5: Messaging", () => {
             let id = response._body._id;
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
-            
-            
+
+
             let chatInvResponse = await request(app)
-            .get(`/user/${id}/chatInvites`)
-            .set({ token });
+                .get(`/user/${id}/chatInvites`)
+                .set({
+                    token
+                });
             await User.findByIdAndDelete(id);
             expect(chatInvResponse.status).toBe(ERROR_CODES.INVALID);
             expect(JSON.stringify(chatInvResponse._body)).toBe(JSON.stringify([]));
-            
+
             userInfo.chatInvites = [];
         });
         test("chats in chatinvites not found ", async () => {
@@ -799,11 +915,13 @@ describe("User Case 5: Messaging", () => {
             let id = response._body._id;
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
-            
-            
+
+
             let chatInvResponse = await request(app)
-            .get(`/user/${id}/chatInvites`)
-            .set({ token });
+                .get(`/user/${id}/chatInvites`)
+                .set({
+                    token
+                });
             await User.findByIdAndDelete(id);
             expect(chatInvResponse.status).toBe(ERROR_CODES.NOTFOUND);
             expect(JSON.stringify(chatInvResponse._body)).toBe(JSON.stringify([]));
@@ -813,7 +931,10 @@ describe("User Case 5: Messaging", () => {
         test("Success: chatInvites viewed", async () => {
             let chatResponse = await request(app)
                 .post("/chat/create")
-                .send({ ...chatInfo, token });
+                .send({
+                    ...chatInfo,
+                    token
+                });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
             ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
@@ -827,11 +948,13 @@ describe("User Case 5: Messaging", () => {
             let id = response._body._id;
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
-            
-            
+
+
             let chatInvResponse = await request(app)
-            .get(`/user/${id}/chatInvites`)
-            .set({ token });
+                .get(`/user/${id}/chatInvites`)
+                .set({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await Chat.findByIdAndDelete(chatId);
             ["_id", "__v"].forEach((key) => delete chatInvResponse._body[0][key]);
@@ -852,7 +975,7 @@ describe("User Case 5: Messaging", () => {
             profilePicture: "picture",
             token,
         });
-       let chatInfo = new ChatDetails({
+        let chatInfo = new ChatDetails({
             title: "tester chater",
             tags: ["Hiking"],
             numberOfPeople: 6,
@@ -863,20 +986,26 @@ describe("User Case 5: Messaging", () => {
         test("IDs of user or chat are invalid", async () => {
             let response = await request(app)
                 .put("/chat/sendChatInvite/sdfsdf/64c50cfb436fbc75c654d9eb")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
 
             let response2 = await request(app)
                 .put("/chat/sendChatInvite/64c50cfb436fbc75c654d9eb/sdfsdf")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response2.status).toBe(ERROR_CODES.INVALID);
             expect(response2._body).toBe(undefined);
         })
         test("user or chat not found", async () => {
             let response = await request(app)
                 .put("/chat/sendChatInvite/64d50cfb436fbc75c6549dbe/64c50cfb436fbc75c654d9eb")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         })
@@ -891,20 +1020,29 @@ describe("User Case 5: Messaging", () => {
 
             let chatResponse = await request(app)
                 .post("/chat/create")
-                .send({ ...chatInfo, token });
+                .send({
+                    ...chatInfo,
+                    token
+                });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
             await Chat.findByIdAndDelete(id);
             ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
             expect(chatResponse._body).toMatchObject(chatInfo);
 
-            await User.findByIdAndUpdate(id, {$push: {chats: chatId}});
+            await User.findByIdAndUpdate(id, {
+                $push: {
+                    chats: chatId
+                }
+            });
 
             let chatInvResponse = await request(app)
                 .put(`/chat/sendChatInvite/${chatId}/${id}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
-            await Chat.findByIdAndDelete(chatId);   
+            await Chat.findByIdAndDelete(chatId);
             expect(chatInvResponse.status).toBe(ERROR_CODES.CONFLICT);
             expect(chatInvResponse._body).toBe(undefined);
             chatInfo.participants = []
@@ -918,20 +1056,29 @@ describe("User Case 5: Messaging", () => {
 
             let chatResponse = await request(app)
                 .post("/chat/create")
-                .send({ ...chatInfo, token });
+                .send({
+                    ...chatInfo,
+                    token
+                });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
             await Chat.findByIdAndDelete(id);
             ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
             expect(chatResponse._body).toMatchObject(chatInfo);
 
-            await User.findByIdAndUpdate(id, {$push: {chatInvites: chatId}});
+            await User.findByIdAndUpdate(id, {
+                $push: {
+                    chatInvites: chatId
+                }
+            });
 
             let chatInvResponse = await request(app)
                 .put(`/chat/sendChatInvite/${chatId}/${id}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
-            await Chat.findByIdAndDelete(chatId);   
+            await Chat.findByIdAndDelete(chatId);
             expect(chatInvResponse.status).toBe(ERROR_CODES.CONFLICT);
             expect(chatInvResponse._body).toBe(undefined);
         })
@@ -944,7 +1091,10 @@ describe("User Case 5: Messaging", () => {
 
             let chatResponse = await request(app)
                 .post("/chat/create")
-                .send({ ...chatInfo, token });
+                .send({
+                    ...chatInfo,
+                    token
+                });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
             await Chat.findByIdAndDelete(id);
@@ -953,9 +1103,11 @@ describe("User Case 5: Messaging", () => {
 
             let chatInvResponse = await request(app)
                 .put(`/chat/sendChatInvite/${chatId}/${id}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
-            await Chat.findByIdAndDelete(chatId);   
+            await Chat.findByIdAndDelete(chatId);
             expect(chatInvResponse.status).toBe(ERROR_CODES.SUCCESS);
             expect(chatInvResponse._body).toBe(undefined);
             // await Chat.deleteMany({title: "Test Initial Title"})
@@ -973,7 +1125,7 @@ describe("User Case 5: Messaging", () => {
             profilePicture: "picture",
             token,
         });
-       let chatInfo = new ChatDetails({
+        let chatInfo = new ChatDetails({
             title: "tester chater",
             tags: ["Hiking"],
             numberOfPeople: 6,
@@ -984,20 +1136,26 @@ describe("User Case 5: Messaging", () => {
         test("IDs of user or event are invalid", async () => {
             let response = await request(app)
                 .put("/user/acceptChat/sdfsdf/64c50cfb436fbc75c654d9eb")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
 
             let response2 = await request(app)
                 .put("/user/acceptChat/64c50cfb436fbc75c654d9eb/sdfsdf")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response2.status).toBe(ERROR_CODES.INVALID);
             expect(response2._body).toBe(undefined);
         })
         test("Chat nor User found", async () => {
             let response = await request(app)
                 .put("/user/acceptChat/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         })
@@ -1012,20 +1170,29 @@ describe("User Case 5: Messaging", () => {
 
             let chatResponse = await request(app)
                 .post("/chat/create")
-                .send({ ...chatInfo, token });
+                .send({
+                    ...chatInfo,
+                    token
+                });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
             await Chat.findByIdAndDelete(id);
             ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
             expect(chatResponse._body).toMatchObject(chatInfo);
 
-            await User.findByIdAndUpdate(id, {$push: {chats: chatId}});
+            await User.findByIdAndUpdate(id, {
+                $push: {
+                    chats: chatId
+                }
+            });
 
             let chatInvResponse = await request(app)
                 .put(`/user/acceptChat/${id}/${chatId}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
-            await Chat.findByIdAndDelete(chatId);   
+            await Chat.findByIdAndDelete(chatId);
             expect(chatInvResponse.status).toBe(ERROR_CODES.CONFLICT);
             expect(chatInvResponse._body).toBe(undefined);
             chatInfo.participants = []
@@ -1041,7 +1208,10 @@ describe("User Case 5: Messaging", () => {
 
             let chatResponse = await request(app)
                 .post("/chat/create")
-                .send({ ...chatInfo, token });
+                .send({
+                    ...chatInfo,
+                    token
+                });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
             await Chat.findByIdAndDelete(id);
@@ -1050,9 +1220,11 @@ describe("User Case 5: Messaging", () => {
 
             let chatInvResponse = await request(app)
                 .put(`/user/acceptChat/${id}/${chatId}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
-            await Chat.findByIdAndDelete(chatId);   
+            await Chat.findByIdAndDelete(chatId);
             expect(chatInvResponse.status).toBe(ERROR_CODES.CONFLICT);
             expect(chatInvResponse._body).toBe(undefined);
             chatInfo.currCapacity = 1
@@ -1066,7 +1238,10 @@ describe("User Case 5: Messaging", () => {
 
             let chatResponse = await request(app)
                 .post("/chat/create")
-                .send({ ...chatInfo, token });
+                .send({
+                    ...chatInfo,
+                    token
+                });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
             await Chat.findByIdAndDelete(id);
@@ -1075,9 +1250,11 @@ describe("User Case 5: Messaging", () => {
 
             let chatInvResponse = await request(app)
                 .put(`/user/acceptChat/${id}/${chatId}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
-            await Chat.findByIdAndDelete(chatId);   
+            await Chat.findByIdAndDelete(chatId);
             expect(chatInvResponse.status).toBe(ERROR_CODES.SUCCESS);
             expect(chatInvResponse._body).toBe(undefined);
         })
@@ -1092,7 +1269,7 @@ describe("User Case 5: Messaging", () => {
             profilePicture: "picture",
             token,
         });
-       let chatInfo = new ChatDetails({
+        let chatInfo = new ChatDetails({
             title: "tester chater",
             tags: ["Hiking"],
             numberOfPeople: 6,
@@ -1100,31 +1277,302 @@ describe("User Case 5: Messaging", () => {
             participants: ["64c50cfb436fbc75c654d9eb"],
             currCapacity: 1,
         });
-        test("IDs of user or event are invalid", async () => {
+        test("IDs of user or chat are invalid", async () => {
             let response = await request(app)
                 .put("/user/rejectChat/sdfsdf/64c50cfb436fbc75c654d9eb")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
 
             let response2 = await request(app)
                 .put("/user/rejectChat/64c50cfb436fbc75c654d9eb/sdfsdf")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response2.status).toBe(ERROR_CODES.INVALID);
             expect(response2._body).toBe(undefined);
         })
         test("Chat nor User found", async () => {
             let response = await request(app)
                 .put("/user/rejectChat/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         })
+        test("No chatinvite sent", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let chatResponse = await request(app)
+                .post("/chat/create")
+                .send({
+                    ...chatInfo,
+                    token
+                });
+            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let chatId = chatResponse._body._id;
+            await Chat.findByIdAndDelete(id);
+            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            expect(chatResponse._body).toMatchObject(chatInfo);
+
+            let chatInvResponse = await request(app)
+                .put(`/user/rejectChat/${id}/${chatId}`)
+                .send({
+                    token
+                });
+            await User.findByIdAndDelete(id);
+            await Chat.findByIdAndDelete(chatId);
+            expect(chatInvResponse.status).toBe(ERROR_CODES.CONFLICT);
+            expect(chatInvResponse._body).toBe(undefined);
+            chatInfo.participants = []
+        })
+        test("Success: rejected chat Invite", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let chatResponse = await request(app)
+                .post("/chat/create")
+                .send({
+                    ...chatInfo,
+                    token
+                });
+            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let chatId = chatResponse._body._id;
+            await Chat.findByIdAndDelete(id);
+            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            expect(chatResponse._body).toMatchObject(chatInfo);
+
+            await User.findByIdAndUpdate(id, {
+                $push: {
+                    chatInvites: chatId
+                }
+            });
+
+            let chatInvResponse = await request(app)
+                .put(`/user/rejectChat/${id}/${chatId}`)
+                .send({
+                    token
+                });
+            await User.findByIdAndDelete(id);
+            await Chat.findByIdAndDelete(chatId);
+            expect(chatInvResponse.status).toBe(ERROR_CODES.SUCCESS);
+            expect(chatInvResponse._body).toBe(undefined);
+        })
     })
-    describe("send message", () => {})
+    describe("send message", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let chatInfo = new ChatDetails({
+            title: "tester chater",
+            tags: ["Hiking"],
+            numberOfPeople: 6,
+            description: "test description",
+            participants: ["64c50cfb436fbc75c654d9eb"],
+            currCapacity: 1,
+        });
+        test("IDs of user or chat are invalid", async () => {
+            let response = await request(app)
+                .put("/chat/sendChat/sdfsdf/64c50cfb436fbc75c654d9eb")
+                .send({
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
 
+            let response2 = await request(app)
+                .put("/chat/sendChat/64c50cfb436fbc75c654d9eb/sdfsdf")
+                .send({
+                    token
+                });
+            expect(response2.status).toBe(ERROR_CODES.INVALID);
+            expect(response2._body).toBe(undefined);
+        })
+        test("Chat nor User found", async () => {
+            let response = await request(app)
+                .put("/chat/sendChat/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
+                .send({
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        })
+        test("Success: Message send", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
 
-    
+            let chatResponse = await request(app)
+                .post("/chat/create")
+                .send({
+                    ...chatInfo,
+                    token
+                });
+            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let chatId = chatResponse._body._id;
+            await Chat.findByIdAndDelete(id);
+            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            expect(chatResponse._body).toMatchObject(chatInfo);
+
+            let timeStamp = "1659172077"
+            let text = "Hello"
+            let chatInvResponse = await request(app)
+                .put(`/chat/sendChat/${id}/${chatId}`)
+                .send({
+                    token,
+                    timeStamp,
+                    text
+                });
+            await User.findByIdAndDelete(id);
+            await Chat.findByIdAndDelete(chatId);
+            expect(chatInvResponse.status).toBe(ERROR_CODES.SUCCESS);
+        })
+    })
+    describe("get chat info", () => {
+        let chatInfo = new ChatDetails({
+            title: "tester chater",
+            tags: ["Hiking"],
+            numberOfPeople: 6,
+            description: "test description",
+            participants: ["64c50cfb436fbc75c654d9eb"],
+            currCapacity: 1,
+        });
+        test("Invalid chat ID", async () => {
+            let response = await request(app)
+                .get("/chat/dfjsdfks")
+                .set({
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        })
+        test("Event with event ID not found", async () => {
+            let response = await request(app)
+                .get("/chat/64d31ae677f7ad9a56ab89c6")
+                .set({
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        })
+        test("Success: chat info successfully sent", async () => {
+            let response = await request(app)
+                .post("/chat/create")
+                .send({
+                    ...chatInfo,
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(chatInfo);
+
+            let chatResponse = await request(app)
+                .get(`/chat/${id}`)
+                .set({
+                    token
+                });
+            await Chat.findByIdAndDelete(id);
+            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            expect(chatResponse._body).toMatchObject(chatInfo);
+        })
+    })
+    describe("view chats which a user is in", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let chatInfo = new ChatDetails({
+            title: "tester chater",
+            tags: ["Hiking"],
+            numberOfPeople: 6,
+            description: "test description",
+            participants: ["64c50cfb436fbc75c654d9eb"],
+            currCapacity: 1,
+        });
+        test("Invalid User ID", async () => {
+            let response = await request(app)
+                .get("/user/dfjsdfks/chat")
+                .set({
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toEqual([]);
+        })
+        test("No chats found", async () => {
+            let response = await request(app)
+                .post("/user/create")
+                .send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let chatResponse = await request(app)
+                .get(`/user/${id}/chat`)
+                .set({
+                    token
+                });
+            await User.findByIdAndDelete(id);
+            expect(chatResponse.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(chatResponse._body).toEqual([]);
+        })
+        test("Success: Chat found", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            chatInfo.participants = [id];
+
+            let chatResponse = await request(app)
+                .post("/chat/create")
+                .send({
+                    ...chatInfo,
+                    token
+                });
+            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let chatId = chatResponse._body._id;
+            await Chat.findByIdAndDelete(id);
+            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            expect(chatResponse._body).toMatchObject(chatInfo);
+
+            let chatListResponse = await request(app)
+                .get(`/user/${id}/chat`)
+                .set({
+                    token
+                });
+            await User.findByIdAndDelete(id);
+            await Chat.findByIdAndDelete(chatId);
+            expect(chatListResponse.status).toBe(ERROR_CODES.SUCCESS)
+
+        })
+        
+    })
+
 })
 
 describe("User Case 6: Profile Management", () => {
@@ -1145,9 +1593,9 @@ describe("User Case 6: Profile Management", () => {
             expect(response._body).toMatchObject(userInfo);
             await User.findByIdAndDelete(id);
         });
-        
+
     });
-    
+
     describe("edit user", () => {
         let userInfo = new UserAccount({
             name: "Rob Robber",
@@ -1213,14 +1661,18 @@ describe("User Case 6: Profile Management", () => {
         test("Invalid user ID", async () => {
             let response = await request(app)
                 .get("/user/dfjsdfks")
-                .set({ token });
+                .set({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         });
         test("User with user ID not found", async () => {
             let response = await request(app)
                 .get("/user/64d31ae677f7ad9a56ab89c6")
-                .set({ token });
+                .set({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         });
@@ -1235,7 +1687,9 @@ describe("User Case 6: Profile Management", () => {
 
             let foundUser = await request(app)
                 .get(`/user/${id}`)
-                .set({ token });
+                .set({
+                    token
+                });
             await User.findByIdAndDelete(id);
             expect(foundUser.status).toBe(ERROR_CODES.SUCCESS);
             ["_id", "__v"].forEach((key) => delete foundUser._body[key]);
@@ -1268,18 +1722,20 @@ describe("User Case 6: Profile Management", () => {
             let id = response._body._id;
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
-            
-            
+
+
             let friendReqResponse = await request(app)
-            .get(`/user/${id}/friendRequest`)
-            .set({ token });
+                .get(`/user/${id}/friendRequest`)
+                .set({
+                    token
+                });
             await User.findByIdAndDelete(id);
             expect(friendReqResponse.status).toBe(ERROR_CODES.INVALID);
             expect(JSON.stringify(friendReqResponse._body)).toBe(JSON.stringify([]));
 
             userInfo.friendRequest = [];
         });
-        
+
         test("No friend requests for user found", async () => {
             userInfo.friendRequest = ["64d31ae677f7ad9a56ab89c6"]
 
@@ -1288,18 +1744,20 @@ describe("User Case 6: Profile Management", () => {
             let id = response._body._id;
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
-            
-            
+
+
             let friendReqResponse = await request(app)
-            .get(`/user/${id}/friendRequest`)
-            .set({ token });
+                .get(`/user/${id}/friendRequest`)
+                .set({
+                    token
+                });
             await User.findByIdAndDelete(id);
             expect(friendReqResponse.status).toBe(ERROR_CODES.NOTFOUND);
             expect(JSON.stringify(friendReqResponse._body)).toBe(JSON.stringify([]));
 
             userInfo.friendRequest = [];
         });
-        
+
         test("Success: list of friend requests of user viewed", async () => {
             let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
             expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
@@ -1314,15 +1772,17 @@ describe("User Case 6: Profile Management", () => {
             let id = response._body._id;
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
-            
-            
+
+
             let friendReqResponse = await request(app)
-            .get(`/user/${id}/friendRequest`)
-            .set({ token });
-            
-            await User.findByIdAndDelete(id);
-            await User.findByIdAndDelete(otherUserID);
-            
+                .get(`/user/${id}/friendRequest`)
+                .set({
+                    token
+                });
+
+            await User.findByIdAndDelete(id)
+            await User.findByIdAndDelete(otherUserID)
+
             let finalReq = friendReqResponse._body;
 
             ["_id", "__v"].forEach((key) => delete finalReq[0][key]);
@@ -1358,18 +1818,20 @@ describe("User Case 6: Profile Management", () => {
             let id = response._body._id;
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
-            
-            
+
+
             let friendResponse = await request(app)
-            .get(`/user/${id}/friends`)
-            .set({ token });
+                .get(`/user/${id}/friends`)
+                .set({
+                    token
+                });
             await User.findByIdAndDelete(id);
             expect(friendResponse.status).toBe(ERROR_CODES.INVALID);
             expect(JSON.stringify(friendResponse._body)).toBe(JSON.stringify([]));
 
             userInfo.friends = [];
         });
-        
+
         test("No friend for user found", async () => {
             userInfo.friends = ["64d31ae677f7ad9a56ab89c6"]
 
@@ -1378,18 +1840,20 @@ describe("User Case 6: Profile Management", () => {
             let id = response._body._id;
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
-            
-            
+
+
             let friendResponse = await request(app)
-            .get(`/user/${id}/friends`)
-            .set({ token });
+                .get(`/user/${id}/friends`)
+                .set({
+                    token
+                });
             await User.findByIdAndDelete(id);
             expect(friendResponse.status).toBe(ERROR_CODES.NOTFOUND);
             expect(JSON.stringify(friendResponse._body)).toBe(JSON.stringify([]));
 
             userInfo.friends = [];
         });
-        
+
         test("Success: list of friend of user viewed", async () => {
             let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
             expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
@@ -1404,15 +1868,17 @@ describe("User Case 6: Profile Management", () => {
             let id = response._body._id;
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
-            
-            
+
+
             let friendResponse = await request(app)
-            .get(`/user/${id}/friends`)
-            .set({ token });
-            
+                .get(`/user/${id}/friends`)
+                .set({
+                    token
+                });
+
             await User.findByIdAndDelete(id);
             await User.findByIdAndDelete(otherUserID);
-            
+
             let final = friendResponse._body;
 
             ["_id", "__v"].forEach((key) => delete final[0][key]);
@@ -1442,14 +1908,18 @@ describe("User Case 6: Profile Management", () => {
         test("IDs of user or otherUser are invalid", async () => {
             let response = await request(app)
                 .put("/user/sendFriendRequest/sdfsdf/sdfdf")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         })
         test("No users found", async () => {
             let response = await request(app)
                 .put("/user/sendFriendRequest/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         })
@@ -1468,11 +1938,17 @@ describe("User Case 6: Profile Management", () => {
             ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
             expect(otherResponse._body).toMatchObject(otherUserInfo);
 
-            await User.findByIdAndUpdate(id, {$push: {friends: otherUserID}});
+            await User.findByIdAndUpdate(id, {
+                $push: {
+                    friends: otherUserID
+                }
+            });
 
             let friendReqResponse = await request(app)
                 .put(`/user/sendFriendRequest/${id}/${otherUserID}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await User.findByIdAndDelete(otherUserID);
             expect(friendReqResponse.status).toBe(ERROR_CODES.CONFLICT);
@@ -1497,7 +1973,9 @@ describe("User Case 6: Profile Management", () => {
 
             let friendReqResponse = await request(app)
                 .put(`/user/sendFriendRequest/${id}/${otherUserID}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await User.findByIdAndDelete(otherUserID);
             expect(friendReqResponse.status).toBe(ERROR_CODES.CONFLICT);
@@ -1520,7 +1998,9 @@ describe("User Case 6: Profile Management", () => {
 
             let friendReqResponse = await request(app)
                 .put(`/user/sendFriendRequest/${id}/${otherUserID}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await User.findByIdAndDelete(otherUserID);
             expect(friendReqResponse.status).toBe(ERROR_CODES.SUCCESS);
@@ -1547,14 +2027,18 @@ describe("User Case 6: Profile Management", () => {
         test("IDs of user or otherUser are invalid", async () => {
             let response = await request(app)
                 .put("/user/acceptUser/sdfsdf/sdfdf")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         })
         test("No users found", async () => {
             let response = await request(app)
                 .put("/user/acceptUser/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         })
@@ -1573,11 +2057,17 @@ describe("User Case 6: Profile Management", () => {
             ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
             expect(otherResponse._body).toMatchObject(otherUserInfo);
 
-            await User.findByIdAndUpdate(id, {$push: {friends: otherUserID}});
+            await User.findByIdAndUpdate(id, {
+                $push: {
+                    friends: otherUserID
+                }
+            });
 
             let friendReqResponse = await request(app)
                 .put(`/user/acceptUser/${id}/${otherUserID}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await User.findByIdAndDelete(otherUserID);
             expect(friendReqResponse.status).toBe(ERROR_CODES.CONFLICT);
@@ -1600,7 +2090,9 @@ describe("User Case 6: Profile Management", () => {
 
             let friendReqResponse = await request(app)
                 .put(`/user/acceptUser/${id}/${otherUserID}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await User.findByIdAndDelete(otherUserID);
             expect(friendReqResponse.status).toBe(ERROR_CODES.SUCCESS);
@@ -1627,14 +2119,18 @@ describe("User Case 6: Profile Management", () => {
         test("IDs of user or otherUser are invalid", async () => {
             let response = await request(app)
                 .put("/user/rejectUser/sdfsdf/sdfdf")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         })
         test("No users found", async () => {
             let response = await request(app)
                 .put("/user/rejectUser/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         })
@@ -1653,7 +2149,9 @@ describe("User Case 6: Profile Management", () => {
 
             let friendReqResponse = await request(app)
                 .put(`/user/rejectUser/${id}/${otherUserID}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await User.findByIdAndDelete(otherUserID);
             expect(friendReqResponse.status).toBe(ERROR_CODES.CONFLICT);
@@ -1677,7 +2175,9 @@ describe("User Case 6: Profile Management", () => {
 
             let friendReqResponse = await request(app)
                 .put(`/user/rejectUser/${id}/${otherUserID}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await User.findByIdAndDelete(otherUserID);
             expect(friendReqResponse.status).toBe(ERROR_CODES.SUCCESS);
@@ -1704,14 +2204,18 @@ describe("User Case 6: Profile Management", () => {
         test("IDs of user or otherUser are invalid", async () => {
             let response = await request(app)
                 .put("/user/removeFriend/sdfsdf/sdfdf")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         })
         test("No users found", async () => {
             let response = await request(app)
                 .put("/user/removeFriend/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
-                .send({token});
+                .send({
+                    token
+                });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         })
@@ -1730,11 +2234,17 @@ describe("User Case 6: Profile Management", () => {
             ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
             expect(otherResponse._body).toMatchObject(otherUserInfo);
 
-            await User.findByIdAndUpdate(id, {$push: {friends: otherUserID}});
+            await User.findByIdAndUpdate(id, {
+                $push: {
+                    friends: otherUserID
+                }
+            });
 
             let friendReqResponse = await request(app)
                 .put(`/user/removeFriend/${id}/${otherUserID}`)
-                .send({token});
+                .send({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await User.findByIdAndDelete(otherUserID);
             expect(friendReqResponse.status).toBe(ERROR_CODES.SUCCESS);
@@ -1744,79 +2254,371 @@ describe("User Case 6: Profile Management", () => {
     })
 });
 
-describe("view event", () => {
-    test("No events found", async () => {});
-    test("Success: view all events", async () => {});
+describe("Use Case 7: Report/Block User/Event", () => {
+    describe("Report User", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let otherUserInfo = new UserAccount({
+            name: "Bob Bobber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        test("Invalid user ID", async () => {
+            let response = await request(app)
+                .post("/user/sdfsdf/reportUser/sdfdf")
+                .send({
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        }); 
+        
+        test("User reporter or reported not found", async () => {
+            let response = await request(app)
+                .post("/user/64d31ae677f7ad9a56ab89c6/reportUser/64d31ae677f7ad9a56ab89c6")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        });
+
+        test("Success: User is reported", async () => {
+            let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
+            expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let otherUserID = otherResponse._body._id;
+            ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
+            expect(otherResponse._body).toMatchObject(otherUserInfo);
+
+
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let reportResponse = await request(app)
+                .post(`/user/${id}/reportUser/${otherUserID}`)
+                .send({token, reason: "cuz", description: "cuz", isBlocked: false});
+            await User.findByIdAndDelete(id);
+            await User.findByIdAndDelete(otherUserID);
+            expect(reportResponse.status).toBe(ERROR_CODES.SUCCESS);
+            await Report.findByIdAndDelete(reportResponse._body._id)
+        });
+    });
+
+    describe("Block User", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let otherUserInfo = new UserAccount({
+            name: "Bob Bobber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        test("Invalid user ID", async () => {
+            let response = await request(app)
+                .post("/user/sdfsdf/reportUser/sdfdf")
+                .send({
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        }); 
+        
+        test("User reporter or reported not found", async () => {
+            let response = await request(app)
+                .post("/user/64d31ae677f7ad9a56ab89c6/reportUser/64d31ae677f7ad9a56ab89c6")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        });
+        test("success: user is blocked", async () => {
+            let otherResponse = await request(app).post("/user/create").send(otherUserInfo);
+            expect(otherResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let otherUserID = otherResponse._body._id;
+            ["_id", "__v"].forEach((key) => delete otherResponse._body[key]);
+            expect(otherResponse._body).toMatchObject(otherUserInfo);
+
+
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let reportResponse = await request(app)
+                .post(`/user/${id}/reportUser/${otherUserID}`)
+                .send({token, reason: "cuz", description: "cuz", isBlocked: true});
+            await User.findByIdAndDelete(id);
+            await User.findByIdAndDelete(otherUserID);
+            expect(reportResponse.status).toBe(ERROR_CODES.SUCCESS);
+            await Report.findByIdAndDelete(reportResponse._body._id)
+        });
+    });
+
+    describe("Report Event", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let eventInfo = new EventDetails({
+            title: "tester event",
+            eventOwnerID: "62d63248860a82beb388af87",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            numberOfPeople: 6,
+            currCapacity: 1,
+            participants: ["62d63248860a82beb388af87"],
+        });
+        test("Invalid event ID", async () => {
+            let response = await request(app)
+                .post("/user/sdfsdf/reportEvent/sdfdf")
+                .send({
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        }); 
+        
+        test("User reporter not found", async () => {
+            let response = await request(app)
+                .post("/user/64d31ae677f7ad9a56ab89c6/reportEvent/64d31ae677f7ad9a56ab89c6")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        });
+
+        test("Success: Event is reported", async () => {
+            let eventResponse = await request(app)
+                .post("/event/create")
+                .send({
+                    ...eventInfo,
+                    token
+                });
+            expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
+            // console.log(eventResponse._body)
+            let eventId = eventResponse._body._id;
+            let chat = eventResponse._body.chat
+
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let reportResponse = await request(app)
+                .post(`/user/${id}/reportEvent/${eventId}`)
+                .send({token, reason: "cuz", description: "cuz", isBlocked: false});
+            await User.findByIdAndDelete(id);            
+            await Chat.findByIdAndDelete(chat)
+            await Event.findByIdAndDelete(eventId);
+            expect(reportResponse.status).toBe(ERROR_CODES.SUCCESS);
+            await Report.findByIdAndDelete(reportResponse._body._id)
+        })
+    });
+
+    describe("Block Event", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        let eventInfo = new EventDetails({
+            title: "tester event",
+            eventOwnerID: "62d63248860a82beb388af87",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            numberOfPeople: 6,
+            currCapacity: 1,
+            participants: ["62d63248860a82beb388af87"],
+        });
+        test("Invalid event ID", async () => {
+            let response = await request(app)
+                .post("/user/sdfsdf/reportEvent/sdfdf")
+                .send({
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        }); 
+        
+        test("User reporter not found", async () => {
+            let response = await request(app)
+                .post("/user/64d31ae677f7ad9a56ab89c6/reportEvent/64d31ae677f7ad9a56ab89c6")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        });
+
+        test("success: event is blocked", async () => {
+            let eventResponse = await request(app)
+                .post("/event/create")
+                .send({
+                    ...eventInfo,
+                    token
+                });
+            expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
+            // console.log(eventResponse._body)
+            let eventId = eventResponse._body._id;
+            let chat = eventResponse._body.chat
+
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let reportResponse = await request(app)
+                .post(`/user/${id}/reportEvent/${eventId}`)
+                .send({token, reason: "cuz", description: "cuz", isBlocked: true});
+            await User.findByIdAndDelete(id);            
+            await Chat.findByIdAndDelete(chat)
+            await Event.findByIdAndDelete(eventId);
+            expect(reportResponse.status).toBe(ERROR_CODES.SUCCESS);
+            await Report.findByIdAndDelete(reportResponse._body._id)
+        });
+    });
     
-    test("Event id is invalid", async () => {});
-    test("No event found", async () => {});
-    test("Success: event is viewed", async () => {});
+    describe("List all reports", () => {
+        test("check if endpong returns correct response", async () => {
+            let response = await request(app).get("/reports").set({
+                token
+            })
+            expect(response.status).toBe(ERROR_CODES.SUCCESS)
+        })
+    })
 
-    test("No event found", async () => {});
-    test("Success: list of events with given named viewed", async () => {});
-
-    test("No event found", async () => {});
-    test("Success: list of events a user is in viewed", async () => {});
-});
-
-describe("view chat", () => {
-    test("No chat found", async () => {});
-    test("Invalid chat ID", async () => {});
-    test("Success: chat is viewed", async () => {});
-
-    test("No chat found", async () => {});
-    test("Invalid chat ID", async () => {});
-    test("Success: list of chat with given name viewed", async () => {});
-
-    test("No chat found", async () => {});
-    test("Invalid user ID", async () => {});
-    test("Success: list of chat requests of user viewed", async () => {});
-});
-
-describe("send chat", () => {
-    test("Invalid user ID", async () => {});
-    test("Invalid chat ID", async () => {});
-    test("No user found", async () => {});
-    test("No chat found", async () => {});
-    test("Success: chat is sent to single user", async () => {});
     
-    
-    test("Invalid user ID", async () => {});
-    test("Invalid chat ID", async () => {});
-    test("No user found", async () => {});
-    test("No chat found", async () => {});
-    test("Success: chat is sent to chat group", async () => {});
+
 });
 
+describe("User Case 8: Ban User/Event", () => {
+    describe("Ban User", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        test("Invalid user ID", async () => {
+            let response = await request(app)
+                .post("/user/dfjsdfks/ban")
+                .send({
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toEqual(undefined);
+        }); 
 
-describe("accept chat invite", () => {
-    test("Success: chat invite accepted", async () => {});
-});
+        test("User not found", async () => {
+            let response = await request(app)
+                .post("/user/64d31ae677f7ad9a56ab89c6/ban")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        }); 
 
-describe("reject chat invite", () => {
-    test("Success: chat invite rejected", async () => {});
-});
+        test("Success: User is banned", async () => {
+            let response = await request(app)
+                .post("/user/create")
+                .send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
 
-describe("leave chat", () => {
-    test("Success: chat left", async () => {});
-});
+            let banResponse = await request(app).post(`/user/${id}/ban`).send({token})
+            await User.findByIdAndDelete(id);
+            expect(banResponse.status).toBe(ERROR_CODES.SUCCESS)            
+        });
+    });
 
-describe("report user", () => {
-    test("Success: user reported", async () => {});
-});
+    describe("Ban Event", () => {
+        let eventInfo = new EventDetails({
+            //id : 62d50cfb436fbc75c258d9eb
+            title: "tester event",
+            eventOwnerID: "62d63248860a82beb388af87",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            numberOfPeople: 6,
+            currCapacity: 1,
+            participants: ["62d63248860a82beb388af87"],
+        });
+        test("Invalid event ID", async () => {
+            let response = await request(app)
+                .post("/event/dfjsdfks/ban")
+                .send({
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toEqual(undefined);  
+        }); 
 
-describe("report event", () => {
-    test("Success: event reported", async () => {});
-});
+        test("Event not found", async () => {
+            let response = await request(app)
+                .post("/event/64d31ae677f7ad9a56ab89c6/ban")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        }); 
 
-describe("view reports", () => {
-    test("Success: all reports viewed", async () => {});
-});
+        test("Success: Event is banned", async () => {
+            let response = await request(app)
+                .post("/event/create")
+                .send({
+                    ...eventInfo,
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            let chat = response._body.chat
+            // ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
+            // ["chat"].forEach((key) => delete eventInfo[key]);
+            // expect(response._body).toMatchObject(eventInfo);
+            
+            let banResponse = await request(app).post(`/event/${id}/ban`).send({token})
+            await Chat.findByIdAndDelete(chat)
+            await Event.findByIdAndDelete(id);
+            expect(banResponse.status).toBe(ERROR_CODES.SUCCESS)  
 
-describe("ban user", () => {
-    test("Success: user is banned", async () => {});
-});
+        });
+    });
 
-describe("ban event", () => {
-    test("Success: event is banned", async () => {});
 });

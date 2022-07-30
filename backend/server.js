@@ -378,22 +378,16 @@ app.get("/user/:id/chatInvites", async (req, res) => {
 
 //Chat: send message to a single user
 app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
-	console.log("hello");
 	let userID = req.params.userID;
 	let chatID = req.params.chatID;
 	let timeStamp = req.body.timeStamp;
 	let text = req.body.text;
 
 	try {
-		let userResponse = await userStore.findUserByID(userID);
-		if (userResponse.status !== ERROR_CODES.SUCCESS)
-			return res.status(userResponse.status).send("Unsuccesfull");
-		let fromUserName = userResponse.data.name;
 		let updatedChatResponse = await chatEngine.sendChatMessage(
 			userID,
 			chatID,
 			text,
-			fromUserName,
 			timeStamp,
 			userStore
 		);
@@ -416,8 +410,8 @@ app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
 //Chat: Sends the chat object (which includes all the messages) - get
 app.get("/chat/:id", async (req, res) => {
 	let id = req.params.id;
-	console.log("IN CHAT END POINT");
-	console.log(id);
+	// console.log("IN CHAT END POINT");
+	// console.log(id);
 	try {
 		let chatResponse = await chatEngine.findChatByID(id);
 		res.status(chatResponse.status).send(chatResponse.data);
@@ -685,7 +679,7 @@ app.post("/user/:reporterID/reportUser/:reportedID", async (req, res) => {
 	let isEvent = 0;
 	let isBlocked = req.body.isBlocked;
 	try {
-		await reportService.report(
+		let response = await reportService.report(
 			reporterID,
 			reportedID,
 			reason,
@@ -695,7 +689,7 @@ app.post("/user/:reporterID/reportUser/:reportedID", async (req, res) => {
 			userStore,
 			eventStore
 		);
-		res.status(ERROR_CODES.SUCCESS).send("Successful");
+		res.status(response.status).send(response.data);
 	} catch (e) {
 		console.log(e);
 		res.status(ERROR_CODES.DBERROR).send(null);
@@ -710,7 +704,7 @@ app.post("/user/:reporterID/reportEvent/:reportedID", async (req, res) => {
 	let isEvent = 1;
 	let isBlocked = req.body.isBlocked;
 	try {
-		await reportService.report(
+		let response = await reportService.report(
 			reporterID,
 			reportedID,
 			reason,
@@ -720,7 +714,7 @@ app.post("/user/:reporterID/reportEvent/:reportedID", async (req, res) => {
 			userStore,
 			eventStore
 		);
-		res.status(ERROR_CODES.SUCCESS).send("Successful");
+		res.status(response.status).send(response.data);
 	} catch (e) {
 		console.log(e);
 		res.status(ERROR_CODES.DBERROR).send(null);
@@ -740,8 +734,8 @@ app.get("/reports", async (req, res) => {
 app.post("/user/:id/ban", async (req, res) => {
 	let id = req.params.id;
 	try {
-		await banService.banUser(id, userStore);
-		res.status(ERROR_CODES.SUCCESS).send("Successful");
+		let response = await banService.banUser(id, userStore);
+		res.status(response.status).send("Successful");
 	} catch (e) {
 		console.log(e);
 		res.status(ERROR_CODES.DBERROR).send(null);
@@ -761,8 +755,8 @@ app.get("/user", async (req, res) => {
 app.post("/event/:id/ban", async (req, res) => {
 	let id = req.params.id;
 	try {
-		await banService.banEvent(id, eventStore);
-		res.status(ERROR_CODES.SUCCESS).send("Successful");
+		let response = await banService.banEvent(id, eventStore, userStore);
+		res.status(response.status).send("Successful");
 	} catch (e) {
 		console.log(e);
 		res.status(ERROR_CODES.DBERROR).send(null);

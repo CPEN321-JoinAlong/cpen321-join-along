@@ -1,0 +1,141 @@
+07-29 21:44:59.721 25062 25093 I TestRunner: started: testSearchEmptyString(com.joinalongapp.joinalong.SearchScreenActivityTest)
+07-29 21:44:59.733  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: a: input svInfo.flags is 8
+07-29 21:44:59.733  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: b: input svInfo.flags is 8
+07-29 21:44:59.736 25062 25093 W Settings: Setting always_finish_activities has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+07-29 21:44:59.747  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:44:59.760  1796  1880 I chatty  : uid=1000(system) HwBinder:1796_1 identical 1 line
+07-29 21:44:59.766  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:44:59.770 18811 18865 D EGL_emulation: eglMakeCurrent: 0xd4d1a660: ver 3 0 (tinfo 0xd4d0f500)
+07-29 21:44:59.774  2044  2068 E system_server: Invalid ID 0x00000000.
+07-29 21:44:59.795  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:44:59.815  2044  2060 W InputReader: Device has associated, but no associated display id.
+07-29 21:44:59.817  2044  2060 I chatty  : uid=1000(system) Binder:2044_1 identical 38 lines
+07-29 21:44:59.818  2044  2060 W InputReader: Device has associated, but no associated display id.
+07-29 21:44:59.821 25095 25095 W ActivityThread: handleWindowVisibility: no activity for token android.os.BinderProxy@81c26f7
+07-29 21:44:59.822  2044  2060 W InputReader: Device has associated, but no associated display id.
+07-29 21:44:59.822  2044  2060 I chatty  : uid=1000(system) Binder:2044_1 identical 8 lines
+07-29 21:44:59.822  2044  2060 W InputReader: Device has associated, but no associated display id.
+07-29 21:44:59.844  2044  2068 W InputReader: Device has associated, but no associated display id.
+07-29 21:44:59.845  2044  2068 I chatty  : uid=1000(system) android.anim identical 18 lines
+07-29 21:44:59.845  2044  2068 W InputReader: Device has associated, but no associated display id.
+07-29 21:44:59.848  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 5976064
+07-29 21:44:59.887 18811 18865 D EGL_emulation: eglMakeCurrent: 0xd4d1a660: ver 3 0 (tinfo 0xd4d0f500)
+07-29 21:44:59.891  9002  9002 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.tapandpay.service.BIND dat=chimera-action:com.google.android.gms.tapandpay.service.BIND cmp=com.google.android.gms/.chimera.PersistentApiService }
+07-29 21:44:59.914  8507  8507 I KeyboardViewUtil: systemKeyboardHeightRatio:1.000000; userKeyboardHeightRatio:1.000000.
+07-29 21:44:59.915  8507  8507 I AndroidIME: LatinIme.onActivate() : EditorInfo = Package = com.android.settings.intelligence : Type = Text : Learning = Disable : Suggestion = Hide : AutoCorrection = Disable : Microphone = Show : NoPersonalizedLearning = Disable
+07-29 21:44:59.935 25095 25126 D EGL_emulation: eglMakeCurrent: 0xdcd118e0: ver 3 0 (tinfo 0xe7e89460)
+07-29 21:44:59.949  8507  8507 I Conv2QueryExtension: Current locale: en_US, config allows these locales: de,en,es,fr,it,ms,pt,ta
+07-29 21:44:59.949  8507  8507 I Conv2QueryExtension: Conv2Query not enabled due to current app [com.android.settings.intelligence] not in whitelist
+07-29 21:44:59.949  8507  8507 I Conv2QueryExtension: onActivate() : Disabled by unsupported host app
+07-29 21:44:59.957  2044  2901 W InputReader: Device has associated, but no associated display id.
+07-29 21:44:59.960  2044  2901 I chatty  : uid=1000(system) Binder:2044_B identical 38 lines
+07-29 21:44:59.960  2044  2901 W InputReader: Device has associated, but no associated display id.
+07-29 21:44:59.963 25062 25062 W ActivityThread: handleWindowVisibility: no activity for token android.os.BinderProxy@74438b4
+07-29 21:44:59.965  2044  2901 W InputReader: Device has associated, but no associated display id.
+07-29 21:44:59.972  2044  2901 I chatty  : uid=1000(system) Binder:2044_B identical 18 lines
+07-29 21:44:59.972  2044  2901 W InputReader: Device has associated, but no associated display id.
+07-29 21:44:59.995 25062 25062 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@9b1ea4c in: PRE_ON_CREATE
+07-29 21:44:59.996 25062 25062 V ActivityScenario: Activity lifecycle changed event received but ignored because the reported transition was not ON_CREATE while the last known transition was PRE_ON_CREATE
+07-29 21:45:00.007  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9048064
+07-29 21:45:00.014  2044 11423 D HostConnection: HostConnection::get() New Host Connection established 0xb48f0950, tid 11423
+07-29 21:45:00.026  2044 11423 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_native_sync_v3 ANDROID_EMU_native_sync_v4 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV420_888_to_NV21 ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0
+07-29 21:45:00.029  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9048064
+07-29 21:45:00.029  2044 11423 W OpenGLRenderer: Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+07-29 21:45:00.042  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9048064
+07-29 21:45:00.052  2044 11423 D eglCodecCommon: setVertexArrayObject: set vao to 0 (0) 0 0
+07-29 21:45:00.052  2044 11423 D EGL_emulation: eglCreateContext: 0xd1638ec0: maj 3 min 0 rcv 3
+07-29 21:45:00.073  8507 11372 D EGL_emulation: eglMakeCurrent: 0xd4d1b4a0: ver 3 0 (tinfo 0xd4d0fc60)
+07-29 21:45:00.077  2044 11423 D EGL_emulation: eglMakeCurrent: 0xd1638ec0: ver 3 0 (tinfo 0xb7daeb20)
+07-29 21:45:00.114 25062 25062 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@9b1ea4c in: CREATED
+07-29 21:45:00.114 25062 25062 V ActivityScenario: Update currentActivityStage to CREATED, currentActivity=com.joinalongapp.joinalong.SearchScreenActivity@9b1ea4c
+07-29 21:45:00.120 25062 25062 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@9b1ea4c in: STARTED
+07-29 21:45:00.120 25062 25062 V ActivityScenario: Update currentActivityStage to STARTED, currentActivity=com.joinalongapp.joinalong.SearchScreenActivity@9b1ea4c
+07-29 21:45:00.122 25062 25062 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@9b1ea4c in: RESUMED
+07-29 21:45:00.122 25062 25062 V ActivityScenario: Update currentActivityStage to RESUMED, currentActivity=com.joinalongapp.joinalong.SearchScreenActivity@9b1ea4c
+07-29 21:45:00.123 25062 25093 W ngapp.joinalon: Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+07-29 21:45:00.131  2044 11423 D eglCodecCommon: setVertexArrayObject: set vao to 0 (0) 1 0
+07-29 21:45:00.192  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:45:00.204  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:45:00.210  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:45:00.238 25062 25129 D EGL_emulation: eglMakeCurrent: 0xe7e52a80: ver 3 0 (tinfo 0xe7e89350)
+07-29 21:45:00.255  2044  2072 I ActivityTaskManager: Displayed com.joinalongapp.joinalong/.SearchScreenActivity: +338ms
+07-29 21:45:00.257  8507  8507 I PhenotypeExpConfig: refreshConfiguration() : Force = false : UpdateAvailable = false : Age = 277 minutes : MaxAge = 720 minutes
+07-29 21:45:00.266  8507  8507 I AndroidIME: LatinIme.onDeactivate()
+07-29 21:45:00.269 25062 25062 I AssistStructure: Flattened final assist data: 1720 bytes, containing 1 windows, 9 views
+07-29 21:45:00.326  8507  8507 I KeyboardViewUtil: systemKeyboardHeightRatio:1.000000; userKeyboardHeightRatio:1.000000.
+07-29 21:45:00.326  8507  8507 I AndroidIME: LatinIme.onActivate() : EditorInfo = Package = com.joinalongapp.joinalong : Type = Text : Learning = Disable : Suggestion = Hide : AutoCorrection = Disable : Microphone = Show : NoPersonalizedLearning = Disable
+07-29 21:45:00.343  8507  8507 I Conv2QueryExtension: Current locale: en_US, config allows these locales: de,en,es,fr,it,ms,pt,ta
+07-29 21:45:00.343  8507  8507 I Conv2QueryExtension: Conv2Query not enabled due to current app [com.joinalongapp.joinalong] not in whitelist
+07-29 21:45:00.343  8507  8507 I Conv2QueryExtension: onActivate() : Disabled by unsupported host app
+07-29 21:45:00.364  9002  9002 W qja     : Pending fill request while another request in the same session was triggered. [CONTEXT service_id=177 ]
+07-29 21:45:00.402  8507 11372 D EGL_emulation: eglMakeCurrent: 0xd4d1b4a0: ver 3 0 (tinfo 0xd4d0fc60)
+07-29 21:45:00.414  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:45:00.437  8507 11372 D EGL_emulation: eglMakeCurrent: 0xd4d1b4a0: ver 3 0 (tinfo 0xd4d0fc60)
+07-29 21:45:00.442  2044  2056 I system_server: NativeAlloc concurrent copying GC freed 16627(1060KB) AllocSpace objects, 10(200KB) LOS objects, 25% free, 17MB/23MB, paused 914us total 287.168ms
+07-29 21:45:00.462  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:45:00.485  2044  6305 I AssistStructure: Flattened final assist data: 1628 bytes, containing 1 windows, 9 views
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: Could not retrieve result in time: 14
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: java.util.concurrent.TimeoutException
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: 	at java.util.concurrent.FutureTask.get(FutureTask.java:206)
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: 	at com.android.settings.intelligence.search.SearchResultAggregator.fetchResults(SearchResultAggregator.java:68)
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: 	at com.android.settings.intelligence.search.SearchResultLoader.loadInBackground(SearchResultLoader.java:25)
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: 	at com.android.settings.intelligence.search.SearchResultLoader.loadInBackground(SearchResultLoader.java:13)
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: 	at android.content.AsyncTaskLoader.onLoadInBackground(AsyncTaskLoader.java:321)
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: 	at android.content.AsyncTaskLoader$LoadTask.doInBackground(AsyncTaskLoader.java:74)
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: 	at android.content.AsyncTaskLoader$LoadTask.doInBackground(AsyncTaskLoader.java:62)
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: 	at android.os.AsyncTask$3.call(AsyncTask.java:378)
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+07-29 21:45:00.485 18811 25205 D SearchResultAggregator: 	at java.lang.Thread.run(Thread.java:919)
+07-29 21:45:00.489  9002 23980 W qbj     : Infinite Data has no result for com.joinalongapp.joinalong [CONTEXT service_id=177 ]
+07-29 21:45:00.496  9002 24682 W qbj     : Infinite Data has no result for com.joinalongapp.joinalong [CONTEXT service_id=177 ]
+07-29 21:45:00.508  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:45:00.622 25062 25062 I ViewInteraction: Performing 'single click' action on view view.getId() is <2131362403/com.joinalongapp.joinalong:id/searchBar>
+07-29 21:45:00.733  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: a: input svInfo.flags is 8
+07-29 21:45:00.734  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: b: input svInfo.flags is 8
+07-29 21:45:00.912 25062 25093 W ngapp.joinalon: Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+07-29 21:45:00.917 25062 25062 I ViewInteraction: Performing 'send keyCode: 66, metaState: 0 key event' action on view view.getId() is <2131362403/com.joinalongapp.joinalong:id/searchBar>
+07-29 21:45:00.934 25062 25093 W ngapp.joinalon: Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+07-29 21:45:00.936 25062 25062 I ViewInteraction: Checking 'MatchesViewAssertion{viewMatcher=an instance of android.widget.TextView and view.getText() with or without transformation to match: is "No Results Found"}' assertion on view view.getId() is <2131362404/com.joinalongapp.joinalong:id/searchNoResults>
+07-29 21:45:00.951 25062 25062 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@9b1ea4c in: PAUSED
+07-29 21:45:00.951 25062 25062 V ActivityScenario: Update currentActivityStage to PAUSED, currentActivity=com.joinalongapp.joinalong.SearchScreenActivity@9b1ea4c
+07-29 21:45:00.952  2044  5280 W InputReader: Device has associated, but no associated display id.
+07-29 21:45:00.954  2044  5280 I chatty  : uid=1000(system) Binder:2044_1D identical 38 lines
+07-29 21:45:00.954  2044  5280 W InputReader: Device has associated, but no associated display id.
+07-29 21:45:00.955 25095 25095 W ActivityThread: handleWindowVisibility: no activity for token android.os.BinderProxy@3623b93
+07-29 21:45:00.957  2044  5280 W InputReader: Device has associated, but no associated display id.
+07-29 21:45:00.957  2044  5280 I chatty  : uid=1000(system) Binder:2044_1D identical 8 lines
+07-29 21:45:00.957  2044  5280 W InputReader: Device has associated, but no associated display id.
+07-29 21:45:00.997  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:45:01.006  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:45:01.021 25095 25126 D EGL_emulation: eglMakeCurrent: 0xdcd118e0: ver 3 0 (tinfo 0xe7e89460)
+07-29 21:45:01.026  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:45:01.047  8507  8507 I PhenotypeExpConfig: refreshConfiguration() : Force = false : UpdateAvailable = false : Age = 277 minutes : MaxAge = 720 minutes
+07-29 21:45:01.049  8507  8507 I AndroidIME: LatinIme.onDeactivate()
+07-29 21:45:01.057  2044  6305 W InputReader: Device has associated, but no associated display id.
+07-29 21:45:01.064  2044  6305 I chatty  : uid=1000(system) Binder:2044_20 identical 48 lines
+07-29 21:45:01.064  2044  6305 W InputReader: Device has associated, but no associated display id.
+07-29 21:45:01.085 25095 25095 W ActivityThread: handleWindowVisibility: no activity for token android.os.BinderProxy@54720fc
+07-29 21:45:01.094  8507 11372 D EGL_emulation: eglMakeCurrent: 0xd4d1b4a0: ver 3 0 (tinfo 0xd4d0fc60)
+07-29 21:45:01.138  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:45:01.148  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:45:01.159 25095 25126 D EGL_emulation: eglMakeCurrent: 0xdcd118e0: ver 3 0 (tinfo 0xe7e89460)
+07-29 21:45:01.163  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:45:01.167  2044  2068 W InputReader: Device has associated, but no associated display id.
+07-29 21:45:01.169  2044  2068 I chatty  : uid=1000(system) android.anim identical 18 lines
+07-29 21:45:01.169  2044  2068 W InputReader: Device has associated, but no associated display id.
+07-29 21:45:01.179 25062 25129 D EGL_emulation: eglMakeCurrent: 0xe7e52a80: ver 3 0 (tinfo 0xe7e89350)
+07-29 21:45:01.181  2044  2072 I ActivityTaskManager: Displayed com.joinalongapp.joinalong.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity: +93ms
+07-29 21:45:01.187  2044  2901 W InputReader: Device has associated, but no associated display id.
+07-29 21:45:01.188  2044  2901 I chatty  : uid=1000(system) Binder:2044_B identical 8 lines
+07-29 21:45:01.188  2044  2901 W InputReader: Device has associated, but no associated display id.
+07-29 21:45:01.209  2044  5387 W InputReader: Device has associated, but no associated display id.
+07-29 21:45:01.212  2044  5387 I chatty  : uid=1000(system) Binder:2044_1E identical 28 lines
+07-29 21:45:01.212  2044  5387 W InputReader: Device has associated, but no associated display id.
+07-29 21:45:01.224 25062 25062 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@9b1ea4c in: STOPPED
+07-29 21:45:01.226 25062 25062 V ActivityScenario: Update currentActivityStage to STOPPED, currentActivity=com.joinalongapp.joinalong.SearchScreenActivity@9b1ea4c
+07-29 21:45:01.243 25062 25062 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@9b1ea4c in: DESTROYED
+07-29 21:45:01.243 25062 25062 V ActivityScenario: Update currentActivityStage to DESTROYED, currentActivity=null
+07-29 21:45:01.244 25062 25093 I TestRunner: finished: testSearchEmptyString(com.joinalongapp.joinalong.SearchScreenActivityTest)
+

@@ -59,13 +59,13 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/eventListRecyclerView"
         android:layout_width="314dp"
-        android:layout_height="511dp"
+        android:layout_height="590dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/aboveTitleGuideline6"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="@+id/aboveTitleGuideline4"
+        app:layout_constraintVertical_bias="0.245" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

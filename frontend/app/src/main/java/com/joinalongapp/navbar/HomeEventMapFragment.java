@@ -43,7 +43,7 @@ public class HomeEventMapFragment extends Fragment {
     private GoogleMap map;
     private List<Event> eventList = new ArrayList<>();
     private ClusterManager<MapClusterItem> clusterManager;
-    private static final float DEFAULT_ZOOM = 10F;
+    private static final float DEFAULT_ZOOM = 11F;
 
     public HomeEventMapFragment() {
         // Required empty public constructor
@@ -199,7 +199,6 @@ public class HomeEventMapFragment extends Fragment {
         }
 
         // default camera view
-        //TODO: edit this
         LatLng defaultView = new LatLng(0, 0);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultView, DEFAULT_ZOOM));
     }

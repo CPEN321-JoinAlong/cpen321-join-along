@@ -103,7 +103,7 @@ public class FeedbackMessageBuilder {
 
     public static void createParseError(Exception e, String operation, Activity activity) {
         createDefaultNeutralError("Unable to parse data during " + operation + "." + "\nPlease try again later.", activity, operation);
-        Log.e(operation, "Create profile error. Unable to parse user input data: " + e.getMessage());
+        Log.e(operation, "Unable to parse input data: " + e.getMessage());
     }
 
     public static void createDefaultNeutralSuccessOnHttp200(String operation, Activity activity) {

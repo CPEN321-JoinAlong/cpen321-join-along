@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.FeedbackMessageBuilder;
+import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.controller.ResponseErrorHandler;
@@ -341,6 +342,12 @@ public class ViewEventFragment extends Fragment {
                                         });
                                     }
                                 }, 0);
+                            } else if (response.code() == HttpStatusConstants.STATUS_HTTP_409 ) {
+                                new FeedbackMessageBuilder()
+                                        .setTitle("Event Full!")
+                                        .setDescription("The event is now full.\nUnable to join event.")
+                                        .withActivity(activity)
+                                        .buildAsyncNeutralMessage();
                             } else {
                                 ResponseErrorHandler.createErrorMessage(response, operation, "Event", activity);
                             }

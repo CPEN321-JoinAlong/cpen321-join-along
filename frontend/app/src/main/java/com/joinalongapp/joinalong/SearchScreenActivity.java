@@ -344,6 +344,7 @@ public class SearchScreenActivity extends AppCompatActivity {
         returnButton = findViewById(R.id.reportBackButton);
         recyclerView = findViewById(R.id.searchPeopleRecyclerView);
         noResults = findViewById(R.id.searchNoResults);
+        removeNoResultsMessage();
     }
 
     public enum SearchMode {
@@ -356,12 +357,12 @@ public class SearchScreenActivity extends AppCompatActivity {
 
         if (theMode == SearchMode.EVENT_MODE) {
             searchView.setQueryHint("Search Events");
-            myUrlPath = "event/title/"; //TODO: HTTP 200, 404, 500
+            myUrlPath = "event/title/";
 
         }
         if (theMode == SearchMode.USER_MODE) {
             searchView.setQueryHint("Search Users");
-            myUrlPath = "user/name/"; //TODO: HTTP 200, 404, 500
+            myUrlPath = "user/name/";
         }
     }
 

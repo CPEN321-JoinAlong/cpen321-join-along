@@ -167,11 +167,9 @@ public class ManageEventActivity extends AppCompatActivity {
                         return;
                     }
 
-                    //todo: enable time pick
-                    // disabling date checking for now
-//                    if (!checkDateRange(bDate, eDate)){
-//                        return;
-//                    }
+                    if (!checkDateRange(bDate, eDate)){
+                        return;
+                    }
 
                     Event event = new Event();
                     event.setTitle(title.getText().toString());
@@ -183,13 +181,22 @@ public class ManageEventActivity extends AppCompatActivity {
                     event.setEndDate(eDate);
                     event.setPublicVisibility(eventVisibilityTab.getSelectedTabPosition() == PUBLIC_VISIBILITY_INDEX);
 
-                    String ownerId = ((UserApplicationInfo) getApplication()).getProfile().getId();
-                    event.setEventOwnerId(ownerId);
+                    //TODO: fix this later
+                    if (getIntent().getExtras().getString("testingId") != null) {
+                        event.setEventOwnerId(getIntent().getExtras().getString("testingId"));
+                    } else {
+                        String ownerId = ((UserApplicationInfo) getApplication()).getProfile().getId();
+                        event.setEventOwnerId(ownerId);
+                    }
 
                     RequestManager requestManager = new RequestManager();
                     try {
                         JSONObject json = event.toJson();
-                        json.put("token", ((UserApplicationInfo) getApplication()).getUserToken());
+                        String token = ((UserApplicationInfo) getApplication()).getUserToken();
+                        if (token == null) {
+                            token = getIntent().getExtras().getString("testingToken");
+                        }
+                        json.put("token", token);
 
                         if (info != null && info.getSerializable("EVENT") != null) {
                             // EDIT EVENT
@@ -245,6 +252,19 @@ public class ManageEventActivity extends AppCompatActivity {
                                             }
                                         }, 0);
 
+                                        if (getIntent().getStringExtra("testingToken") != null) {
+                                            try {
+                                                JSONObject json = new JSONObject(response.body().string());
+                                                Event eventForTest = new Event();
+                                                eventForTest.populateDetailsFromJson(json.toString());
+                                                getIntent().putExtra("createdTestEvent", eventForTest);
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+
                                     } else {
                                         ResponseErrorHandler.createErrorMessage(response, "Create Event", "event", ManageEventActivity.this);
                                     }
@@ -280,12 +300,22 @@ public class ManageEventActivity extends AppCompatActivity {
 
     private boolean checkDateRange(Date bDate, Date eDate) {
         boolean isValid = true;
-        if (!bDate.before(eDate)){
+        if (!bDate.before(eDate) && !bDate.equals(eDate)){
             isValid = false;
             beginningDate.setError("End date cannot be before beginning date.");
+            endDate.setError("End date cannot be before beginning date.");
         }
 
-        Date now = new Date();
+        //TODO: fix this when we add time start and end dates
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
+        Date now;
+        try {
+            now = sdf.parse(sdf.format(new Date()));
+        } catch (ParseException e) {
+            System.out.println("invalid date");
+            return false;
+        }
 
         if (bDate.before(now)) {
             isValid = false;
@@ -338,7 +368,7 @@ public class ManageEventActivity extends AppCompatActivity {
             title.setError("Empty Title field");
         }
         if (!isValidNameTitle(title.getText().toString())) {
-            title.setError("First name contains invalid character(s).");
+            title.setError("Title contains invalid character(s).");
             flag = false;
         }
         if(editTextEmpty(location)){

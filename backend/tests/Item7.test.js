@@ -69,8 +69,8 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
             await Event.findByIdAndDelete(id);
             ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
             ["chat"].forEach((key) => delete eventInfo[key]);
-            console.log(response._body);
-            console.log(eventInfo);
+            // console.log(response._body);
+            // console.log(eventInfo);
             expect(response._body).toMatchObject(eventInfo);
         });
     });
@@ -257,7 +257,6 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
             ["chat"].forEach((key) => delete eventInfo[key]);
             expect(eventResponse._body).toMatchObject(eventInfo);
 
-
             let eventListResponse = await request(app)
                 .get(`/user/${id}/event`)
                 .set({ token });
@@ -274,7 +273,7 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
 })
 
 describe("Use Case 2: Join Event", () => {
-    //accept EventInvite, rejectEventInvite, leaveEvent
+    // accept EventInvite, rejectEventInvite, leaveEvent
     describe("Accept EventInvite (join event)", () => {
         let userInfo = new UserAccount({
             name: "Rob Robber",
@@ -588,87 +587,547 @@ describe("Use Case 2: Join Event", () => {
     })
 })
 
-
-describe("create chat", () => {
-    let chatInfo = new ChatDetails({
-        title: "tester chater",
-        tags: ["Hiking"],
-        numberOfPeople: 6,
-        description: "test description",
-        participants: ["64c50cfb436fbc75c654d9eb"],
-        currCapacity: 1,
-    });
-    test("Success: chat created", async () => {
-        let response = await request(app)
-            .post("/chat/create")
-            .send({ ...chatInfo, token });
-        expect(response.status).toBe(ERROR_CODES.SUCCESS);
-        let id = response._body._id;
-        await Chat.findByIdAndDelete(id);
-        ["_id", "__v"].forEach((key) => delete response._body[key]);
-        console.log(response._body);
-        expect(response._body).toMatchObject(chatInfo);
-    });
-});
-
-
-
-
-describe("edit chat", () => {
-    let chatInfo = new ChatDetails({
-        title: "tester chater",
-        tags: ["Hiking"],
-        numberOfPeople: 6,
-        description: "test description",
-        participants: ["64c50cfb436fbc75c654d9eb"],
-        currCapacity: 1,
-    });
-    let updatedChatInfo = new ChatDetails({
-        title: "tester chater 2",
-        tags: ["Hiking"],
-        numberOfPeople: 6,
-        description: "test description",
-        participants: ["64c50cfb436fbc75c654d9eb"],
-        currCapacity: 1,
-    });
-    test("invalid chat ID", async () => {
-        let response = await request(app)
-            .put("/chat/dfjsdfks/edit")
-            .send({...chatInfo, token});
-        expect(response.status).toBe(ERROR_CODES.INVALID);
-        expect(response._body).toBe(undefined);
-    });
-    test("Chat with ID not found", async () => {
-        let response = await request(app)
-            .put("/chat/64d31ae677f7ad9a56ab89c6/edit")
-            .send({...chatInfo, token});
-        expect(response.status).toBe(ERROR_CODES.NOTFOUND);
-        expect(response._body).toBe(undefined);
+describe("Use Case 3: Search Events/User", () => {
+    describe("Search User", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+        test("No User found", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+            let searchResponse = await request(app).get(`/user/name/Rob Roberto`).set({token})
+            await User.findByIdAndDelete(id);
+            expect(searchResponse.status).toBe(ERROR_CODES.NOTFOUND)
+            expect(searchResponse._body).toEqual([])
+        })
+        test("Success: User found", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+            let searchResponse = await request(app).get(`/user/name/Rob Rob`).set({token})
+            await User.findByIdAndDelete(id);
+            expect(searchResponse.status).toBe(ERROR_CODES.SUCCESS)
+            console.log(searchResponse._body[0])
+            delete searchResponse._body[0]["_id"]
+            delete searchResponse._body[0]["__v"]
+            // ["_id", "__v"].forEach((key) => delete searchResponse._body[0][key]);
+            expect(searchResponse._body[0]).toMatchObject(userInfo)
+        })
     })
-    test("Success: chat is edited", async () => {
-        let response = await request(app)
-            .post("/chat/create")
-            .send({ ...chatInfo, token });
-        expect(response.status).toBe(ERROR_CODES.SUCCESS);
-        let id = response._body._id;
-        ["_id", "__v"].forEach((key) => delete response._body[key]);
-        console.log(response._body);
-        expect(response._body).toMatchObject(chatInfo);
-        
-        let updatedResponse = await request(app)
-            .put(`/chat/${id}/edit`)
-            .send({...updatedChatInfo, token});
-        await Chat.findByIdAndDelete(id);
-        expect(updatedResponse.status).toBe(ERROR_CODES.SUCCESS)
-        let updatedChat = updatedResponse._body
-        delete updatedChat["_id"]
-        delete updatedChat["__v"]
-        expect(updatedChat).toMatchObject(updatedChatInfo);
+    describe("Search Event", () => {
+       let eventInfo = new EventDetails({
+            //id : 62d50cfb436fbc75c258d9eb
+            title: "tester event",
+            eventOwnerID: "62d63248860a82beb388af87",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            numberOfPeople: 6,
+            currCapacity: 1,
+            participants: ["62d63248860a82beb388af87"],
+        });
+        test("No Event found", async () => {
+            let searchResponse = await request(app).get(`/event/title/sdfshfashifohwehjejsdjksjkih`).set({token})
+            expect(searchResponse.status).toBe(ERROR_CODES.NOTFOUND)
+            expect(searchResponse._body).toEqual([])
+        })
+       test("Success: Event found", async () => {
+            let response = await request(app)
+                .post("/event/create")
+                .send({ ...eventInfo, token });
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            let chat = response._body.chat;
+            ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
+            ["chat"].forEach((key) => delete eventInfo[key]);
+            
+            let searchResponse = await request(app).get(`/event/title/tester event`).set({token})
+            await Chat.findByIdAndDelete(chat)
+            await Event.findByIdAndDelete(id);
+            expect(searchResponse.status).toBe(ERROR_CODES.SUCCESS)
+            delete searchResponse._body[0]["_id"]
+            delete searchResponse._body[0]["__v"]
+            delete searchResponse._body[0]["chat"]
+            expect(searchResponse._body[0]).toMatchObject(eventInfo)
+        })
+ 
     })
-});
+    describe("List all user", () => {
+        test("check if endpoint returns correct response", async () => {
+            let response = await request(app).get("/user").set({token})
+            expect(response.status).toBe(ERROR_CODES.SUCCESS)
+            expect(JSON.stringify(response._body)).toBe(JSON.stringify(await User.find({})))
+        })
+    })
+    describe("List all event", () => {
+        test("check if endpoint returns correct response", async () => {
+            let response = await request(app).get("/event").set({token})
+            expect(response.status).toBe(ERROR_CODES.SUCCESS)
+            expect(JSON.stringify(response._body)).toBe(JSON.stringify(await Event.find({})))
+        })
+    })
+})
+
+describe("User Case 5: Messaging", () => {
+    //create chat, edit chat, view chat, send message, send chatinvite, accept chat, reject Chat, view Chat invites
+    describe("create chat", () => {
+        let chatInfo = new ChatDetails({
+            title: "tester chater",
+            tags: ["Hiking"],
+            numberOfPeople: 6,
+            description: "test description",
+            participants: ["64c50cfb436fbc75c654d9eb"],
+            currCapacity: 1,
+        });
+        test("Success: chat created", async () => {
+            let response = await request(app)
+                .post("/chat/create")
+                .send({ ...chatInfo, token });
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            await Chat.findByIdAndDelete(id);
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(chatInfo);
+        });
+    });
+    describe("edit chat", () => {
+        let chatInfo = new ChatDetails({
+            title: "tester chater",
+            tags: ["Hiking"],
+            numberOfPeople: 6,
+            description: "test description",
+            participants: ["64c50cfb436fbc75c654d9eb"],
+            currCapacity: 1,
+        });
+        let updatedChatInfo = new ChatDetails({
+            title: "tester chater 2",
+            tags: ["Hiking"],
+            numberOfPeople: 6,
+            description: "test description",
+            participants: ["64c50cfb436fbc75c654d9eb"],
+            currCapacity: 1,
+        });
+        test("invalid chat ID", async () => {
+            let response = await request(app)
+                .put("/chat/dfjsdfks/edit")
+                .send({ ...chatInfo, token });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        });
+        test("Chat with ID not found", async () => {
+            let response = await request(app)
+                .put("/chat/64d31ae677f7ad9a56ab89c6/edit")
+                .send({ ...chatInfo, token });
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        });
+        test("Success: chat is edited", async () => {
+            let response = await request(app)
+                .post("/chat/create")
+                .send({ ...chatInfo, token });
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            // console.log(response._body);
+            expect(response._body).toMatchObject(chatInfo);
+
+            let updatedResponse = await request(app)
+                .put(`/chat/${id}/edit`)
+                .send({ ...updatedChatInfo, token });
+            await Chat.findByIdAndDelete(id);
+            expect(updatedResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let updatedChat = updatedResponse._body;
+            delete updatedChat["_id"];
+            delete updatedChat["__v"];
+            expect(updatedChat).toMatchObject(updatedChatInfo);
+        });
+    });
+    describe("view all chat invites", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+       let chatInfo = new ChatDetails({
+            title: "tester chater",
+            tags: ["Hiking"],
+            numberOfPeople: 6,
+            description: "test description",
+            participants: ["64c50cfb436fbc75c654d9eb"],
+            currCapacity: 1,
+        });
+        test("IDs of friend requests are invalid", async () => {
+            userInfo.chatInvites = ["sdflkjsdf"]
+
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+            
+            
+            let chatInvResponse = await request(app)
+            .get(`/user/${id}/chatInvites`)
+            .set({ token });
+            await User.findByIdAndDelete(id);
+            expect(chatInvResponse.status).toBe(ERROR_CODES.INVALID);
+            expect(JSON.stringify(chatInvResponse._body)).toBe(JSON.stringify([]));
+            
+            userInfo.chatInvites = [];
+        });
+        test("chats in chatinvites not found ", async () => {
+            userInfo.chatInvites = ["64d31ae677f7ad9a56ab89c6"]
+
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+            
+            
+            let chatInvResponse = await request(app)
+            .get(`/user/${id}/chatInvites`)
+            .set({ token });
+            await User.findByIdAndDelete(id);
+            expect(chatInvResponse.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(JSON.stringify(chatInvResponse._body)).toBe(JSON.stringify([]));
+
+            userInfo.chatInvites = [];
+        });
+        test("Success: chatInvites viewed", async () => {
+            let chatResponse = await request(app)
+                .post("/chat/create")
+                .send({ ...chatInfo, token });
+            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let chatId = chatResponse._body._id;
+            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            expect(chatResponse._body).toMatchObject(chatInfo);
 
 
-describe("Profile Management Use Case", () => {
+            userInfo.chatInvites = [chatId]
+
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+            
+            
+            let chatInvResponse = await request(app)
+            .get(`/user/${id}/chatInvites`)
+            .set({ token });
+            await User.findByIdAndDelete(id);
+            await Chat.findByIdAndDelete(chatId);
+            ["_id", "__v"].forEach((key) => delete chatInvResponse._body[0][key]);
+            expect(chatInvResponse.status).toBe(ERROR_CODES.SUCCESS);
+            expect(chatInvResponse._body[0]).toMatchObject(chatInfo);
+
+            userInfo.chatInvites = [];
+        });
+
+
+    })
+    describe("send chat invite", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+       let chatInfo = new ChatDetails({
+            title: "tester chater",
+            tags: ["Hiking"],
+            numberOfPeople: 6,
+            description: "test description",
+            participants: ["64c50cfb436fbc75c654d9eb"],
+            currCapacity: 1,
+        });
+        test("IDs of user or chat are invalid", async () => {
+            let response = await request(app)
+                .put("/chat/sendChatInvite/sdfsdf/64c50cfb436fbc75c654d9eb")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+
+            let response2 = await request(app)
+                .put("/chat/sendChatInvite/64c50cfb436fbc75c654d9eb/sdfsdf")
+                .send({token});
+            expect(response2.status).toBe(ERROR_CODES.INVALID);
+            expect(response2._body).toBe(undefined);
+        })
+        test("user or chat not found", async () => {
+            let response = await request(app)
+                .put("/chat/sendChatInvite/64d50cfb436fbc75c6549dbe/64c50cfb436fbc75c654d9eb")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        })
+        test("User already in chat", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            chatInfo.participants = [id];
+
+            let chatResponse = await request(app)
+                .post("/chat/create")
+                .send({ ...chatInfo, token });
+            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let chatId = chatResponse._body._id;
+            await Chat.findByIdAndDelete(id);
+            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            expect(chatResponse._body).toMatchObject(chatInfo);
+
+            await User.findByIdAndUpdate(id, {$push: {chats: chatId}});
+
+            let chatInvResponse = await request(app)
+                .put(`/chat/sendChatInvite/${chatId}/${id}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await Chat.findByIdAndDelete(chatId);   
+            expect(chatInvResponse.status).toBe(ERROR_CODES.CONFLICT);
+            expect(chatInvResponse._body).toBe(undefined);
+            chatInfo.participants = []
+        })
+        test("Chatinvite was already sent before", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let chatResponse = await request(app)
+                .post("/chat/create")
+                .send({ ...chatInfo, token });
+            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let chatId = chatResponse._body._id;
+            await Chat.findByIdAndDelete(id);
+            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            expect(chatResponse._body).toMatchObject(chatInfo);
+
+            await User.findByIdAndUpdate(id, {$push: {chatInvites: chatId}});
+
+            let chatInvResponse = await request(app)
+                .put(`/chat/sendChatInvite/${chatId}/${id}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await Chat.findByIdAndDelete(chatId);   
+            expect(chatInvResponse.status).toBe(ERROR_CODES.CONFLICT);
+            expect(chatInvResponse._body).toBe(undefined);
+        })
+        test("Success: Chat Invite sent", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let chatResponse = await request(app)
+                .post("/chat/create")
+                .send({ ...chatInfo, token });
+            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let chatId = chatResponse._body._id;
+            await Chat.findByIdAndDelete(id);
+            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            expect(chatResponse._body).toMatchObject(chatInfo);
+
+            let chatInvResponse = await request(app)
+                .put(`/chat/sendChatInvite/${chatId}/${id}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await Chat.findByIdAndDelete(chatId);   
+            expect(chatInvResponse.status).toBe(ERROR_CODES.SUCCESS);
+            expect(chatInvResponse._body).toBe(undefined);
+            // await Chat.deleteMany({title: "Test Initial Title"})
+            // await Event.deleteMany({title: "Test Initial Title"})
+        })
+
+
+    })
+    describe("accept chat invite", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+       let chatInfo = new ChatDetails({
+            title: "tester chater",
+            tags: ["Hiking"],
+            numberOfPeople: 6,
+            description: "test description",
+            participants: ["64c50cfb436fbc75c654d9eb"],
+            currCapacity: 1,
+        });
+        test("IDs of user or event are invalid", async () => {
+            let response = await request(app)
+                .put("/user/acceptChat/sdfsdf/64c50cfb436fbc75c654d9eb")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+
+            let response2 = await request(app)
+                .put("/user/acceptChat/64c50cfb436fbc75c654d9eb/sdfsdf")
+                .send({token});
+            expect(response2.status).toBe(ERROR_CODES.INVALID);
+            expect(response2._body).toBe(undefined);
+        })
+        test("Chat nor User found", async () => {
+            let response = await request(app)
+                .put("/user/acceptChat/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        })
+        test("User already in chat", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            chatInfo.participants = [id];
+
+            let chatResponse = await request(app)
+                .post("/chat/create")
+                .send({ ...chatInfo, token });
+            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let chatId = chatResponse._body._id;
+            await Chat.findByIdAndDelete(id);
+            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            expect(chatResponse._body).toMatchObject(chatInfo);
+
+            await User.findByIdAndUpdate(id, {$push: {chats: chatId}});
+
+            let chatInvResponse = await request(app)
+                .put(`/user/acceptChat/${id}/${chatId}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await Chat.findByIdAndDelete(chatId);   
+            expect(chatInvResponse.status).toBe(ERROR_CODES.CONFLICT);
+            expect(chatInvResponse._body).toBe(undefined);
+            chatInfo.participants = []
+        })
+        test("chat capacity at max", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            chatInfo.currCapacity = 6;
+
+            let chatResponse = await request(app)
+                .post("/chat/create")
+                .send({ ...chatInfo, token });
+            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let chatId = chatResponse._body._id;
+            await Chat.findByIdAndDelete(id);
+            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            expect(chatResponse._body).toMatchObject(chatInfo);
+
+            let chatInvResponse = await request(app)
+                .put(`/user/acceptChat/${id}/${chatId}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await Chat.findByIdAndDelete(chatId);   
+            expect(chatInvResponse.status).toBe(ERROR_CODES.CONFLICT);
+            expect(chatInvResponse._body).toBe(undefined);
+            chatInfo.currCapacity = 1
+        })
+        test("Success: chat invite accepted", async () => {
+            let response = await request(app).post("/user/create").send(userInfo);
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(userInfo);
+
+            let chatResponse = await request(app)
+                .post("/chat/create")
+                .send({ ...chatInfo, token });
+            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let chatId = chatResponse._body._id;
+            await Chat.findByIdAndDelete(id);
+            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            expect(chatResponse._body).toMatchObject(chatInfo);
+
+            let chatInvResponse = await request(app)
+                .put(`/user/acceptChat/${id}/${chatId}`)
+                .send({token});
+            await User.findByIdAndDelete(id);
+            await Chat.findByIdAndDelete(chatId);   
+            expect(chatInvResponse.status).toBe(ERROR_CODES.SUCCESS);
+            expect(chatInvResponse._body).toBe(undefined);
+        })
+
+    })
+    describe("reject chat invite", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+       let chatInfo = new ChatDetails({
+            title: "tester chater",
+            tags: ["Hiking"],
+            numberOfPeople: 6,
+            description: "test description",
+            participants: ["64c50cfb436fbc75c654d9eb"],
+            currCapacity: 1,
+        });
+        test("IDs of user or event are invalid", async () => {
+            let response = await request(app)
+                .put("/user/rejectChat/sdfsdf/64c50cfb436fbc75c654d9eb")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+
+            let response2 = await request(app)
+                .put("/user/rejectChat/64c50cfb436fbc75c654d9eb/sdfsdf")
+                .send({token});
+            expect(response2.status).toBe(ERROR_CODES.INVALID);
+            expect(response2._body).toBe(undefined);
+        })
+        test("Chat nor User found", async () => {
+            let response = await request(app)
+                .put("/user/rejectChat/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
+                .send({token});
+            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+            expect(response._body).toBe(undefined);
+        })
+    })
+    describe("send message", () => {})
+
+
+    
+})
+
+describe("User Case 6: Profile Management", () => {
     describe("create user", () => {
         let userInfo = new UserAccount({
             name: "Rob Robber",
@@ -783,9 +1242,6 @@ describe("Profile Management Use Case", () => {
             expect(foundUser._body).toMatchObject(userInfo);
         });
     });
-
-    //need see/send/accept/remove friendRequests, see/accept/remove friends, 
-
     describe("view all friend requests", () => {
         let userInfo = new UserAccount({
             name: "Rob Robber",
@@ -876,7 +1332,6 @@ describe("Profile Management Use Case", () => {
             userInfo.friendRequest = [];
         });
     })
-
     describe("view all friends", () => {
         let userInfo = new UserAccount({
             name: "Rob Robber",
@@ -967,7 +1422,6 @@ describe("Profile Management Use Case", () => {
             userInfo.friends = [];
         });
     })
-
     describe("send friend request", () => {
         let userInfo = new UserAccount({
             name: "Rob Robber",
@@ -1334,44 +1788,13 @@ describe("send chat", () => {
     test("Success: chat is sent to chat group", async () => {});
 });
 
-describe("send chat invite", () => {
-    test("Success: chat invite is sent", async () => {});
-});
-
-describe("send friend request", () => {
-    test("Success: friend request is sent", async () => {});
-});
 
 describe("accept chat invite", () => {
     test("Success: chat invite accepted", async () => {});
 });
 
-describe("accept event invite", () => {
-    test("Success: event invite accepted", async () => {});
-});
-
-describe("accept friend request", () => {
-    test("Success: friend request accepted", async () => {});
-});
-
 describe("reject chat invite", () => {
     test("Success: chat invite rejected", async () => {});
-});
-
-describe("reject event invite", () => {
-    test("Success: event invite rejected", async () => {});
-});
-
-describe("reject friend request", () => {
-    test("Success: friend request rejected", async () => {});
-});
-
-describe("remove friend", () => {
-    test("Success: friend removed", async () => {});
-});
-
-describe("leave event", () => {
-    test("Success: event left", async () => {});
 });
 
 describe("leave chat", () => {

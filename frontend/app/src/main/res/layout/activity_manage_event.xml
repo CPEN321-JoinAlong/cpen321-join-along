@@ -67,14 +67,14 @@
         app:tabTextColor="@color/black">
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/block_option"
+            android:id="@+id/publicOption"
             android:layout_width="wrap_content"
 
             android:layout_height="wrap_content"
             android:text="@string/default_public_string" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/dontblock_option"
+            android:id="@+id/privateOption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/default_private_string" />

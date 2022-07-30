@@ -20,7 +20,7 @@ const BanService = require("./modules/ban_module/BanService");
 const ERROR_CODES = require("./ErrorCodes");
 
 function logRequest(req, res, next) {
-	console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
+	// console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
 	next();
 }
 
@@ -155,7 +155,7 @@ app.post("/user/create", async (req, res) => {
 	let userInfo = new UserAccount(userObject);
 	try {
 		let userResponse = await userStore.createUser(userInfo);
-		console.log(userResponse);
+		// console.log(userResponse);
 		res.status(userResponse.status).send(userResponse.data);
 	} catch (e) {
 		console.log(e);
@@ -169,7 +169,7 @@ app.post("/chat/create", async (req, res) => {
 	let chatInfo = new ChatDetails(chatObject);
 	try {
 		let chatResponse = await chatEngine.createChat(chatInfo, userStore);
-		console.log(chatResponse);
+		// console.log(chatResponse);
 		res.status(chatResponse.status).send(chatResponse.data);
 	} catch (e) {
 		console.log(e);
@@ -181,7 +181,7 @@ app.post("/chat/create", async (req, res) => {
 app.post("/event/create", async (req, res) => {
 	let eventObject = req.body;
 	let eventInfo = new EventDetails(eventObject);
-	console.log(eventInfo);
+	// console.log(eventInfo);
 	try {
 		let eventResponse = await eventStore.createEvent(eventInfo, userStore);
 		let chatResponse = await chatEngine.createChat(
@@ -501,10 +501,10 @@ app.put("/user/sendFriendRequest/:userID/:otherUserID", async (req, res) => {
 			userID,
 			otherUserID
 		);
-		console.log(friendReqResponse);
-		if (friendReqResponse === ERROR_CODES.SUCCESS)
-			res.status(friendReqResponse.status).send("Successful");
-		else res.status(friendReqResponse.status).send("Unsuccessful");
+		// if (friendReqResponse === ERROR_CODES.SUCCESS)
+		res.status(friendReqResponse.status).send(friendReqResponse.data);
+		// console.log(friendReqResponse);
+		// else res.status(friendReqResponse.status).send("Unsuccessful");
 	} catch (e) {
 		console.log(e);
 		res.status(ERROR_CODES.DBERROR).send(null);
@@ -634,19 +634,19 @@ app.put("/user/leaveEvent/:userID/:eventID", async (req, res) => {
 	let userID = req.params.userID;
 	let eventID = req.params.eventID;
 	let event = await eventStore.findEventByID(eventID);
-	console.log("IN THE ENDPOINT");
-	console.log(event);
+	// console.log("IN THE ENDPOINT");
+	// console.log(event);
 	if (event.status !== ERROR_CODES.SUCCESS)
 		return res.status(event.status).send("Event not found");
-	console.log("EVENT FOUND");
+	// console.log("EVENT FOUND");
 	try {
 		let eventResponse = await userStore.leaveEvent(
 			userID,
 			eventID,
 			eventStore
 		);
-		console.log("THIS IS EVENT RESPONSE");
-		console.log(eventResponse);
+		// console.log("THIS IS EVENT RESPONSE");
+		// console.log(eventResponse);
 		await userStore.leaveChat(userID, event.data.chat, chatEngine);
 		if (eventResponse.status === ERROR_CODES.SUCCESS)
 			res.status(eventResponse.status).send("Successful");

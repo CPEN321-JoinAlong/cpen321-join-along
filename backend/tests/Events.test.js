@@ -546,7 +546,8 @@ describe("delete an event", () => {
             participants: ["62d50cfb436fbc75c258d9eb", "62d50cfb436fbc"],
             currCapacity: 2,
             numberOfPeople: 6,
-            chat: "68ndhfb436fbc83jjj4rh4" 
+            chat: "68ndhfb436fbc83jjj4rh4",
+            eventImage: "Image" 
         })
         let eventUpdate = {
             $inc: {currCapacity: 1}

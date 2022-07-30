@@ -1,6 +1,7 @@
 package com.joinalongapp.joinalong;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -47,6 +48,7 @@ public class MessageActivity extends AppCompatActivity {
     private EditText messageField;
     private TextView chatTitle;
     private ImageButton backButton;
+    private ImageButton chatInfoButton;
     private Socket socket;
 
     @Override
@@ -84,6 +86,16 @@ public class MessageActivity extends AppCompatActivity {
 
                 socket.emit("messageDetection", userId, chatId, timestamp, messageContent);
                 messageField.setText("");
+            }
+        });
+
+        chatInfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MessageActivity.this, ViewChatActivity.class);
+                i.putExtra("CHAT_INFO", chatDetails);
+                startActivity(i);
+                //TODO: finish()?
             }
         });
 
@@ -169,6 +181,7 @@ public class MessageActivity extends AppCompatActivity {
         messageField = findViewById(R.id.editTextChatMessage);
         chatTitle = findViewById(R.id.chatTitleName);
         backButton = findViewById(R.id.chatBackButton);
+        chatInfoButton = findViewById(R.id.chatInfo);
     }
 
     private void initMessages(String id, String token, Activity activity) throws IOException, JSONException {

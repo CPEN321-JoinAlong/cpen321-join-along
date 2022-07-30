@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.joinalongapp.navbar.ViewChatFragment">
+    tools:context=".ViewChatActivity">
 
     <ImageButton
         android:id="@+id/chatBackButton"
@@ -170,4 +170,17 @@
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline30" />
+
+    <ImageButton
+        android:id="@+id/chatOptions"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_baseline_more_vert_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline28" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

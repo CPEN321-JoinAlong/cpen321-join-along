@@ -3,7 +3,7 @@ package com.joinalongapp.adapter;
 import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
 
 import android.app.Activity;
-import android.os.Bundle;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.controller.PathBuilder;
@@ -21,7 +19,7 @@ import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
-import com.joinalongapp.navbar.ViewChatFragment;
+import com.joinalongapp.joinalong.ViewChatActivity;
 import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.UserProfile;
 
@@ -189,16 +187,9 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewChatFragment viewChatFragment = new ViewChatFragment();
-                Bundle info = new Bundle();
-                info.putSerializable("CHAT_INFO", chatDetails.get(holder.getBindingAdapterPosition()));
-                viewChatFragment.setArguments(info);
-                AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
-                fragmentTransaction.add(R.id.frame_layout, viewChatFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                Intent i = new Intent(v.getContext(), ViewChatActivity.class);
+                i.putExtra("CHAT_INFO", chatDetails.get(holder.getBindingAdapterPosition()));
+                v.getContext().startActivity(i);
             }
         });
         //holder.getProfilePicture().set

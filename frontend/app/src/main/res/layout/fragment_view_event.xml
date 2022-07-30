@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:clickable="true"
-    tools:context="com.joinalongapp.navbar.ViewChatFragment">
+    tools:context="com.joinalongapp.navbar.ViewEventFragment">
 
     <ImageButton
         android:id="@+id/viewEventBackButton"

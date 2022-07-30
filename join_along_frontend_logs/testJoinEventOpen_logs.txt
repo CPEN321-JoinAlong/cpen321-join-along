@@ -1,0 +1,259 @@
+07-29 21:58:16.991 25923 25954 I TestRunner: started: testJoinEventOpen(com.joinalongapp.joinalong.JoinEventTest)
+07-29 21:58:16.995  2044  2068 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:16.997  2044  2068 I chatty  : uid=1000(system) android.anim identical 18 lines
+07-29 21:58:16.997  2044  2068 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:17.005  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 5976064
+07-29 21:58:17.010 25923 25954 W Settings: Setting always_finish_activities has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+07-29 21:58:17.017 25956 25987 D EGL_emulation: eglMakeCurrent: 0xdcd16e40: ver 3 0 (tinfo 0xe7e89420)
+07-29 21:58:17.045  2044 11423 D HostConnection: HostConnection::get() New Host Connection established 0xb48f0950, tid 11423
+07-29 21:58:17.049  2044 11423 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_native_sync_v3 ANDROID_EMU_native_sync_v4 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV420_888_to_NV21 ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0
+07-29 21:58:17.055  2044 11423 W OpenGLRenderer: Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+07-29 21:58:17.067  2044 11423 D eglCodecCommon: setVertexArrayObject: set vao to 0 (0) 0 0
+07-29 21:58:17.067  2044 11423 D EGL_emulation: eglCreateContext: 0xb493b420: maj 3 min 0 rcv 3
+07-29 21:58:17.077  2044 11423 D EGL_emulation: eglMakeCurrent: 0xb493b420: ver 3 0 (tinfo 0xb7daeb20)
+07-29 21:58:17.096  2044  2060 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:17.103  2044  2060 I chatty  : uid=1000(system) Binder:2044_1 identical 48 lines
+07-29 21:58:17.103  2044  2060 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:17.107 25956 25956 W ActivityThread: handleWindowVisibility: no activity for token android.os.BinderProxy@f99a155
+07-29 21:58:17.115  8507  8507 I KeyboardViewUtil: systemKeyboardHeightRatio:1.000000; userKeyboardHeightRatio:1.000000.
+07-29 21:58:17.115  8507  8507 I AndroidIME: LatinIme.onActivate() : EditorInfo = Package = com.android.settings.intelligence : Type = Text : Learning = Disable : Suggestion = Hide : AutoCorrection = Disable : Microphone = Show : NoPersonalizedLearning = Disable
+07-29 21:58:17.138  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:17.146  8507  8507 I Conv2QueryExtension: Current locale: en_US, config allows these locales: de,en,es,fr,it,ms,pt,ta
+07-29 21:58:17.149  8507  8507 I Conv2QueryExtension: Conv2Query not enabled due to current app [com.android.settings.intelligence] not in whitelist
+07-29 21:58:17.149  8507  8507 I Conv2QueryExtension: onActivate() : Disabled by unsupported host app
+07-29 21:58:17.161  2044 11423 D eglCodecCommon: setVertexArrayObject: set vao to 0 (0) 1 0
+07-29 21:58:17.196  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9048064
+07-29 21:58:17.221  1796 18153 I chatty  : uid=1000(system) HwBinder:1796_3 identical 1 line
+07-29 21:58:17.288  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9048064
+07-29 21:58:17.314  1796  1880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:17.378  8507 11372 D EGL_emulation: eglMakeCurrent: 0xd4d1b4a0: ver 3 0 (tinfo 0xd4d0fc60)
+07-29 21:58:17.405  2044  2495 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:17.429  2044  2495 I chatty  : uid=1000(system) Binder:2044_A identical 37 lines
+07-29 21:58:17.429  2044  2495 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:17.429 25923 25923 W ActivityThread: handleWindowVisibility: no activity for token android.os.BinderProxy@baddbd8
+07-29 21:58:17.429  2044  2495 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:17.461  2044  2495 I chatty  : uid=1000(system) Binder:2044_A identical 29 lines
+07-29 21:58:17.461  2044  2495 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:17.464  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 5976064
+07-29 21:58:17.494 18811 18865 D EGL_emulation: eglMakeCurrent: 0xd4d1a660: ver 3 0 (tinfo 0xd4d0f500)
+07-29 21:58:17.576 25923 25923 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@2804df0 in: PRE_ON_CREATE
+07-29 21:58:17.577 25923 25923 V ActivityScenario: Activity lifecycle changed event received but ignored because the reported transition was not ON_CREATE while the last known transition was PRE_ON_CREATE
+07-29 21:58:17.647 25923 25923 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@2804df0 in: CREATED
+07-29 21:58:17.647 25923 25923 V ActivityScenario: Update currentActivityStage to CREATED, currentActivity=com.joinalongapp.joinalong.SearchScreenActivity@2804df0
+07-29 21:58:17.649  2044  2056 I system_server: NativeAlloc concurrent copying GC freed 35077(2215KB) AllocSpace objects, 28(1328KB) LOS objects, 25% free, 17MB/23MB, paused 12.336ms total 560.511ms
+07-29 21:58:17.652 25923 25923 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@2804df0 in: STARTED
+07-29 21:58:17.653 25923 25923 V ActivityScenario: Update currentActivityStage to STARTED, currentActivity=com.joinalongapp.joinalong.SearchScreenActivity@2804df0
+07-29 21:58:17.654 25923 25923 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@2804df0 in: RESUMED
+07-29 21:58:17.654 25923 25923 V ActivityScenario: Update currentActivityStage to RESUMED, currentActivity=com.joinalongapp.joinalong.SearchScreenActivity@2804df0
+07-29 21:58:17.656 25923 25954 W ngapp.joinalon: Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: Could not retrieve result in time: 14
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: java.util.concurrent.TimeoutException
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: 	at java.util.concurrent.FutureTask.get(FutureTask.java:206)
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: 	at com.android.settings.intelligence.search.SearchResultAggregator.fetchResults(SearchResultAggregator.java:68)
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: 	at com.android.settings.intelligence.search.SearchResultLoader.loadInBackground(SearchResultLoader.java:25)
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: 	at com.android.settings.intelligence.search.SearchResultLoader.loadInBackground(SearchResultLoader.java:13)
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: 	at android.content.AsyncTaskLoader.onLoadInBackground(AsyncTaskLoader.java:321)
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: 	at android.content.AsyncTaskLoader$LoadTask.doInBackground(AsyncTaskLoader.java:74)
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: 	at android.content.AsyncTaskLoader$LoadTask.doInBackground(AsyncTaskLoader.java:62)
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: 	at android.os.AsyncTask$3.call(AsyncTask.java:378)
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+07-29 21:58:17.695 18811 26026 D SearchResultAggregator: 	at java.lang.Thread.run(Thread.java:919)
+07-29 21:58:17.707  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:17.718  1796 18153 I chatty  : uid=1000(system) HwBinder:1796_3 identical 1 line
+07-29 21:58:17.723  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:17.740 25923 25990 D EGL_emulation: eglMakeCurrent: 0xdcd18700: ver 3 0 (tinfo 0xdcd254b0)
+07-29 21:58:17.762  2044  2072 I ActivityTaskManager: Displayed com.joinalongapp.joinalong/.SearchScreenActivity: +566ms
+07-29 21:58:17.777  8507  8507 I PhenotypeExpConfig: refreshConfiguration() : Force = false : UpdateAvailable = false : Age = 291 minutes : MaxAge = 720 minutes
+07-29 21:58:17.789  8507  8507 I AndroidIME: LatinIme.onDeactivate()
+07-29 21:58:17.799 25923 25923 I AssistStructure: Flattened final assist data: 1720 bytes, containing 1 windows, 9 views
+07-29 21:58:17.818  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: a: input svInfo.flags is 8
+07-29 21:58:17.818  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: b: input svInfo.flags is 8
+07-29 21:58:17.849  9002  9002 W qja     : Pending fill request while another request in the same session was triggered. [CONTEXT service_id=177 ]
+07-29 21:58:17.857  2044  4778 I AssistStructure: Flattened final assist data: 1628 bytes, containing 1 windows, 9 views
+07-29 21:58:17.862  9002 25998 W qbj     : Infinite Data has no result for com.joinalongapp.joinalong [CONTEXT service_id=177 ]
+07-29 21:58:17.862  9002 24321 W qbj     : Infinite Data has no result for com.joinalongapp.joinalong [CONTEXT service_id=177 ]
+07-29 21:58:17.866  9002 25134 W qbj     : Infinite Data has no result for com.joinalongapp.joinalong [CONTEXT service_id=177 ]
+07-29 21:58:17.878  9002 25134 W qbj     : Infinite Data has no result for com.joinalongapp.joinalong [CONTEXT service_id=177 ]
+07-29 21:58:17.878  8507  8507 I KeyboardViewUtil: systemKeyboardHeightRatio:1.000000; userKeyboardHeightRatio:1.000000.
+07-29 21:58:17.879  8507  8507 I AndroidIME: LatinIme.onActivate() : EditorInfo = Package = com.joinalongapp.joinalong : Type = Text : Learning = Disable : Suggestion = Hide : AutoCorrection = Disable : Microphone = Show : NoPersonalizedLearning = Disable
+07-29 21:58:17.892  8507  8507 I Conv2QueryExtension: Current locale: en_US, config allows these locales: de,en,es,fr,it,ms,pt,ta
+07-29 21:58:17.893  8507  8507 I Conv2QueryExtension: Conv2Query not enabled due to current app [com.joinalongapp.joinalong] not in whitelist
+07-29 21:58:17.893  8507  8507 I Conv2QueryExtension: onActivate() : Disabled by unsupported host app
+07-29 21:58:17.921  8507 11372 D EGL_emulation: eglMakeCurrent: 0xd4d1b4a0: ver 3 0 (tinfo 0xd4d0fc60)
+07-29 21:58:17.926  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:17.946  8507 11372 D EGL_emulation: eglMakeCurrent: 0xd4d1b4a0: ver 3 0 (tinfo 0xd4d0fc60)
+07-29 21:58:17.954  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:18.023  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:18.133 25923 25923 I ViewInteraction: Performing 'single click' action on view view.getId() is <2131362403/com.joinalongapp.joinalong:id/searchBar>
+07-29 21:58:18.197  1820  1998 D AF::Track: interceptBuffer: took 261us to intercept 0 tracks
+07-29 21:58:18.437 25923 25954 W ngapp.joinalon: Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+07-29 21:58:18.440 25923 25923 I ViewInteraction: Performing 'replace text(Test)' action on view is assignable from class <class android.widget.EditText>
+07-29 21:58:18.447 25923 25923 I System.out: search
+07-29 21:58:18.447 25923 25923 I System.out: changed
+07-29 21:58:18.484 25923 25923 I ViewInteraction: Performing 'send keyCode: 66, metaState: 0 key event' action on view is assignable from class <class android.widget.EditText>
+07-29 21:58:18.487  8507  8507 I KeyboardViewUtil: systemKeyboardHeightRatio:1.000000; userKeyboardHeightRatio:1.000000.
+07-29 21:58:18.489  8507  8507 I AndroidIME: LatinIme.onDeactivate()
+07-29 21:58:18.490  8507  8507 I AndroidIME: LatinIme.onActivate() : EditorInfo = Package = com.joinalongapp.joinalong : Type = Text : Learning = Disable : Suggestion = Hide : AutoCorrection = Disable : Microphone = Show : NoPersonalizedLearning = Disable
+07-29 21:58:18.498  8507  8507 I Conv2QueryExtension: Current locale: en_US, config allows these locales: de,en,es,fr,it,ms,pt,ta
+07-29 21:58:18.499  8507  8507 I Conv2QueryExtension: Conv2Query not enabled due to current app [com.joinalongapp.joinalong] not in whitelist
+07-29 21:58:18.499  8507  8507 I Conv2QueryExtension: onActivate() : Disabled by unsupported host app
+07-29 21:58:18.520  8507  8507 I PhenotypeExpConfig: refreshConfiguration() : Force = false : UpdateAvailable = false : Age = 291 minutes : MaxAge = 720 minutes
+07-29 21:58:18.531  8507  8507 I AndroidIME: LatinIme.onDeactivate()
+07-29 21:58:18.537  8507 11372 D EGL_emulation: eglMakeCurrent: 0xd4d1b4a0: ver 3 0 (tinfo 0xd4d0fc60)
+07-29 21:58:18.818  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: a: input svInfo.flags is 8
+07-29 21:58:18.818  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: b: input svInfo.flags is 8
+07-29 21:58:19.197 25923 25936 I ngapp.joinalon: Background concurrent copying GC freed 29321(1265KB) AllocSpace objects, 9(396KB) LOS objects, 49% free, 4222KB/8444KB, paused 1.491ms total 191.625ms
+07-29 21:58:19.581 25923 25954 W ngapp.joinalon: Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+07-29 21:58:19.583 25923 25923 I ViewInteraction: Performing 'actionOnItemAtPosition performing ViewAction: single click on item at position: 0' action on view view.getId() is <2131362405/com.joinalongapp.joinalong:id/searchPeopleRecyclerView>
+07-29 21:58:19.817  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: a: input svInfo.flags is 8
+07-29 21:58:19.817  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: b: input svInfo.flags is 8
+07-29 21:58:20.055 25923 25954 W ngapp.joinalon: Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+07-29 21:58:20.060 25923 25923 I ViewInteraction: Checking 'MatchesViewAssertion{viewMatcher=(view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() to return non-empty rectangle)}' assertion on view view.getId() is <2131362563/com.joinalongapp.joinalong:id/viewEventConstraintLayout>
+07-29 21:58:20.061 25923 25954 W ngapp.joinalon: Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+07-29 21:58:20.063 25923 25923 I ViewInteraction: Checking 'MatchesViewAssertion{viewMatcher=an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Test"}' assertion on view view.getId() is <2131362571/com.joinalongapp.joinalong:id/viewEventTitle>
+07-29 21:58:20.065 25923 25954 W ngapp.joinalon: Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+07-29 21:58:20.065 25923 25954 W ngapp.joinalon: Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+07-29 21:58:20.068 25923 25923 I ViewInteraction: Performing 'single click' action on view view.getId() is <2131362177/com.joinalongapp.joinalong:id/joinEventButton>
+07-29 21:58:20.546 25923 26052 D Join Event: Fri Jul 29 21:58:20 PDT 2022
+07-29 21:58:20.668  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 3457024
+07-29 21:58:20.676  1796 18153 I chatty  : uid=1000(system) HwBinder:1796_3 identical 1 line
+07-29 21:58:20.678  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 3457024
+07-29 21:58:20.697 25923 25990 D EGL_emulation: eglMakeCurrent: 0xdcd18700: ver 3 0 (tinfo 0xdcd254b0)
+07-29 21:58:20.744 25923 25990 D EGL_emulation: eglMakeCurrent: 0xdcd18700: ver 3 0 (tinfo 0xdcd254b0)
+07-29 21:58:20.817  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: a: input svInfo.flags is 8
+07-29 21:58:20.817  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: b: input svInfo.flags is 8
+07-29 21:58:21.817  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: a: input svInfo.flags is 8
+07-29 21:58:21.817  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: b: input svInfo.flags is 8
+07-29 21:58:22.253 25923 25990 D EGL_emulation: eglMakeCurrent: 0xdcd18700: ver 3 0 (tinfo 0xdcd254b0)
+07-29 21:58:22.818  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: a: input svInfo.flags is 8
+07-29 21:58:22.818  1794  2501 E GnssHAL_GnssInterface: gnssSvStatusCb: b: input svInfo.flags is 8
+07-29 21:58:23.238  1785  2002 W audio_hw_generic: Not supplying enough data to HAL, expected position 10629197 , only wrote 10226992
+07-29 21:58:23.345 25923 25954 W ngapp.joinalon: Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+07-29 21:58:23.373 25923 25923 I ViewInteraction: Checking 'MatchesViewAssertion{viewMatcher=(view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() to return non-empty rectangle)}' assertion on view an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Event Successfully Joined!"
+07-29 21:58:23.373 25923 25923 E ViewAssertions: '(view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() to return non-empty rectangle)' check could not be performed because view 'an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Event Successfully Joined!"' was not found.
+07-29 21:58:23.393 25923 25923 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@2804df0 in: PAUSED
+07-29 21:58:23.393 25923 25923 V ActivityScenario: Update currentActivityStage to PAUSED, currentActivity=com.joinalongapp.joinalong.SearchScreenActivity@2804df0
+07-29 21:58:23.394  2044  4778 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:23.398  2044  4778 I chatty  : uid=1000(system) Binder:2044_1A identical 48 lines
+07-29 21:58:23.398  2044  4778 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:23.399 25956 25956 W ActivityThread: handleWindowVisibility: no activity for token android.os.BinderProxy@49ffdd1
+07-29 21:58:23.405  2044  2072 E memtrack: Couldn't load memtrack module
+07-29 21:58:23.405  2044  2072 W android.os.Debug: failed to get memory consumption info: -1
+07-29 21:58:23.457  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:23.469  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:23.497 25956 25987 D EGL_emulation: eglMakeCurrent: 0xdcd16e40: ver 3 0 (tinfo 0xe7e89420)
+07-29 21:58:23.503  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:23.516  2044  5280 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:23.519  2044  5280 I chatty  : uid=1000(system) Binder:2044_1D identical 48 lines
+07-29 21:58:23.519  2044  5280 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:23.529 25956 25956 W ActivityThread: handleWindowVisibility: no activity for token android.os.BinderProxy@29dd9c2
+07-29 21:58:23.592  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:23.612  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:23.661 25956 25987 D EGL_emulation: eglMakeCurrent: 0xdcd16e40: ver 3 0 (tinfo 0xe7e89420)
+07-29 21:58:23.666  1796 18153 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9334784
+07-29 21:58:23.676  2044  2068 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:23.680  2044  2068 I chatty  : uid=1000(system) android.anim identical 18 lines
+07-29 21:58:23.680  2044  2068 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:23.712 25923 25990 D EGL_emulation: eglMakeCurrent: 0xdcd18700: ver 3 0 (tinfo 0xdcd254b0)
+07-29 21:58:23.728  2044  2072 I ActivityTaskManager: Displayed com.joinalongapp.joinalong.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity: +130ms
+07-29 21:58:23.740  2044  4778 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:23.765  2044  4778 I chatty  : uid=1000(system) Binder:2044_1A identical 38 lines
+07-29 21:58:23.765  2044  4778 W InputReader: Device has associated, but no associated display id.
+07-29 21:58:23.779 25923 25923 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@2804df0 in: STOPPED
+07-29 21:58:23.780 25923 25923 V ActivityScenario: Update currentActivityStage to STOPPED, currentActivity=com.joinalongapp.joinalong.SearchScreenActivity@2804df0
+07-29 21:58:23.801 25923 25923 D LifecycleMonitor: Lifecycle status change: com.joinalongapp.joinalong.SearchScreenActivity@2804df0 in: DESTROYED
+07-29 21:58:23.801 25923 25923 V ActivityScenario: Update currentActivityStage to DESTROYED, currentActivity=null
+07-29 21:58:23.802 25923 25954 E TestRunner: failed: testJoinEventOpen(com.joinalongapp.joinalong.JoinEventTest)
+07-29 21:58:23.802 25923 25954 E TestRunner: ----- begin exception -----
+07-29 21:58:23.803 25923 25954 E TestRunner: androidx.test.espresso.NoMatchingViewException: No views in hierarchy found matching: an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Event Successfully Joined!"
+07-29 21:58:23.803 25923 25954 E TestRunner:
+07-29 21:58:23.803 25923 25954 E TestRunner: View Hierarchy:
+07-29 21:58:23.803 25923 25954 E TestRunner: +>DecorView{id=-1, visibility=VISIBLE, width=1024, height=544, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,0)(wrapxwrap) gr=CENTER sim={adjust=pan} ty=APPLICATION fmt=TRANSLUCENT wanim=0x7f120003
+07-29 21:58:23.803 25923 25954 E TestRunner:   fl=DIM_BEHIND FULLSCREEN ALT_FOCUSABLE_IM SPLIT_TOUCH HARDWARE_ACCELERATED}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+07-29 21:58:23.803 25923 25954 E TestRunner: |
+07-29 21:58:23.803 25923 25954 E TestRunner: +->LinearLayout{id=-1, visibility=VISIBLE, width=936, height=456, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@544017d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=44.0, y=44.0, child-count=2}
+07-29 21:58:23.803 25923 25954 E TestRunner: |
+07-29 21:58:23.803 25923 25954 E TestRunner: +-->ViewStub{id=16908692, res-name=action_mode_bar_stub, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@a16e872, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+07-29 21:58:23.803 25923 25954 E TestRunner: |
+07-29 21:58:23.803 25923 25954 E TestRunner: +-->FrameLayout{id=-1, visibility=VISIBLE, width=936, height=456, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@b3a0140, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+07-29 21:58:23.803 25923 25954 E TestRunner: |
+07-29 21:58:23.803 25923 25954 E TestRunner: +--->FitWindowsFrameLayout{id=2131361853, res-name=action_bar_root, visibility=VISIBLE, width=936, height=456, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@c320a1f, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+07-29 21:58:23.803 25923 25954 E TestRunner: |
+07-29 21:58:23.803 25923 25954 E TestRunner: +---->ContentFrameLayout{id=16908290, res-name=content, visibility=VISIBLE, width=936, height=456, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@416e335, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+07-29 21:58:23.803 25923 25954 E TestRunner: |
+07-29 21:58:23.803 25923 25954 E TestRunner: +----->AlertDialogLayout{id=2131362317, res-name=parentPanel, visibility=VISIBLE, width=936, height=456, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@25aa296, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=4}
+07-29 21:58:23.803 25923 25954 E TestRunner: |
+07-29 21:58:23.803 25923 25954 E TestRunner: +------>LinearLayout{id=2131362528, res-name=topPanel, visibility=VISIBLE, width=936, height=139, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.LinearLayoutCompat$LayoutParams@3bd43ed, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+07-29 21:58:23.803 25923 25954 E TestRunner: |
+07-29 21:58:23.803 25923 25954 E TestRunner: +------->LinearLayout{id=2131362525, res-name=title_template, visibility=VISIBLE, width=936, height=117, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false,
+07-29 21:58:23.803 25923 25954 E TestRunner: ----- end exception -----
+07-29 21:58:23.809 25923 25954 I TestRunner: finished: testJoinEventOpen(com.joinalongapp.joinalong.JoinEventTest)
+
+androidx.test.espresso.NoMatchingViewException: No views in hierarchy found matching: an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Event Successfully Joined!"
+
+View Hierarchy:
++>DecorView{id=-1, visibility=VISIBLE, width=1024, height=544, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,0)(wrapxwrap) gr=CENTER sim={adjust=pan} ty=APPLICATION fmt=TRANSLUCENT wanim=0x7f120003
+fl=DIM_BEHIND FULLSCREEN ALT_FOCUSABLE_IM SPLIT_TOUCH HARDWARE_ACCELERATED}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++->LinearLayout{id=-1, visibility=VISIBLE, width=936, height=456, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@544017d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=44.0, y=44.0, child-count=2}
+|
++-->ViewStub{id=16908692, res-name=action_mode_bar_stub, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@a16e872, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+|
++-->FrameLayout{id=-1, visibility=VISIBLE, width=936, height=456, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@b3a0140, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++--->FitWindowsFrameLayout{id=2131361853, res-name=action_bar_root, visibility=VISIBLE, width=936, height=456, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@c320a1f, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++---->ContentFrameLayout{id=16908290, res-name=content, visibility=VISIBLE, width=936, height=456, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@416e335, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++----->AlertDialogLayout{id=2131362317, res-name=parentPanel, visibility=VISIBLE, width=936, height=456, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@25aa296, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=4}
+|
++------>LinearLayout{id=2131362528, res-name=topPanel, visibility=VISIBLE, width=936, height=139, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.LinearLayoutCompat$LayoutParams@3bd43ed, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------->LinearLayout{id=2131362525, res-name=title_template, visibility=VISIBLE, width=936, height=117, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@4703a70, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++-------->AppCompatImageView{id=16908294, res-name=icon, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@83731e9, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+|
++-------->DialogTitle{id=2131361874, res-name=alertTitle, visibility=VISIBLE, width=804, height=67, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@3eb6e6e, tag=null, root-is-layout-requested=false, has-input-connection=false, x=66.0, y=50.0, text=Not Found during Join Event, input-type=0, ime-target=false, has-links=false}
+|
++------->Space{id=2131362522, res-name=titleDividerNoCustom, visibility=VISIBLE, width=936, height=22, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@df7b90f, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=117.0}
+|
++------>FrameLayout{id=2131361955, res-name=contentPanel, visibility=VISIBLE, width=936, height=163, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.LinearLayoutCompat$LayoutParams@d4803a5, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=139.0, child-count=1}
+|
++------->NestedScrollView{id=2131362401, res-name=scrollView, visibility=VISIBLE, width=936, height=163, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@100d72b, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++-------->LinearLayout{id=-1, visibility=VISIBLE, width=936, height=163, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@733bb07, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}
+|
++--------->Space{id=2131362493, res-name=textSpacerNoTitle, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@26cf434, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+|
++--------->MaterialTextView{id=16908299, res-name=message, visibility=VISIBLE, width=936, height=163, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@f04025d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Unable to Join Event.
+Event was not found.
+, input-type=0, ime-target=false, has-links=false}
+|
++--------->Space{id=2131362492, res-name=textSpacerNoButtons, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@e5b87d2, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+|
++------>FrameLayout{id=2131361965, res-name=customPanel, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=androidx.appcompat.widget.LinearLayoutCompat$LayoutParams@dff1fa0, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++------->FrameLayout{id=2131361964, res-name=custom, visibility=VISIBLE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@7036759, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=0}
+|
++------>ScrollView{id=2131361913, res-name=buttonPanel, visibility=VISIBLE, width=936, height=154, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.LinearLayoutCompat$LayoutParams@8bf03ff, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=302.0, child-count=1}
+|
++------->ButtonBarLayout{id=-1, visibility=VISIBLE, width=936, height=154, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@4ad42b8, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=4}
+|
++-------->MaterialButton{id=16908315, res-name=button3, visibility=VISIBLE, width=176, height=132, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@a69a891, tag=null, root-is-layout-requested=false, has-input-connection=false, x=33.0, y=11.0, text=OK, input-type=0, ime-target=false, has-links=false, is-checked=false}
+|
++-------->Space{id=2131362440, res-name=spacer, visibility=INVISIBLE, width=694, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@17f23f6, tag=null, root-is-layout-requested=false, has-input-connection=false, x=209.0, y=143.0}
+|
++-------->MaterialButton{id=16908314, res-name=button2, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@65b73f7, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=, input-type=0, ime-target=false, has-links=false, is-checked=false}
+|
++-------->MaterialButton{id=16908313, res-name=button1, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@a4fd264, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=, input-type=0, ime-target=false, has-links=false, is-checked=false}
+|
++---->ViewStubCompat{id=2131361864, res-name=action_mode_bar_stub, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@36f3ccd, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+at dalvik.system.VMStack.getThreadStackTrace(Native Method)
+at java.lang.Thread.getStackTrace(Thread.java:1720)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:12)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.check(ViewInteraction.java:12)
+at com.joinalongapp.joinalong.JoinEventTest.testJoinEventOpen(JoinEventTest.java:60)

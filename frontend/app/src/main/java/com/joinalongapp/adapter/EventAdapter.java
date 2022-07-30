@@ -1,6 +1,7 @@
 package com.joinalongapp.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Event;
 
 import java.util.List;
+import java.util.Random;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
@@ -30,6 +32,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.event_cards_layout, parent, false);
+        //Random random = new Random();
+        //int color = Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
+        //view.setBackgroundColor(color);
         return new EventViewHolder(view);
     }
 

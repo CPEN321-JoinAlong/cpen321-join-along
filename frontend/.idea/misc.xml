@@ -21,24 +21,24 @@
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_search_screen.xml" value="0.5" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_select_rideshare.xml" value="0.32760416666666664" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_view_report.xml" value="0.18" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/event_cards_layout.xml" value="0.32760416666666664" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_friends.xml" value="0.1" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/event_cards_layout.xml" value="0.37566137566137564" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_friends.xml" value="0.25" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_friends_list.xml" value="0.32760416666666664" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_friends_request.xml" value="0.2234375" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_home.xml" value="0.1" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_home.xml" value="0.2" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_home_event_list.xml" value="0.32760416666666664" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_home_event_map.xml" value="0.32760416666666664" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_messaging.xml" value="0.28125" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_messaging_list.xml" value="0.28125" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_messaging_request.xml" value="0.28125" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_profile.xml" value="0.2" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_profile.xml" value="0.10648148148148148" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_view_chat.xml" value="0.32760416666666664" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_view_event.xml" value="0.22" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_view_profile.xml" value="0.22" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_view_profile.xml" value="0.18" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_view_report.xml" value="0.5" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/individual_choice_chip.xml" value="0.32760416666666664" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/individual_entry_chip.xml" value="0.32760416666666664" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/list_item.xml" value="0.1" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/list_item.xml" value="0.25" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/map_info_window_layout.xml" value="0.32760416666666664" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/received_message_item.xml" value="0.5" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/report_list_item.xml" value="0.5" />
@@ -64,7 +64,6 @@
         <entry key="..\:/Users/jdara/AndroidStudioProjects/cpen321-join-along/frontend/app/src/main/res/layout/activity_select_rideshare.xml" value="0.358695652173913" />
         <entry key="..\:/Users/jdara/AndroidStudioProjects/cpen321-join-along/frontend/app/src/main/res/layout/activity_test.xml" value="0.33" />
         <entry key="..\:/Users/jdara/AndroidStudioProjects/cpen321-join-along/frontend/app/src/main/res/layout/event_cards.xml" value="0.358695652173913" />
-        <entry key="..\:/Users/jdara/AndroidStudioProjects/cpen321-join-along/frontend/app/src/main/res/layout/event_cards_layout.xml" value="0.358695652173913" />
         <entry key="..\:/Users/jdara/AndroidStudioProjects/cpen321-join-along/frontend/app/src/main/res/layout/fragment_dashboard.xml" value="0.358695652173913" />
         <entry key="..\:/Users/jdara/AndroidStudioProjects/cpen321-join-along/frontend/app/src/main/res/layout/fragment_event.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/jdara/AndroidStudioProjects/cpen321-join-along/frontend/app/src/main/res/layout/fragment_events.xml" value="0.358695652173913" />
@@ -95,7 +94,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

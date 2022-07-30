@@ -70,7 +70,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardView2"
-        android:layout_width="310dp"
+        android:layout_width="350dp"
         android:layout_height="28dp"
         android:layout_margin="10dp"
         app:cardCornerRadius="8dp"

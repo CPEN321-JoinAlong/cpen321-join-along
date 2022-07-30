@@ -28,8 +28,8 @@
             android:layout_marginEnd="1dp"
             android:text="@string/card_event_name_default"
             android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textFontWeight="2000"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/cardViewEventDescription"

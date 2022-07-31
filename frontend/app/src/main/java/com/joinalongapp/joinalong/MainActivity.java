@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -59,6 +58,7 @@ public class MainActivity extends AppCompatActivity{
                 case R.id.event:
                     Intent i = new Intent(MainActivity.this, ManageEventActivity.class);
                     startActivity(i);
+                    finish();
                     break;
                 case R.id.friends:
                     replaceFragment(new FriendsFragment());

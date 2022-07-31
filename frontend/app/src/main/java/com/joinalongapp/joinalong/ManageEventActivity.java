@@ -83,6 +83,7 @@ public class ManageEventActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent home = new Intent(ManageEventActivity.this, MainActivity.class);
                 startActivity(home);
+                finish();
             }
         });
 

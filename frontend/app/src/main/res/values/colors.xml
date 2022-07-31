@@ -15,5 +15,21 @@
     <color name="red">#cf3119</color>
     <color name="green">#40de1d</color>
 
+    <color name="night_gradient_start">#7e57c2</color>
+    <color name="night_gradient_center">#d1c4e9</color>
+    <color name="night_button_color">#e6ceff</color>
+    <color name="night_default_subtitle_color">#e6ceff</color>
+    <color name="night_tab_color">#e6ceff</color>
+    <color name="night_chip_color">#9091ec</color>
+    <color name="night_stroke_color">@color/white</color>
+
+    <color name="light_gradient_start">#e64a19</color>
+    <color name="light_gradient_center">#ffab91</color>
+    <color name="light_button_color">#DD2C00</color>
+    <color name="light_default_subtitle_color">#DD2C00</color>
+    <color name="light_tab_color">#DD2C00</color>
+    <color name="light_chip_color">@color/light_grey</color>
+    <color name="light_stroke_color">@color/light_grey</color>
+
 
 </resources>

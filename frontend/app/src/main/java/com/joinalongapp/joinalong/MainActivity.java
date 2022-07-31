@@ -1,9 +1,12 @@
 package com.joinalongapp.joinalong;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -25,6 +28,24 @@ public class MainActivity extends AppCompatActivity{
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         replaceFragment(new HomeFragment());
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("darkModePrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        final boolean darkMode = sharedPreferences.getBoolean("dark_mode_toggle", false);
+        boolean changedMode = sharedPreferences.getBoolean("changed", false);
+
+        //if(changedMode){
+        //    editor.putBoolean("changed", false);
+        //    replaceFragment(new ProfileFragment());
+        //}
+
+        //if(darkMode){
+        //    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        //}
+       // else{
+        //    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        //}
+
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
 

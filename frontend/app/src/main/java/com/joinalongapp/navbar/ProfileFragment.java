@@ -1,7 +1,10 @@
 
 package com.joinalongapp.navbar;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +12,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -46,6 +51,9 @@ public class ProfileFragment extends Fragment {
     private ImageButton logoutButton;
     private TextView profileDescription;
     private Button viewReportsButton;
+    private Switch toggleDarkMode;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
 
     public ProfileFragment() {
@@ -69,6 +77,9 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getActivity().getSharedPreferences("darkModePrefs", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
     }
 
     @Override
@@ -86,6 +97,35 @@ public class ProfileFragment extends Fragment {
         addTagsToChipGroup(tags);
         Picasso.get().load(user.getProfilePicture()).into(profilePicture);
         profileDescription.setText(description);
+
+
+        //boolean darkMode = sharedPreferences.getBoolean("dark_mode_toggle", false);
+
+        user.setAdmin(true);
+
+        boolean darkMode = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES;
+
+
+        toggleDarkMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(darkMode){
+
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    editor.putBoolean("dark_mode_toggle", false);
+
+                }
+                else{
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    editor.putBoolean("dark_mode_toggle", true);
+
+                }
+                //editor.putBoolean("changed", true);
+                editor.apply();
+
+
+            }
+        });
 
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,6 +174,7 @@ public class ProfileFragment extends Fragment {
         logoutButton = view.findViewById(R.id.logoutButton);
         profileDescription = view.findViewById(R.id.userDescription);
         viewReportsButton = view.findViewById(R.id.viewReportsButton);
+        toggleDarkMode = view.findViewById(R.id.nightModeSwitch);
     }
 
     private void signOut() {
@@ -155,4 +196,6 @@ public class ProfileFragment extends Fragment {
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
+
+
 }

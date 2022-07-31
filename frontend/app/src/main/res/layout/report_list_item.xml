@@ -12,6 +12,7 @@
         android:layout_marginLeft="35dp"
         android:layout_marginTop="10dp"
         android:text="TextView"
+        android:textColor="?attr/defaultTextColor"
         android:textSize="28sp" />
 
     <Button
@@ -30,7 +31,7 @@
         android:foregroundTint="@android:color/transparent"
         android:text="&#8942;"
         android:textAppearance="?android:textAppearanceLarge"
-        android:textColor="@color/black"
+        android:textColor="?attr/defaultTextColor"
         app:iconTint="@android:color/transparent"
         app:rippleColor="@android:color/transparent"
         app:strokeColor="@android:color/transparent" />
@@ -39,6 +40,7 @@
         android:id="@+id/individualReportType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="?attr/defaultTextColor"
         android:layout_marginLeft="235dp"
         android:layout_marginTop="25dp"
         android:text="TextView" />
@@ -47,6 +49,7 @@
         android:id="@+id/individualReporterName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="?attr/defaultTextColor"
         android:layout_marginLeft="35dp"
         android:layout_marginTop="50dp"
         android:text="TextView" />

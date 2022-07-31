@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/frameLayoutSearch"
+    android:background="?attr/backgroundColor"
     tools:context=".SearchScreenActivity">
 
 
@@ -14,7 +15,7 @@
         android:layout_height="49dp"
         android:layout_gravity="right"
         android:layout_marginTop="5dp"
-
+        android:textColor="?attr/defaultTextColor"
         android:layout_marginRight="5dp"
         android:gravity="right"
         android:iconifiedByDefault="false"
@@ -54,6 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:textColor="?attr/defaultTextColor"
         android:text="@string/default_search_no_results" />
 
 

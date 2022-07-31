@@ -1,58 +1,28 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chatRequestSwipeRefreshLayout"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
-    tools:context="com.joinalongapp.navbar.MessagingRequestFragment">
-
-    <ImageView
-        android:id="@+id/individualProfilePicture"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
-        app:srcCompat="@drawable/ic_baseline_group_24" />
-
-    <Button
-        android:id="@+id/acceptButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_gravity="right"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="70dp"
-
+    android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@android:color/transparent"
-        android:backgroundTint="@android:color/transparent"
-        android:drawableTint="@android:color/transparent"
-        android:foregroundTint="@android:color/transparent"
-        android:text="\u2713"
-        android:textAppearance="?android:textAppearanceLarge"
-        android:textColor="@color/green"
-        app:iconTint="@android:color/transparent"
-        app:rippleColor="@android:color/transparent"
-        app:strokeColor="@android:color/transparent" />
+        tools:context="com.joinalongapp.navbar.MessagingRequestFragment">
 
-    <Button
-        android:id="@+id/rejectButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_gravity="right"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="20dp"
 
-        android:background="@android:color/transparent"
-        android:backgroundTint="@android:color/transparent"
-        android:drawableTint="@android:color/transparent"
-        android:foregroundTint="@android:color/transparent"
-        android:text="\u2717"
-        android:textAppearance="?android:textAppearanceLarge"
-        android:textColor="@color/red"
-        app:iconTint="@android:color/transparent"
-        app:rippleColor="@android:color/transparent"
-        app:strokeColor="@android:color/transparent" />
 
-</FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatRequestRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

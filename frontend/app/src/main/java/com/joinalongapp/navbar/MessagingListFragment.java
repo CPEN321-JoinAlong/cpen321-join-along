@@ -1,6 +1,7 @@
 package com.joinalongapp.navbar;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.MessagingListCustomAdapter;
@@ -40,7 +42,7 @@ public class MessagingListFragment extends Fragment {
 
     private RecyclerView messagingListRecyclerView;
     private MessagingListCustomAdapter messagingListCustomAdapter;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
     protected List<ChatDetails> dataset;
 
 
@@ -84,6 +86,23 @@ public class MessagingListFragment extends Fragment {
         initElements(rootView);
         initAdapter();
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    initDataset();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000); //TODO: FIXME: a delay seems kinda hacky here
+            }
+        });
+
         return rootView;
     }
 
@@ -95,6 +114,7 @@ public class MessagingListFragment extends Fragment {
 
     private void initElements(View rootView) {
         messagingListRecyclerView = (RecyclerView) rootView.findViewById(R.id.messagingListRecyclerView);
+        swipeRefreshLayout = rootView.findViewById(R.id.chatListSwipeRefresh);
     }
 
     private void initDataset() throws IOException {

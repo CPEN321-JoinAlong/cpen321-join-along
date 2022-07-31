@@ -2,6 +2,7 @@ package com.joinalongapp.navbar;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.FriendsRequestCustomAdapter;
@@ -41,6 +43,7 @@ public class FriendsRequestFragment extends Fragment {
     private RecyclerView friendsRequestRecyclerView;
     private FriendsRequestCustomAdapter friendsRequestCustomAdapter;
     protected List<UserProfile> dataset;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public FriendsRequestFragment() {
         // Required empty public constructor
@@ -81,6 +84,25 @@ public class FriendsRequestFragment extends Fragment {
         initElements(rootView);
         initAdapter();
 
+        Activity activity = this.getActivity();
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    initDataset(activity);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000); //TODO: FIXME: a delay seems kinda hacky here
+            }
+        });
+
         return rootView;
     }
 
@@ -92,6 +114,7 @@ public class FriendsRequestFragment extends Fragment {
 
     private void initElements(View rootView) {
         friendsRequestRecyclerView = (RecyclerView) rootView.findViewById(R.id.peopleRecyclerView);
+        swipeRefreshLayout = rootView.findViewById(R.id.friendsFragmentSwipeRefresh);
     }
 
     private void initDataset(Activity activity) throws IOException {

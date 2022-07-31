@@ -1,6 +1,7 @@
 package com.joinalongapp.navbar;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +11,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.joinalongapp.adapter.EventAdapter;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Event;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +30,7 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
     private RecyclerView eventRecycler;
     private List<Event> eventList = new ArrayList<>();
     private EventAdapter eventAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public HomeEventListFragment() {
         // Required empty public constructor
@@ -65,6 +69,19 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         eventList = (List<Event>) getArguments().getSerializable("eventsList");
         updateEventCards();
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateEventCards();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000); //TODO: FIXME: a delay seems kinda hacky here
+            }
+        });
+
         return view;
     }
 
@@ -84,6 +101,7 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
 
     private void initElements(View view) {
         eventRecycler = view.findViewById(R.id.eventListRecyclerView);
+        swipeRefreshLayout = view.findViewById(R.id.homeEventSwipeRefresh);
     }
 
     /**

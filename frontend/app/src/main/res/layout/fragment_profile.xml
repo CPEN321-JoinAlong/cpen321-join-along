@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#BEDD2C00"
+    android:background="@drawable/gradient_background"
     android:outlineAmbientShadowColor="#FFFFFF"
     tools:context="com.joinalongapp.navbar.ProfileFragment">
 
@@ -71,10 +71,10 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="8dp"
         android:text="@string/default_interests"
-        android:textColor="@color/orange"
+        android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/interestsChipGroup"
         app:layout_constraintEnd_toStartOf="@+id/guideline19"
@@ -131,7 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/default_description"
-        android:textColor="@color/orange"
+        android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toTopOf="@+id/guideline17" />
@@ -178,6 +178,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:textColor="?attr/defaultTextColor"
         android:text="TextView"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
@@ -189,11 +190,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/default_view_reports"
+        android:backgroundTint="?attr/buttonColor"
         app:layout_constraintBottom_toTopOf="@+id/guideline18"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline17"
         app:layout_constraintVertical_bias="0.925" />
+
+
+    <Switch
+        android:id="@+id/nightModeSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/default_empty_string"
+        android:thumbTint="?attr/buttonColor"
+        android:trackTint="?attr/buttonColor"
+        app:layout_constraintBottom_toTopOf="@+id/guideline15"
+        app:layout_constraintStart_toStartOf="@+id/guideline16" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

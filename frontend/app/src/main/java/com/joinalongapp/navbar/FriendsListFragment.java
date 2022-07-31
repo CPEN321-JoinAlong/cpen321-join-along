@@ -111,7 +111,7 @@ public class FriendsListFragment extends Fragment {
 
     private void initElements(View rootView) {
         friendsListRecyclerView = (RecyclerView) rootView.findViewById(R.id.friendsListRecyclerView);
-        swipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
+        swipeRefreshLayout = rootView.findViewById(R.id.friendsSwipeRefresh);
     }
 
     private void initDataset() throws IOException{

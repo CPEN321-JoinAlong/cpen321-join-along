@@ -56,8 +56,9 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="682dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/eventListRecyclerView"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/homeEventSwipeRefresh"
         android:layout_width="350dp"
         android:layout_height="590dp"
         android:layout_marginTop="16dp"
@@ -66,7 +67,15 @@
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/aboveTitleGuideline4"
-        app:layout_constraintVertical_bias="0.245" />
+        app:layout_constraintVertical_bias="0.245" >
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/eventListRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#BEDD2C00"
+    android:background="@drawable/gradient_background"
     android:clickable="true"
     android:outlineAmbientShadowColor="#FFFFFF"
     tools:context="com.joinalongapp.navbar.ProfileFragment">
@@ -21,15 +21,14 @@
         app:layout_constraintTop_toBottomOf="@+id/profileName" />
 
 
-
     <TextView
         android:id="@+id/profileName"
         android:layout_width="175dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="@string/default_empty_string"
         android:textColor="@color/white"
         android:textSize="30sp"
-        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +39,7 @@
         android:layout_width="135dp"
         android:layout_height="135dp"
         android:layout_marginTop="16dp"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="?attr/backgroundColor"
         app:cardCornerRadius="250dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -61,8 +60,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/default_interests"
-        android:textColor="@color/orange"
         android:textSize="20sp"
+        android:textColor="?attr/defaultSubtitleTextColor"
         app:layout_constraintEnd_toStartOf="@+id/guideline19"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
@@ -155,7 +154,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/default_description"
-        android:textColor="@color/orange"
+        android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toTopOf="@+id/guideline17" />
@@ -166,6 +165,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="TextView"
+        android:textColor="?attr/defaultTextColor"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toBottomOf="@+id/descriptionText" />
@@ -176,6 +176,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="60dp"
+        android:backgroundTint="?attr/buttonColor"
         android:text="@string/create_report_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline16" />
@@ -184,6 +185,7 @@
         android:id="@+id/addFriendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="?attr/buttonColor"
         android:text="@string/add_friend_subtitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -197,6 +199,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="36dp"
         android:layout_marginBottom="60dp"
+        android:backgroundTint="?attr/buttonColor"
         android:text="Ban"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline19" />

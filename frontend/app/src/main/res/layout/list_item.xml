@@ -26,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="100dp"
+        android:textColor="?attr/defaultTextColor"
         android:text="TextView"
         android:textSize="28sp" />
 
@@ -45,7 +46,7 @@
         android:foregroundTint="@android:color/transparent"
         android:text="&#8942;"
         android:textAppearance="?android:textAppearanceLarge"
-        android:textColor="@color/black"
+        android:textColor="?attr/defaultTextColor"
         app:iconTint="@android:color/transparent"
         app:rippleColor="@android:color/transparent"
         app:strokeColor="@android:color/transparent" />

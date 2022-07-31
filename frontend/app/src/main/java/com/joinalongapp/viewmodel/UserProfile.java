@@ -106,7 +106,7 @@ public class UserProfile implements Serializable, IDetailsModel {
         return isAdmin;
     }
 
-    private void setAdmin(boolean admin) {
+    public void setAdmin(boolean admin) {
         isAdmin = admin;
     }
 

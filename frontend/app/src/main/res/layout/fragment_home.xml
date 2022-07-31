@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
     tools:context="com.joinalongapp.navbar.HomeEventListFragment">
 
     <androidx.constraintlayout.widget.Guideline
@@ -58,7 +59,7 @@
         android:id="@+id/homeSearchButton"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:background="#0000"
+        android:background="?attr/backgroundColor"
         android:contentDescription="@string/default_search"
         android:minHeight="48dp"
         android:outlineAmbientShadowColor="#0000"
@@ -85,10 +86,10 @@
             android:id="@+id/homeEventDisplayTabLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:tabIndicatorColor="@color/orange"
+            app:tabIndicatorColor="?attr/tabColor"
             app:tabIndicatorHeight="50dp"
             app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/black">
+            app:tabTextColor="?attr/defaultTextColor">
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/eventListOption"

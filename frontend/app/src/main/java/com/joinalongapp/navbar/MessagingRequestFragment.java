@@ -2,6 +2,7 @@ package com.joinalongapp.navbar;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.MessagingRequestCustomAdapter;
@@ -39,7 +41,7 @@ import okhttp3.Response;
  */
 public class MessagingRequestFragment extends Fragment {
     private MessagingRequestCustomAdapter messagingRequestCustomAdapter;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
     protected List<ChatDetails> dataset;
 
     public MessagingRequestFragment() {
@@ -76,15 +78,35 @@ public class MessagingRequestFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_messaging_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_messaging_request, container, false);
 
-        RecyclerView messagingRequestRecyclerView = (RecyclerView) rootView.findViewById(R.id.messagingListRecyclerView);
+        RecyclerView messagingRequestRecyclerView = (RecyclerView) rootView.findViewById(R.id.chatRequestRecyclerView);
 
         messagingRequestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         messagingRequestCustomAdapter = new MessagingRequestCustomAdapter(dataset);
         messagingRequestRecyclerView.setAdapter(messagingRequestCustomAdapter);
 
+        swipeRefreshLayout = rootView.findViewById(R.id.chatRequestSwipeRefreshLayout);
+
+        Activity activity = this.getActivity();
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    initDataset(activity);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000); //TODO: FIXME: a delay seems kinda hacky here
+            }
+        });
 
         return rootView;
         }

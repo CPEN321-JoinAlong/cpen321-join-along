@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="100dp"
+        android:textColor="?attr/defaultTextColor"
         android:text="TextView"
         android:textSize="28sp" />
 

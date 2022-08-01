@@ -240,7 +240,7 @@ public class ViewEventFragment extends Fragment {
                                                                         .show();
 
                                                                 String userName = userApplicationInfo.getProfile().getFullName();
-                                                                Chip chip = new Chip(activity);
+                                                                Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, members, false);
                                                                 chip.setText(userName);
                                                                 members.removeView(chip);
 
@@ -383,7 +383,7 @@ public class ViewEventFragment extends Fragment {
         joinButton.setVisibility(View.GONE);
         rideshareButton.setVisibility(View.VISIBLE);
         String userName = userApplicationInfo.getProfile().getFullName();
-        userChip = new Chip(activity);
+        userChip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, members, false);
         userChip.setText(userName);
         members.addView(userChip);
         event.setCurrentNumPeopleRegistered(event.getCurrentNumPeopleRegistered() + 1);
@@ -499,7 +499,7 @@ public class ViewEventFragment extends Fragment {
         description.setText(event.getDescription());
 
         for (String tag : event.getStringListOfTags()) {
-            Chip chip = new Chip(getActivity());
+            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, tags, false);
             chip.setText(tag);
             tags.addView(chip);
         }
@@ -511,7 +511,7 @@ public class ViewEventFragment extends Fragment {
         beginDate.setText(sdf.format(event.getBeginningDate()));
         endDate.setText(sdf.format(event.getEndDate()));
 
-        Chip ownerChip = new Chip(getActivity());
+        Chip ownerChip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, organizer, false);
 
         FragmentActivity fragmentActivity = getActivity();
         String path = "user/" + event.getEventOwnerId();
@@ -558,7 +558,7 @@ public class ViewEventFragment extends Fragment {
 
         for (String memberId : event.getMembers()) {
             RequestManager membersRequestManager = new RequestManager();
-            Chip memberChip = new Chip(fragmentActivity);
+            Chip memberChip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, members, false);
             String memberPath = "user/" + memberId;
 
             try {

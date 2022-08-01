@@ -17,14 +17,14 @@
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_chat.xml" value="0.25" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_event.xml" value="0.4029126213592233" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_manage_profile.xml" value="0.33" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_message.xml" value="0.25" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_message.xml" value="0.33" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_report.xml" value="0.22" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_search_screen.xml" value="0.5" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_select_rideshare.xml" value="0.32760416666666664" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_view_chat.xml" value="0.2713541666666667" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/activity_view_report.xml" value="0.18" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/event_cards_layout.xml" value="0.37566137566137564" />
-        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_friends.xml" value="0.1" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/event_cards_layout.xml" value="0.67" />
+        <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_friends.xml" value="0.33" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_friends_list.xml" value="0.11614730878186968" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_friends_request.xml" value="0.2234375" />
         <entry key="..\:/Users/Ken/Desktop/cpen321-join-along/frontend/app/src/main/res/layout/fragment_home.xml" value="0.33" />

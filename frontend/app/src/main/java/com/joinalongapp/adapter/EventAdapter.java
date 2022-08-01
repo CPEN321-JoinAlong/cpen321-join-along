@@ -42,7 +42,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Event model = homepageEventList.get(position);
         String eventTitleString = model.getTitle();
-        String eventDescriptionString = model.getDescription();
+        String eventDescriptionString = model.getOwnerName();
         holder.eventTitle.setText(eventTitleString);
         holder.eventDescription.setText(eventDescriptionString);
 

@@ -202,7 +202,7 @@ public class ViewChatActivity extends AppCompatActivity {
                                                                         .show();
 
                                                                 String userName = userApplicationInfo.getProfile().getFullName();
-                                                                Chip chip = new Chip(activity);
+                                                                Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, friends, false);
                                                                 chip.setText(userName);
                                                                 friends.removeView(chip);
 

@@ -103,7 +103,10 @@ public class Event implements Serializable, IDetailsModel {
         return eventOwnerId;
     }
 
-    //TODO: this is a get request with owner id
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
     public String getOwnerName() {
         return ownerName;
     }
@@ -160,7 +163,7 @@ public class Event implements Serializable, IDetailsModel {
     public JSONObject toJson() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("title", getTitle());
-
+        json.put("eventOwnerName", getOwnerName());
         JSONArray tags = new JSONArray(getStringListOfTags());
         json.put("tags", tags);
 
@@ -187,6 +190,8 @@ public class Event implements Serializable, IDetailsModel {
         for (int i = 0; i < tags.length(); i++) {
             addTagToInterests(new Tag(tags.getString(i)));
         }
+
+        setOwnerName(json.getString("eventOwnerName"));
 
         SimpleDateFormat serverSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 

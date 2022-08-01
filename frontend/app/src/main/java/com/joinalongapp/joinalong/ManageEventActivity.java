@@ -7,6 +7,7 @@ import static com.joinalongapp.TextInputUtils.isValidNameTitle;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.location.Address;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -173,6 +175,7 @@ public class ManageEventActivity extends AppCompatActivity {
                     }
 
                     Event event = new Event();
+                    event.setOwnerName(((UserApplicationInfo) getApplication()).getProfile().getFullName());
                     event.setTitle(title.getText().toString());
                     event.setTags(getTagsFromChipGroup());
                     event.setLocation(standardizeAddress(location.getText().toString(), getApplicationContext()));

@@ -11,7 +11,7 @@
         android:id="@+id/chatRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/text_gchat_indicator"
         app:layout_constraintTop_toTopOf="@+id/guideline36" />
@@ -35,7 +35,8 @@
     <RelativeLayout
         android:id="@+id/layout_gchat_chatbox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -46,12 +47,13 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
+
             android:layout_toStartOf="@+id/sendChatButton"
             android:background="@android:color/transparent"
-            android:textColor="?attr/defaultTextColor"
             android:hint="Enter Message"
             android:inputType="text"
             android:maxLines="6"
+            android:textColor="?attr/defaultTextColor"
             tools:ignore="Autofill" />
 
         <ImageButton

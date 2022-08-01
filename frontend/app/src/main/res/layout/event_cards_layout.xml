@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
         <TextView
             android:id="@+id/cardViewEventName"
             android:layout_width="match_parent"
@@ -34,7 +35,9 @@
             android:textFontWeight="2000"
             android:textSize="18sp" />
 
+
         <TextView
+
             android:id="@+id/cardViewEventDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,8 +45,10 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
-            android:textColor="?attr/defaultTextColor"
             android:drawablePadding="2dp"
-            android:text="@string/card_event_description_default" />
+            android:text="@string/card_event_description_default"
+            android:textColor="@color/grey" />
+
+
     </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>

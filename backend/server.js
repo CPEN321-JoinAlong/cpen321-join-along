@@ -456,7 +456,8 @@ app.get("/event/:id", async (req, res) => {
 app.get("/event", async (req, res) => {
 	try {
 		let eventListResponse = await eventStore.findAllEvents();
-		res.status(eventListResponse.status).send(eventListResponse.data);
+		let sortedList = eventListResponse.data.sort((a,b) => Date.parse(a.beginningDate) - Date.parse(b.beginningDate))
+		res.status(eventListResponse.status).send(sortedList);
 	} catch (e) {
 		console.log(e);
 		res.status(ERROR_CODES.DBERROR).send(null);

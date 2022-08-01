@@ -98,12 +98,6 @@ app.use(async (req, res, next) => {
 //JUST FOR TESTING
 app.get("/test", async (req, res) => {
 	let a = {};
-	//await User.deleteMany({});
-	//await Event.deleteMany({});
-	//await Report.deleteMany({});
-	//await User.updateMany({},{ friends: [] })
-	// console.log(await User.updateMany({location: "fsdhfkjshfsdh"},{ $push: {interests: "HEH"} }))
-	// await User.findByIdAndUpdate("62cc914dcb4206428b972c28", {$pull: {events: "dslkfjl"}})
 	try {
 		a["user"] = await User.find({});
 		a["chat"] = await Chat.find({});
@@ -763,6 +757,10 @@ app.post("/event/:id/ban", async (req, res) => {
 	}
 });
 
+app.get("/chat", async (req, res) => {
+	res.send(await Chat.find({}))
+})
+
 //*  Socket.io connection
 const io = new socketio.Server(server)
 //let io = socketio.listen(server)
@@ -780,15 +778,10 @@ io.on('connection', (socket) => {
 	socket.on('messageDetection', async (userID, chatID, timeStamp, text) => {
 		console.log(userID + " sent message: " + text)
 		try {
-			let userResponse = await userStore.findUserByID(userID);
-			if (userResponse.status !== ERROR_CODES.SUCCESS)
-				return res.status(userResponse.status).send("Unsuccesfull");
-			let fromUserName = userResponse.data.name;
 			let updatedChatResponse = await chatEngine.sendChatMessage(
 				userID,
 				chatID,
 				text,
-				fromUserName,
 				timeStamp,
 				userStore
 			);

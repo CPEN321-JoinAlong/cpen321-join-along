@@ -13,9 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.MessageListCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
+import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.Message;
 import com.joinalongapp.viewmodel.UserProfile;
@@ -95,7 +97,7 @@ public class MessageActivity extends AppCompatActivity {
                 Intent i = new Intent(MessageActivity.this, ViewChatActivity.class);
                 i.putExtra("CHAT_INFO", chatDetails);
                 startActivity(i);
-                //TODO: finish()?
+                finish();
             }
         });
 
@@ -139,7 +141,7 @@ public class MessageActivity extends AppCompatActivity {
                             messageAdapter.notifyDataSetChanged();
 
                             messageRecycler.scrollToPosition(messages.size() - 1);
-                        } catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -197,39 +199,46 @@ public class MessageActivity extends AppCompatActivity {
         requestManager.get(path, token, new RequestManager.OnRequestCompleteListener() {
             @Override
             public void onSuccess(Call call, Response response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response.body().string());
-                    JSONArray jsonArray = (JSONArray) jsonObject.get("messages");
-                    List<Message> outputMessages = new ArrayList<>();
-                    String userId = ((UserApplicationInfo) getApplication()).getProfile().getId();
-                    for(int i = 0; i < jsonArray.length(); i++){
-                        Message message = new Message();
-                        message.populateDetailsFromJson(jsonArray.get(i).toString());
-                        message.setOwner(message.getId().equals(userId));
-                        outputMessages.add(message);
-                    }
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        JSONArray jsonArray = (JSONArray) jsonObject.get("messages");
 
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    messages = outputMessages;
-                                    messageAdapter.changeDataset(outputMessages);
-                                    messageRecycler.scrollToPosition(messages.size() - 1);
-                                }
-                            });
+                        List<Message> outputMessages = new ArrayList<>();
+                        String userId = ((UserApplicationInfo) getApplication()).getProfile().getId();
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            Message message = new Message();
+                            message.populateDetailsFromJson(jsonArray.get(i).toString());
+                            message.setOwner(message.getId().equals(userId));
+                            outputMessages.add(message);
                         }
-                    }, 0);
-                } catch(IOException | JSONException e){
-                    e.printStackTrace();
+
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        messages = outputMessages;
+                                        messageAdapter.changeDataset(outputMessages);
+                                        messageRecycler.scrollToPosition(messages.size() - 1);
+                                    }
+                                });
+                            }
+                        }, 0);
+                    } catch (IOException | JSONException e) {
+                        FeedbackMessageBuilder.createParseError(e, "Load Messages", MessageActivity.this);
+                    }
+                } else {
+                    ResponseErrorHandler.createErrorMessage(response, "Load Messages", "Message", MessageActivity.this);
                 }
+
             }
 
             @Override
             public void onError(Call call, IOException e) {
-                // TODO: add error messages.
+                FeedbackMessageBuilder.createServerConnectionError(e, "Load Messages", MessageActivity.this);
             }
         });
     }

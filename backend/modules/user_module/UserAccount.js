@@ -2,6 +2,7 @@ class UserAccount {
     constructor(userInfo) {
         //fields from userInfo
         this.name = userInfo.name;
+        this.isAdmin = userInfo.isAdmin != null ? userInfo.isAdmin : false;
         this.interests = userInfo.interests;
         this.location = userInfo.location;
         this.description = userInfo.description;

@@ -426,7 +426,8 @@ app.get("/user/:id/event", async (req, res) => {
 			res.status(userResponse.status).send([]);
 		else {
 			let eventListResponse = await eventStore.findEventByUser(id);
-			res.status(eventListResponse.status).send(eventListResponse.data);
+			let sortedList = eventListResponse.data.sort((a,b) => Date.parse(a.beginningDate) - Date.parse(b.beginningDate))
+			res.status(eventListResponse.status).send(sortedList);
 		}
 	} catch (e) {
 		console.log(e);

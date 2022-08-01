@@ -5,7 +5,6 @@ import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionErro
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -197,6 +196,7 @@ public class ManageChatActivity extends AppCompatActivity {
                         }
 
                         System.out.println(json.toString());
+                        System.out.println(path.build().toString());
 
                         submitManager.post(path.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
                             @Override
@@ -266,7 +266,7 @@ public class ManageChatActivity extends AppCompatActivity {
         tagChipGroup = findViewById(R.id.manageChatTags);
         chatDescription = findViewById(R.id.manageChatEditTextDescription);
         friendAutoComplete = findViewById(R.id.autoCompleteFriendText);
-        friendChipGroup = findViewById(R.id.manageChatFriends);
+        friendChipGroup = findViewById(R.id.viewProfileInterests);
         cancelButton = findViewById(R.id.manageChatCancelButton);
         submitButton = findViewById(R.id.submitManageChatButton);
     }

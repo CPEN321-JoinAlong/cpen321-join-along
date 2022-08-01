@@ -227,7 +227,7 @@ public class ViewProfileFragment extends Fragment {
         backButton = view.findViewById(R.id.chatBackButton);
         profileName = view.findViewById(R.id.profileName);
         profilePicture = view.findViewById(R.id.profilePicture);
-        manageTags  = view.findViewById(R.id.manageChatFriends);
+        manageTags  = view.findViewById(R.id.viewProfileInterests);
         description = view.findViewById(R.id.description);
         report = view.findViewById(R.id.blockUserButton);
         addFriend = view.findViewById(R.id.addFriendButton);

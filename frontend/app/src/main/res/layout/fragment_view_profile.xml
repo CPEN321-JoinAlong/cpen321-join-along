@@ -23,7 +23,7 @@
 
     <TextView
         android:id="@+id/profileName"
-        android:layout_width="175dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/default_empty_string"
@@ -58,10 +58,11 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="@string/default_interests"
-        android:textSize="20sp"
         android:textColor="?attr/defaultSubtitleTextColor"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollViewInterests"
         app:layout_constraintEnd_toStartOf="@+id/guideline19"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
@@ -137,7 +138,7 @@
         app:layout_constraintVertical_bias="0.05">
 
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/manageChatFriends"
+            android:id="@+id/viewProfileInterests"
             android:layout_width="314dp"
             android:layout_height="38dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline3"

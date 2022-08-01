@@ -108,7 +108,6 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(darkMode){
-
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                     editor.putBoolean("dark_mode_toggle", false);
 

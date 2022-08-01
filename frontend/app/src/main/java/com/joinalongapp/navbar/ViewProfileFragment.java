@@ -110,10 +110,7 @@ public class ViewProfileFragment extends Fragment {
             }
         });
 
-
-        if (hide || shouldHideAddFriendButton(globalUserProfile, otherUserId)){
-            addFriend.setVisibility(View.INVISIBLE);
-        }
+        initButtonVisibility(globalUserProfile, otherUserId);
 
         addFriend.setOnClickListener(new View.OnClickListener() {
             String operation = "Send Friend Request";
@@ -222,7 +219,7 @@ public class ViewProfileFragment extends Fragment {
         return view;
     }
 
-    private boolean shouldHideAddFriendButton(UserProfile theGlobalUserProfile, String theOtherUserId) {
+    private boolean isFriend(UserProfile theGlobalUserProfile, String theOtherUserId) {
         return theGlobalUserProfile.getFriends().contains(theOtherUserId);
     }
 
@@ -243,5 +240,21 @@ public class ViewProfileFragment extends Fragment {
             chip.setText(tag);
             manageTags.addView(chip);
         }
+    }
+
+    private void initButtonVisibility(UserProfile globalUser, String otherProfileId) {
+        String globalUserId = globalUser.getId();
+
+        if (isSelf(globalUserId, otherProfileId)) {
+            addFriend.setVisibility(View.GONE);
+            report.setVisibility(View.GONE);
+        } else if (hide || isFriend(globalUser, otherProfileId)) {
+            addFriend.setVisibility(View.GONE);
+        }
+
+    }
+
+    private boolean isSelf(String globalUserId, String otherProfileId) {
+        return globalUserId.equals(otherProfileId);
     }
 }

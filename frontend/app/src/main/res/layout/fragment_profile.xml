@@ -61,7 +61,7 @@
         android:backgroundTintMode="multiply"
         android:hapticFeedbackEnabled="false"
         android:outlineAmbientShadowColor="#000000"
-        android:src="@android:drawable/ic_menu_edit"
+        android:src="@drawable/ic_baseline_edit_24"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toTopOf="@+id/guideline20"

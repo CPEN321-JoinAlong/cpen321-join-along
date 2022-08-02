@@ -21,6 +21,7 @@
     <string name="end_date_subtitle">End Date</string>
     <string name="visibility_subtitle">Visibility</string>
     <string name="number_of_people_subtitle">Number of People</string>
+    <string name="number_of_people_hint">1234</string>
     <string name="tags_subtitle">Tags</string>
     <string name="description_subtitle">Description</string>
     <string name="add_friends_subtitle">Add Friends</string>
@@ -214,6 +215,7 @@
     <integer name="max_title_length">64</integer>
     <integer name="max_description_length">1250</integer>
     <integer name="max_location_length">500</integer>
+    <integer name="max_number_length">10</integer>
 
     <!--Chat Details-->
     <string name="chat_leave_title">Leave Chat</string>

@@ -125,11 +125,14 @@
         app:layout_constraintTop_toTopOf="@+id/titleSubtitleGuideline"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Spinner
+    <EditText
         android:id="@+id/eventManagementNumberOfPeopleSpinner"
         android:layout_width="100dp"
         android:layout_height="48dp"
-        android:contentDescription="@string/number_of_people_subtitle"
+        android:hint="@string/number_of_people_hint"
+        android:inputType="number"
+        android:maxLength="@integer/max_number_length"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/peopleGuideline"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
         app:layout_constraintHorizontal_bias="1.0"

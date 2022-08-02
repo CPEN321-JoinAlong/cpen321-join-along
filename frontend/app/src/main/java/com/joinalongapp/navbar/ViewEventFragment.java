@@ -600,7 +600,13 @@ public class ViewEventFragment extends Fragment {
 
         }
 
-        String numPeopleInEventString = " (" + event.getCurrentNumPeopleRegistered() + "/" + event.getNumberOfPeopleAllowed() + ")";
+        String numberOfPeopleAllowed;
+        if (event.getNumberOfPeopleAllowed() == Integer.MAX_VALUE) {
+            numberOfPeopleAllowed = "unlimited";
+        } else {
+            numberOfPeopleAllowed = String.valueOf(event.getNumberOfPeopleAllowed());
+        }
+        String numPeopleInEventString = " (" + event.getCurrentNumPeopleRegistered() + "/" + numberOfPeopleAllowed + ")";
         numPeople.setText(numPeopleInEventString);
 
 

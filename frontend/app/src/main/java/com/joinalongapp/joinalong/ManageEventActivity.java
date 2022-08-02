@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -39,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,13 +63,14 @@ public class ManageEventActivity extends AppCompatActivity {
     private EditText endDate;
     private EditText endTime;
     private TabLayout eventVisibilityTab;
-    private Spinner numberOfPeople;
+    private EditText numberOfPeople;
     private EditText description;
     private Button submitButton;
     private ImageButton cancelButton;
     private ChipGroup chipGroupTags;
     private AutoCompleteTextView autoCompleteChipTags;
     private String TAG = "ManageEventActivity";
+    private int numPeopleInEventOnEdit = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,6 @@ public class ManageEventActivity extends AppCompatActivity {
 
         String[] numOfPeople = getResources().getStringArray(R.array.number_of_people_array);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, numOfPeople);
-        numberOfPeople.setAdapter(arrayAdapter);
 
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -155,8 +155,14 @@ public class ManageEventActivity extends AppCompatActivity {
                 eventVisibilityTab.setSelectedTabIndicator(PRIVATE_VISIBILITY_INDEX);
             }
 
-            int position = arrayAdapter.getPosition(String.valueOf(userEvent.getNumberOfPeopleAllowed()));
-            numberOfPeople.setSelection(position);
+            int numPeopleAllowed = userEvent.getNumberOfPeopleAllowed();
+            if (numPeopleAllowed == Integer.MAX_VALUE) {
+                numberOfPeople.setText("");
+            } else {
+                numberOfPeople.setText(String.valueOf(numPeopleAllowed));
+            }
+
+            numPeopleInEventOnEdit = userEvent.getCurrentNumPeopleRegistered();
 
             List<String> existingInterests = userEvent.getStringListOfTags();
             for (String interest : existingInterests) {
@@ -201,7 +207,13 @@ public class ManageEventActivity extends AppCompatActivity {
                     event.setTitle(title.getText().toString());
                     event.setTags(getTagsFromChipGroup());
                     event.setLocation(standardizeAddress(location.getText().toString(), getApplicationContext()));
-                    event.setNumberOfPeopleAllowed(Integer.valueOf(numberOfPeople.getSelectedItem().toString()));
+
+                    int numPeople = Integer.MAX_VALUE;
+                    if (!editTextEmpty(numberOfPeople)) {
+                        numPeople = Integer.parseInt(numberOfPeople.getText().toString());
+                    }
+                    event.setNumberOfPeopleAllowed(numPeople);
+
                     event.setDescription(description.getText().toString());
                     event.setBeginningDate(bDate);
                     event.setEndDate(eDate);
@@ -419,6 +431,28 @@ public class ManageEventActivity extends AppCompatActivity {
             //Due to limitations with EditText, these error messages have to be toast.
             Toast.makeText(this, "Empty End Time field", Toast.LENGTH_SHORT).show();
             endTime.setError("Empty End Time field");
+        }
+
+        if (!editTextEmpty(numberOfPeople)) {
+            flag = false;
+            BigInteger bigInteger = new BigInteger(numberOfPeople.getText().toString());
+            if (bigInteger.compareTo(new BigInteger(String.valueOf(Integer.MAX_VALUE))) == 1) {
+                numberOfPeople.setText(String.valueOf(Integer.MAX_VALUE));
+            }
+            numberOfPeople.setError("Maximum number of people is " + Integer.MAX_VALUE);
+        }
+
+        if (!editTextEmpty(numberOfPeople)) {
+            String numPeopleString = numberOfPeople.getText().toString();
+            int numPeopleInt = Integer.parseInt(numPeopleString);
+            if (numPeopleInt < 1) {
+                flag = false;
+                numberOfPeople.setError("Number of people must be at least 1.");
+            } else if (numPeopleInt < numPeopleInEventOnEdit) {
+                flag = false;
+                numberOfPeople.setError("Number of people registered in event (" + numPeopleInEventOnEdit + ") exceeds new value.");
+            }
+
         }
         if(chipGroupTags.getChildCount() == 0){
             flag = false;

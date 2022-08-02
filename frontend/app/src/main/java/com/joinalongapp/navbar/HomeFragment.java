@@ -1,6 +1,8 @@
 package com.joinalongapp.navbar;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -54,8 +57,11 @@ public class HomeFragment extends Fragment {
     private Spinner eventFilterSpinner;
     private List<String> eventFilterList = new ArrayList<>();
     private static EventViewAdapter viewStateAdapter;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     private ImageButton homepageSearchBar;
+    private ImageButton homepageDarkButton;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -77,6 +83,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getActivity().getSharedPreferences(getString(R.string.dark_mode_prefs), Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
     }
 
     @Override
@@ -87,6 +95,7 @@ public class HomeFragment extends Fragment {
 
         initElements(rootView);
         initSpinner();
+        initDarkMode();
 
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         viewStateAdapter = new EventViewAdapter(fragmentManager, getLifecycle());
@@ -162,6 +171,7 @@ public class HomeFragment extends Fragment {
         eventViewTabs = view.findViewById(R.id.homeEventDisplayTabLayout);
         eventFilterSpinner = view.findViewById(R.id.homepageEventsFilter);
         homepageSearchBar = view.findViewById(R.id.homeSearchButton);
+        homepageDarkButton = view.findViewById(R.id.darkModeButton);
     }
 
     private void initSpinner() {
@@ -258,6 +268,29 @@ public class HomeFragment extends Fragment {
                 });
             }
         }, 0);
+    }
+
+    private void initDarkMode(){
+        boolean darkMode = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES;
+
+        homepageDarkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(darkMode){
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    editor.putBoolean(getString(R.string.dark_mode_prefs), false);
+
+                }
+                else{
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    editor.putBoolean(getString(R.string.dark_mode_prefs), true);
+
+                }
+
+                editor.apply();
+            }
+        });
+
     }
 
 }

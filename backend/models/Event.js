@@ -21,6 +21,7 @@ const EventSchema = new Schema({
     numberOfPeople: Number,
     currCapacity: Number,
     location: String,
+    coordinates: String,
     eventImage: String,
     description: String,
     chat: String

@@ -49,9 +49,6 @@ public class ProfileFragment extends Fragment {
     private ImageButton logoutButton;
     private TextView profileDescription;
     private Button viewReportsButton;
-    private Switch toggleDarkMode;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
 
 
     public ProfileFragment() {
@@ -75,8 +72,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getActivity().getSharedPreferences("darkModePrefs", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
     }
 
@@ -101,29 +96,7 @@ public class ProfileFragment extends Fragment {
 
         user.setAdmin(true);
 
-        boolean darkMode = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES;
 
-
-        toggleDarkMode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(darkMode){
-
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    editor.putBoolean("dark_mode_toggle", false);
-
-                }
-                else{
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    editor.putBoolean("dark_mode_toggle", true);
-
-                }
-                //editor.putBoolean("changed", true);
-                editor.apply();
-
-
-            }
-        });
 
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,7 +145,6 @@ public class ProfileFragment extends Fragment {
         logoutButton = view.findViewById(R.id.logoutButton);
         profileDescription = view.findViewById(R.id.userDescription);
         viewReportsButton = view.findViewById(R.id.viewReportsButton);
-        toggleDarkMode = view.findViewById(R.id.nightModeSwitch);
     }
 
     private void signOut() {

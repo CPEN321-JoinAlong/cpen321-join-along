@@ -67,14 +67,66 @@
     </string-array>
 
     <string-array name="sample_tags">
-        <item>Indoor Activity</item>
-        <item>Outdoor Activity</item>
         <item>Hiking</item>
-        <item>Music Festival</item>
-        <item>Board Games</item>
         <item>Swimming</item>
-        <item>Running</item>
+        <item>Camping</item>
+        <item>Beach</item>
+        <item>Biking</item>
+        <item>Rock Climbing</item>
+        <item>Kayaking</item>
+        <item>Mountain Biking</item>
+        <item>Skiing</item>
+        <item>Gliding</item>
+        <item>Ziplining</item>
+        <item>Gardening</item>
+        <item>Ice Skating</item>
+        <item>Golf</item>
+        <item>Jogging</item>
+
+        <item>Board Games</item>
+        <item>Cards</item>
+        <item>Movies</item>
+        <item>Video Games</item>
+        <item>Escape Room</item>
+        <item>Darts</item>
+
+        <item>Football</item>
+        <item>Basketball</item>
+        <item>Archery</item>
+        <item>Biking</item>
+        <item>Mountain Biking</item>
+        <item>Swimming</item>
+        <item>Frisbee</item>
+        <item>Handball</item>
+        <item>Hockey</item>
+        <item>Lacrosse</item>
+        <item>Volleyball</item>
+        <item>Skiing</item>
+        <item>Spike Ball</item>
+        <item>Soccer</item>
+        <item>Race</item>
+
+        <item>EDC</item>
+        <item>Anime Expo</item>
+        <item>Coachella</item>
+        <item>Airshow</item>
+        <item>Convention</item>
+        <item>Marathon</item>
+        <item>Arts</item>
+        <item>Cultural</item>
+        <item>Music</item>
+        <item>Child Friendly</item>
+        <item>Competition</item>
+        <item>Technology</item>
+        <item>Health</item>
+
+        <item>Food</item>
+        <item>Drinking</item>
+        <item>Partying</item>
+        <item>Bar Hopping</item>
         <item>Dancing</item>
+        <item>Celebration</item>
+
     </string-array>
 
     <!--Profile Management-->
@@ -121,6 +173,8 @@
     <string name="map_view_title">Event Map</string>
     <string name="card_event_name_default">Event Title</string>
     <string name="card_event_description_default">Event Description</string>
+    <string name="card_event_date_default">Event Date</string>
+    <string name="card_event_distance_default">Event Distance</string>
 
     <!--Messaging Navbar-->
     <string name="messaging_title">Messaging</string>
@@ -164,4 +218,20 @@
     <!--Chat Details-->
     <string name="chat_leave_title">Leave Chat</string>
     <string name="chat_edit_title">Edit Chat</string>
+
+
+    <!-- Dark mode -->
+    <string name="dark_mode_prefs">darkModeKey</string>
+
+    <string-array name="list_of_colors">
+        <item>#DE4DF8</item>
+        <item>#9943D9</item>
+        <item>#4743D9</item>
+        <item>#4D76F8</item>
+        <item>#8356F0</item>
+        <item>#3F3AE0</item>
+        <item>#7A41FC</item>
+        <item>#3A8DE0</item>
+
+    </string-array>
 </resources>

@@ -23,7 +23,7 @@
 
     <TextView
         android:id="@+id/profileName"
-        android:layout_width="175dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/default_empty_string"
@@ -58,10 +58,11 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="@string/default_interests"
-        android:textSize="20sp"
         android:textColor="?attr/defaultSubtitleTextColor"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollViewInterests"
         app:layout_constraintEnd_toStartOf="@+id/guideline19"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
@@ -137,7 +138,7 @@
         app:layout_constraintVertical_bias="0.05">
 
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/manageTags"
+            android:id="@+id/viewProfileInterests"
             android:layout_width="314dp"
             android:layout_height="38dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline3"
@@ -177,6 +178,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginBottom="60dp"
         android:backgroundTint="?attr/buttonColor"
+        android:textColor="?attr/defaultWhiteWhite"
         android:text="@string/create_report_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline16" />
@@ -187,6 +189,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="?attr/buttonColor"
         android:text="@string/add_friend_subtitle"
+        android:textColor="?attr/defaultWhiteWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -200,6 +203,7 @@
         android:layout_marginEnd="36dp"
         android:layout_marginBottom="60dp"
         android:backgroundTint="?attr/buttonColor"
+        android:textColor="?attr/defaultWhiteWhite"
         android:text="Ban"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline19" />

@@ -20,7 +20,7 @@
 
     <TextView
         android:id="@+id/profileName"
-        android:layout_width="175dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/default_empty_string"
@@ -191,6 +191,7 @@
         android:layout_height="wrap_content"
         android:text="@string/default_view_reports"
         android:backgroundTint="?attr/buttonColor"
+        android:textColor="?attr/defaultWhiteWhite"
         app:layout_constraintBottom_toTopOf="@+id/guideline18"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -198,15 +199,5 @@
         app:layout_constraintTop_toTopOf="@+id/guideline17"
         app:layout_constraintVertical_bias="0.925" />
 
-
-    <Switch
-        android:id="@+id/nightModeSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/default_empty_string"
-        android:thumbTint="?attr/buttonColor"
-        android:trackTint="?attr/buttonColor"
-        app:layout_constraintBottom_toTopOf="@+id/guideline15"
-        app:layout_constraintStart_toStartOf="@+id/guideline16" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

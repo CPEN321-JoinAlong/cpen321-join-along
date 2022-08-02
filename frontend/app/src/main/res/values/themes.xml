@@ -27,6 +27,7 @@
         <item name="backgroundGradientCenterColor">@color/light_gradient_center</item>
         <item name="defaultStrokeColor">@color/light_stroke_color</item>
         <item name="buttonColor">@color/light_button_color</item>
+        <item name="contrastingGreys">@color/grey</item>
 
     </style>
 </resources>

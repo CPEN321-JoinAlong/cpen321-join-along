@@ -6,9 +6,9 @@
     style="@style/Widget.MaterialComponents.Chip.Entry"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="?attr/backgroundColor"
     android:checkable="false"
     android:clickable="false"
+    app:chipBackgroundColor="?attr/chipColor"
     app:checkedIconVisible="false"
     app:closeIconVisible="true" />
 

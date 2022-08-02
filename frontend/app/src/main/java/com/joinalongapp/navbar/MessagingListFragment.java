@@ -108,7 +108,7 @@ public class MessagingListFragment extends Fragment {
 
     private void initAdapter() {
         messagingListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        messagingListCustomAdapter = new MessagingListCustomAdapter(dataset);
+        messagingListCustomAdapter = new MessagingListCustomAdapter(dataset, this.getActivity());
         messagingListRecyclerView.setAdapter(messagingListCustomAdapter);
     }
 

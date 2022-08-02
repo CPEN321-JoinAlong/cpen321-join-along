@@ -1,5 +1,6 @@
 package com.joinalongapp.adapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,9 +24,11 @@ import java.util.List;
 
 public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingListCustomAdapter.ViewHolder>{
     private List<ChatDetails> chatDetailsList;
+    private Activity activity;
 
-    public MessagingListCustomAdapter(List<ChatDetails> inputDataSet){
+    public MessagingListCustomAdapter(List<ChatDetails> inputDataSet, Activity activity){
         chatDetailsList = inputDataSet;
+        this.activity = activity;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -93,7 +96,9 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
             public void onClick(View v) {
                 Intent i = new Intent(v.getContext(), MessageActivity.class);
                 i.putExtra("CHAT_DETAILS", chatDetailsList.get(holder.getBindingAdapterPosition()));
-                v.getContext().startActivity(i);
+                activity.startActivity(i);
+                activity.overridePendingTransition(android.R.anim.fade_out,android.R.anim.fade_in);
+
             }
         });
         //holder.getProfilePicture().set

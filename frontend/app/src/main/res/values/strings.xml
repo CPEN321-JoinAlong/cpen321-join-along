@@ -221,4 +221,16 @@
 
     <!-- Dark mode -->
     <string name="dark_mode_prefs">darkModeKey</string>
+
+    <string-array name="list_of_colors">
+        <item>#DE4DF8</item>
+        <item>#9943D9</item>
+        <item>#4743D9</item>
+        <item>#4D76F8</item>
+        <item>#8356F0</item>
+        <item>#3F3AE0</item>
+        <item>#7A41FC</item>
+        <item>#3A8DE0</item>
+
+    </string-array>
 </resources>

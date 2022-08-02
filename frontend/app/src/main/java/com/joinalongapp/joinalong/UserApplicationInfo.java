@@ -57,6 +57,11 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
         return json.toString();
     }
 
+    public void reset() {
+        setUserToken("");
+        setProfile(new UserProfile());
+    }
+
     @Override
     public String toJsonString() throws JSONException {
 

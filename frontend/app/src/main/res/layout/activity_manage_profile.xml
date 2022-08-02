@@ -305,49 +305,6 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@android:drawable/ic_delete" />
 
-    <TextView
-        android:id="@+id/useGoogleProfilePicTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/upload_profile_picture"
-        android:textColor="?attr/defaultSubtitleTextColor"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline13"
-        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
-        app:layout_constraintHorizontal_bias="0.282"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline14"
-        app:layout_constraintVertical_bias="0.191" />
-
-    <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/useGoogleProfilePicToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/guideline13"
-        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline2"
-        app:layout_constraintTop_toTopOf="@+id/guideline14"
-        app:layout_constraintVertical_bias="0.822"
-        app:singleSelection="true">
-
-        <Button
-            android:id="@+id/useGoogleProfilePic"
-            android:layout_width="122dp"
-            android:layout_height="37dp"
-            android:text="@string/use_pic"
-            android:textSize="12sp"
-            tools:backgroundTint="#F44336" />
-
-        <Button
-            android:id="@+id/dontUseGoogleProfilePic"
-            android:layout_width="122dp"
-            android:layout_height="37dp"
-            android:backgroundTint="#F89790"
-            android:text="@string/no_use_pic"
-            android:textSize="12sp" />
-    </com.google.android.material.button.MaterialButtonToggleGroup>
-
     <ImageView
         android:id="@+id/profilePicPreview"
         android:layout_width="39dp"

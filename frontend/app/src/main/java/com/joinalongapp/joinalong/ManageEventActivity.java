@@ -8,7 +8,6 @@ import static com.joinalongapp.TextInputUtils.isValidNameTitle;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.location.Address;
 import android.os.Bundle;
 import android.view.View;
@@ -22,9 +21,9 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -141,9 +140,12 @@ public class ManageEventActivity extends AppCompatActivity {
             title.setText(userEvent.getTitle());
             location.setText(userEvent.getLocation());
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
-            beginningDate.setText(sdf.format(userEvent.getBeginningDate()));
-            endDate.setText(sdf.format(userEvent.getEndDate()));
+            SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+            SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
+            beginningDate.setText(sdfDate.format(userEvent.getBeginningDate()));
+            beginningTime.setText(sdfTime.format(userEvent.getBeginningDate()));
+            endDate.setText(sdfDate.format(userEvent.getEndDate()));
+            endTime.setText(sdfTime.format(userEvent.getEndDate()));
 
             boolean publicVisibility = userEvent.getPublicVisibility();
             if(publicVisibility){
@@ -170,11 +172,12 @@ public class ManageEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(checkInvalidFields()){
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
 
                     Date bDate;
                     try {
-                        bDate = sdf.parse(beginningDate.getText().toString());
+                        String stringDate = beginningDate.getText().toString() + " " + beginningTime.getText().toString();
+                        bDate = sdf.parse(stringDate);
                     } catch (ParseException e) {
                         beginningDate.setError("Invalid date.");
                         return;
@@ -182,7 +185,8 @@ public class ManageEventActivity extends AppCompatActivity {
 
                     Date eDate;
                     try {
-                        eDate = sdf.parse(endDate.getText().toString());
+                        String stringDate = endDate.getText().toString() + " " + endTime.getText().toString();
+                        eDate = sdf.parse(stringDate);
                     } catch (ParseException e) {
                         endDate.setError("Invalid date.");
                         return;
@@ -313,28 +317,25 @@ public class ManageEventActivity extends AppCompatActivity {
         boolean isValid = true;
         if (!bDate.before(eDate) && !bDate.equals(eDate)){
             isValid = false;
+            //Due to limitations with EditText, these error messages have to be toast.
+            Toast.makeText(this, "End date cannot be before beginning date.", Toast.LENGTH_SHORT).show();
             beginningDate.setError("End date cannot be before beginning date.");
             endDate.setError("End date cannot be before beginning date.");
         }
 
-        //TODO: fix this when we add time start and end dates
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
-        Date now;
-        try {
-            now = sdf.parse(sdf.format(new Date()));
-        } catch (ParseException e) {
-            System.out.println("invalid date");
-            return false;
-        }
+        Date now = new Date();
 
         if (bDate.before(now)) {
             isValid = false;
+            //Due to limitations with EditText, these error messages have to be toast.
+            Toast.makeText(this, "Beginning date cannot be in the past.", Toast.LENGTH_SHORT).show();
             beginningDate.setError("Beginning date cannot be in the past.");
         }
 
         if (eDate.before(now)) {
             isValid = false;
+            //Due to limitations with EditText, these error messages have to be toast.
+            Toast.makeText(this, "End date cannot be in the past.", Toast.LENGTH_SHORT).show();
             endDate.setError("End date cannot be in the past.");
         }
 
@@ -397,18 +398,26 @@ public class ManageEventActivity extends AppCompatActivity {
         }
         if(editTextEmpty(beginningDate)){
             flag = false;
+            //Due to limitations with EditText, these error messages have to be toast.
+            Toast.makeText(this, "Empty Beginning Date field", Toast.LENGTH_SHORT).show();
             beginningDate.setError("Empty Beginning Date field");
         }
         if(editTextEmpty(beginningTime)){
             flag = false;
+            //Due to limitations with EditText, these error messages have to be toast.
+            Toast.makeText(this, "Empty Beginning Time field", Toast.LENGTH_SHORT).show();
             beginningTime.setError("Empty Beginning Time field");
         }
         if(editTextEmpty(endDate)){
             flag = false;
+            //Due to limitations with EditText, these error messages have to be toast.
+            Toast.makeText(this, "Empty End Date field", Toast.LENGTH_SHORT).show();
             endDate.setError("Empty End Date field");
         }
         if(editTextEmpty(endTime)){
             flag = false;
+            //Due to limitations with EditText, these error messages have to be toast.
+            Toast.makeText(this, "Empty End Time field", Toast.LENGTH_SHORT).show();
             endTime.setError("Empty End Time field");
         }
         if(chipGroupTags.getChildCount() == 0){
@@ -468,7 +477,8 @@ public class ManageEventActivity extends AppCompatActivity {
 
                 SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.CANADA);
 
-                editText.setText(sdf.format(input.getTime()));
+                String time = sdf.format(input.getTime());
+                editText.setText(time.replaceAll("\\.", ""));
             }
         }, hour, minute, false);
 

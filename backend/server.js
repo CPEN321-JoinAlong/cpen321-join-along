@@ -426,7 +426,8 @@ app.get("/user/:id/event", async (req, res) => {
 			res.status(userResponse.status).send([]);
 		else {
 			let eventListResponse = await eventStore.findEventByUser(id);
-			res.status(eventListResponse.status).send(eventListResponse.data);
+			let sortedList = eventListResponse.data.sort((a,b) => Date.parse(a.beginningDate) - Date.parse(b.beginningDate))
+			res.status(eventListResponse.status).send(sortedList);
 		}
 	} catch (e) {
 		console.log(e);
@@ -456,7 +457,8 @@ app.get("/event/:id", async (req, res) => {
 app.get("/event", async (req, res) => {
 	try {
 		let eventListResponse = await eventStore.findAllEvents();
-		res.status(eventListResponse.status).send(eventListResponse.data);
+		let sortedList = eventListResponse.data.sort((a,b) => Date.parse(a.beginningDate) - Date.parse(b.beginningDate))
+		res.status(eventListResponse.status).send(sortedList);
 	} catch (e) {
 		console.log(e);
 		res.status(ERROR_CODES.DBERROR).send(null);
@@ -807,6 +809,18 @@ io.on('connection', (socket) => {
 		socket.broadcast.emit('disconnected', 'socket disconnected')
 	})
 })
+
+app.post("/user/:id/recommendedEvents", async (req, res) => {
+	let id = req.params.id;
+	try {
+		let response = await recSystem.recommendEvents(id, userStore, eventStore);
+		console.log(response)
+		res.status(response.status).send(response.data);
+	} catch (e) {
+		console.log(e);
+		res.status(ERROR_CODES.DBERROR).send(null);
+	}
+});
 
 module.exports = {app, server};
 

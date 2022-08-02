@@ -11,6 +11,7 @@ class EventDetails {
         this.location = eventInfo.location;
         this.description = eventInfo.description;
 
+        this.coordinates = eventInfo.coordinates ? eventInfo.coordinates : "Not available"; 
         this.participants = eventInfo.participants
             ? eventInfo.participants
             : (this.eventOwnerID ? [this.eventOwnerID] : []);

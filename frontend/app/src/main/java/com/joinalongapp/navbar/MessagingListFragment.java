@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.joinalongapp.FeedbackMessageBuilder;
+import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.adapter.MessagingListCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
@@ -44,6 +46,7 @@ public class MessagingListFragment extends Fragment {
     private MessagingListCustomAdapter messagingListCustomAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     protected List<ChatDetails> dataset;
+    private TextView noResults;
 
 
     public MessagingListFragment() {
@@ -115,6 +118,7 @@ public class MessagingListFragment extends Fragment {
     private void initElements(View rootView) {
         messagingListRecyclerView = (RecyclerView) rootView.findViewById(R.id.messagingListRecyclerView);
         swipeRefreshLayout = rootView.findViewById(R.id.chatListSwipeRefresh);
+        noResults = rootView.findViewById(R.id.chatListNoResults);
     }
 
     private void initDataset() throws IOException {
@@ -150,13 +154,21 @@ public class MessagingListFragment extends Fragment {
                                     @Override
                                     public void run() {
                                         messagingListCustomAdapter.changeDataset(outputChats);
+
+                                        if (outputChats.size() == 0) {
+                                            noResults.setVisibility(View.VISIBLE);
+                                        } else {
+                                            noResults.setVisibility(View.GONE);
+                                        }
                                     }
                                 });
                             }
                         }, 0);
-                    } catch(JSONException | IOException e){
+                    } catch (JSONException | IOException e) {
                         FeedbackMessageBuilder.createParseError(e, operation, getActivity());
                     }
+                } else if (response.code() == HttpStatusConstants.STATUS_HTTP_404){
+                    noResults.setVisibility(View.VISIBLE);
                 } else {
                     ResponseErrorHandler.createErrorMessage(response, operation, "Chat", getActivity());
                 }

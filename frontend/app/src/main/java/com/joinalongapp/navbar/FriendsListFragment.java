@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.joinalongapp.FeedbackMessageBuilder;
+import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.adapter.FriendsListCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
@@ -42,6 +44,7 @@ public class FriendsListFragment extends Fragment {
     private FriendsListCustomAdapter friendsListCustomAdapter;
     protected List<UserProfile> dataset;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView noResults;
 
     public FriendsListFragment() {
         // Required empty public constructor
@@ -112,6 +115,7 @@ public class FriendsListFragment extends Fragment {
     private void initElements(View rootView) {
         friendsListRecyclerView = (RecyclerView) rootView.findViewById(R.id.friendsListRecyclerView);
         swipeRefreshLayout = rootView.findViewById(R.id.friendsSwipeRefresh);
+        noResults = rootView.findViewById(R.id.friendsListNoResults);
     }
 
     private void initDataset() throws IOException{
@@ -147,6 +151,12 @@ public class FriendsListFragment extends Fragment {
                                     @Override
                                     public void run() {
                                         friendsListCustomAdapter.changeDataset(outputFriends);
+
+                                        if (outputFriends.size() == 0) {
+                                            noResults.setVisibility(View.VISIBLE);
+                                        } else {
+                                            noResults.setVisibility(View.GONE);
+                                        }
                                     }
                                 });
                             }
@@ -156,7 +166,9 @@ public class FriendsListFragment extends Fragment {
                     } catch(JSONException | IOException e){
                         FeedbackMessageBuilder.createParseError(e, operation, getActivity());
                     }
-                } else {
+                } else if (response.code() == HttpStatusConstants.STATUS_HTTP_404) {
+                    noResults.setVisibility(View.VISIBLE);
+                }else {
                     ResponseErrorHandler.createErrorMessage(response, operation, "User", getActivity());
                 }
 

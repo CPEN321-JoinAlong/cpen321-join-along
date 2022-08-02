@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.joinalongapp.FeedbackMessageBuilder;
+import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.adapter.MessagingRequestCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
@@ -43,6 +45,7 @@ public class MessagingRequestFragment extends Fragment {
     private MessagingRequestCustomAdapter messagingRequestCustomAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     protected List<ChatDetails> dataset;
+    private TextView noResults;
 
     public MessagingRequestFragment() {
         // Required empty public constructor
@@ -87,7 +90,7 @@ public class MessagingRequestFragment extends Fragment {
         messagingRequestCustomAdapter = new MessagingRequestCustomAdapter(dataset);
         messagingRequestRecyclerView.setAdapter(messagingRequestCustomAdapter);
 
-        swipeRefreshLayout = rootView.findViewById(R.id.chatRequestSwipeRefreshLayout);
+        initElements(rootView);
 
         Activity activity = this.getActivity();
 
@@ -110,6 +113,11 @@ public class MessagingRequestFragment extends Fragment {
 
         return rootView;
         }
+
+    private void initElements(View rootView) {
+        noResults = rootView.findViewById(R.id.chatRequestNoResults);
+        swipeRefreshLayout = rootView.findViewById(R.id.chatRequestSwipeRefreshLayout);
+    }
 
     private void initDataset(Activity activity) throws IOException {
         UserProfile user = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
@@ -146,6 +154,12 @@ public class MessagingRequestFragment extends Fragment {
                                     @Override
                                     public void run() {
                                         messagingRequestCustomAdapter.changeDataset(outputChats);
+
+                                        if (outputChats.size() == 0) {
+                                            noResults.setVisibility(View.VISIBLE);
+                                        } else {
+                                            noResults.setVisibility(View.GONE);
+                                        }
                                     }
                                 });
                             }
@@ -154,6 +168,8 @@ public class MessagingRequestFragment extends Fragment {
                     } catch(JSONException | IOException e){
                         FeedbackMessageBuilder.createParseError(e, operation, activity);
                     }
+                } else if (response.code() == HttpStatusConstants.STATUS_HTTP_404) {
+                    noResults.setVisibility(View.VISIBLE);
                 } else {
                     ResponseErrorHandler.createErrorMessage(response, operation, "User or Chat", activity);
                 }

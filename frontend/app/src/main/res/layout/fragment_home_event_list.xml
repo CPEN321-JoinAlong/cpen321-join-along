@@ -56,8 +56,19 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="682dp" />
 
+    <TextView
+        android:id="@+id/eventListNoResults"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/default_search_no_results"
+        android:textColor="?attr/defaultTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/homeEventSwipeRefresh"
         android:layout_width="350dp"
         android:layout_height="590dp"

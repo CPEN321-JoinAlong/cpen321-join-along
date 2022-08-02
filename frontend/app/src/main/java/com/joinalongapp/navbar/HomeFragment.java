@@ -220,6 +220,9 @@ public class HomeFragment extends Fragment {
                             FeedbackMessageBuilder.createParseError(e, operation, fragmentActivity);
                             //TODO: add no events found message
                         }
+                    } else if (response.code() == HttpStatusConstants.STATUS_HTTP_404) {
+                        List<Event> eventList = new ArrayList<>();
+                        updateEventLists(eventList, fragmentActivity, curr);
                     } else {
                         ResponseErrorHandler.createErrorMessage(response, operation, "Event", fragmentActivity);
                         //TODO: add no events found message

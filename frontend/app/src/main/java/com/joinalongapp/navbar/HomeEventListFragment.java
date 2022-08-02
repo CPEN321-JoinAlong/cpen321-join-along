@@ -5,8 +5,8 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -18,7 +18,6 @@ import com.joinalongapp.adapter.EventAdapter;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Event;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +31,7 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
     private List<Event> eventList = new ArrayList<>();
     private EventAdapter eventAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView noResults;
 
     public HomeEventListFragment() {
         // Required empty public constructor
@@ -64,8 +64,6 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
 
         initElements(view);
 
-
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         eventRecycler.setLayoutManager(linearLayoutManager);
 
@@ -94,6 +92,11 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
     }
 
     private void updateAdapter() {
+        if (eventList.size() == 0) {
+            noResults.setVisibility(View.VISIBLE);
+        } else {
+            noResults.setVisibility(View.GONE);
+        }
         eventAdapter = new EventAdapter(getActivity(), eventList);
         eventAdapter.setClickListener(this);
     }
@@ -105,6 +108,7 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
     private void initElements(View view) {
         eventRecycler = view.findViewById(R.id.eventListRecyclerView);
         swipeRefreshLayout = view.findViewById(R.id.homeEventSwipeRefresh);
+        noResults = view.findViewById(R.id.eventListNoResults);
     }
 
     /**

@@ -149,10 +149,10 @@ public class ManageEventActivity extends AppCompatActivity {
 
             boolean publicVisibility = userEvent.getPublicVisibility();
             if(publicVisibility){
-                eventVisibilityTab.setSelectedTabIndicator(PUBLIC_VISIBILITY_INDEX);
+                eventVisibilityTab.selectTab(eventVisibilityTab.getTabAt(PUBLIC_VISIBILITY_INDEX));
             }
             else {
-                eventVisibilityTab.setSelectedTabIndicator(PRIVATE_VISIBILITY_INDEX);
+                eventVisibilityTab.selectTab(eventVisibilityTab.getTabAt(PRIVATE_VISIBILITY_INDEX));
             }
 
             int numPeopleAllowed = userEvent.getNumberOfPeopleAllowed();

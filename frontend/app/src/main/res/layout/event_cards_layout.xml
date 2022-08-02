@@ -39,15 +39,45 @@
         <TextView
 
             android:id="@+id/cardViewEventDescription"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/cardViewEventName"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="35dp"
             android:layout_marginBottom="10dp"
             android:drawablePadding="2dp"
             android:text="@string/card_event_description_default"
-            android:textColor="@color/grey" />
+            android:textColor="?attr/contrastingGreys" />
+
+        <TextView
+
+            android:id="@+id/cardViewDistance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cardViewEventName"
+            android:layout_marginStart="150dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="10dp"
+            android:drawablePadding="2dp"
+            android:gravity="right"
+            android:text="@string/card_event_distance_default"
+            android:textColor="?attr/contrastingGreys" />
+
+        <TextView
+
+            android:id="@+id/cardViewEventDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cardViewEventName"
+            android:layout_marginStart="150dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="10dp"
+            android:drawablePadding="2dp"
+            android:gravity="right"
+            android:text="@string/card_event_date_default"
+            android:textColor="?attr/contrastingGreys" />
 
 
     </RelativeLayout>

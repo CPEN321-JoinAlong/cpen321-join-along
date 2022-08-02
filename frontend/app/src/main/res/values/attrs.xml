@@ -10,4 +10,5 @@
     <attr name="defaultStrokeColor" format="reference"/>
     <attr name="chipColor" format="reference"/>
     <attr name="tabColor" format="reference"/>
+    <attr name="contrastingGreys" format="reference"/>
 </resources>

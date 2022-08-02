@@ -191,6 +191,7 @@
         android:layout_height="wrap_content"
         android:text="@string/default_view_reports"
         android:backgroundTint="?attr/buttonColor"
+        android:textColor="?attr/defaultWhiteWhite"
         app:layout_constraintBottom_toTopOf="@+id/guideline18"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

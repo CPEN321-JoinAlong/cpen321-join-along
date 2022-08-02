@@ -27,6 +27,8 @@
         <item name="backgroundGradientCenterColor">@color/night_gradient_center</item>
         <item name="defaultStrokeColor">@color/night_stroke_color</item>
         <item name="buttonColor">@color/night_button_color</item>
+        <item name="contrastingGreys">@color/light_grey</item>
+
     </style>
 
 </resources>

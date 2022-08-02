@@ -379,6 +379,7 @@
         android:layout_marginBottom="16dp"
         android:backgroundTint="?attr/buttonColor"
         android:text="@string/default_create_string"
+        android:textColor="?attr/defaultWhiteWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

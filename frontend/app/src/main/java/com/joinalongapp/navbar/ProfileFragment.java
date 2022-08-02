@@ -75,7 +75,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getActivity().getSharedPreferences("darkModePrefs", Context.MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences(getString(R.string.dark_mode_prefs), Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
     }
@@ -109,15 +109,15 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 if(darkMode){
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    editor.putBoolean("dark_mode_toggle", false);
+                    editor.putBoolean(getString(R.string.dark_mode_prefs), false);
 
                 }
                 else{
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    editor.putBoolean("dark_mode_toggle", true);
+                    editor.putBoolean(getString(R.string.dark_mode_prefs), true);
 
                 }
-                //editor.putBoolean("changed", true);
+
                 editor.apply();
 
 

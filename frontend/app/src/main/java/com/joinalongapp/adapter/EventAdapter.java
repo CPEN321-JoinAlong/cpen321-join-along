@@ -2,6 +2,7 @@ package com.joinalongapp.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Event;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -43,8 +48,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         Event model = homepageEventList.get(position);
         String eventTitleString = model.getTitle();
         String eventDescriptionString = model.getOwnerName();
+        Date eventDate = model.getBeginningDate();
+        String eventLocation = model.getLocation();
+        DateFormat dateFormat = new SimpleDateFormat("EEE, MMMM d");
+        String result = dateFormat.format(eventDate);
+
+
+        holder.eventLocation.setText(eventLocation);
         holder.eventTitle.setText(eventTitleString);
         holder.eventDescription.setText(eventDescriptionString);
+        holder.eventDate.setText(result);
 
         //TODO: add any button on click listeners for CardView buttons here
     }
@@ -57,11 +70,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView eventTitle;
         private TextView eventDescription;
+        private TextView eventDate;
+        private TextView eventLocation;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
             eventTitle = itemView.findViewById(R.id.cardViewEventName);
             eventDescription = itemView.findViewById(R.id.cardViewEventDescription);
+            eventDate = itemView.findViewById(R.id.cardViewEventDate);
+            eventLocation = itemView.findViewById(R.id.cardViewDistance);
             itemView.setOnClickListener(this);
 
             //TODO: add any buttons on CardView here

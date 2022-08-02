@@ -810,5 +810,17 @@ io.on('connection', (socket) => {
 	})
 })
 
+app.post("/user/:id/recommendedEvents", async (req, res) => {
+	let id = req.params.id;
+	try {
+		let response = await recSystem.recommendEvents(id, userStore, eventStore);
+		console.log(response)
+		res.status(response.status).send(response.data);
+	} catch (e) {
+		console.log(e);
+		res.status(ERROR_CODES.DBERROR).send(null);
+	}
+});
+
 module.exports = {app, server};
 

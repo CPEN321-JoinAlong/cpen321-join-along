@@ -5,6 +5,7 @@
     <!--ManageEvent Strings-->
     <string name="create_event_title">Create Event</string>
     <string name="date_hint">YYYY/MM/DD</string>
+    <string name="time_hint">HH:MM</string>
     <!--ReportActivity Strings-->
     <string name="create_report_text">Report</string>
     <string name="reporting_message">Thanks for looking out for our community! \nPlease take some time to enter some additional details!</string>
@@ -16,7 +17,7 @@
     <!--Subtitle Strings-->
     <string name="title_subtitle">Title</string>
     <string name="location_subtitle">Location</string>
-    <string name="beginning_date_subtitle">Beginning Date</string>
+    <string name="beginning_date_subtitle">Beginning\nDate</string>
     <string name="end_date_subtitle">End Date</string>
     <string name="visibility_subtitle">Visibility</string>
     <string name="number_of_people_subtitle">Number of People</string>

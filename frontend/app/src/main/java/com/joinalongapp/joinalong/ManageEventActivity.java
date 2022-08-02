@@ -6,6 +6,7 @@ import static com.joinalongapp.LocationUtils.validateAddress;
 import static com.joinalongapp.TextInputUtils.isValidNameTitle;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -56,7 +58,9 @@ public class ManageEventActivity extends AppCompatActivity {
     private EditText title;
     private EditText location;
     private EditText beginningDate;
+    private EditText beginningTime;
     private EditText endDate;
+    private EditText endTime;
     private TabLayout eventVisibilityTab;
     private Spinner numberOfPeople;
     private EditText description;
@@ -94,10 +98,24 @@ public class ManageEventActivity extends AppCompatActivity {
             }
         });
 
+        beginningTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeOperation(beginningTime);
+            }
+        });
+
         endDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 calendarOperation(endDate);
+            }
+        });
+
+        endTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeOperation(endTime);
             }
         });
 
@@ -340,7 +358,9 @@ public class ManageEventActivity extends AppCompatActivity {
         title = findViewById(R.id.editTextEventManagementTitle);
         location = findViewById(R.id.editTextEventManagementLocation);
         beginningDate = findViewById(R.id.editTextEventManagementBeginningDate);
+        beginningTime = findViewById(R.id.editTextEventManagementBeginningTime);
         endDate = findViewById(R.id.editTextEventManagementEndDate);
+        endTime = findViewById(R.id.editTextEventManagementEndTime);
         eventVisibilityTab = findViewById(R.id.eventVisibilitySelection);
         numberOfPeople = findViewById(R.id.eventManagementNumberOfPeopleSpinner);
         description = findViewById(R.id.eventManagementEditTextDescription);
@@ -356,6 +376,7 @@ public class ManageEventActivity extends AppCompatActivity {
         if(editTextEmpty(title)){
             flag = false;
             title.setError("Empty Title field");
+            title.requestFocus();
         }
         if (!isValidNameTitle(title.getText().toString())) {
             title.setError("Title contains invalid character(s).");
@@ -375,9 +396,17 @@ public class ManageEventActivity extends AppCompatActivity {
             flag = false;
             beginningDate.setError("Empty Beginning Date field");
         }
+        if(editTextEmpty(beginningTime)){
+            flag = false;
+            beginningTime.setError("Empty Beginning Time field");
+        }
         if(editTextEmpty(endDate)){
             flag = false;
             endDate.setError("Empty End Date field");
+        }
+        if(editTextEmpty(endTime)){
+            flag = false;
+            endTime.setError("Empty End Time field");
         }
         if(chipGroupTags.getChildCount() == 0){
             flag = false;
@@ -420,6 +449,27 @@ public class ManageEventActivity extends AppCompatActivity {
 
         datePicker.getDatePicker().setMinDate(now);
         datePicker.show();
+    }
+
+    private void timeOperation(EditText editText) {
+        Calendar now = Calendar.getInstance();
+        int hour = now.get(Calendar.HOUR_OF_DAY);
+        int minute = now.get(Calendar.MINUTE);
+
+        TimePickerDialog timePicker = new TimePickerDialog(ManageEventActivity.this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                Calendar input = Calendar.getInstance();
+                input.set(Calendar.HOUR_OF_DAY, selectedHour);
+                input.set(Calendar.MINUTE, selectedMinute);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.CANADA);
+
+                editText.setText(sdf.format(input.getTime()));
+            }
+        }, hour, minute, false);
+
+        timePicker.show();
     }
 
     private void initAutoCompleteChipGroup(AutoCompleteTextView autoCompleteTextView, ChipGroup chipGroup, String[] fillArray){

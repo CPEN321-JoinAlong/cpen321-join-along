@@ -42,29 +42,27 @@
         android:id="@+id/beginningDateText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:text="@string/beginning_date_subtitle"
         android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextEventManagementBeginningDate"
-        app:layout_constraintEnd_toStartOf="@+id/endDateText"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
-        app:layout_constraintTop_toTopOf="@+id/locationGuideline"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="@+id/locationGuideline" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/eventVisibilitySelection"
         android:layout_width="314dp"
         android:layout_height="37dp"
-        app:layout_constraintBottom_toTopOf="@+id/visibilityGuideline"
+        android:background="?attr/backgroundColor"
 
+        app:layout_constraintBottom_toTopOf="@+id/visibilityGuideline"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/dateGuideline"
-        app:layout_constraintVertical_bias="0.777"
+        app:layout_constraintVertical_bias="0.866"
         app:tabIndicatorColor="?attr/buttonColor"
         app:tabIndicatorHeight="50dp"
-        android:background="?attr/backgroundColor"
         app:tabSelectedTextColor="@color/white"
         app:tabTextColor="?attr/defaultTextColor">
 
@@ -89,14 +87,15 @@
         android:layout_height="37dp"
         app:layout_constraintBottom_toTopOf="@+id/tagsGuideline"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
-        app:layout_constraintVertical_bias="0.278" />
+        app:layout_constraintVertical_bias="0.305" />
 
     <EditText
         android:id="@+id/editTextEventManagementLocation"
         android:layout_width="314dp"
-        android:layout_height="50dp"
+        android:layout_height="48dp"
         android:autofillHints="AUTOFILL_HINT_POSTAL_ADDRESS"
         android:ems="10"
         android:hint="@string/default_enter_location"
@@ -104,11 +103,13 @@
         android:maxLength="@integer/max_location_length"
         android:textColor="?attr/defaultTextColor"
         android:textColorHint="@color/grey"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/locationGuideline"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/titleSubtitleGuideline"
-        app:layout_constraintVertical_bias="0.666" />
+        app:layout_constraintVertical_bias="0.785" />
 
     <TextView
         android:id="@+id/eventManagementLocationSubtitle"
@@ -122,7 +123,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/titleSubtitleGuideline"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Spinner
         android:id="@+id/eventManagementNumberOfPeopleSpinner"
@@ -136,6 +137,7 @@
         app:layout_constraintTop_toTopOf="@+id/visibilityGuideline"
         tools:ignore="DuplicateSpeakableTextCheck" />
 
+
     <TextView
         android:id="@+id/numberOfPeople"
         android:layout_width="135dp"
@@ -145,16 +147,15 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/peopleGuideline"
         app:layout_constraintEnd_toStartOf="@+id/eventManagementNumberOfPeopleSpinner"
-        app:layout_constraintHorizontal_bias="0.015"
+        app:layout_constraintHorizontal_bias="0.012"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/visibilityGuideline"
-        app:layout_constraintVertical_bias="0.166" />
-
+        app:layout_constraintVertical_bias="0.511" />
 
     <EditText
         android:id="@+id/eventManagementEditTextDescription"
         android:layout_width="314dp"
-        android:layout_height="50dp"
+        android:layout_height="48dp"
         android:ems="10"
         android:gravity="start|top"
         android:hint="@string/default_enter_description"
@@ -163,11 +164,13 @@
         android:maxLength="@integer/max_description_length"
         android:textColor="?attr/defaultTextColor"
         android:textColorHint="@color/grey"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/descriptionGuideline"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/tagsGuideline"
-        app:layout_constraintVertical_bias="0.687" />
+        app:layout_constraintVertical_bias="0.785" />
 
     <TextView
         android:id="@+id/descriptionText"
@@ -195,11 +198,13 @@
         android:text="@string/default_empty_string"
         android:textColor="?attr/defaultTextColor"
         android:textColorHint="@color/grey"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/titleSubtitleGuideline"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/underTitleGuideLine"
-        app:layout_constraintVertical_bias="0.707" />
+        app:layout_constraintVertical_bias="0.785" />
 
     <TextView
         android:id="@+id/eventManagementTitleSubtitle"
@@ -207,32 +212,76 @@
         android:layout_height="wrap_content"
         android:text="@string/title_subtitle"
         android:textColor="?attr/defaultSubtitleTextColor"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/editTextEventManagementTitle"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/underTitleGuideLine"
-        app:layout_constraintVertical_bias="0.9"
-        android:textSize="16sp" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/editTextEventManagementBeginningDate"
-        android:layout_width="133dp"
-        android:layout_height="50dp"
+        android:layout_width="120dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="80dp"
         android:ems="10"
+        android:focusable="false"
         android:hint="@string/date_hint"
+        android:importantForAutofill="no"
         android:inputType="date"
         android:textColor="?attr/defaultTextColor"
         android:textColorHint="@color/grey"
-        android:focusable="false"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/dateGuideline"
-        app:layout_constraintEnd_toStartOf="@+id/editTextEventManagementEndDate"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
+        app:layout_constraintHorizontal_bias="0.008"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/locationGuideline"
-        app:layout_constraintVertical_bias="1.0"
-        tools:ignore="DuplicateSpeakableTextCheck"
-        android:importantForAutofill="no" />
+        app:layout_constraintVertical_bias="0.075"
+        tools:ignore="DuplicateSpeakableTextCheck" />
+
+    <EditText
+        android:id="@+id/editTextEventManagementBeginningTime"
+        android:layout_width="88dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="80dp"
+        android:ems="10"
+        android:focusable="false"
+        android:hint="@string/time_hint"
+        android:importantForAutofill="no"
+        android:inputType="time"
+        android:textColor="?attr/defaultTextColor"
+        android:textColorHint="@color/grey"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/dateGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
+        app:layout_constraintTop_toTopOf="@+id/locationGuideline"
+        app:layout_constraintVertical_bias="0.075"
+        tools:ignore="DuplicateSpeakableTextCheck" />
+
+    <EditText
+        android:id="@+id/editTextEventManagementEndTime"
+        android:layout_width="88dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="80dp"
+        android:ems="10"
+        android:focusable="false"
+        android:hint="@string/time_hint"
+        android:importantForAutofill="no"
+        android:inputType="time"
+        android:textColor="?attr/defaultTextColor"
+        android:textColorHint="@color/grey"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/dateGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
+        app:layout_constraintTop_toTopOf="@+id/locationGuideline"
+        app:layout_constraintVertical_bias="0.981"
+        tools:ignore="DuplicateSpeakableTextCheck" />
 
     <TextView
         android:id="@+id/visibilityText"
@@ -245,14 +294,15 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/eventVisibilitySelection"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
-        app:layout_constraintHorizontal_bias="0.003"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
-        app:layout_constraintTop_toTopOf="@+id/dateGuideline" />
+        app:layout_constraintTop_toTopOf="@+id/dateGuideline"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/editTextEventManagementEndDate"
-        android:layout_width="133dp"
-        android:layout_height="50dp"
+        android:layout_width="120dp"
+        android:layout_height="48dp"
         android:ems="10"
         android:focusable="false"
         android:hint="@string/date_hint"
@@ -260,26 +310,26 @@
         android:inputType="date"
         android:textColor="?attr/defaultTextColor"
         android:textColorHint="@color/grey"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/dateGuideline"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.417"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/locationGuideline"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.981" />
 
     <TextView
         android:id="@+id/endDateText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
         android:text="@string/end_date_subtitle"
         android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextEventManagementEndDate"
+        app:layout_constraintBottom_toTopOf="@+id/dateGuideline"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.659"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/locationGuideline"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintHorizontal_bias="0.141"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tagText"
@@ -290,7 +340,7 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/eventManagementTagChipGroup"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.003"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
         app:layout_constraintVertical_bias="0.0" />
@@ -321,42 +371,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="166dp" />
+        app:layout_constraintGuide_begin="160dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/locationGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="249dp" />
+        app:layout_constraintGuide_begin="236dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/dateGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="325dp" />
+        app:layout_constraintGuide_begin="337dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/peopleGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="458dp" />
+        app:layout_constraintGuide_begin="464dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/visibilityGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="398dp" />
+        app:layout_constraintGuide_begin="408dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/tagsGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="574dp" />
+        app:layout_constraintGuide_begin="580dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/aboveTitleGuideline"
@@ -389,16 +439,18 @@
     <AutoCompleteTextView
         android:id="@+id/autoCompleteChipTextView"
         android:layout_width="314dp"
-        android:layout_height="50dp"
+        android:layout_height="48dp"
         android:layout_marginTop="4dp"
-        android:textColor="?attr/defaultTextColor"
         android:hint="@string/default_enter_tags"
         android:text="@string/default_empty_string"
+        android:textColor="?attr/defaultTextColor"
         android:textColorHint="@color/grey"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/tagsGuideline"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/peopleGuideline"
-        app:layout_constraintVertical_bias="0.887" />
+        app:layout_constraintVertical_bias="0.89" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

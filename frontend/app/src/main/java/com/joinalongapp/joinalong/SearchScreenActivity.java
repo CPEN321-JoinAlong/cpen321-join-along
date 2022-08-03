@@ -173,12 +173,12 @@ public class SearchScreenActivity extends AppCompatActivity {
                     if (fetchSearchTermSuggestionsTask.getStatus() != AsyncTask.Status.RUNNING) {
                         if (fetchSearchTermSuggestionsTask.getStatus() == AsyncTask.Status.FINISHED) {
                             fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(token, activity, getSearchMode());
-                            System.out.println("reset");
+                            System.out.println("SUGGESTION reset");
                         }
                         fetchSearchTermSuggestionsTask.execute(newText);
-                        System.out.println("search");
+                        System.out.println("SUGGESTION search");
                     }
-                    System.out.println("changed");
+                    System.out.println("SUGGESTION changed");
 
                 } else {
                     searchView.getSuggestionsAdapter().changeCursor(null);
@@ -253,7 +253,7 @@ public class SearchScreenActivity extends AppCompatActivity {
                                                         cursor.addRow(row);
                                                     }
 
-                                                    updateSuggestions();
+                                                    updateSuggestions(cursor);
 
                                                 } catch (IOException | JSONException e) {
                                                     Log.e("Search Event Suggestions", e.getMessage());
@@ -292,7 +292,7 @@ public class SearchScreenActivity extends AppCompatActivity {
                                                         cursor.addRow(row);
                                                     }
 
-                                                    updateSuggestions();
+                                                    updateSuggestions(cursor);
 
                                                 } catch (IOException | JSONException e) {
                                                     Log.e("Search Event Suggestions", e.getMessage());
@@ -325,23 +325,19 @@ public class SearchScreenActivity extends AppCompatActivity {
             return cursor;
         }
 
-        private void updateSuggestions() {
+        private void updateSuggestions(Cursor cursor) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
                     ((Activity) activity.get()).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            searchView.getSuggestionsAdapter().changeCursor(cursor);
                             searchView.getSuggestionsAdapter().notifyDataSetChanged();
                         }
                     });
                 }
             }, 0);
-        }
-
-        @Override
-        protected void onPostExecute(Cursor result) {
-            searchView.getSuggestionsAdapter().changeCursor(result);
         }
 
     }

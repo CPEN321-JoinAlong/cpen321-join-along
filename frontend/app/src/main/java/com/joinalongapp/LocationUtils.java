@@ -38,6 +38,22 @@ public class LocationUtils {
         return new LatLng(lat, lng);
     }
 
+    public static LatLng getLatLngFromString(String coordinates) {
+        String[] latLngString = coordinates.split(",");
+
+        double lat = Double.parseDouble(latLngString[0].trim());
+        double lng = Double.parseDouble(latLngString[1].trim());
+
+        return new LatLng(lat, lng);
+    }
+
+    public static String getLatLngAsString(LatLng coordinates) {
+        String lat = String.valueOf(coordinates.latitude);
+        String lng = String.valueOf(coordinates.longitude);
+
+        return lat + "," + lng;
+    }
+
     /**
      * Validates that a location exists. A location does not require a valid street address.
      * @param address

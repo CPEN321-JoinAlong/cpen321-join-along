@@ -3,6 +3,7 @@ package com.joinalongapp.viewmodel;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.joinalongapp.LocationUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +33,7 @@ public class Event implements Serializable, IDetailsModel {
     private List<String> members = new ArrayList<>();
     private String description;
     private int currentNumPeopleRegistered;
-    private LatLng coordinates;
+    private String coordinates;
 
     public int getCurrentNumPeopleRegistered() {
         return currentNumPeopleRegistered;
@@ -151,11 +152,11 @@ public class Event implements Serializable, IDetailsModel {
     }
 
     public LatLng getCoordinates() {
-        return coordinates;
+        return LocationUtils.getLatLngFromString(coordinates);
     }
 
     public void setCoordinates(LatLng coordinates) {
-        this.coordinates = coordinates;
+        this.coordinates = LocationUtils.getLatLngAsString(coordinates);
     }
 
     public List<String> getStringListOfTags(){
@@ -186,11 +187,7 @@ public class Event implements Serializable, IDetailsModel {
         json.put("publicVisibility", getPublicVisibility());
         json.put("eventOwnerID", getEventOwnerId());
 
-        String lat = String.valueOf(getCoordinates().latitude);
-        String lng = String.valueOf(getCoordinates().longitude);
-
-        String inputCoords = lat + "," + lng;
-        json.put("coordinates", inputCoords);
+        json.put("coordinates", LocationUtils.getLatLngAsString(getCoordinates()));
 
         return json;
     }
@@ -239,15 +236,9 @@ public class Event implements Serializable, IDetailsModel {
         }
 
         setCurrentNumPeopleRegistered(json.getInt("currCapacity"));
-
-
+        
         String coordinates = json.getString("coordinates");
-        String[] latLngString = coordinates.split(",");
-
-        double lat = Double.parseDouble(latLngString[0].trim());
-        double lng = Double.parseDouble(latLngString[1].trim());
-
-        setCoordinates(new LatLng(lat, lng));
+        setCoordinates(LocationUtils.getLatLngFromString(coordinates));
 
         return this;
     }

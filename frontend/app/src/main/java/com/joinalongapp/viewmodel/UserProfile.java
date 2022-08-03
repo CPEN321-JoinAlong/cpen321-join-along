@@ -1,6 +1,7 @@
 package com.joinalongapp.viewmodel;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.joinalongapp.LocationUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +16,7 @@ public class UserProfile implements Serializable, IDetailsModel {
     private String firstName;
     private String lastName;
     private String location;
-    private LatLng coordinates;
+    private String coordinates;
     private List<Tag> tags = new ArrayList<>();
     private String description;
     private String profilePictureUrl;
@@ -126,11 +127,11 @@ public class UserProfile implements Serializable, IDetailsModel {
     }
 
     public LatLng getCoordinates() {
-        return coordinates;
+        return LocationUtils.getLatLngFromString(coordinates);
     }
 
     public void setCoordinates(LatLng coordinates) {
-        this.coordinates = coordinates;
+        this.coordinates = LocationUtils.getLatLngAsString(coordinates);
     }
 
     public String getFullName(){
@@ -149,11 +150,7 @@ public class UserProfile implements Serializable, IDetailsModel {
         JSONArray jsonArray = new JSONArray(friends);
         json.put("friends", jsonArray);
 
-        String lat = String.valueOf(getCoordinates().latitude);
-        String lng = String.valueOf(getCoordinates().longitude);
-
-        String inputCoords = lat + "," + lng;
-        json.put("coordinates", inputCoords);
+        json.put("coordinates", LocationUtils.getLatLngAsString(getCoordinates()));
 
         return json.toString();
     }
@@ -190,10 +187,7 @@ public class UserProfile implements Serializable, IDetailsModel {
         String coordinates = json.getString("coordinates");
         String[] latLngString = coordinates.split(",");
 
-        double lat = Double.parseDouble(latLngString[0].trim());
-        double lng = Double.parseDouble(latLngString[1].trim());
-
-        setCoordinates(new LatLng(lat, lng));
+        setCoordinates(LocationUtils.getLatLngFromString(coordinates));
 
         // TODO: add parsing for admin
 

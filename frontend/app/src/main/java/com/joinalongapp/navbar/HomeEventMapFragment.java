@@ -150,10 +150,12 @@ public class HomeEventMapFragment extends Fragment {
         List<LatLng> latLngList = new ArrayList<>();
 
         for (Event event : eventList) {
+            LatLng input = event.getCoordinates();
 
-            LatLng eventLatLng = event.getCoordinates();
-            double addressLat = roundToFiveDecimalPlaces(eventLatLng.latitude);
-            double addressLong = roundToFiveDecimalPlaces(eventLatLng.longitude);
+            double addressLat = roundToFiveDecimalPlaces(input.latitude);
+            double addressLong = roundToFiveDecimalPlaces(input.longitude);
+
+            LatLng eventLatLng = new LatLng(addressLat, addressLong);
 
             while (latLngList.contains(eventLatLng)) {
                 addressLat += randomOffset();

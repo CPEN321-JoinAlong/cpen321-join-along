@@ -30,6 +30,7 @@ import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.SearchScreenActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
+import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -181,7 +182,8 @@ public class HomeFragment extends Fragment {
         eventFilterList.add("Joined Events");
 
         //TODO: change this to get user interests from global
-        List<String> userInterests = new ArrayList<>();
+        UserProfile userProfile = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
+        List<String> userInterests = userProfile.getStringListOfTags();
 
         eventFilterList.addAll(userInterests);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, eventFilterList);
@@ -201,8 +203,14 @@ public class HomeFragment extends Fragment {
                 path = new PathBuilder().addUser().addNode(userId).addEvent().build();
                 break;
             case "All Events":
-            default:
                 path = new PathBuilder().addEvent().build();
+                break;
+            case "My Events":
+                //TODO: change later when endpoint is made
+                path = new PathBuilder().addEvent().build();
+                break;
+            default:
+                path = new PathBuilder().addEvent().addNode("tag").addNode(filter).build();
                 break;
         }
 

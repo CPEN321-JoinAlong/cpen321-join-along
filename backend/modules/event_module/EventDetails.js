@@ -6,7 +6,7 @@ class EventDetails {
         this.tags = eventInfo.tags;
         this.beginningDate = eventInfo.beginningDate;
         this.endDate = eventInfo.endDate;
-        this.publicVisibility = eventInfo.publicVisibility;
+        this.publicVisibility = eventInfo.publicVisibility != null ? eventInfo.publicVisibility : true;
         this.numberOfPeople = eventInfo.numberOfPeople;
         this.location = eventInfo.location;
         this.description = eventInfo.description;

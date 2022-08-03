@@ -142,7 +142,8 @@ class UserStore {
         if (event.data && user.data && chat.data) {
             if (
                 event.data.currCapacity < event.data.numberOfPeople &&
-                !user.data.events.includes(eventID) && !event.data.participants.includes(userID)
+                !user.data.events.includes(eventID) && !event.data.participants.includes(userID) &&
+                !user.data.blockedEvents.includes(eventID)
             ) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { events: eventID },
@@ -219,7 +220,9 @@ class UserStore {
             if (
                 !user.data.friends.includes(otherUserID) &&
                 !otherUser.data.friends.includes(userID) &&
-                !otherUser.data.friendRequest.includes(userID)
+                !otherUser.data.friendRequest.includes(userID) &&
+                !user.data.blockedUsers.includes(otherUserID) &&
+                !otherUser.data.blockedUsers.includes(userID)
             ) {
                 await User.findByIdAndUpdate(otherUserID, {
                     $push: { friendRequest: userID },

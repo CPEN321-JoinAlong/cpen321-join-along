@@ -446,7 +446,7 @@ app.get("/user/:id/event", async (req, res) => {
                     Date.parse(a.beginningDate) - Date.parse(b.beginningDate)
             );
             sortedList = sortedList.map((event) => ({
-                ...new EventDetails(event),
+                ...(event.toJSON()),
                 distance: distCalc(
                     userResponse.data.coordinates,
                     event.coordinates
@@ -484,13 +484,13 @@ app.get("/event", async (req, res) => {
         // console.log(user)
         if (user.data) {
             sortedList = sortedList.map((event) => ({
-                ...new EventDetails(event),
+                ...(event.toJSON()),
                 distance: distCalc(user.data.coordinates, event.coordinates),
             }));
             res.status(eventListResponse.status).send(sortedList);
         } else {
             sortedList = sortedList.map((event) => ({
-                ...new EventDetails(event),
+                ...(event.toJSON()),
                 distance: -1,
             }));
             res.status(eventListResponse.status).send(sortedList);
@@ -871,7 +871,7 @@ app.get("/user/:id/recommendedEvents", async (req, res) => {
         }
 
         sortedList = sortedList.map((event) => ({
-            ...new EventDetails(event),
+            ...(event.toJSON()),
             distance: distCalc(user.data.coordinates, event.coordinates),
         }));
 

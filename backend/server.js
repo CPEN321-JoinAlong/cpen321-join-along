@@ -193,6 +193,7 @@ app.post("/chat/create", async (req, res) => {
         let user = await userStore.findUserForLogin(req.body.token);
         let newList = chatInfo.participants.filter(userId => userId != user.data._id)
         chatInfo.participants = [user.data._id]
+        chatInfo.currCapacity = 1
         let chatResponse = await chatEngine.createChat(chatInfo, userStore);
         for(let userId of newList){
             await userStore.sendChatInvite(userId, chatResponse.data._id, chatEngine)

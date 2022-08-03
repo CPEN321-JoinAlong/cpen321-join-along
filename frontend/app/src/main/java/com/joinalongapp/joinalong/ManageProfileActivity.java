@@ -3,6 +3,7 @@ package com.joinalongapp.joinalong;
 import static com.joinalongapp.FeedbackMessageBuilder.createParseError;
 import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
 import static com.joinalongapp.LocationUtils.getAddressFromString;
+import static com.joinalongapp.LocationUtils.getCoordsFromAddress;
 import static com.joinalongapp.LocationUtils.standardizeAddress;
 import static com.joinalongapp.LocationUtils.validateLocation;
 import static com.joinalongapp.TextInputUtils.isValidNameTitle;
@@ -215,6 +216,7 @@ public class ManageProfileActivity extends AppCompatActivity {
         //TODO fix me
         Address address = getAddressFromString(locationEdit.getText().toString(), getApplicationContext());
         originalProfile.setLocation(standardizeAddress(address));
+        originalProfile.setCoordinates(getCoordsFromAddress(address));
 
         List<Tag> tags = getTagsFromChipGroup();
         originalProfile.setTags(tags);

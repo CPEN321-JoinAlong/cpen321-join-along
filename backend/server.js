@@ -475,7 +475,8 @@ app.get("/event", async (req, res) => {
 		console.log(sortedList)
 		let user = await userStore.findUserForLogin(req.headers.token)
 		if(user.data) {
-			sortedList = sortedList.map(event => ({...(new EventDetails(event)), distance: distCalc(user.coordinates, event.coordinates)}))
+			// sortedList = sortedList.map(event => ({...(new EventDetails(event)), distance: distCalc(user.coordinates, event.coordinates)}))
+			res.status(eventListResponse.status).send(sortedList);
 		} else {
 			res.status(eventListResponse.status).send(sortedList);
 		}

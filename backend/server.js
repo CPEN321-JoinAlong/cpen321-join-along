@@ -321,6 +321,31 @@ app.get("/event/title/:eventName", async (req, res) => {
     }
 });
 
+app.get("/event/tag/:eventTag", async (req, res) => {
+    let eventTag = req.params.eventTag;
+    try {
+        let eventListResponse = await eventStore.findAllEvents();
+		eventListResponse.data = eventListResponse.data.filter(event => event.tags.includes(eventTag))
+		let user = await userStore.findUserForLogin(req.headers.token);
+		if(user.data) {
+            eventListResponse.data = eventListResponse.data.map((event) => ({
+                ...(event.toJSON()),
+                distance: distCalc(user.data.coordinates, event.coordinates),
+            }));
+            res.status(eventListResponse.status).send(eventListResponse.data);
+		} else {
+            eventListResponse.data = eventListResponse.data.map((event) => ({
+                ...(event.toJSON()),
+                distance: -1,
+            }));
+			res.status(eventListResponse.status).send(eventListResponse.data);
+		}
+    } catch (e) {
+        console.log(e);
+        res.status(ERROR_CODES.DBERROR).send(null);
+    }
+});
+
 //Sends the list of friend requests of user - get
 app.get("/user/:id/friendRequest", async (req, res) => {
     let id = req.params.id;
@@ -779,6 +804,16 @@ app.get("/reports", async (req, res) => {
 app.post("/user/:id/ban", async (req, res) => {
     let id = req.params.id;
     try {
+        let user = await userStore.findUserByID(id)
+        if (user.status !== ERROR_CODES.SUCCESS)
+            return res.status(user.status).send("User not found")
+        
+        for (let eventID of user.data.events)
+            await userStore.leaveEvent(id, eventID, eventStore)
+            
+        for (let chatID of user.data.chats)
+            await userStore.leaveChat(id, chatID, chatStore)
+
         let response = await banService.banUser(id, userStore);
         res.status(response.status).send("Successful");
     } catch (e) {

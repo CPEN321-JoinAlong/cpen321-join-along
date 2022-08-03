@@ -223,7 +223,14 @@ app.post("/event/create", async (req, res) => {
             eventResponse.data,
             userStore
         );
-        res.status(updatedEvent.status).send(updatedEvent.data);
+		let user = await userStore.findUserForLogin(req.headers.token);
+		if (user.data) {
+			updatedEvent.data = {...(updatedEvent.data.toJSON()), distance: distCalc(user.data.coordinates, updatedEvent.data.coordinates)}
+			res.status(updatedEvent.status).send(updatedEvent.data);
+		} else {
+			updatedEvent.data = {...(updatedEvent.data.toJSON()), distance: -1}
+			res.status(updatedEvent.status).send(updatedEvent.data);
+		} 
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -265,7 +272,14 @@ app.put("/event/:id/edit", async (req, res) => {
             req.body,
             userStore
         );
-        res.status(eventResponse.status).send(eventResponse.data); //update the update func to send the new object
+		let user = await userStore.findUserForLogin(req.headers.token);
+		if (user.data) {
+			eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+			res.status(eventResponse.status).send(eventResponse.data);
+		} else {
+			eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+			res.status(eventResponse.status).send(eventResponse.data);
+		} 
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -503,7 +517,14 @@ app.get("/event/:id", async (req, res) => {
     let id = req.params.id;
     try {
         let eventResponse = await eventStore.findEventByID(id);
-        res.status(eventResponse.status).send(eventResponse.data);
+		let user = await userStore.findUserForLogin(req.headers.token);
+		if (user.data) {
+			eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+			res.status(eventResponse.status).send(eventResponse.data);
+		} else {
+			eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+			res.status(eventResponse.status).send(eventResponse.data);
+		} 
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);

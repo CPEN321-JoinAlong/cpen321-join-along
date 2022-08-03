@@ -1,25 +1,28 @@
-const axios = require("axios");
-const API_KEY = "AIzaSyDFO8v4uud6-k0s_T_25pJzTV_qvMndDBk";
-
 //temporarity using to update all the events and User
-module.exports = async function (coordUser, coordEvent) {
+module.exports = function (coordUser, coordEvent) {
+    // console.log(coordUser)
+    // console.log(coordEvent)
     let userLat = parseFloat(coordUser.split(",")[0]);
     let userLng = parseFloat(coordUser.split(",")[0]);
 
     let eventLat = parseFloat(coordEvent.split(",")[0]);
     let eventLng = parseFloat(coordEvent.split(",")[0]);
-
+    // console.log(eventLat + ", " + eventLng)
+    if((userLat === 0 && userLng === 0) || (eventLat === 0 && eventLng === 0)){
+        return -1
+    }
     var R = 6371; // Radius of the earth in km
     var dLat = deg2rad(eventLat - userLat); // deg2rad below
     var dLon = deg2rad(eventLng - userLng);
     var a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(deg2rad(lat1)) *
-            Math.cos(deg2rad(lat2)) *
+        Math.cos(deg2rad(userLat)) *
+            Math.cos(deg2rad(eventLat)) *
             Math.sin(dLon / 2) *
             Math.sin(dLon / 2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c; // Distance in km
+    // console.log(d)
     return d;
 };
 

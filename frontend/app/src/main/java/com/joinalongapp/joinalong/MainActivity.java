@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity{
                 case R.id.event:
                     Intent i = new Intent(MainActivity.this, ManageEventActivity.class);
                     startActivity(i);
+                    overridePendingTransition(R.anim.bottom_slide_down, R.anim.no_animation);
                     finish();
                     break;
                 case R.id.friends:

@@ -176,7 +176,10 @@ public class ViewChatActivity extends AppCompatActivity {
                                             .addNode(chatId)
                                             .build();
 
-                                    new RequestManager().put(path, token, new RequestManager.OnRequestCompleteListener() {
+                                    JSONObject json = new JSONObject();
+                                    json.put("token", token);
+
+                                    new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                                         @Override
                                         public void onSuccess(Call call, Response response) {
 
@@ -187,7 +190,7 @@ public class ViewChatActivity extends AppCompatActivity {
                                                         activity.runOnUiThread(new Runnable() {
                                                             @Override
                                                             public void run() {
-                                                                menu.getMenu().findItem(R.id.eventLeave).setVisible(false);
+                                                                menu.getMenu().findItem(R.id.chatLeave).setVisible(false);
 
                                                                 new AlertDialog.Builder(activity)
                                                                         .setTitle("Successfully Left Chat")
@@ -225,6 +228,8 @@ public class ViewChatActivity extends AppCompatActivity {
                                     });
                                 } catch (IOException e) {
                                     FeedbackMessageBuilder.createServerConnectionError(e, operation, activity);
+                                } catch (JSONException e) {
+                                    FeedbackMessageBuilder.createParseError(e, operation, activity);
                                 }
 
                                 return true;

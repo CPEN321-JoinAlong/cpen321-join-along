@@ -23,7 +23,7 @@ const distCalc = require("./DistanceCalc");
 const ERROR_CODES = require("./ErrorCodes");
 
 function logRequest(req, res, next) {
-    console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
+    // console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
     next();
 }
 
@@ -272,7 +272,10 @@ app.put("/event/:id/edit", async (req, res) => {
             req.body,
             userStore
         );
-		let user = await userStore.findUserForLogin(req.headers.token);
+		console.log(eventResponse)
+		console.log(req.body.token)
+		let user = await userStore.findUserForLogin(req.body.token);
+		console.log(user)
 		if (user.data) {
 			eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
 			res.status(eventResponse.status).send(eventResponse.data);

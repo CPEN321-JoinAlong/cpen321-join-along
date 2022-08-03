@@ -23,7 +23,7 @@ const distCalc = require("./DistanceCalc");
 const ERROR_CODES = require("./ErrorCodes");
 
 function logRequest(req, res, next) {
-    console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
+    // console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
     next();
 }
 
@@ -223,7 +223,14 @@ app.post("/event/create", async (req, res) => {
             eventResponse.data,
             userStore
         );
-        res.status(updatedEvent.status).send(updatedEvent.data);
+		let user = await userStore.findUserForLogin(req.headers.token);
+		if (user.data) {
+			updatedEvent.data = {...(updatedEvent.data.toJSON()), distance: distCalc(user.data.coordinates, updatedEvent.data.coordinates)}
+			res.status(updatedEvent.status).send(updatedEvent.data);
+		} else {
+			updatedEvent.data = {...(updatedEvent.data.toJSON()), distance: -1}
+			res.status(updatedEvent.status).send(updatedEvent.data);
+		} 
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -265,7 +272,17 @@ app.put("/event/:id/edit", async (req, res) => {
             req.body,
             userStore
         );
-        res.status(eventResponse.status).send(eventResponse.data); //update the update func to send the new object
+		console.log(eventResponse)
+		console.log(req.body.token)
+		let user = await userStore.findUserForLogin(req.body.token);
+		console.log(user)
+		if (user.data) {
+			eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+			res.status(eventResponse.status).send(eventResponse.data);
+		} else {
+			eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+			res.status(eventResponse.status).send(eventResponse.data);
+		} 
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -301,6 +318,31 @@ app.get("/event/title/:eventName", async (req, res) => {
     let eventName = req.params.eventName;
     try {
         let eventListResponse = await eventStore.findEventsByName(eventName);
+		let user = await userStore.findUserForLogin(req.headers.token);
+		if(user.data) {
+            eventListResponse.data = eventListResponse.data.map((event) => ({
+                ...(event.toJSON()),
+                distance: distCalc(user.data.coordinates, event.coordinates),
+            }));
+            res.status(eventListResponse.status).send(eventListResponse.data);
+		} else {
+            eventListResponse.data = eventListResponse.data.map((event) => ({
+                ...(event.toJSON()),
+                distance: -1,
+            }));
+			res.status(eventListResponse.status).send(eventListResponse.data);
+		}
+    } catch (e) {
+        console.log(e);
+        res.status(ERROR_CODES.DBERROR).send(null);
+    }
+});
+
+app.get("/event/tag/:eventTag", async (req, res) => {
+    let eventTag = req.params.eventTag;
+    try {
+        let eventListResponse = await eventStore.findAllEvents();
+		eventListResponse.data = eventListResponse.data.filter(event => event.tags.includes(eventTag))
 		let user = await userStore.findUserForLogin(req.headers.token);
 		if(user.data) {
             eventListResponse.data = eventListResponse.data.map((event) => ({
@@ -478,7 +520,14 @@ app.get("/event/:id", async (req, res) => {
     let id = req.params.id;
     try {
         let eventResponse = await eventStore.findEventByID(id);
-        res.status(eventResponse.status).send(eventResponse.data);
+		let user = await userStore.findUserForLogin(req.headers.token);
+		if (user.data) {
+			eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+			res.status(eventResponse.status).send(eventResponse.data);
+		} else {
+			eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+			res.status(eventResponse.status).send(eventResponse.data);
+		} 
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -779,6 +828,16 @@ app.get("/reports", async (req, res) => {
 app.post("/user/:id/ban", async (req, res) => {
     let id = req.params.id;
     try {
+        let user = await userStore.findUserByID(id)
+        if (user.status !== ERROR_CODES.SUCCESS)
+            return res.status(user.status).send("User not found")
+        
+        for (let eventID of user.data.events)
+            await userStore.leaveEvent(id, eventID, eventStore)
+            
+        for (let chatID of user.data.chats)
+            await userStore.leaveChat(id, chatID, chatStore)
+
         let response = await banService.banUser(id, userStore);
         res.status(response.status).send("Successful");
     } catch (e) {

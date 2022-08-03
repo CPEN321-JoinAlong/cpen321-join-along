@@ -12,14 +12,14 @@
         android:id="@+id/viewEventBackButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginStart="5dp"
         android:layout_marginTop="20dp"
         android:layout_weight="1"
         android:background="@android:color/transparent"
-        android:src="?attr/actionModeCloseDrawable"
 
+        android:src="?attr/actionModeCloseDrawable"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/eventViewDescriptionTitle"
@@ -329,8 +329,8 @@
         android:id="@+id/eventViewNumPeople"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/defaultTextColor"
         android:text="TextView"
+        android:textColor="?attr/defaultTextColor"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/eventViewMembersTitle"
         app:layout_constraintTop_toTopOf="@+id/guideline31" />
@@ -340,27 +340,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/join_event"
-        app:tint="?attr/buttonColor"
         android:textColor="?attr/defaultWhiteWhite"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/guideline50"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline35"
-        app:layout_constraintVertical_bias="0.043" />
+        app:tint="?attr/buttonColor" />
 
     <Button
         android:id="@+id/viewEventBookRideshareButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/book_rideshare"
-        app:tint="?attr/buttonColor"
         android:textColor="?attr/defaultWhiteWhite"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline27"
-        app:layout_constraintStart_toStartOf="@+id/guideline26"
-        app:layout_constraintTop_toTopOf="@+id/guideline35"
-        app:layout_constraintVertical_bias="0.482" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline51"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline50"
+        app:layout_constraintVertical_bias="0.571"
+        app:tint="?attr/buttonColor" />
 
     <ImageButton
         android:id="@+id/eventOptions"
@@ -371,21 +371,36 @@
         android:background="@android:color/transparent"
         android:scaleType="fitXY"
         android:src="@drawable/ic_baseline_more_vert_24"
-        app:tint="?attr/defaultTextColor"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline28" />
+        app:layout_constraintTop_toTopOf="@+id/guideline28"
+        app:tint="?attr/defaultTextColor" />
 
     <Button
         android:id="@+id/eventBanButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
         android:text="Ban"
-        app:tint="?attr/buttonColor"
         android:textColor="?attr/defaultWhiteWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/joinEventButton"
-        app:layout_constraintVertical_bias="0.811" />
+        app:layout_constraintTop_toTopOf="@+id/guideline51"
+        app:layout_constraintVertical_bias="0.181"
+        app:tint="?attr/buttonColor" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="593dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline51"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="650dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

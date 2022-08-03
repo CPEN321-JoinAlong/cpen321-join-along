@@ -21,7 +21,8 @@
         app:layout_constraintHorizontal_bias="0.865"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_delete" />
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
+        app:tint="#FF0000"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/aboveTitleGuideline3"

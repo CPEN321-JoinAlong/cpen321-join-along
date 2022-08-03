@@ -53,7 +53,7 @@ class EventStore {
         });
         if (foundEventList.length !== 0)
             return new ResponseObject(ERROR_CODES.SUCCESS, foundEventList);
-        else return new ResponseObject(ERROR_CODES.NOTFOUND, foundEventList);
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, foundEventList.filter(event => event.publicVisibility));
     }
 
     async findEventByUser(userID) {

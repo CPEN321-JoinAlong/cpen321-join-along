@@ -177,6 +177,7 @@ public class HomeFragment extends Fragment {
     private void initSpinner() {
         eventFilterList.add("Recommended");
         eventFilterList.add("My Events");
+        eventFilterList.add("All Events");
         eventFilterList.add("Joined Events");
 
         //TODO: change this to get user interests from global
@@ -193,10 +194,13 @@ public class HomeFragment extends Fragment {
         String path;
 
         switch (filter) {
-            case "My Events":
+            case "Recommended":
+                path = new PathBuilder().addUser().addNode(userId).addNode("recommendedEvents").build();
+                break;
+            case "Joined Events":
                 path = new PathBuilder().addUser().addNode(userId).addEvent().build();
                 break;
-            case "Recommended":
+            case "All Events":
             default:
                 path = new PathBuilder().addEvent().build();
                 break;

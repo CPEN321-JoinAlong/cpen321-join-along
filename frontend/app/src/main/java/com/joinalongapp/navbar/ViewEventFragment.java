@@ -422,12 +422,14 @@ public class ViewEventFragment extends Fragment {
                     //TODO go back to map
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                     fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 } else {
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                     fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();

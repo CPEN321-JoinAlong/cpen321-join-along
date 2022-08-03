@@ -22,13 +22,16 @@
 
     <TextView
         android:id="@+id/individualReportName"
-        android:layout_width="wrap_content"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="100dp"
-        android:textColor="?attr/defaultTextColor"
+        android:layout_marginTop="22dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
         android:text="TextView"
-        android:textSize="28sp" />
+        android:textColor="?attr/defaultTextColor"
+        android:textSize="25sp" />
 
     <Button
         android:id="@+id/reportOptions"

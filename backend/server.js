@@ -277,10 +277,14 @@ app.put("/event/:id/edit", async (req, res) => {
 		let user = await userStore.findUserForLogin(req.body.token);
 		console.log(user)
 		if (user.data) {
-			eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+            if(eventResponse.data){
+                eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+            }
 			res.status(eventResponse.status).send(eventResponse.data);
 		} else {
-			eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+            if(eventResponse.data){
+                eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+            }
 			res.status(eventResponse.status).send(eventResponse.data);
 		} 
     } catch (e) {
@@ -522,10 +526,14 @@ app.get("/event/:id", async (req, res) => {
         let eventResponse = await eventStore.findEventByID(id);
 		let user = await userStore.findUserForLogin(req.headers.token);
 		if (user.data) {
-			eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+			if(eventResponse.data){
+                eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+            }
 			res.status(eventResponse.status).send(eventResponse.data);
 		} else {
-			eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+            if(eventResponse.data){
+                eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+            }
 			res.status(eventResponse.status).send(eventResponse.data);
 		} 
     } catch (e) {

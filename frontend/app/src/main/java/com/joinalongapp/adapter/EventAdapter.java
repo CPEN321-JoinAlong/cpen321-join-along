@@ -33,6 +33,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     private ItemClickListener clickListener;
     private String[] colors;
     private final int NUMBERS_OF_COLORS = 12;
+    private final int INVALID_DISTANCE = -1;
 
     public EventAdapter(Context context, List<Event> eventArrayList) {
         this.context = context;
@@ -63,10 +64,24 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         String eventLocation = model.getLocation();
         DateFormat dateFormat = new SimpleDateFormat("EEE, MMMM d");
         String result = dateFormat.format(eventDate);
+        double distance = model.getDistance();
+
+        if(Math.round(distance) == INVALID_DISTANCE){
+            holder.eventLocation.setText("");
+        }
+        else{
+            if(distance < 0.1){
+                holder.eventLocation.setText((distance * 1000) + " m");
+            }
+            else{
+                holder.eventLocation.setText(Math.round(distance * 10.0) / 10.0 + " km");
+            }
+
+        }
 
         String color = colors[position % NUMBERS_OF_COLORS];
         holder.eventRelativeLayout.setStrokeColor(Color.parseColor(color));
-        holder.eventLocation.setText(eventLocation);
+        //holder.eventLocation.setText(eventLocation);
         holder.eventTitle.setText(eventTitleString);
         holder.eventDescription.setText(eventDescriptionString);
         holder.eventDate.setText(result);

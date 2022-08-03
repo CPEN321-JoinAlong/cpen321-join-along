@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.joinalongapp.joinalong.MessageActivity;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.ChatDetails;
+import com.squareup.picasso.Picasso;
 
 import java.util.Iterator;
 import java.util.List;
@@ -38,9 +39,6 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-
-
             name = (TextView) itemView.findViewById(R.id.individualReportName);
             profilePicture = (ImageView) itemView.findViewById(R.id.individualProfilePicture);
             options = (Button) itemView.findViewById(R.id.reportOptions);
@@ -101,6 +99,10 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
 
             }
         });
+
+        ChatDetails chatDetails = chatDetailsList.get(holder.getBindingAdapterPosition());
+
+        //Picasso.get().load(chatDetailsList.get(holder.getBindingAdapterPosition()).getProfilePicture()).into(holder.getProfilePicture());
         //holder.getProfilePicture().set
     }
 

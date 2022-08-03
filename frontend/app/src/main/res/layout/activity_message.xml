@@ -100,11 +100,15 @@
 
     <TextView
         android:id="@+id/chatTitleName"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="TextView"
-        android:textSize="20sp"
         android:textColor="?attr/defaultTextColor"
+        android:textSize="20sp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
         app:layout_constraintBottom_toTopOf="@+id/chatRecycler"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

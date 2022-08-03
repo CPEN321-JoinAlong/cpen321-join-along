@@ -72,7 +72,7 @@ class EventStore {
         let eventList = await Event.find({});
         if (eventList.length !== 0)
             return new ResponseObject(ERROR_CODES.SUCCESS, eventList);
-        else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList);
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList.filter(event => event.publicVisibility));
     }
 
     async findEventByID(eventID) {

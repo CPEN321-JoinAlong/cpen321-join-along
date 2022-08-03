@@ -1,4 +1,5 @@
 //temporarity using to update all the events and User
+// const axios = require("axios")
 module.exports = function (coordUser, coordEvent) {
     // console.log(coordUser)
     // console.log(coordEvent)
@@ -24,6 +25,17 @@ module.exports = function (coordUser, coordEvent) {
     var d = R * c; // Distance in km
     // console.log(d)
     return d;
+    // try {
+    //     let response = await axios(
+    //         "https://maps.googleapis.com/maps/api/geocode/json?address="+ location + "&key=AIzaSyDFO8v4uud6-k0s_T_25pJzTV_qvMndDBk"
+    //     );
+    //     let coordinates = response.data.results[0].geometry.location;
+    //     console.log(coordinates)
+    //     return`${coordinates.lat},${coordinates.lng}`;
+    // } catch (e) {
+    //     // console.log(e)
+    //     return "0,0"
+    // }
 };
 
 function deg2rad(deg) {

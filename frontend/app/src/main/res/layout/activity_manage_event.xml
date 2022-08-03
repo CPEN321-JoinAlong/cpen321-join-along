@@ -16,13 +16,15 @@
         android:contentDescription="@string/default_cancel_string"
         android:minHeight="48dp"
         android:outlineAmbientShadowColor="#0000"
+
         app:layout_constraintBottom_toTopOf="@+id/underTitleGuideLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.865"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@android:drawable/ic_delete" />
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
+        app:tint="#FF0000" />
 
     <TextView
         android:id="@+id/eventManagementTitle"

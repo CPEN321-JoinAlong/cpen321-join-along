@@ -434,12 +434,12 @@ public class ManageEventActivity extends AppCompatActivity {
         }
 
         if (!editTextEmpty(numberOfPeople)) {
-            flag = false;
             BigInteger bigInteger = new BigInteger(numberOfPeople.getText().toString());
             if (bigInteger.compareTo(new BigInteger(String.valueOf(Integer.MAX_VALUE))) == 1) {
+                flag = false;
                 numberOfPeople.setText(String.valueOf(Integer.MAX_VALUE));
+                numberOfPeople.setError("Maximum number of people is " + Integer.MAX_VALUE);
             }
-            numberOfPeople.setError("Maximum number of people is " + Integer.MAX_VALUE);
         }
 
         if (!editTextEmpty(numberOfPeople)) {

@@ -14,7 +14,7 @@ class RecSystem {
         // console.log(eventList)
         let freeEventList = eventList.data.filter(event => event.currCapacity < event.numberOfPeople);
         // console.log(freeEventList.length)
-        freeEventList = freeEventList.filter(event => !event.participants.includes(userID))
+        freeEventList = freeEventList.filter(event => !event.participants.includes(userID) && !userInfo.data.blockedEvents.includes(event._id))
         // console.log(freeEventList.length)
         // console.log(cosSim)
         freeEventList = freeEventList.sort((a, b) => this.#cosineSimilarity(userInfo.data.interests, b.tags) - this.#cosineSimilarity(userInfo.data.interests, a.tags))

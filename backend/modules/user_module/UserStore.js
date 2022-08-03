@@ -295,7 +295,9 @@ class UserStore {
         if (user.data && otherUser.data) {
             if (
                 !user.data.friends.includes(otherUserID) &&
-                !otherUser.data.friends.includes(userID)
+                !otherUser.data.friends.includes(userID) &&
+                !user.data.blockedUsers.includes(otherUserID) &&
+                !otherUser.data.blockedUsers.includes(userID)
             ) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { friends: otherUserID },

@@ -190,14 +190,13 @@ app.post("/chat/create", async (req, res) => {
     let chatObject = req.body;
     let chatInfo = new ChatDetails(chatObject);
     try {
-        let user = await userStore.findUserForLogin(req.headers.token);
+        let user = await userStore.findUserForLogin(req.body.token);
         let newList = chatInfo.participants.filter(userId => userId != user.data._id)
         chatInfo.participants = [user.data._id]
         let chatResponse = await chatEngine.createChat(chatInfo, userStore);
         for(let userId of newList){
             await userStore.sendChatInvite(userId, chatResponse.data._id, chatEngine)
         }
-        // console.log(chatResponse);
         res.status(chatResponse.status).send(chatResponse.data);
     } catch (e) {
         console.log(e);
@@ -261,7 +260,14 @@ app.put("/user/:id/edit", async (req, res) => {
 app.put("/chat/:id/edit", async (req, res) => {
     let id = req.params.id;
     try {
+        let chat = await chatEngine.findChatByID(id);
+        if(chat.data == null) return res.status(chat.status).send(null)
+        let newParticipants = req.body.participants.filter(userId => !chat.data.participants.includes(userId))
+        req.body.participants = req.body.participants.filter(userId => chat.data.participants.includes(userId))
         let chatResponse = await chatEngine.editChat(id, req.body, userStore);
+        for(let userId of newParticipants){
+            await userStore.sendChatInvite(userId, chatResponse.data._id, chatEngine)
+        }
         res.status(chatResponse.status).send(chatResponse.data); //update the update function to send the new object
     } catch (e) {
         console.log(e);

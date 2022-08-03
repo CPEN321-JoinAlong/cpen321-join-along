@@ -44,6 +44,9 @@ afterAll(async () => {
     await Event.deleteMany({title: "tester event"})
     await User.deleteMany({name: "Rob Robber"})
     await User.deleteMany({name: "Bob Bobber"})
+    await User.updateMany({token}, {
+        chats: []
+    })
     mongoose.connection.close();
     server.close();
     // done();

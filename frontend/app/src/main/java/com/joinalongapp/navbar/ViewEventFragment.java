@@ -156,7 +156,7 @@ public class ViewEventFragment extends Fragment {
                             .addNode("ban")
                             .build();
 
-                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    requestManager.post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             if (response.isSuccessful()) {
@@ -212,7 +212,10 @@ public class ViewEventFragment extends Fragment {
                                             .addNode(eventId)
                                             .build();
 
-                                    new RequestManager().put(path, token, new RequestManager.OnRequestCompleteListener() {
+                                    JSONObject json = new JSONObject();
+                                    json.put("token", token);
+
+                                    new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                                         @Override
                                         public void onSuccess(Call call, Response response) {
 
@@ -264,6 +267,8 @@ public class ViewEventFragment extends Fragment {
                                     });
                                 } catch (IOException e) {
                                     FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
+                                } catch (JSONException e) {
+                                    FeedbackMessageBuilder.createParseError(e, operation, getActivity());
                                 }
 
                                 return true;

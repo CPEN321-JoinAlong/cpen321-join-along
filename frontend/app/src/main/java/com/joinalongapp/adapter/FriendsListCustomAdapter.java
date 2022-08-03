@@ -122,6 +122,7 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                 viewProfileFragment.setArguments(info);
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                 fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
                 fragmentTransaction.add(R.id.frame_layout, viewProfileFragment);
                 fragmentTransaction.addToBackStack(null);

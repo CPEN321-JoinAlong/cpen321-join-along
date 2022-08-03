@@ -97,7 +97,7 @@ public class MessagingListCustomAdapter extends RecyclerView.Adapter<MessagingLi
                 Intent i = new Intent(v.getContext(), MessageActivity.class);
                 i.putExtra("CHAT_DETAILS", chatDetailsList.get(holder.getBindingAdapterPosition()));
                 activity.startActivity(i);
-                activity.overridePendingTransition(android.R.anim.fade_out,android.R.anim.fade_in);
+                activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
             }
         });

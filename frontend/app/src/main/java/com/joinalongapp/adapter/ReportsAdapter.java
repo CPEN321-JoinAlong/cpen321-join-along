@@ -113,6 +113,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
                 viewReportFragment.setArguments(info);
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                 fragmentTransaction.replace(R.id.constraintLayoutProfile, viewReportFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();

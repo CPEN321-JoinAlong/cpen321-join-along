@@ -178,7 +178,7 @@ public class ViewProfileFragment extends Fragment {
                             .addNode("ban")
                             .build();
 
-                    new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    new RequestManager().post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             if (response.isSuccessful()) {

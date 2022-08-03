@@ -34,6 +34,7 @@ public class Event implements Serializable, IDetailsModel {
     private String description;
     private int currentNumPeopleRegistered;
     private String coordinates;
+    private double distance;
 
     public int getCurrentNumPeopleRegistered() {
         return currentNumPeopleRegistered;
@@ -159,6 +160,14 @@ public class Event implements Serializable, IDetailsModel {
         this.coordinates = LocationUtils.getLatLngAsString(coordinates);
     }
 
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
     public List<String> getStringListOfTags(){
         List<String> result = new ArrayList<>();
         for(Tag tag : tags){
@@ -229,6 +238,8 @@ public class Event implements Serializable, IDetailsModel {
         setNumberOfPeopleAllowed(json.getInt("numberOfPeople"));
         setLocation(json.getString("location"));
         setDescription(json.getString("description"));
+
+        setDistance(Double.parseDouble(json.getString("distance")));
 
         JSONArray members = json.getJSONArray("participants");
         for (int i = 0; i < members.length(); i++) {

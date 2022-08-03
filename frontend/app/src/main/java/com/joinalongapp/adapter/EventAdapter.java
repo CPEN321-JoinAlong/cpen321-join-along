@@ -2,13 +2,11 @@ package com.joinalongapp.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,11 +18,9 @@ import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Event;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
@@ -57,31 +53,31 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Animation animation = AnimationUtils.loadAnimation(holder.itemView.getContext(), android.R.anim.slide_in_left);
-        Event model = homepageEventList.get(position);
-        String eventTitleString = model.getTitle();
-        String eventDescriptionString = model.getOwnerName();
-        Date eventDate = model.getBeginningDate();
-        String eventLocation = model.getLocation();
+        Event event = homepageEventList.get(position);
+        String eventTitleString = event.getTitle();
+        String eventDescriptionString = event.getOwnerName();
+        Date eventDate = event.getBeginningDate();
         DateFormat dateFormat = new SimpleDateFormat("EEE, MMMM d");
         String result = dateFormat.format(eventDate);
-        double distance = model.getDistance();
+        double distance = event.getDistance();
 
-        if(Math.round(distance) == INVALID_DISTANCE){
+        if (Math.round(distance) == INVALID_DISTANCE) {
             holder.eventLocation.setText("");
-        }
-        else{
-            if(distance < 0.1){
-                holder.eventLocation.setText((distance * 1000) + " m");
+        } else {
+            if (distance < 1.0) {
+                long roundedDistance = Math.round((distance * 1000) * 1);
+                String displayDistance = roundedDistance + " m";
+                holder.eventLocation.setText(displayDistance);
             }
-            else{
-                holder.eventLocation.setText(Math.round(distance * 10.0) / 10.0 + " km");
+            else {
+                double roundedDistance = Math.round(distance * 10.0) / 10.0;
+                String displayDistance = roundedDistance + " km";
+                holder.eventLocation.setText(displayDistance);
             }
-
         }
 
         String color = colors[position % NUMBERS_OF_COLORS];
         holder.eventRelativeLayout.setStrokeColor(Color.parseColor(color));
-        //holder.eventLocation.setText(eventLocation);
         holder.eventTitle.setText(eventTitleString);
         holder.eventDescription.setText(eventDescriptionString);
         holder.eventDate.setText(result);

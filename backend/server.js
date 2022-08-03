@@ -128,7 +128,7 @@ app.get("/test", async (req, res) => {
             await Event.findByIdAndUpdate(event._id, { coordinates });
         });
 
-		a["user"] = await User.find({});
+        a["user"] = await User.find({});
         a["event"] = await Event.find({});
 
         res.status(ERROR_CODES.SUCCESS).send(a);
@@ -445,6 +445,13 @@ app.get("/user/:id/event", async (req, res) => {
                 (a, b) =>
                     Date.parse(a.beginningDate) - Date.parse(b.beginningDate)
             );
+            sortedList = sortedList.map((event) => ({
+                ...(event.toJSON()),
+                distance: distCalc(
+                    userResponse.data.coordinates,
+                    event.coordinates
+                ),
+            }));
             res.status(eventListResponse.status).send(sortedList);
         }
     } catch (e) {
@@ -472,14 +479,22 @@ app.get("/event", async (req, res) => {
         let sortedList = eventListResponse.data.sort(
             (a, b) => Date.parse(a.beginningDate) - Date.parse(b.beginningDate)
         );
-		console.log(sortedList)
-		let user = await userStore.findUserForLogin(req.headers.token)
-		if(user.data) {
-			// sortedList = sortedList.map(event => ({...(new EventDetails(event)), distance: distCalc(user.coordinates, event.coordinates)}))
-			res.status(eventListResponse.status).send(sortedList);
-		} else {
-			res.status(eventListResponse.status).send(sortedList);
-		}
+        // console.log(sortedList)
+        let user = await userStore.findUserForLogin(req.headers.token);
+        // console.log(user)
+        if (user.data) {
+            sortedList = sortedList.map((event) => ({
+                ...(event.toJSON()),
+                distance: distCalc(user.data.coordinates, event.coordinates),
+            }));
+            res.status(eventListResponse.status).send(sortedList);
+        } else {
+            sortedList = sortedList.map((event) => ({
+                ...(event.toJSON()),
+                distance: -1,
+            }));
+            res.status(eventListResponse.status).send(sortedList);
+        }
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -845,7 +860,22 @@ app.get("/user/:id/recommendedEvents", async (req, res) => {
             eventStore
         );
         let eventList = response.data;
-        res.status(response.status).send(eventList);
+
+        let sortedList = eventList.sort(
+            (a, b) => Date.parse(a.beginningDate) - Date.parse(b.beginningDate)
+        );
+
+        let user = await userStore.findUserByID(id);
+        if (!user.data) {
+            return res.status(response.status).send([]);
+        }
+
+        sortedList = sortedList.map((event) => ({
+            ...(event.toJSON()),
+            distance: distCalc(user.data.coordinates, event.coordinates),
+        }));
+
+        res.status(response.status).send(sortedList);
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);

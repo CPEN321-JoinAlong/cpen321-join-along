@@ -17,10 +17,13 @@ const EventDetails = require("./modules/event_module/EventDetails");
 const EventStore = require("./modules/event_module/EventStore");
 const ReportService = require("./modules/report_module/ReportService");
 const BanService = require("./modules/ban_module/BanService");
+const RecSystem = require("./modules/rec_module/RecSystem");
+const distCalc = require("./DistanceCalc")
+
 const ERROR_CODES = require("./ErrorCodes");
 
 function logRequest(req, res, next) {
-	// console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
+	console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
 	next();
 }
 
@@ -50,6 +53,7 @@ let eventStore = new EventStore();
 let chatEngine = new ChatEngine();
 let reportService = new ReportService();
 let banService = new BanService();
+let recSystem = new RecSystem();
 
 // // firebase admin SDK
 // admin.initializeApp({
@@ -99,6 +103,7 @@ app.use(async (req, res, next) => {
 app.get("/test", async (req, res) => {
 	let a = {};
 	try {
+		console.log("Hello")
 		a["user"] = await User.find({});
 		a["chat"] = await Chat.find({});
 		a["event"] = await Event.find({});
@@ -243,19 +248,6 @@ app.put("/event/:id/edit", async (req, res) => {
 		res.status(ERROR_CODES.DBERROR).send(null);
 	}
 });
-
-//* Home Screen
-
-// //Sends the user object and events the user is a part of for the home screen - get
-// app.get("/user/:id/home", async (req, res) => {
-//     let { id } = req.params;
-//     let foundUser = await userStore.findUserByID(id);
-//     if (foundUser == null) res.status(ERROR_CODES.NOTFOUND).send("No User Found");
-//     else {
-//         let events = await eventStore.findEventByIDList(foundUser.events);
-//         res.status(ERROR_CODES.SUCCESS).send(events); //need to change this to event id, name and description only
-//     }
-// });
 
 //Sends the user object for the profile page - get
 app.get("/user/:id", async (req, res) => {
@@ -434,12 +426,6 @@ app.get("/user/:id/event", async (req, res) => {
 		res.status(ERROR_CODES.DBERROR).send(null);
 	}
 });
-
-//Event list: Send list of Event
-// app.post("/event/filter", async (req, res) => {
-//     let eventList = await eventStore.findEventByDetails(req.body);
-//     res.status(ERROR_CODES.SUCCESS).send(eventList);
-// });
 
 //Event: Sends the event object (for view event details?) - get
 app.get("/event/:id", async (req, res) => {
@@ -810,12 +796,12 @@ io.on('connection', (socket) => {
 	})
 })
 
-app.post("/user/:id/recommendedEvents", async (req, res) => {
+app.get("/user/:id/recommendedEvents", async (req, res) => {
 	let id = req.params.id;
 	try {
 		let response = await recSystem.recommendEvents(id, userStore, eventStore);
-		console.log(response)
-		res.status(response.status).send(response.data);
+		let eventList = response.data;
+		res.status(response.status).send(eventList);
 	} catch (e) {
 		console.log(e);
 		res.status(ERROR_CODES.DBERROR).send(null);

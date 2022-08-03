@@ -10,6 +10,7 @@ const UserSchema = new Schema({
         },
     ],
     location: String,
+    coordinates: String,
     chats: [
         {
             type: String,

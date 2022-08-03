@@ -1,5 +1,6 @@
 const categories = require("./InterestTags")
 const ResponseObject = require("./../../ResponseObject")
+const ERROR_CODES = require("./../../ErrorCodes")
 
 class RecSystem {
     constructor() {
@@ -8,12 +9,20 @@ class RecSystem {
 
     async recommendEvents(userID, userStore, eventStore) {
         let userInfo = await userStore.findUserByID(userID)
+        // console.log(userInfo)
         let eventList = await eventStore.findAllEvents();
+        // console.log(eventList)
         let freeEventList = eventList.data.filter(event => event.currCapacity < event.numberOfPeople);
-        freeEventList = freeEventList.filter(event => !event.participant.includes(userID))
+        // console.log(freeEventList.length)
+        freeEventList = freeEventList.filter(event => !event.participants.includes(userID))
+        // console.log(freeEventList.length)
+        // console.log(cosSim)
         freeEventList = freeEventList.sort((a, b) => this.#cosineSimilarity(userInfo.data.interests, b.tags) - this.#cosineSimilarity(userInfo.data.interests, a.tags))
+        let cosSim = freeEventList.map(event => this.#cosineSimilarity(userInfo.data.interests, event.tags))
+        console.log(cosSim)
+        // console.log(freeEventList.slice(0, 11))
 
-        return new ResponseObject(ERROR_CODES.SUCCESS, freeEventList.subarray(0, 11))
+        return new ResponseObject(ERROR_CODES.SUCCESS, freeEventList.slice(0, 11))
     }
 
     #cosineSimilarity(userTags, eventTags) {
@@ -78,16 +87,6 @@ class RecSystem {
         return category.includes(tag)
     }
 
-    // gets the relative numbers for the event's interest tags compared to the user's interest tags
-    //[OutdoorActivity, IndoorActivity, Sports, Events, SocialActivity]
-
-
-    // user: ['Frisbee', 'Health', 'Skiing']
-    // event1: ['Partying', 'Anime Expo', 'Swimming', 'Skiing']
-    // event2: ["Basketball", "Swimming"]
-
-    //[0,1,0,2,1,0]
-    //[0,1,0,2,1,1]
     #getVector(tags, otherTags) {
 
         let vector = {
@@ -102,7 +101,6 @@ class RecSystem {
         for (let tag of tags) {
             // console.log(tag)
             if (otherTags.includes(tag)) {
-                // console.log("WHY THE FUCK")
                 vector["Same"] += 2
             }
 
@@ -114,7 +112,4 @@ class RecSystem {
     }
 }
 
-let userTags = ["Hiking", "Cards", "Archery"]
-let eventTags = ["Movies", "Swimming", "Skiing"]
-let rec = new RecSystem();
-console.log(rec.cosineSimilarity(userTags, eventTags))
+module.exports = RecSystem

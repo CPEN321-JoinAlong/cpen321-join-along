@@ -156,7 +156,7 @@ public class ViewEventFragment extends Fragment {
                             .addNode("ban")
                             .build();
 
-                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    requestManager.post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             if (response.isSuccessful()) {

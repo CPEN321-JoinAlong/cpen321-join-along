@@ -104,7 +104,8 @@ public class MessageActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.onBackPressed();
+                activity.finish();
+                activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         });
 

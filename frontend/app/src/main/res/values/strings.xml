@@ -225,15 +225,36 @@
     <!-- Dark mode -->
     <string name="dark_mode_prefs">darkModeKey</string>
 
-    <string-array name="list_of_colors">
-        <item>#DE4DF8</item>
-        <item>#9943D9</item>
-        <item>#4743D9</item>
-        <item>#4D76F8</item>
-        <item>#8356F0</item>
-        <item>#3F3AE0</item>
-        <item>#7A41FC</item>
-        <item>#3A8DE0</item>
-
+    <string-array name="list_of_colors_light">
+        <item>#E44C4C</item>
+        <item>#E7634A</item>
+        <item>#E97949</item>
+        <item>#EC9047</item>
+        <item>#EEA645</item>
+        <item>#F1BD44</item>
+        <item>#F3D342</item>
+        <item>#F1BD44</item>
+        <item>#EEA645</item>
+        <item>#EC9047</item>
+        <item>#E97949</item>
+        <item>#E7634A</item>
     </string-array>
+
+    <string-array name="list_of_colors_dark">
+        <item>#5CA3C9</item>
+        <item>#6B97CA</item>
+        <item>#7A8BCB</item>
+        <item>#897FCD</item>
+        <item>#9873CE</item>
+        <item>#A767CF</item>
+        <item>#B65BD0</item>
+        <item>#A767CF</item>
+        <item>#9873CE</item>
+        <item>#897FCD</item>
+        <item>#7A8BCB</item>
+        <item>#6B97CA</item>
+    </string-array>
+
+    <!-- Animation Time -->
+    <integer name="view_form_animation_time">300</integer>
 </resources>

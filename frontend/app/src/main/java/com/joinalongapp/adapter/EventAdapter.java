@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
@@ -31,6 +32,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     private List<Event> homepageEventList;
     private ItemClickListener clickListener;
     private String[] colors;
+    private final int NUMBERS_OF_COLORS = 12;
 
     public EventAdapter(Context context, List<Event> eventArrayList) {
         this.context = context;
@@ -42,7 +44,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.event_cards_layout, parent, false);
-        colors = parent.getResources().getStringArray(R.array.list_of_colors);
+        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+            colors = parent.getResources().getStringArray(R.array.list_of_colors_dark);
+        }
+        else{
+            colors = parent.getResources().getStringArray(R.array.list_of_colors_light);
+        }
         return new EventViewHolder(view);
     }
 
@@ -57,19 +64,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         DateFormat dateFormat = new SimpleDateFormat("EEE, MMMM d");
         String result = dateFormat.format(eventDate);
 
-
-
-        String color = colors[position % 8];
-
+        String color = colors[position % NUMBERS_OF_COLORS];
         holder.eventRelativeLayout.setStrokeColor(Color.parseColor(color));
-
         holder.eventLocation.setText(eventLocation);
         holder.eventTitle.setText(eventTitleString);
         holder.eventDescription.setText(eventDescriptionString);
         holder.eventDate.setText(result);
-
         holder.itemView.startAnimation(animation);
-
         //TODO: add any button on click listeners for CardView buttons here
     }
 

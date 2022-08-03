@@ -190,7 +190,13 @@ app.post("/chat/create", async (req, res) => {
     let chatObject = req.body;
     let chatInfo = new ChatDetails(chatObject);
     try {
+        let user = await userStore.findUserForLogin(req.headers.token);
+        let newList = chatInfo.participants.filter(userId => userId != user.data._id)
+        chatInfo.participants = [user.data._id]
         let chatResponse = await chatEngine.createChat(chatInfo, userStore);
+        for(let userId of newList){
+            await userStore.sendChatInvite(userId, chatResponse.data._id, chatEngine)
+        }
         // console.log(chatResponse);
         res.status(chatResponse.status).send(chatResponse.data);
     } catch (e) {

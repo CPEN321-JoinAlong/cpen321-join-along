@@ -21,7 +21,7 @@ const ERROR_CODES = require("./../ErrorCodes.js");
 // const ResponseObject = require("./../ResponseObject");
 const Report = require("./../models/Report")
 
-const token = "104872861014317782334";
+const token = "113803938110058454466";
 
 mongoose.connect(
     "mongodb://useradmin:MTnCBEI9nIx6L6F@54.200.52.211:34542/joinalong", {
@@ -36,6 +36,17 @@ db.once("open", () => {
 });
 beforeAll((done) => {
     done();
+});
+
+afterAll(async () => {
+    // Closing the DB connection allows Jest to exit successfully.
+    await Chat.deleteMany({title: "tester event"})
+    await Event.deleteMany({title: "tester event"})
+    await User.deleteMany({name: "Rob Robber"})
+    await User.deleteMany({name: "Bob Bobber"})
+    mongoose.connection.close();
+    server.close();
+    // done();
 });
 
 describe("Use Case 2: Join Event", () => {

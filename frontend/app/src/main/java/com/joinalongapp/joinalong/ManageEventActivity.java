@@ -1,6 +1,7 @@
 package com.joinalongapp.joinalong;
 
 import static com.joinalongapp.LocationUtils.getAddressFromString;
+import static com.joinalongapp.LocationUtils.getCoordsFromAddress;
 import static com.joinalongapp.LocationUtils.standardizeAddress;
 import static com.joinalongapp.LocationUtils.validateAddress;
 import static com.joinalongapp.TextInputUtils.isValidNameTitle;
@@ -206,7 +207,10 @@ public class ManageEventActivity extends AppCompatActivity {
                     event.setOwnerName(((UserApplicationInfo) getApplication()).getProfile().getFullName());
                     event.setTitle(title.getText().toString());
                     event.setTags(getTagsFromChipGroup());
-                    event.setLocation(standardizeAddress(location.getText().toString(), getApplicationContext()));
+
+                    Address address = getAddressFromString(location.getText().toString(), getApplicationContext());
+                    event.setLocation(standardizeAddress(address));
+                    event.setCoordinates(getCoordsFromAddress(address));
 
                     int numPeople = Integer.MAX_VALUE;
                     if (!editTextEmpty(numberOfPeople)) {

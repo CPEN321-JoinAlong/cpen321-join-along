@@ -43,7 +43,7 @@ public class EditEventsTest extends BaseManageEventActivityTest {
     static {
         event = new Event();
         event.setTitle("Initial Title");
-        event.setLocation(LocationUtils.standardizeAddress("2336 Main Mall Vancouver", ApplicationProvider.getApplicationContext()));
+        event.setLocation(LocationUtils.standardizeAddress(LocationUtils.getAddressFromString("2336 Main Mall Vancouver", ApplicationProvider.getApplicationContext())));
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
 

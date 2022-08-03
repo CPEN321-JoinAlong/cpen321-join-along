@@ -92,7 +92,7 @@ public class HomeEventMapFragment extends Fragment {
                 clusterManager.getMarkerCollection().setInfoWindowAdapter(new MapInfoWindowAdapter(inflater));
                 map.setInfoWindowAdapter(clusterManager.getMarkerManager());
 
-                initMarkerInfoWindowClickListerner();
+                initMarkerInfoWindowClickListener();
                 initMarkerClusterClickListener();
 
             }
@@ -118,7 +118,7 @@ public class HomeEventMapFragment extends Fragment {
         });
     }
 
-    private void initMarkerInfoWindowClickListerner() {
+    private void initMarkerInfoWindowClickListener() {
         clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MapClusterItem>() {
             @Override
             public void onClusterItemInfoWindowClick(MapClusterItem item) {
@@ -150,13 +150,10 @@ public class HomeEventMapFragment extends Fragment {
         List<LatLng> latLngList = new ArrayList<>();
 
         for (Event event : eventList) {
-            String eventLocation = event.getLocation();
-            Address address = getAddressFromString(eventLocation, getActivity().getApplicationContext());
 
-            double addressLat = roundToFiveDecimalPlaces(address.getLatitude());
-            double addressLong = roundToFiveDecimalPlaces(address.getLongitude());
-
-            LatLng eventLatLng = new LatLng(addressLat, addressLong);
+            LatLng eventLatLng = event.getCoordinates();
+            double addressLat = roundToFiveDecimalPlaces(eventLatLng.latitude);
+            double addressLong = roundToFiveDecimalPlaces(eventLatLng.longitude);
 
             while (latLngList.contains(eventLatLng)) {
                 addressLat += randomOffset();

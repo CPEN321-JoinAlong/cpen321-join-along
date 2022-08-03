@@ -1,5 +1,7 @@
 package com.joinalongapp.viewmodel;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +15,7 @@ public class UserProfile implements Serializable, IDetailsModel {
     private String firstName;
     private String lastName;
     private String location;
+    private LatLng coordinates;
     private List<Tag> tags = new ArrayList<>();
     private String description;
     private String profilePictureUrl;
@@ -122,6 +125,14 @@ public class UserProfile implements Serializable, IDetailsModel {
         this.profilePictureUrl = profilePicture;
     }
 
+    public LatLng getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(LatLng coordinates) {
+        this.coordinates = coordinates;
+    }
+
     public String getFullName(){
         return firstName + " " + lastName;
     }
@@ -137,6 +148,12 @@ public class UserProfile implements Serializable, IDetailsModel {
 
         JSONArray jsonArray = new JSONArray(friends);
         json.put("friends", jsonArray);
+
+        String lat = String.valueOf(getCoordinates().latitude);
+        String lng = String.valueOf(getCoordinates().longitude);
+
+        String inputCoords = lat + "," + lng;
+        json.put("coordinates", inputCoords);
 
         return json.toString();
     }
@@ -169,6 +186,14 @@ public class UserProfile implements Serializable, IDetailsModel {
         for (int i = 0; i < jsonFriendsList.length(); i++) {
             addFriendToList(jsonFriendsList.getString(i));
         }
+
+        String coordinates = json.getString("coordinates");
+        String[] latLngString = coordinates.split(",");
+
+        double lat = Double.parseDouble(latLngString[0].trim());
+        double lng = Double.parseDouble(latLngString[1].trim());
+
+        setCoordinates(new LatLng(lat, lng));
 
         // TODO: add parsing for admin
 

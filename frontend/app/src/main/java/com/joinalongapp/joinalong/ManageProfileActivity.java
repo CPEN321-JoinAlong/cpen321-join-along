@@ -212,7 +212,9 @@ public class ManageProfileActivity extends AppCompatActivity {
     private void modifyOriginalProfile(UserProfile originalProfile) {
         originalProfile.setFirstName(firstNameEdit.getText().toString());
         originalProfile.setLastName(lastNameEdit.getText().toString());
-        originalProfile.setLocation(standardizeAddress(locationEdit.getText().toString(), getApplicationContext()));
+        //TODO fix me
+        Address address = getAddressFromString(locationEdit.getText().toString(), getApplicationContext());
+        originalProfile.setLocation(standardizeAddress(address));
 
         List<Tag> tags = getTagsFromChipGroup();
         originalProfile.setTags(tags);

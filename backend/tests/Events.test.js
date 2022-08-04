@@ -430,17 +430,44 @@ describe("remove user from event", () => {
 })
 
 describe("create event", () => {
+    test("Success: event created without participants or event owner", async () => {
+        const userStore = new UserStore();
+        const eventStore = new EventStore();
+        let eventInfo = new EventDetails({
+            title: "Event",
+            tags: ["hiking"],
+            beginningDate: "2022-08-08",
+            endingDate: "2022-09-01",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            coordinates: "11.09,12.22",
+            description: "test description",
+            currCapacity: 1,
+            numberOfPeople: 6,
+            chat: "68ndhfb436fbc83jjj4rh4" 
+        })
+        console.log(eventInfo.participants)
+        let result = new Event(eventInfo);
+        result.save.mockResolvedValue(eventInfo);
+        userStore.updateUserAccount.mockResolvedValue(new ResponseObject(ERROR_CODES.SUCCESS))
+        let createdEvent = await eventStore.createEvent(eventInfo, userStore);
+        expect(JSON.stringify(createdEvent.data)).toBe(JSON.stringify(eventInfo))
+        expect(createdEvent.status).toBe(ERROR_CODES.SUCCESS)
+    })
+
     test("Success: event created", async () => {
         const userStore = new UserStore();
         const eventStore = new EventStore();
         let eventInfo = new EventDetails({
             title: "Event",
             eventOwnerID: "62d50cfb436fbc75c258d9eb",
+            eventOwnerName: "Brie Carl",
             tags: ["hiking"],
             beginningDate: "2022-08-08",
             endingDate: "2022-09-01",
             publicVisibility: true,
             location: "2205 West Mall Toronto",
+            coordinates: "11.09,12.22",
             description: "test description",
             participants: ["62d50cfb436fbc75c258d9eb", "sdffdsfsd"],
             currCapacity: 1,
@@ -491,7 +518,6 @@ describe("update an event", () => {
             tags: ["hiking"],
             beginningDate: "2022-08-08",
             endingDate: "2022-09-01",
-            publicVisibility: true,
             location: "2205 West Mall Toronto",
             description: "test description",
             participants: ["62d50cfb436fbc75c258d9eb"],

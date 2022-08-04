@@ -172,10 +172,12 @@ describe("create user", () => {
         const userStore = new UserStore();
         let userInfo = new UserAccount({
             name: "Rob Robber",
+            isAdmin: true,
             interests: ["Swimming"],
             location: "2423 Montreal Mall, Vancouver",
             description: "Test description",
             profilePicture: "picture",
+            coordinates: "90.88,76.10"
         });
         let result = new User(userInfo);
         result.save.mockResolvedValue(userInfo);

@@ -430,8 +430,13 @@ app.get("/user/:id/chat", async (req, res) => {
         else {
             let chatListResponse = await chatEngine.findChatByUser(id);
             for(let chat of chatListResponse.data) {
-                // let participants = chat.participants.filter(userId =>  userId != id);
-                let userList = await userStore.findFriendByIDList(chat.participants);
+                let participants = []
+                if(chat.participants.length > 1){
+                    participants = chat.participants.filter(userId =>  userId != id);
+                } else {
+                    participants = chat.participants
+                }
+                let userList = await userStore.findFriendByIDList(participants);
                 if(userList.data) {
                     chat._doc.images = userList.data.map(user => user.profilePicture)
                 }   

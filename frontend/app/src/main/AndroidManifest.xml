@@ -24,9 +24,6 @@
             android:name=".ViewReportActivity"
             android:exported="false" />
         <activity
-            android:name=".SelectRideshareActivity"
-            android:exported="false" />
-        <activity
             android:name=".MessageActivity"
             android:exported="false" />
 

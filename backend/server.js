@@ -557,13 +557,14 @@ app.get("/event/:id", async (req, res) => {
 
 //Event: Sends all events in the database
 app.get("/event", async (req, res) => {
+    let token = req.headers.token
     try {
         let eventListResponse = await eventStore.findAllEvents();
         let sortedList = eventListResponse.data
             .sort((a, b) => Date.parse(a.beginningDate) - Date.parse(b.beginningDate))
-            .filter(a => a.currCapacity != 0);
+            .filter(a => a.currCapacity !== 0);
         // console.log(sortedList)
-        let user = await userStore.findUserForLogin(req.headers.token);
+        let user = await userStore.findUserForLogin(token);
         // console.log(user)
         if (user.data) {
 			sortedList = sortedList.map((event) => ({

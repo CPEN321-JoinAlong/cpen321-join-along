@@ -5,8 +5,6 @@ const EventDetails = require("./../modules/event_module/EventDetails");
 const EventStore = require("./../modules/event_module/EventStore");
 const Event =  require("./../models/Event")
 
-const ChatEngine = require("./../modules/chat_module/ChatEngine");
-
 const ERROR_CODES = require("./../ErrorCodes.js");
 const ResponseObject = require("./../ResponseObject")
 
@@ -531,7 +529,7 @@ describe("delete an event", () => {
         expect(foundEvent.status).toBe(ERROR_CODES.NOTFOUND);
     })
 
-    test("Success: event found and updated", async () => {
+    test("Success: event found and deleted", async () => {
         const userStore = new UserStore();
         const eventStore = new EventStore();
         let eventInfo = new EventDetails({
@@ -549,9 +547,7 @@ describe("delete an event", () => {
             chat: "68ndhfb436fbc83jjj4rh4",
             eventImage: "Image" 
         })
-        let eventUpdate = {
-            $inc: {currCapacity: 1}
-        }
+        
         Event.findById.mockResolvedValue(eventInfo)
         let foundEvent = await eventStore.deleteEvent("62d50cfb436fbc75c258d9eb", userStore);
         expect(JSON.stringify(null)).toBe(JSON.stringify(null));

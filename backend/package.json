@@ -1,5 +1,5 @@
 {
-  "engine": {
+  "engines": {
     "node": ">=10.6.0"
   },
   "engineStrict": true,

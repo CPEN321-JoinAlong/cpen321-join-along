@@ -139,6 +139,8 @@ public class UserProfile implements Serializable, IDetailsModel {
     }
 
     public String toJsonString() throws JSONException {
+        //TODO: refactor to avoid duplication in user application info
+        //if this method is changed, the same one has to be changed in user application info
         JSONObject json = new JSONObject();
         json.put("id", getId());
         json.put("name", getFullName());

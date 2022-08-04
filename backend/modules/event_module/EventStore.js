@@ -52,8 +52,8 @@ class EventStore {
             title: { $regex: searchEvent, $options: "i" },
         });
         if (foundEventList.length !== 0)
-            return new ResponseObject(ERROR_CODES.SUCCESS, foundEventList);
-        else return new ResponseObject(ERROR_CODES.NOTFOUND, foundEventList.filter(event => event.publicVisibility));
+            return new ResponseObject(ERROR_CODES.SUCCESS, foundEventList.filter(event => event.publicVisibility));
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, foundEventList);
     }
 
     async findEventByUser(userID) {
@@ -71,8 +71,8 @@ class EventStore {
     async findAllEvents() {
         let eventList = await Event.find({});
         if (eventList.length !== 0)
-            return new ResponseObject(ERROR_CODES.SUCCESS, eventList);
-        else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList.filter(event => event.publicVisibility));
+            return new ResponseObject(ERROR_CODES.SUCCESS, eventList.filter(event => event.publicVisibility));
+        else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList);
     }
 
     async findEventByID(eventID) {

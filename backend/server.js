@@ -23,7 +23,7 @@ const distCalc = require("./DistanceCalc");
 const ERROR_CODES = require("./ErrorCodes");
 
 function logRequest(req, res, next) {
-    // console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
+    console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
     next();
 }
 
@@ -429,6 +429,18 @@ app.get("/user/:id/chat", async (req, res) => {
             res.status(userResponse.status).send([]);
         else {
             let chatListResponse = await chatEngine.findChatByUser(id);
+            for(let chat of chatListResponse.data) {
+                let participants = []
+                if(chat.participants.length > 1){
+                    participants = chat.participants.filter(userId =>  userId != id);
+                } else {
+                    participants = chat.participants
+                }
+                let userList = await userStore.findFriendByIDList(participants);
+                if(userList.data) {
+                    chat._doc.images = userList.data.map(user => user.profilePicture)
+                }   
+            }
             res.status(chatListResponse.status).send(chatListResponse.data);
         }
     } catch (e) {
@@ -449,6 +461,18 @@ app.get("/user/:id/chatInvites", async (req, res) => {
                 userResponse.data.chatInvites,
                 chatEngine
             );
+            for(let chat of chatInvResponse.data) {
+                let participants = []
+                if(chat.participants.length > 1){
+                    participants = chat.participants.filter(userId =>  userId != id);
+                } else {
+                    participants = chat.participants
+                }
+                let userList = await userStore.findFriendByIDList(participants);
+                if(userList.data) {
+                    chat._doc.images = userList.data.map(user => user.profilePicture)
+                }   
+            }
             res.status(chatInvResponse.status).send(chatInvResponse.data);
         }
     } catch (e) {

@@ -239,7 +239,13 @@ public class Event implements Serializable, IDetailsModel {
         setLocation(json.getString("location"));
         setDescription(json.getString("description"));
 
-        setDistance(Double.parseDouble(json.getString("distance")));
+        String distance = json.getString("distance");
+        if (distance.isEmpty() || distance.equals("null")) {
+            setDistance(-1);
+        } else {
+            setDistance(Double.parseDouble(json.getString("distance")));
+        }
+
 
         JSONArray members = json.getJSONArray("participants");
         for (int i = 0; i < members.length(); i++) {

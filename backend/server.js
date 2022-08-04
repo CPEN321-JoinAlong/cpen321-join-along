@@ -190,8 +190,14 @@ app.post("/chat/create", async (req, res) => {
     let chatObject = req.body;
     let chatInfo = new ChatDetails(chatObject);
     try {
+        let user = await userStore.findUserForLogin(req.body.token);
+        let newList = chatInfo.participants.filter(userId => userId != user.data._id)
+        chatInfo.participants = [user.data._id]
+        chatInfo.currCapacity = 1
         let chatResponse = await chatEngine.createChat(chatInfo, userStore);
-        // console.log(chatResponse);
+        for(let userId of newList){
+            await userStore.sendChatInvite(userId, chatResponse.data._id, chatEngine)
+        }
         res.status(chatResponse.status).send(chatResponse.data);
     } catch (e) {
         console.log(e);
@@ -255,7 +261,14 @@ app.put("/user/:id/edit", async (req, res) => {
 app.put("/chat/:id/edit", async (req, res) => {
     let id = req.params.id;
     try {
+        let chat = await chatEngine.findChatByID(id);
+        if(chat.data == null) return res.status(chat.status).send(null)
+        let newParticipants = req.body.participants.filter(userId => !chat.data.participants.includes(userId))
+        req.body.participants = req.body.participants.filter(userId => chat.data.participants.includes(userId))
         let chatResponse = await chatEngine.editChat(id, req.body, userStore);
+        for(let userId of newParticipants){
+            await userStore.sendChatInvite(userId, chatResponse.data._id, chatEngine)
+        }
         res.status(chatResponse.status).send(chatResponse.data); //update the update function to send the new object
     } catch (e) {
         console.log(e);
@@ -277,10 +290,14 @@ app.put("/event/:id/edit", async (req, res) => {
 		let user = await userStore.findUserForLogin(req.body.token);
 		console.log(user)
 		if (user.data) {
-			eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+            if(eventResponse.data){
+                eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+            }
 			res.status(eventResponse.status).send(eventResponse.data);
 		} else {
-			eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+            if(eventResponse.data){
+                eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+            }
 			res.status(eventResponse.status).send(eventResponse.data);
 		} 
     } catch (e) {
@@ -522,10 +539,14 @@ app.get("/event/:id", async (req, res) => {
         let eventResponse = await eventStore.findEventByID(id);
 		let user = await userStore.findUserForLogin(req.headers.token);
 		if (user.data) {
-			eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+			if(eventResponse.data){
+                eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+            }
 			res.status(eventResponse.status).send(eventResponse.data);
 		} else {
-			eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+            if(eventResponse.data){
+                eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+            }
 			res.status(eventResponse.status).send(eventResponse.data);
 		} 
     } catch (e) {
@@ -536,13 +557,14 @@ app.get("/event/:id", async (req, res) => {
 
 //Event: Sends all events in the database
 app.get("/event", async (req, res) => {
+    let token = req.headers.token
     try {
         let eventListResponse = await eventStore.findAllEvents();
         let sortedList = eventListResponse.data
             .sort((a, b) => Date.parse(a.beginningDate) - Date.parse(b.beginningDate))
-            .filter(a => a.currCapacity != 0);
+            .filter(a => a.currCapacity !== 0);
         // console.log(sortedList)
-        let user = await userStore.findUserForLogin(req.headers.token);
+        let user = await userStore.findUserForLogin(token);
         // console.log(user)
         if (user.data) {
 			sortedList = sortedList.map((event) => ({

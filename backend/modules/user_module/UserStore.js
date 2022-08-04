@@ -457,7 +457,7 @@ class UserStore {
             // console.log("IN LEAVE EVENT");
             let response = await eventStore.removeUser(eventID, userID, this);
             // console.log(response);
-            return new ResponseObject(ERROR_CODES.SUCCESS);
+            return new ResponseObject(ERROR_CODES.SUCCESS, response);
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
@@ -478,7 +478,7 @@ class UserStore {
             let response = await chatEngine.removeUser(chatID, userID, this);
             // console.log("IN LEAVE CHAT");
             // console.log(response);
-            return new ResponseObject(ERROR_CODES.SUCCESS);
+            return new ResponseObject(ERROR_CODES.SUCCESS, response);
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND);
         }

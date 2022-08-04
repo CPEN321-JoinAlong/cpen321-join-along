@@ -36,6 +36,7 @@ afterAll(async () => {
     // Closing the DB connection allows Jest to exit successfully.
     await Chat.deleteMany({title: "tester event"})
     await Event.deleteMany({title: "tester event"})
+    await Chat.deleteMany({title: "tester chater"})
     await User.deleteMany({name: "Rob Robber"})
     await User.deleteMany({name: "Bob Bobber"})
     await User.updateMany({token}, {
@@ -54,7 +55,7 @@ describe("User Case 5: Messaging", () => {
             tags: ["Hiking"],
             numberOfPeople: 6,
             description: "test description",
-            participants: ["64c50cfb436fbc75c654d9eb"],
+            participants: ["62eae6dc6948e5255b2d2c43"],
             currCapacity: 1,
         });
         test("Success: chat created", async () => {
@@ -77,7 +78,7 @@ describe("User Case 5: Messaging", () => {
             tags: ["Hiking"],
             numberOfPeople: 6,
             description: "test description",
-            participants: ["64c50cfb436fbc75c654d9eb"],
+            participants: ["62eae6dc6948e5255b2d2c43"],
             currCapacity: 1,
         });
         let updatedChatInfo = new ChatDetails({
@@ -85,7 +86,7 @@ describe("User Case 5: Messaging", () => {
             tags: ["Hiking"],
             numberOfPeople: 6,
             description: "test description",
-            participants: ["64c50cfb436fbc75c654d9eb"],
+            participants: ["62eae6dc6948e5255b2d2c43"],
             currCapacity: 1,
         });
         test("invalid chat ID", async () => {
@@ -149,7 +150,7 @@ describe("User Case 5: Messaging", () => {
             tags: ["Hiking"],
             numberOfPeople: 6,
             description: "test description",
-            participants: ["64c50cfb436fbc75c654d9eb"],
+            participants: ["62eae6dc6948e5255b2d2c43"],
             currCapacity: 1,
         });
         test("IDs of chat invites are invalid", async () => {
@@ -239,14 +240,14 @@ describe("User Case 5: Messaging", () => {
             location: "2423 Montreal Mall, Vancouver",
             description: "Test description",
             profilePicture: "picture",
-            token,
+            token: "1234567890",
         });
         let chatInfo = new ChatDetails({
             title: "tester chater",
             tags: ["Hiking"],
             numberOfPeople: 6,
             description: "test description",
-            participants: ["64c50cfb436fbc75c654d9eb"],
+            participants: [],
             currCapacity: 1,
         });
         test("IDs of user or chat are invalid", async () => {
@@ -288,7 +289,7 @@ describe("User Case 5: Messaging", () => {
                 .post("/chat/create")
                 .send({
                     ...chatInfo,
-                    token
+                    token: userInfo.token
                 });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
@@ -324,12 +325,13 @@ describe("User Case 5: Messaging", () => {
                 .post("/chat/create")
                 .send({
                     ...chatInfo,
-                    token
+                    token: userInfo.token
                 });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
             await Chat.findByIdAndDelete(id);
             ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            chatInfo.participants = [id];
             expect(chatResponse._body).toMatchObject(chatInfo);
 
             await User.findByIdAndUpdate(id, {
@@ -365,7 +367,6 @@ describe("User Case 5: Messaging", () => {
             let chatId = chatResponse._body._id;
             await Chat.findByIdAndDelete(id);
             ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
-            expect(chatResponse._body).toMatchObject(chatInfo);
 
             let chatInvResponse = await request(app)
                 .put(`/chat/sendChatInvite/${chatId}/${id}`)
@@ -389,14 +390,14 @@ describe("User Case 5: Messaging", () => {
             location: "2423 Montreal Mall, Vancouver",
             description: "Test description",
             profilePicture: "picture",
-            token,
+            token: "1234567890",
         });
         let chatInfo = new ChatDetails({
             title: "tester chater",
             tags: ["Hiking"],
             numberOfPeople: 6,
             description: "test description",
-            participants: ["64c50cfb436fbc75c654d9eb"],
+            participants: ["62eae6dc6948e5255b2d2c43"],
             currCapacity: 1,
         });
         test("IDs of user or event are invalid", async () => {
@@ -438,7 +439,7 @@ describe("User Case 5: Messaging", () => {
                 .post("/chat/create")
                 .send({
                     ...chatInfo,
-                    token
+                    token: userInfo.token
                 });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
@@ -476,12 +477,14 @@ describe("User Case 5: Messaging", () => {
                 .post("/chat/create")
                 .send({
                     ...chatInfo,
-                    token
+                    token: userInfo.token
                 });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
             await Chat.findByIdAndDelete(id);
             ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+            chatInfo.participants = [id];
+            chatInfo.currCapacity = 1;
             expect(chatResponse._body).toMatchObject(chatInfo);
 
             let chatInvResponse = await request(app)
@@ -512,7 +515,6 @@ describe("User Case 5: Messaging", () => {
             let chatId = chatResponse._body._id;
             await Chat.findByIdAndDelete(id);
             ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
-            expect(chatResponse._body).toMatchObject(chatInfo);
 
             let chatInvResponse = await request(app)
                 .put(`/user/acceptChat/${id}/${chatId}`)
@@ -540,7 +542,7 @@ describe("User Case 5: Messaging", () => {
             tags: ["Hiking"],
             numberOfPeople: 6,
             description: "test description",
-            participants: ["64c50cfb436fbc75c654d9eb"],
+            participants: ["62eae6dc6948e5255b2d2c43"],
             currCapacity: 1,
         });
         test("IDs of user or chat are invalid", async () => {
@@ -616,7 +618,6 @@ describe("User Case 5: Messaging", () => {
             let chatId = chatResponse._body._id;
             await Chat.findByIdAndDelete(id);
             ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
-            expect(chatResponse._body).toMatchObject(chatInfo);
 
             await User.findByIdAndUpdate(id, {
                 $push: {
@@ -649,7 +650,7 @@ describe("User Case 5: Messaging", () => {
             tags: ["Hiking"],
             numberOfPeople: 6,
             description: "test description",
-            participants: ["64c50cfb436fbc75c654d9eb"],
+            participants: ["62eae6dc6948e5255b2d2c43"],
             currCapacity: 1,
         });
         test("IDs of user or chat are invalid", async () => {
@@ -717,7 +718,7 @@ describe("User Case 5: Messaging", () => {
             tags: ["Hiking"],
             numberOfPeople: 6,
             description: "test description",
-            participants: ["64c50cfb436fbc75c654d9eb"],
+            participants: ["62eae6dc6948e5255b2d2c43"],
             currCapacity: 1,
         });
         test("Invalid chat ID", async () => {
@@ -768,14 +769,16 @@ describe("User Case 5: Messaging", () => {
             location: "2423 Montreal Mall, Vancouver",
             description: "Test description",
             profilePicture: "picture",
-            token,
+            token: "1234567890",
         });
         let chatInfo = new ChatDetails({
             title: "tester chater",
             tags: ["Hiking"],
             numberOfPeople: 6,
             description: "test description",
-            participants: ["64c50cfb436fbc75c654d9eb"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            participants: ["62eae6dc6948e5255b2d2c43"],
             currCapacity: 1,
         });
         test("Invalid User ID", async () => {
@@ -818,13 +821,12 @@ describe("User Case 5: Messaging", () => {
                 .post("/chat/create")
                 .send({
                     ...chatInfo,
-                    token
+                    token: userInfo.token
                 });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
             await Chat.findByIdAndDelete(id);
             ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
-            expect(chatResponse._body).toMatchObject(chatInfo);
 
             let chatListResponse = await request(app)
                 .get(`/user/${id}/chat`)

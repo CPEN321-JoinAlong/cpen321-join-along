@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/default_search_no_results"
+            android:text="@string/default_requests_no_results"
             android:textColor="?attr/defaultTextColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/peopleRecyclerView"

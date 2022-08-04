@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.joinalongapp.joinalong.MessageActivity;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.ChatDetails;
-import com.squareup.picasso.Picasso;
 
 import java.util.Iterator;
 import java.util.List;

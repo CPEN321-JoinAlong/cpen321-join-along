@@ -87,13 +87,6 @@ public class ProfileFragment extends Fragment {
         Picasso.get().load(user.getProfilePicture()).into(profilePicture);
         profileDescription.setText(description);
 
-
-        //boolean darkMode = sharedPreferences.getBoolean("dark_mode_toggle", false);
-
-        user.setAdmin(true);
-
-
-
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,6 +157,4 @@ public class ProfileFragment extends Fragment {
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
-
-
 }

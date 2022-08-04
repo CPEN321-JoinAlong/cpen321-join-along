@@ -111,6 +111,7 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
         }
 
         setUserToken(json.getString("token"));
+        profile.setAdmin(json.getBoolean("isAdmin"));
 
         return this;
     }

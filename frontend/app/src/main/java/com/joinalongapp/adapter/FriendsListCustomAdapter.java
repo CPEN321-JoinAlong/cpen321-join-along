@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,14 +53,21 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
         private TextView name;
         private ImageView profilePicture;
         private Button options;
+        private CardView groupPictureOptionFirst;
+        private CardView groupPictureOptionSecond;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
 
-            name = (TextView) itemView.findViewById(R.id.individualReportName);
+            name = (TextView) itemView.findViewById(R.id.individualListName);
             profilePicture = (ImageView) itemView.findViewById(R.id.individualProfilePicture);
             options = (Button) itemView.findViewById(R.id.reportOptions);
+            groupPictureOptionFirst = (CardView) itemView.findViewById(R.id.groupCardViewFirst);
+            groupPictureOptionSecond = (CardView) itemView.findViewById(R.id.groupCardViewSecond);
+
+            groupPictureOptionFirst.setVisibility(View.INVISIBLE);
+            groupPictureOptionSecond.setVisibility(View.INVISIBLE);
         }
 
         public TextView getName() {
@@ -129,6 +137,7 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                 fragmentTransaction.commit();
             }
         });
+
         Picasso.get().load(users.get(holder.getBindingAdapterPosition()).getProfilePicture()).into(holder.getProfilePicture());
     }
 

@@ -68,7 +68,7 @@ public class ManageChatActivity extends AppCompatActivity {
         String token = ((UserApplicationInfo) getApplication()).getUserToken();
         UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
 
-        friends = new NameIdPair[user.getFriends().size()];
+        //kfriends = new NameIdPair[user.getFriends().size()];
         friendIdsAdded = new ArrayList<>();
 
         initElement();
@@ -114,6 +114,7 @@ public class ManageChatActivity extends AppCompatActivity {
                     if (response.isSuccessful()) {
                         try {
                             JSONArray jsonArray = new JSONArray(response.body().string());
+                            friends = new NameIdPair[jsonArray.length()];
                             for(int i = 0; i < jsonArray.length(); i++){
                                 UserProfile userProfile = new UserProfile();
                                 userProfile.populateDetailsFromJson(jsonArray.get(i).toString());

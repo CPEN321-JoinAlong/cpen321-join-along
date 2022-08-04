@@ -446,7 +446,6 @@ describe("create event", () => {
             numberOfPeople: 6,
             chat: "68ndhfb436fbc83jjj4rh4" 
         })
-        console.log(eventInfo.participants)
         let result = new Event(eventInfo);
         result.save.mockResolvedValue(eventInfo);
         userStore.updateUserAccount.mockResolvedValue(new ResponseObject(ERROR_CODES.SUCCESS))

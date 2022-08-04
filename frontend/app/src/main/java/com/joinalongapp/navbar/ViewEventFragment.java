@@ -14,6 +14,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -29,10 +30,14 @@ import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.joinalong.CreateReportActivity;
 import com.joinalongapp.joinalong.ManageEventActivity;
 import com.joinalongapp.joinalong.R;
-import com.joinalongapp.joinalong.SelectRideshareActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.UserProfile;
+import com.lyft.deeplink.RideTypeEnum;
+import com.lyft.lyftbutton.LyftButton;
+import com.lyft.lyftbutton.LyftStyle;
+import com.lyft.lyftbutton.RideParams;
+import com.lyft.networking.ApiConfig;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,7 +68,7 @@ public class ViewEventFragment extends Fragment {
     private TextView numPeople;
     private ImageButton backButton;
     private Button joinButton;
-    private Button rideshareButton;
+    private LyftButton lyftButton;
     private Event event;
     private ImageButton options;
     private PopupMenu menu;
@@ -123,11 +128,32 @@ public class ViewEventFragment extends Fragment {
 
         initBackButton();
         initJoinButton();
-        initRideshareButton();
+        initLyftButton();
         initEventMenu();
         initBanButton();
 
         return view;
+    }
+
+    private void initLyftButton() {
+        ApiConfig config = new ApiConfig.Builder()
+                .setClientId("...")
+                .setClientToken("...")
+                .build();
+
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+            lyftButton.setLyftStyle(LyftStyle.MULBERRY_DARK);
+        } else {
+            lyftButton.setLyftStyle(LyftStyle.MULTI_COLOR);
+        }
+
+        lyftButton.setApiConfig(config);
+
+        RideParams.Builder rideParamsBuilder = new RideParams.Builder();
+        rideParamsBuilder.setRideTypeEnum(RideTypeEnum.STANDARD);
+
+        lyftButton.setRideParams(rideParamsBuilder.build());
+        lyftButton.load();
     }
 
     private void initBanButton(){
@@ -226,8 +252,10 @@ public class ViewEventFragment extends Fragment {
                                                         activity.runOnUiThread(new Runnable() {
                                                             @Override
                                                             public void run() {
+                                                                //TODO: can remove the next few lines of code since it's done in modify on leave?
+                                                                //      have to check...
                                                                 joinButton.setVisibility(View.VISIBLE);
-                                                                rideshareButton.setVisibility(View.GONE);
+                                                                lyftButton.setVisibility(View.GONE);
                                                                 menu.getMenu().findItem(R.id.eventLeave).setVisible(false);
 
                                                                 new AlertDialog.Builder(activity)
@@ -299,7 +327,7 @@ public class ViewEventFragment extends Fragment {
 
     private void modifyViewOnLeaveEvent(UserApplicationInfo userApplicationInfo, FragmentActivity activity) {
         joinButton.setVisibility(View.VISIBLE);
-        rideshareButton.setVisibility(View.GONE);
+        lyftButton.setVisibility(View.GONE);
         members.removeView(userChip);
         userChip = null;
         event.setCurrentNumPeopleRegistered(event.getCurrentNumPeopleRegistered() - 1);
@@ -307,16 +335,6 @@ public class ViewEventFragment extends Fragment {
         numPeople.setText(numPeopleInEventString);
         event.removeMemberFromList(userApplicationInfo.getProfile().getId());
 
-    }
-
-    private void initRideshareButton() {
-        rideshareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), SelectRideshareActivity.class);
-                startActivity(i);
-            }
-        });
     }
 
     private void initJoinButton() {
@@ -386,7 +404,7 @@ public class ViewEventFragment extends Fragment {
 
     private void modifyViewOnJoinEvent(UserApplicationInfo userApplicationInfo, FragmentActivity activity) {
         joinButton.setVisibility(View.GONE);
-        rideshareButton.setVisibility(View.VISIBLE);
+        lyftButton.setVisibility(View.VISIBLE);
         String userName = userApplicationInfo.getProfile().getFullName();
         userChip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, members, false);
         userChip.setText(userName);
@@ -465,18 +483,16 @@ public class ViewEventFragment extends Fragment {
     }
 
     private void initButtonVisibility() {
-        UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
-        //String userId = userApplicationInfo.getProfile().getId();
         if (isPartOfEvent(userId)) {
             joinButton.setVisibility(View.GONE);
-            rideshareButton.setVisibility(View.VISIBLE);
+            lyftButton.setVisibility(View.VISIBLE);
         } else if (event.getCurrentNumPeopleRegistered() == event.getNumberOfPeopleAllowed()) {
             joinButton.setEnabled(false);
             joinButton.setText("Event full!");
-            rideshareButton.setVisibility(View.GONE);
+            lyftButton.setVisibility(View.GONE);
         } else {
             joinButton.setVisibility(View.VISIBLE);
-            rideshareButton.setVisibility(View.GONE);
+            lyftButton.setVisibility(View.GONE);
         }
     }
 
@@ -496,7 +512,7 @@ public class ViewEventFragment extends Fragment {
         numPeople = view.findViewById(R.id.eventViewNumPeople);
         backButton = view.findViewById(R.id.viewEventBackButton);
         joinButton = view.findViewById(R.id.joinEventButton);
-        rideshareButton = view.findViewById(R.id.viewEventBookRideshareButton);
+        lyftButton = view.findViewById(R.id.lyft_button);
         options = view.findViewById(R.id.eventOptions);
         ban = view.findViewById(R.id.eventBanButton);
     }

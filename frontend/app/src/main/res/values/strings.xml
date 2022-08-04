@@ -5,6 +5,7 @@
     <!--ManageEvent Strings-->
     <string name="create_event_title">Create Event</string>
     <string name="date_hint">YYYY/MM/DD</string>
+    <string name="time_hint">HH:MM</string>
     <!--ReportActivity Strings-->
     <string name="create_report_text">Report</string>
     <string name="reporting_message">Thanks for looking out for our community! \nPlease take some time to enter some additional details!</string>
@@ -16,10 +17,11 @@
     <!--Subtitle Strings-->
     <string name="title_subtitle">Title</string>
     <string name="location_subtitle">Location</string>
-    <string name="beginning_date_subtitle">Beginning Date</string>
+    <string name="beginning_date_subtitle">Beginning\nDate</string>
     <string name="end_date_subtitle">End Date</string>
     <string name="visibility_subtitle">Visibility</string>
     <string name="number_of_people_subtitle">Number of People</string>
+    <string name="number_of_people_hint">1234</string>
     <string name="tags_subtitle">Tags</string>
     <string name="description_subtitle">Description</string>
     <string name="add_friends_subtitle">Add Friends</string>
@@ -49,6 +51,9 @@
     <string name="default_messages">Messages</string>
     <string name="default_search">Search</string>
     <string name="default_search_no_results">No Results Found</string>
+    <string name="default_friends_no_results">No Friends Found</string>
+    <string name="default_requests_no_results">No Requests Found</string>
+    <string name="default_chats_no_results">No Chats Found</string>
     <string name="default_description">Description</string>
     <string name="default_view_reports">View Reports</string>
     <string name="default_report_type_subtitle">Report Type</string>
@@ -66,14 +71,66 @@
     </string-array>
 
     <string-array name="sample_tags">
-        <item>Indoor Activity</item>
-        <item>Outdoor Activity</item>
         <item>Hiking</item>
-        <item>Music Festival</item>
-        <item>Board Games</item>
         <item>Swimming</item>
-        <item>Running</item>
+        <item>Camping</item>
+        <item>Beach</item>
+        <item>Biking</item>
+        <item>Rock Climbing</item>
+        <item>Kayaking</item>
+        <item>Mountain Biking</item>
+        <item>Skiing</item>
+        <item>Gliding</item>
+        <item>Ziplining</item>
+        <item>Gardening</item>
+        <item>Ice Skating</item>
+        <item>Golf</item>
+        <item>Jogging</item>
+
+        <item>Board Games</item>
+        <item>Cards</item>
+        <item>Movies</item>
+        <item>Video Games</item>
+        <item>Escape Room</item>
+        <item>Darts</item>
+
+        <item>Football</item>
+        <item>Basketball</item>
+        <item>Archery</item>
+        <item>Biking</item>
+        <item>Mountain Biking</item>
+        <item>Swimming</item>
+        <item>Frisbee</item>
+        <item>Handball</item>
+        <item>Hockey</item>
+        <item>Lacrosse</item>
+        <item>Volleyball</item>
+        <item>Skiing</item>
+        <item>Spike Ball</item>
+        <item>Soccer</item>
+        <item>Race</item>
+
+        <item>EDC</item>
+        <item>Anime Expo</item>
+        <item>Coachella</item>
+        <item>Airshow</item>
+        <item>Convention</item>
+        <item>Marathon</item>
+        <item>Arts</item>
+        <item>Cultural</item>
+        <item>Music</item>
+        <item>Child Friendly</item>
+        <item>Competition</item>
+        <item>Technology</item>
+        <item>Health</item>
+
+        <item>Food</item>
+        <item>Drinking</item>
+        <item>Partying</item>
+        <item>Bar Hopping</item>
         <item>Dancing</item>
+        <item>Celebration</item>
+
     </string-array>
 
     <!--Profile Management-->
@@ -120,6 +177,8 @@
     <string name="map_view_title">Event Map</string>
     <string name="card_event_name_default">Event Title</string>
     <string name="card_event_description_default">Event Description</string>
+    <string name="card_event_date_default">Event Date</string>
+    <string name="card_event_distance_default">Event Distance</string>
 
     <!--Messaging Navbar-->
     <string name="messaging_title">Messaging</string>
@@ -159,4 +218,46 @@
     <integer name="max_title_length">64</integer>
     <integer name="max_description_length">1250</integer>
     <integer name="max_location_length">500</integer>
+    <integer name="max_number_length">10</integer>
+
+    <!--Chat Details-->
+    <string name="chat_leave_title">Leave Chat</string>
+    <string name="chat_edit_title">Edit Chat</string>
+
+
+    <!-- Dark mode -->
+    <string name="dark_mode_prefs">darkModeKey</string>
+
+    <string-array name="list_of_colors_light">
+        <item>#E44C4C</item>
+        <item>#E7634A</item>
+        <item>#E97949</item>
+        <item>#EC9047</item>
+        <item>#EEA645</item>
+        <item>#F1BD44</item>
+        <item>#F3D342</item>
+        <item>#F1BD44</item>
+        <item>#EEA645</item>
+        <item>#EC9047</item>
+        <item>#E97949</item>
+        <item>#E7634A</item>
+    </string-array>
+
+    <string-array name="list_of_colors_dark">
+        <item>#5CA3C9</item>
+        <item>#6B97CA</item>
+        <item>#7A8BCB</item>
+        <item>#897FCD</item>
+        <item>#9873CE</item>
+        <item>#A767CF</item>
+        <item>#B65BD0</item>
+        <item>#A767CF</item>
+        <item>#9873CE</item>
+        <item>#897FCD</item>
+        <item>#7A8BCB</item>
+        <item>#6B97CA</item>
+    </string-array>
+
+    <!-- Animation Time -->
+    <integer name="view_form_animation_time">300</integer>
 </resources>

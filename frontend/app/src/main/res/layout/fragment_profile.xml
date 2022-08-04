@@ -3,26 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#BEDD2C00"
+    android:background="@drawable/gradient_background"
     android:outlineAmbientShadowColor="#FFFFFF"
     tools:context="com.joinalongapp.navbar.ProfileFragment">
-
-    <!-- TODO: Update blank fragment layout -->
 
     <FrameLayout
         android:id="@+id/testLayout"
         android:layout_width="match_parent"
         android:layout_height="500dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/rounded_corners"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileName"/>
+        app:layout_constraintTop_toBottomOf="@+id/profileName" />
 
     <TextView
         android:id="@+id/profileName"
-        android:layout_width="175dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/default_empty_string"
@@ -31,27 +29,39 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
+        app:layout_constraintTop_toBottomOf="@+id/cardViewId" />
 
-    <ImageView
-        android:id="@+id/profilePicture"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_baseline_person_24"
-        app:layout_constraintBottom_toTopOf="@+id/guideline15"
+    <androidx.cardview.widget.CardView
+        android:layout_width="135dp"
+        android:layout_height="135dp"
+        app:cardCornerRadius="250dp"
+        app:layout_constraintBottom_toTopOf="@+id/profileName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline20"
-        app:layout_constraintVertical_bias="0.467" />
+        app:layout_constraintVertical_bias="0.467"
+        android:id="@+id/cardViewId"
+        app:cardBackgroundColor="@color/white">
+
+        <ImageView
+            android:id="@+id/profilePicture"
+            android:layout_width="135dp"
+            android:layout_height="135dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_baseline_person_24" />
+    </androidx.cardview.widget.CardView>
+
 
     <ImageButton
         android:id="@+id/editButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:backgroundTint="#0000"
+        android:backgroundTint="#00A32B2B"
+        android:backgroundTintMode="multiply"
+        android:hapticFeedbackEnabled="false"
         android:outlineAmbientShadowColor="#000000"
-        android:src="@android:drawable/ic_menu_edit"
+        android:src="@drawable/ic_baseline_edit_24"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toTopOf="@+id/guideline20"
@@ -61,9 +71,10 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="8dp"
         android:text="@string/default_interests"
-        android:textColor="@color/orange"
+        android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/interestsChipGroup"
         app:layout_constraintEnd_toStartOf="@+id/guideline19"
@@ -120,7 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/default_description"
-        android:textColor="@color/orange"
+        android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toTopOf="@+id/guideline17" />
@@ -129,7 +140,7 @@
         android:id="@+id/interestsChipGroup"
         android:layout_width="314dp"
         android:layout_height="62dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="68dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline17"
         app:layout_constraintEnd_toStartOf="@+id/guideline19"
         app:layout_constraintHorizontal_bias="0.0"
@@ -167,8 +178,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:textColor="?attr/defaultTextColor"
         android:text="TextView"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toBottomOf="@+id/textView4"
         app:layout_constraintWidth_max="314dp" />
@@ -178,11 +190,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/default_view_reports"
+        android:backgroundTint="?attr/buttonColor"
+        android:textColor="?attr/defaultWhiteWhite"
         app:layout_constraintBottom_toTopOf="@+id/guideline18"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline17"
         app:layout_constraintVertical_bias="0.925" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

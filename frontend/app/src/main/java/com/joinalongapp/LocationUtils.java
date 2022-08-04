@@ -5,6 +5,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -25,9 +27,31 @@ public class LocationUtils {
         return retVal;
     }
 
-    public static String standardizeAddress(String addressString, Context applicationContext) {
-        Address address = getAddressFromString(addressString, applicationContext);
+    public static String standardizeAddress(Address address) {
         return address == null ? null : address.getAddressLine(0);
+    }
+
+    public static LatLng getCoordsFromAddress(Address address) {
+        double lat = address.getLatitude();
+        double lng = address.getLongitude();
+
+        return new LatLng(lat, lng);
+    }
+
+    public static LatLng getLatLngFromString(String coordinates) {
+        String[] latLngString = coordinates.split(",");
+
+        double lat = Double.parseDouble(latLngString[0].trim());
+        double lng = Double.parseDouble(latLngString[1].trim());
+
+        return new LatLng(lat, lng);
+    }
+
+    public static String getLatLngAsString(LatLng coordinates) {
+        String lat = String.valueOf(coordinates.latitude);
+        String lng = String.valueOf(coordinates.longitude);
+
+        return lat + "," + lng;
     }
 
     /**

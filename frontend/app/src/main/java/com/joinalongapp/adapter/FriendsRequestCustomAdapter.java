@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,13 +50,21 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
         private ImageView profilePicture;
         private Button accept;
         private Button reject;
+        private CardView groupPictureOptionFirst;
+        private CardView groupPictureOptionSecond;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            name = (TextView) itemView.findViewById(R.id.individualReportName);
-            profilePicture = (ImageView) itemView.findViewById(R.id.individualProfilePicture);
+            name = (TextView) itemView.findViewById(R.id.individualRequestName);
+            profilePicture = (ImageView) itemView.findViewById(R.id.requestIndividualProfilePicture);
             accept = (Button) itemView.findViewById(R.id.acceptButton);
             reject = (Button) itemView.findViewById(R.id.rejectButton);
+            groupPictureOptionFirst = (CardView) itemView.findViewById(R.id.groupRequestCardViewFirst);
+            groupPictureOptionSecond = (CardView) itemView.findViewById(R.id.groupRequestCardViewSecond);
+
+            groupPictureOptionFirst.setVisibility(View.INVISIBLE);
+            groupPictureOptionSecond.setVisibility(View.INVISIBLE);
+
         }
 
         public TextView getName() {
@@ -206,6 +215,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                 viewProfileFragment.setArguments(info);
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                 fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frame_layout));
                 fragmentTransaction.add(R.id.frame_layout, viewProfileFragment);
                 fragmentTransaction.addToBackStack(null);

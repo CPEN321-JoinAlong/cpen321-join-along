@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
+    android:backgroundTint="?attr/backgroundColor"
     android:background="@drawable/rectangle_border_map">
 
     <TextView
@@ -18,7 +19,7 @@
         android:paddingHorizontal="8dp"
         android:paddingVertical="5dp"
         android:text="@string/card_event_name_default"
-        android:textColor="@color/black"
+        android:textColor="?attr/defaultTextColor"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,6 +36,7 @@
         android:paddingHorizontal="8dp"
         android:paddingVertical="5dp"
         android:text="@string/card_event_description_default"
+        android:textColor="?attr/defaultTextColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapInfoWindowEventName" />
 
@@ -49,5 +51,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/mapInfoWindowEventName"
         app:layout_constraintTop_toTopOf="parent"
+        app:tint="?attr/defaultTextColor"
         app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>

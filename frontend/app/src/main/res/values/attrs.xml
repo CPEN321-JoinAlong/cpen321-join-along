@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="backgroundGradientStartColor" format="reference"/>
+    <attr name="backgroundGradientCenterColor" format="reference"/>
+    <attr name="defaultTextColor" format="reference"/>
+    <attr name="defaultSubtitleTextColor" format="reference"/>
+    <attr name="buttonColor" format="reference"/>
+    <attr name="defaultWhiteWhite" format="reference"/>
+    <attr name="defaultBlackBlack" format="reference"/>
+    <attr name="defaultStrokeColor" format="reference"/>
+    <attr name="chipColor" format="reference"/>
+    <attr name="tabColor" format="reference"/>
+    <attr name="contrastingGreys" format="reference"/>
+</resources>

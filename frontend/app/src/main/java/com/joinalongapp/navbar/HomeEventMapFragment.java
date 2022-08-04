@@ -43,7 +43,7 @@ public class HomeEventMapFragment extends Fragment {
     private GoogleMap map;
     private List<Event> eventList = new ArrayList<>();
     private ClusterManager<MapClusterItem> clusterManager;
-    private static final float DEFAULT_ZOOM = 10F;
+    private static final float DEFAULT_ZOOM = 11F;
 
     public HomeEventMapFragment() {
         // Required empty public constructor
@@ -92,7 +92,7 @@ public class HomeEventMapFragment extends Fragment {
                 clusterManager.getMarkerCollection().setInfoWindowAdapter(new MapInfoWindowAdapter(inflater));
                 map.setInfoWindowAdapter(clusterManager.getMarkerManager());
 
-                initMarkerInfoWindowClickListerner();
+                initMarkerInfoWindowClickListener();
                 initMarkerClusterClickListener();
 
             }
@@ -118,7 +118,7 @@ public class HomeEventMapFragment extends Fragment {
         });
     }
 
-    private void initMarkerInfoWindowClickListerner() {
+    private void initMarkerInfoWindowClickListener() {
         clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MapClusterItem>() {
             @Override
             public void onClusterItemInfoWindowClick(MapClusterItem item) {
@@ -150,11 +150,10 @@ public class HomeEventMapFragment extends Fragment {
         List<LatLng> latLngList = new ArrayList<>();
 
         for (Event event : eventList) {
-            String eventLocation = event.getLocation();
-            Address address = getAddressFromString(eventLocation, getActivity().getApplicationContext());
+            LatLng input = event.getCoordinates();
 
-            double addressLat = roundToFiveDecimalPlaces(address.getLatitude());
-            double addressLong = roundToFiveDecimalPlaces(address.getLongitude());
+            double addressLat = roundToFiveDecimalPlaces(input.latitude);
+            double addressLong = roundToFiveDecimalPlaces(input.longitude);
 
             LatLng eventLatLng = new LatLng(addressLat, addressLong);
 
@@ -199,7 +198,6 @@ public class HomeEventMapFragment extends Fragment {
         }
 
         // default camera view
-        //TODO: edit this
         LatLng defaultView = new LatLng(0, 0);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultView, DEFAULT_ZOOM));
     }

@@ -1,9 +1,12 @@
 package com.joinalongapp.joinalong;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -22,9 +25,14 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         replaceFragment(new HomeFragment());
+
+
+
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
 
@@ -38,6 +46,8 @@ public class MainActivity extends AppCompatActivity{
                 case R.id.event:
                     Intent i = new Intent(MainActivity.this, ManageEventActivity.class);
                     startActivity(i);
+                    overridePendingTransition(R.anim.bottom_slide_down, R.anim.no_animation);
+                    finish();
                     break;
                 case R.id.friends:
                     replaceFragment(new FriendsFragment());
@@ -58,6 +68,7 @@ public class MainActivity extends AppCompatActivity{
     private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();

@@ -18,6 +18,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ViewChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".ViewReportActivity"
             android:exported="false" />
         <activity
@@ -51,6 +54,7 @@
             android:exported="true" />
         <activity
             android:name=".LoginActivity"
+            android:configChanges="uiMode"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

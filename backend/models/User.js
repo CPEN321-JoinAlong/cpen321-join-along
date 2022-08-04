@@ -3,12 +3,14 @@ const { Schema } = mongoose;
 
 const UserSchema = new Schema({
     name: String,
+    isAdmin: Boolean,
     interests: [
         {
             type: String,
         },
     ],
     location: String,
+    coordinates: String,
     chats: [
         {
             type: String,

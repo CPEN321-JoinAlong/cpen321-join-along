@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.joinalongapp.navbar.ViewChatFragment">
+    android:background="?attr/backgroundColor"
+    tools:context=".ViewChatActivity">
 
     <ImageButton
         android:id="@+id/chatBackButton"
@@ -23,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/description_subtitle"
-        android:textColor="@color/orange"
+        android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline29" />
@@ -34,6 +35,7 @@
         android:layout_height="wrap_content"
         android:text="TextView"
         android:textSize="24sp"
+        android:textColor="?attr/defaultTextColor"
         app:layout_constraintBottom_toTopOf="@+id/guideline24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tags_subtitle"
-        android:textColor="@color/orange"
+        android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline25" />
@@ -144,6 +146,7 @@
         android:layout_marginTop="24dp"
         android:text="TextView"
         android:textSize="16sp"
+        android:textColor="?attr/defaultTextColor"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toBottomOf="@+id/manageChatDescriptionSubtitle" />
 
@@ -166,8 +169,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/default_friends"
-        android:textColor="@color/orange"
+        android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/guideline26"
         app:layout_constraintTop_toTopOf="@+id/guideline30" />
+
+    <ImageButton
+        android:id="@+id/chatOptions"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_baseline_more_vert_24"
+        app:tint="?attr/defaultTextColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline28" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

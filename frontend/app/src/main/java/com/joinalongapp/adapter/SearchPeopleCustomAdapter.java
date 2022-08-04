@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.navbar.ViewProfileFragment;
 import com.joinalongapp.viewmodel.UserProfile;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -34,12 +36,14 @@ public class SearchPeopleCustomAdapter extends RecyclerView.Adapter<SearchPeople
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView name;
         private View.OnClickListener onItemClickListener;
+        private ImageView profilePicture;
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             itemView.setTag(this);
-            name = (TextView) itemView.findViewById(R.id.entryName);
+            name = (TextView) itemView.findViewById(R.id.individualSearchUserName);
+            profilePicture = (ImageView) itemView.findViewById(R.id.individualSearchProfilePicture);
             itemView.setOnClickListener(onItemClickListener);
 
         }
@@ -51,12 +55,16 @@ public class SearchPeopleCustomAdapter extends RecyclerView.Adapter<SearchPeople
         public void setOnItemClickListener(View.OnClickListener onItemClickListener) {
             this.onItemClickListener = onItemClickListener;
         }
+
+        public ImageView getProfilePicture() {
+            return profilePicture;
+        }
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_item, parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_item_user, parent,false);
 
         return new SearchPeopleCustomAdapter.ViewHolder(view);
     }
@@ -65,6 +73,7 @@ public class SearchPeopleCustomAdapter extends RecyclerView.Adapter<SearchPeople
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         holder.getName().setText((dataset.get(holder.getBindingAdapterPosition())).getFullName());
+        Picasso.get().load(dataset.get(holder.getBindingAdapterPosition()).getProfilePicture()).into(holder.getProfilePicture());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +87,7 @@ public class SearchPeopleCustomAdapter extends RecyclerView.Adapter<SearchPeople
                 viewProfileFragment.setArguments(info);
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                 fragmentTransaction.replace(R.id.frameLayoutSearch, viewProfileFragment);
                 //fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentById(R.id.frameLayoutSearch));
                 //fragmentTransaction.add(R.id.frameLayoutSearch, viewProfileFragment);

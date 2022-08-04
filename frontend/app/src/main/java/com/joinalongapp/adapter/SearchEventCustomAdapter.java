@@ -18,7 +18,7 @@ import com.joinalongapp.viewmodel.Event;
 
 import java.util.List;
 
-public class SearchEventCustomAdapter extends RecyclerView.Adapter<SearchPeopleCustomAdapter.ViewHolder>{
+public class SearchEventCustomAdapter extends RecyclerView.Adapter<SearchEventCustomAdapter.ViewHolder>{
     private List<Event> dataset;
     private FragmentTransaction context;
     private Fragment fragment;
@@ -54,14 +54,14 @@ public class SearchEventCustomAdapter extends RecyclerView.Adapter<SearchPeopleC
 
     @NonNull
     @Override
-    public SearchPeopleCustomAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SearchEventCustomAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_item, parent,false);
 
-        return new SearchPeopleCustomAdapter.ViewHolder(view);
+        return new SearchEventCustomAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SearchPeopleCustomAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SearchEventCustomAdapter.ViewHolder holder, int position) {
 
         holder.getName().setText((dataset.get(holder.getBindingAdapterPosition())).getTitle());
 
@@ -77,6 +77,7 @@ public class SearchEventCustomAdapter extends RecyclerView.Adapter<SearchPeopleC
                 viewEventFragment.setArguments(info);
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                 fragmentTransaction.replace(R.id.frameLayoutSearch, viewEventFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();

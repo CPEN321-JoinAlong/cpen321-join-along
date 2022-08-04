@@ -142,7 +142,8 @@ class UserStore {
         if (event.data && user.data && chat.data) {
             if (
                 event.data.currCapacity < event.data.numberOfPeople &&
-                !user.data.events.includes(eventID) && !event.data.participants.includes(userID)
+                !user.data.events.includes(eventID) && !event.data.participants.includes(userID) &&
+                !user.data.blockedEvents.includes(eventID)
             ) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { events: eventID },
@@ -219,7 +220,9 @@ class UserStore {
             if (
                 !user.data.friends.includes(otherUserID) &&
                 !otherUser.data.friends.includes(userID) &&
-                !otherUser.data.friendRequest.includes(userID)
+                !otherUser.data.friendRequest.includes(userID) &&
+                !user.data.blockedUsers.includes(otherUserID) &&
+                !otherUser.data.blockedUsers.includes(userID)
             ) {
                 await User.findByIdAndUpdate(otherUserID, {
                     $push: { friendRequest: userID },
@@ -295,7 +298,9 @@ class UserStore {
         if (user.data && otherUser.data) {
             if (
                 !user.data.friends.includes(otherUserID) &&
-                !otherUser.data.friends.includes(userID)
+                !otherUser.data.friends.includes(userID) &&
+                !user.data.blockedUsers.includes(otherUserID) &&
+                !otherUser.data.blockedUsers.includes(userID)
             ) {
                 await User.findByIdAndUpdate(userID, {
                     $push: { friends: otherUserID },
@@ -452,7 +457,7 @@ class UserStore {
             // console.log("IN LEAVE EVENT");
             let response = await eventStore.removeUser(eventID, userID, this);
             // console.log(response);
-            return new ResponseObject(ERROR_CODES.SUCCESS);
+            return new ResponseObject(ERROR_CODES.SUCCESS, response);
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
@@ -473,7 +478,7 @@ class UserStore {
             let response = await chatEngine.removeUser(chatID, userID, this);
             // console.log("IN LEAVE CHAT");
             // console.log(response);
-            return new ResponseObject(ERROR_CODES.SUCCESS);
+            return new ResponseObject(ERROR_CODES.SUCCESS, response);
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND);
         }

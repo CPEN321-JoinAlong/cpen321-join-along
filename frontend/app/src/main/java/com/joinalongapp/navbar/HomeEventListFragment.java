@@ -1,15 +1,18 @@
 package com.joinalongapp.navbar;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.joinalongapp.adapter.EventAdapter;
 import com.joinalongapp.joinalong.R;
@@ -27,6 +30,8 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
     private RecyclerView eventRecycler;
     private List<Event> eventList = new ArrayList<>();
     private EventAdapter eventAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView noResults;
 
     public HomeEventListFragment() {
         // Required empty public constructor
@@ -65,6 +70,19 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
         eventList = (List<Event>) getArguments().getSerializable("eventsList");
         updateEventCards();
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateEventCards();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000); //TODO: FIXME: a delay seems kinda hacky here
+            }
+        });
+
         return view;
     }
 
@@ -74,6 +92,11 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
     }
 
     private void updateAdapter() {
+        if (eventList.size() == 0) {
+            noResults.setVisibility(View.VISIBLE);
+        } else {
+            noResults.setVisibility(View.GONE);
+        }
         eventAdapter = new EventAdapter(getActivity(), eventList);
         eventAdapter.setClickListener(this);
     }
@@ -84,6 +107,8 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
 
     private void initElements(View view) {
         eventRecycler = view.findViewById(R.id.eventListRecyclerView);
+        swipeRefreshLayout = view.findViewById(R.id.homeEventSwipeRefresh);
+        noResults = view.findViewById(R.id.eventListNoResults);
     }
 
     /**
@@ -100,6 +125,7 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
 
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();

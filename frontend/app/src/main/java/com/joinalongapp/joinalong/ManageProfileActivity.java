@@ -3,6 +3,7 @@ package com.joinalongapp.joinalong;
 import static com.joinalongapp.FeedbackMessageBuilder.createParseError;
 import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
 import static com.joinalongapp.LocationUtils.getAddressFromString;
+import static com.joinalongapp.LocationUtils.getCoordsFromAddress;
 import static com.joinalongapp.LocationUtils.standardizeAddress;
 import static com.joinalongapp.LocationUtils.validateLocation;
 import static com.joinalongapp.TextInputUtils.isValidNameTitle;
@@ -10,7 +11,6 @@ import static com.joinalongapp.TextInputUtils.isValidNameTitle;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,7 +24,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.FeedbackMessageBuilder;
@@ -63,9 +62,6 @@ public class ManageProfileActivity extends AppCompatActivity {
     private EditText locationEdit;
     private ChipGroup interestsChip;
     private EditText descriptionEdit;
-    private MaterialButtonToggleGroup useProfilePicToggle;
-    private Button useProfilePic;
-    private Button dontUseProfilePic;
     private Button confirm;
     private ImageButton close;
     private AutoCompleteTextView autoCompleteInterests;
@@ -76,18 +72,7 @@ public class ManageProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_profile);
 
-        UserProfile originalProfile = ((UserApplicationInfo) getApplication()).getProfile();
-
         initElements();
-
-        String[] sampleTags = getResources().getStringArray(R.array.sample_tags);
-        initAutoCompleteChipGroup(autoCompleteInterests, interestsChip, sampleTags);
-
-        try {
-            initUseGoogleProfilePicToggle(originalProfile);
-        } catch (IOException e) {
-            Log.e(EDIT_TAG, "Failed to set profile pic: " + e.getMessage());
-        }
 
         if (getIntent().getExtras() != null) {
             if (!isCreatingProfile()) {
@@ -96,6 +81,11 @@ public class ManageProfileActivity extends AppCompatActivity {
                 setUpPageForCreate();
             }
         }
+
+        String[] sampleTags = getResources().getStringArray(R.array.sample_tags);
+        initAutoCompleteChipGroup(autoCompleteInterests, interestsChip, sampleTags);
+
+        UserProfile originalProfile = ((UserApplicationInfo) getApplication()).getProfile();
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,10 +213,17 @@ public class ManageProfileActivity extends AppCompatActivity {
     private void modifyOriginalProfile(UserProfile originalProfile) {
         originalProfile.setFirstName(firstNameEdit.getText().toString());
         originalProfile.setLastName(lastNameEdit.getText().toString());
-        originalProfile.setLocation(standardizeAddress(locationEdit.getText().toString(), getApplicationContext()));
+        //TODO fix me
+        Address address = getAddressFromString(locationEdit.getText().toString(), getApplicationContext());
+        originalProfile.setLocation(standardizeAddress(address));
+        originalProfile.setCoordinates(getCoordsFromAddress(address));
 
         List<Tag> tags = getTagsFromChipGroup();
         originalProfile.setTags(tags);
+
+        if (isCreatingProfile()) {
+            originalProfile.setProfilePicture(getProfilePicUrl());
+        }
 
         originalProfile.setDescription(descriptionEdit.getText().toString());
     }
@@ -266,55 +263,6 @@ public class ManageProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void initUseGoogleProfilePicToggle(UserProfile userProfile) throws IOException {
-        useProfilePicToggle.setVisibility(View.GONE);
-        useProfilePic.setVisibility(View.GONE);
-        dontUseProfilePic.setVisibility(View.GONE);
-        findViewById(R.id.useGoogleProfilePicTitle).setVisibility(View.GONE);
-        //TODO: this might be future functionality
-        //      for now, always uses the user google account profile pic
-
-        if (isCreatingProfile()) {
-            userProfile.setProfilePicture(getProfilePicUrl());
-            Picasso.get().load(getProfilePicUrl()).into(profilePicPreview);
-        } else {
-            String profilePicUrl = ((UserApplicationInfo) getApplication()).getProfile().getProfilePicture();
-            Picasso.get().load(profilePicUrl).into(profilePicPreview);
-        }
-
-
-//        setProfilePicToggleColors(R.color.orange_light, R.color.orange_prim);
-//        profilePicPreview.setVisibility(View.GONE);
-//        userProfile.setProfilePicture("");
-//
-//        useProfilePicToggle.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
-//            @Override
-//            public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-//                if (isChecked) {
-//                    if (checkedId == R.id.useGoogleProfilePic) {
-//                        userProfile.setProfilePicture(getProfilePicUrl());
-//                        setProfilePicToggleColors(R.color.orange_prim, R.color.orange_light);
-//                        profilePicPreview.setVisibility(View.VISIBLE);
-//                        Picasso.get().load(getProfilePicUrl()).into(profilePicPreview);
-//                    } else {
-//                        if (checkedId == R.id.dontUseGoogleProfilePic) {
-//                            userProfile.setProfilePicture("");
-//                            setProfilePicToggleColors(R.color.orange_light, R.color.orange_prim);
-//                            profilePicPreview.setVisibility(View.GONE);
-//                        }
-//                    }
-//                } else {
-//                    // This is the default case, which is to share the cost
-//                    if (group.getCheckedButtonId() == View.NO_ID) {
-//                        userProfile.setProfilePicture("");
-//                        setProfilePicToggleColors(R.color.orange_light, R.color.orange_prim);
-//                        profilePicPreview.setVisibility(View.GONE);
-//                    }
-//                }
-//            }
-//        });
-    }
-
     private void startMainActivity() {
         Intent i = new Intent(ManageProfileActivity.this, MainActivity.class);
         startActivity(i);
@@ -328,6 +276,8 @@ public class ManageProfileActivity extends AppCompatActivity {
         if (getIntent().getExtras().get("lastName") != null) {
             lastNameEdit.setText(getIntent().getExtras().getString("lastName"));
         }
+
+        Picasso.get().load(getProfilePicUrl()).into(profilePicPreview);
     }
 
     private String getProfilePicUrl() {
@@ -363,9 +313,6 @@ public class ManageProfileActivity extends AppCompatActivity {
         interestsChip = findViewById(R.id.profileManagementChipGroup);
         autoCompleteInterests = findViewById(R.id.profileManagementAutoComplete);
         descriptionEdit = findViewById(R.id.profileDescription);
-        useProfilePicToggle = findViewById(R.id.useGoogleProfilePicToggle);
-        useProfilePic = findViewById(R.id.useGoogleProfilePic);
-        dontUseProfilePic = findViewById(R.id.dontUseGoogleProfilePic);
         confirm = findViewById(R.id.profileManageConfirm);
         close = findViewById(R.id.profileCloseButton);
         profilePicPreview = findViewById(R.id.profilePicPreview);

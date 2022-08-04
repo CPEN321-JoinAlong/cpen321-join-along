@@ -7,4 +7,5 @@
     android:layout_height="wrap_content"
     android:clickable="false"
     android:checkable="false"
+    android:backgroundTint="?attr/chipColor"
     style="@style/Widget.MaterialComponents.Chip.Choice" />

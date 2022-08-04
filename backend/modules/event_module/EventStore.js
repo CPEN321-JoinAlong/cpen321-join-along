@@ -52,7 +52,7 @@ class EventStore {
             title: { $regex: searchEvent, $options: "i" },
         });
         if (foundEventList.length !== 0)
-            return new ResponseObject(ERROR_CODES.SUCCESS, foundEventList);
+            return new ResponseObject(ERROR_CODES.SUCCESS, foundEventList.filter(event => event.publicVisibility));
         else return new ResponseObject(ERROR_CODES.NOTFOUND, foundEventList);
     }
 
@@ -71,7 +71,7 @@ class EventStore {
     async findAllEvents() {
         let eventList = await Event.find({});
         if (eventList.length !== 0)
-            return new ResponseObject(ERROR_CODES.SUCCESS, eventList);
+            return new ResponseObject(ERROR_CODES.SUCCESS, eventList.filter(event => event.publicVisibility));
         else return new ResponseObject(ERROR_CODES.NOTFOUND, eventList);
     }
 

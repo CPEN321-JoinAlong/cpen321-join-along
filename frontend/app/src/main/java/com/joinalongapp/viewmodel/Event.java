@@ -2,6 +2,9 @@ package com.joinalongapp.viewmodel;
 
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.joinalongapp.LocationUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +33,8 @@ public class Event implements Serializable, IDetailsModel {
     private List<String> members = new ArrayList<>();
     private String description;
     private int currentNumPeopleRegistered;
+    private String coordinates;
+    private double distance;
 
     public int getCurrentNumPeopleRegistered() {
         return currentNumPeopleRegistered;
@@ -103,7 +108,10 @@ public class Event implements Serializable, IDetailsModel {
         return eventOwnerId;
     }
 
-    //TODO: this is a get request with owner id
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
     public String getOwnerName() {
         return ownerName;
     }
@@ -144,6 +152,22 @@ public class Event implements Serializable, IDetailsModel {
         return description;
     }
 
+    public LatLng getCoordinates() {
+        return LocationUtils.getLatLngFromString(coordinates);
+    }
+
+    public void setCoordinates(LatLng coordinates) {
+        this.coordinates = LocationUtils.getLatLngAsString(coordinates);
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
     public List<String> getStringListOfTags(){
         List<String> result = new ArrayList<>();
         for(Tag tag : tags){
@@ -160,7 +184,7 @@ public class Event implements Serializable, IDetailsModel {
     public JSONObject toJson() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("title", getTitle());
-
+        json.put("eventOwnerName", getOwnerName());
         JSONArray tags = new JSONArray(getStringListOfTags());
         json.put("tags", tags);
 
@@ -171,6 +195,8 @@ public class Event implements Serializable, IDetailsModel {
         json.put("endDate", getEndDate());
         json.put("publicVisibility", getPublicVisibility());
         json.put("eventOwnerID", getEventOwnerId());
+
+        json.put("coordinates", LocationUtils.getLatLngAsString(getCoordinates()));
 
         return json;
     }
@@ -187,6 +213,8 @@ public class Event implements Serializable, IDetailsModel {
         for (int i = 0; i < tags.length(); i++) {
             addTagToInterests(new Tag(tags.getString(i)));
         }
+
+        setOwnerName(json.getString("eventOwnerName"));
 
         SimpleDateFormat serverSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
@@ -211,12 +239,23 @@ public class Event implements Serializable, IDetailsModel {
         setLocation(json.getString("location"));
         setDescription(json.getString("description"));
 
+        String distance = json.getString("distance");
+        if (distance.isEmpty() || distance.equals("null")) {
+            setDistance(-1);
+        } else {
+            setDistance(Double.parseDouble(json.getString("distance")));
+        }
+
+
         JSONArray members = json.getJSONArray("participants");
         for (int i = 0; i < members.length(); i++) {
             addMemberToList(members.getString(i));
         }
 
         setCurrentNumPeopleRegistered(json.getInt("currCapacity"));
+        
+        String coordinates = json.getString("coordinates");
+        setCoordinates(LocationUtils.getLatLngFromString(coordinates));
 
         return this;
     }

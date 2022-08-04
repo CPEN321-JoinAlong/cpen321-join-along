@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="?attr/backgroundColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,7 +11,7 @@
         android:id="@+id/chatRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/text_gchat_indicator"
         app:layout_constraintTop_toTopOf="@+id/guideline36" />
@@ -34,7 +35,8 @@
     <RelativeLayout
         android:id="@+id/layout_gchat_chatbox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -45,11 +47,13 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
+
             android:layout_toStartOf="@+id/sendChatButton"
             android:background="@android:color/transparent"
             android:hint="Enter Message"
             android:inputType="text"
             android:maxLines="6"
+            android:textColor="?attr/defaultTextColor"
             tools:ignore="Autofill" />
 
         <ImageButton
@@ -58,7 +62,9 @@
             android:layout_height="48dp"
             android:layout_alignParentEnd="true"
             android:background="@android:drawable/ic_menu_send"
-            android:text="Send" />
+            android:text="Send"
+            app:background="@android:color/transparent"
+            app:backgroundTint="?attr/buttonColor" />
 
     </RelativeLayout>
 
@@ -81,22 +87,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView"
+    <ImageButton
+        android:id="@+id/chatInfo"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="#FFFFFF"
+        android:background="?attr/backgroundColor"
         app:layout_constraintBottom_toTopOf="@+id/guideline36"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_dialog_info" />
+        app:srcCompat="@drawable/ic_baseline_info_24"
+        app:tint="?attr/buttonColor" />
 
     <TextView
         android:id="@+id/chatTitleName"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="TextView"
+        android:textColor="?attr/defaultTextColor"
         android:textSize="20sp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
         app:layout_constraintBottom_toTopOf="@+id/chatRecycler"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

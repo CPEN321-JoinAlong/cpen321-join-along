@@ -156,7 +156,7 @@ public class ViewEventFragment extends Fragment {
                             .addNode("ban")
                             .build();
 
-                    requestManager.put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    requestManager.post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             if (response.isSuccessful()) {
@@ -212,7 +212,10 @@ public class ViewEventFragment extends Fragment {
                                             .addNode(eventId)
                                             .build();
 
-                                    new RequestManager().put(path, token, new RequestManager.OnRequestCompleteListener() {
+                                    JSONObject json = new JSONObject();
+                                    json.put("token", token);
+
+                                    new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                                         @Override
                                         public void onSuccess(Call call, Response response) {
 
@@ -240,7 +243,7 @@ public class ViewEventFragment extends Fragment {
                                                                         .show();
 
                                                                 String userName = userApplicationInfo.getProfile().getFullName();
-                                                                Chip chip = new Chip(activity);
+                                                                Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, members, false);
                                                                 chip.setText(userName);
                                                                 members.removeView(chip);
 
@@ -264,6 +267,8 @@ public class ViewEventFragment extends Fragment {
                                     });
                                 } catch (IOException e) {
                                     FeedbackMessageBuilder.createServerConnectionError(e, operation, getActivity());
+                                } catch (JSONException e) {
+                                    FeedbackMessageBuilder.createParseError(e, operation, getActivity());
                                 }
 
                                 return true;
@@ -383,7 +388,7 @@ public class ViewEventFragment extends Fragment {
         joinButton.setVisibility(View.GONE);
         rideshareButton.setVisibility(View.VISIBLE);
         String userName = userApplicationInfo.getProfile().getFullName();
-        userChip = new Chip(activity);
+        userChip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, members, false);
         userChip.setText(userName);
         members.addView(userChip);
         event.setCurrentNumPeopleRegistered(event.getCurrentNumPeopleRegistered() + 1);
@@ -417,12 +422,14 @@ public class ViewEventFragment extends Fragment {
                     //TODO go back to map
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                     fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 } else {
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                     fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
@@ -499,7 +506,7 @@ public class ViewEventFragment extends Fragment {
         description.setText(event.getDescription());
 
         for (String tag : event.getStringListOfTags()) {
-            Chip chip = new Chip(getActivity());
+            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, tags, false);
             chip.setText(tag);
             tags.addView(chip);
         }
@@ -511,7 +518,7 @@ public class ViewEventFragment extends Fragment {
         beginDate.setText(sdf.format(event.getBeginningDate()));
         endDate.setText(sdf.format(event.getEndDate()));
 
-        Chip ownerChip = new Chip(getActivity());
+        Chip ownerChip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, organizer, false);
 
         FragmentActivity fragmentActivity = getActivity();
         String path = "user/" + event.getEventOwnerId();
@@ -558,7 +565,7 @@ public class ViewEventFragment extends Fragment {
 
         for (String memberId : event.getMembers()) {
             RequestManager membersRequestManager = new RequestManager();
-            Chip memberChip = new Chip(fragmentActivity);
+            Chip memberChip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, members, false);
             String memberPath = "user/" + memberId;
 
             try {
@@ -600,7 +607,13 @@ public class ViewEventFragment extends Fragment {
 
         }
 
-        String numPeopleInEventString = " (" + event.getCurrentNumPeopleRegistered() + "/" + event.getNumberOfPeopleAllowed() + ")";
+        String numberOfPeopleAllowed;
+        if (event.getNumberOfPeopleAllowed() == Integer.MAX_VALUE) {
+            numberOfPeopleAllowed = "unlimited";
+        } else {
+            numberOfPeopleAllowed = String.valueOf(event.getNumberOfPeopleAllowed());
+        }
+        String numPeopleInEventString = " (" + event.getCurrentNumPeopleRegistered() + "/" + numberOfPeopleAllowed + ")";
         numPeople.setText(numPeopleInEventString);
 
 

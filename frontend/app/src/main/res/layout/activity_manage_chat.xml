@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
     tools:context=".ManageChatActivity">
 
     <androidx.constraintlayout.widget.Guideline
@@ -35,7 +36,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@android:drawable/ic_delete" />
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
+        app:tint="#FF0000" />
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/descriptionGuideline2"
@@ -70,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/create_chat_title"
-        android:textColor="#000000"
+        android:textColor="?attr/defaultTextColor"
         android:textSize="26sp"
         app:layout_constraintBottom_toTopOf="@+id/underTitleGuideLine2"
         app:layout_constraintEnd_toStartOf="@+id/manageChatCancelButton"
@@ -88,7 +91,7 @@
         android:importantForAutofill="no"
         android:inputType="textPersonName"
         android:text="@string/default_empty_string"
-        android:textColor="#000000"
+        android:textColor="?attr/defaultTextColor"
         android:textColorHint="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/title_subtitleGuideline2"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
@@ -102,7 +105,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
         android:text="@string/title_subtitle"
-        android:textColor="@color/orange"
+        android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/manageChatEditTextTitle"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
@@ -116,7 +119,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tags_subtitle"
-        android:textColor="@color/orange"
+        android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/autoCompleteTagText"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
@@ -138,7 +141,7 @@
         app:layout_constraintVertical_bias="0.0">
 
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/manageTags"
+            android:id="@+id/viewProfileInterests"
             android:layout_width="314dp"
             android:layout_height="38dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline3"
@@ -162,7 +165,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/add_friends_subtitle"
-        android:textColor="@color/orange"
+        android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/autoCompleteFriendText"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
@@ -181,7 +184,7 @@
         android:importantForAutofill="no"
         android:inputType="textMultiLine"
         android:text="@string/default_empty_string"
-        android:textColor="#000000"
+        android:textColor="?attr/defaultTextColor"
         android:textColorHint="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
@@ -195,7 +198,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:text="@string/description_subtitle"
-        android:textColor="@color/orange"
+        android:textColor="?attr/defaultSubtitleTextColor"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/manageChatEditTextDescription"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
@@ -246,7 +249,8 @@
         android:id="@+id/submitManageChatButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/orange"
+        android:backgroundTint="?attr/buttonColor"
+        android:textColor="?attr/defaultWhiteWhite"
         android:text="@string/default_create_string"
         app:layout_constraintBottom_toTopOf="@+id/descriptionGuideline2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -259,6 +263,7 @@
         android:layout_height="50dp"
         android:hint="@string/default_enter_tags"
         android:text="@string/default_empty_string"
+        android:textColor="?attr/defaultTextColor"
         android:textColorHint="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/horizontalScrollViewTags"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"
@@ -273,6 +278,7 @@
         android:layout_marginTop="16dp"
         android:hint="@string/default_enter_friends"
         android:text="@string/default_empty_string"
+        android:textColor="?attr/defaultTextColor"
         android:textColorHint="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toStartOf="@+id/rightMarginGuideline2"

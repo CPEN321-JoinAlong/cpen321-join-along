@@ -2,6 +2,7 @@ package com.joinalongapp.joinalong;
 
 import android.app.Application;
 
+import com.joinalongapp.LocationUtils;
 import com.joinalongapp.viewmodel.IDetailsModel;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
@@ -57,6 +58,11 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
         return json.toString();
     }
 
+    public void reset() {
+        setUserToken("");
+        setProfile(new UserProfile());
+    }
+
     @Override
     public String toJsonString() throws JSONException {
 
@@ -74,6 +80,8 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
         if (!profile.getFriends().isEmpty()) {
             json.put("friends", new JSONArray(profile.getFriends()));
         }
+
+        json.put("coordinates", LocationUtils.getLatLngAsString(profile.getCoordinates()));
 
         return json.toString();
     }
@@ -103,6 +111,7 @@ public class UserApplicationInfo extends Application implements IDetailsModel {
         }
 
         setUserToken(json.getString("token"));
+        profile.setAdmin(json.getBoolean("isAdmin"));
 
         return this;
     }

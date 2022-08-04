@@ -1,5 +1,8 @@
 package com.joinalongapp.viewmodel;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.joinalongapp.LocationUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +16,7 @@ public class UserProfile implements Serializable, IDetailsModel {
     private String firstName;
     private String lastName;
     private String location;
+    private String coordinates;
     private List<Tag> tags = new ArrayList<>();
     private String description;
     private String profilePictureUrl;
@@ -106,7 +110,7 @@ public class UserProfile implements Serializable, IDetailsModel {
         return isAdmin;
     }
 
-    private void setAdmin(boolean admin) {
+    public void setAdmin(boolean admin) {
         isAdmin = admin;
     }
 
@@ -122,11 +126,21 @@ public class UserProfile implements Serializable, IDetailsModel {
         this.profilePictureUrl = profilePicture;
     }
 
+    public LatLng getCoordinates() {
+        return LocationUtils.getLatLngFromString(coordinates);
+    }
+
+    public void setCoordinates(LatLng coordinates) {
+        this.coordinates = LocationUtils.getLatLngAsString(coordinates);
+    }
+
     public String getFullName(){
         return firstName + " " + lastName;
     }
 
     public String toJsonString() throws JSONException {
+        //TODO: refactor to avoid duplication in user application info
+        //if this method is changed, the same one has to be changed in user application info
         JSONObject json = new JSONObject();
         json.put("id", getId());
         json.put("name", getFullName());
@@ -137,6 +151,8 @@ public class UserProfile implements Serializable, IDetailsModel {
 
         JSONArray jsonArray = new JSONArray(friends);
         json.put("friends", jsonArray);
+
+        json.put("coordinates", LocationUtils.getLatLngAsString(getCoordinates()));
 
         return json.toString();
     }
@@ -170,7 +186,12 @@ public class UserProfile implements Serializable, IDetailsModel {
             addFriendToList(jsonFriendsList.getString(i));
         }
 
-        // TODO: add parsing for admin
+        String coordinates = json.getString("coordinates");
+        String[] latLngString = coordinates.split(",");
+
+        setCoordinates(LocationUtils.getLatLngFromString(coordinates));
+
+        setAdmin(json.getBoolean("isAdmin"));
 
         return this;
     }

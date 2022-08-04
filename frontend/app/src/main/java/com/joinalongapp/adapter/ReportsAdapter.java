@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -17,10 +16,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.joinalong.R;
-import com.joinalongapp.navbar.ViewProfileFragment;
 import com.joinalongapp.navbar.ViewReportFragment;
 import com.joinalongapp.viewmodel.ReportDetails;
-import com.joinalongapp.viewmodel.UserProfile;
 
 
 import org.json.JSONException;
@@ -79,6 +76,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
         holder.getIndividualReportedName().setText(datasetOfReports.get(position).getReportedName());
         holder.getIndividualReportType().setText("Type: " + datasetOfReports.get(position).getReportType());
         holder.getIndividualReporterName().setText("By: " + datasetOfReports.get(position).getReporterName());
+        holder.getReportOptions().setVisibility(View.INVISIBLE);
         holder.getReportOptions().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,6 +111,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
                 viewReportFragment.setArguments(info);
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                 fragmentTransaction.replace(R.id.constraintLayoutProfile, viewReportFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();

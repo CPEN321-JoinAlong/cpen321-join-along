@@ -24,7 +24,6 @@ import com.google.android.material.chip.ChipGroup;
 import com.joinalongapp.joinalong.LoginActivity;
 import com.joinalongapp.joinalong.ManageProfileActivity;
 import com.joinalongapp.joinalong.R;
-import com.joinalongapp.joinalong.SearchScreenActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.joinalong.ViewReportActivity;
 import com.joinalongapp.viewmodel.UserProfile;
@@ -69,6 +68,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -150,6 +150,8 @@ public class ProfileFragment extends Fragment {
                         // ...
                     }
                 });
+
+        ((UserApplicationInfo) getActivity().getApplication()).reset();
 
         Intent i = new Intent(getActivity(), LoginActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

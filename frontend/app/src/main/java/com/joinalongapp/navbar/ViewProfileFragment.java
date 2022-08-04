@@ -19,8 +19,8 @@ import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.controller.ResponseErrorHandler;
-import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.CreateReportActivity;
+import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.UserProfile;
 import com.squareup.picasso.Picasso;
@@ -30,6 +30,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -110,10 +112,7 @@ public class ViewProfileFragment extends Fragment {
             }
         });
 
-
-        if (hide || shouldHideAddFriendButton(globalUserProfile, otherUserId)){
-            addFriend.setVisibility(View.INVISIBLE);
-        }
+        initButtonVisibility(globalUserProfile, otherUserId);
 
         addFriend.setOnClickListener(new View.OnClickListener() {
             String operation = "Send Friend Request";
@@ -139,7 +138,18 @@ public class ViewProfileFragment extends Fragment {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             if (response.isSuccessful()) {
-                                addFriend.setVisibility(View.INVISIBLE);
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                addFriend.setVisibility(View.INVISIBLE);
+                                            }
+                                        });
+                                    }
+                                }, 0);
+
                             } else {
                                 ResponseErrorHandler.createErrorMessage(response, operation, "User", getActivity());
                             }
@@ -181,7 +191,7 @@ public class ViewProfileFragment extends Fragment {
                             .addNode("ban")
                             .build();
 
-                    new RequestManager().put(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                    new RequestManager().post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             if (response.isSuccessful()) {
@@ -222,7 +232,7 @@ public class ViewProfileFragment extends Fragment {
         return view;
     }
 
-    private boolean shouldHideAddFriendButton(UserProfile theGlobalUserProfile, String theOtherUserId) {
+    private boolean isFriend(UserProfile theGlobalUserProfile, String theOtherUserId) {
         return theGlobalUserProfile.getFriends().contains(theOtherUserId);
     }
 
@@ -230,7 +240,7 @@ public class ViewProfileFragment extends Fragment {
         backButton = view.findViewById(R.id.chatBackButton);
         profileName = view.findViewById(R.id.profileName);
         profilePicture = view.findViewById(R.id.profilePicture);
-        manageTags  = view.findViewById(R.id.manageTags);
+        manageTags  = view.findViewById(R.id.viewProfileInterests);
         description = view.findViewById(R.id.description);
         report = view.findViewById(R.id.blockUserButton);
         addFriend = view.findViewById(R.id.addFriendButton);
@@ -243,5 +253,21 @@ public class ViewProfileFragment extends Fragment {
             chip.setText(tag);
             manageTags.addView(chip);
         }
+    }
+
+    private void initButtonVisibility(UserProfile globalUser, String otherProfileId) {
+        String globalUserId = globalUser.getId();
+
+        if (isSelf(globalUserId, otherProfileId)) {
+            addFriend.setVisibility(View.GONE);
+            report.setVisibility(View.GONE);
+        } else if (hide || isFriend(globalUser, otherProfileId)) {
+            addFriend.setVisibility(View.GONE);
+        }
+
+    }
+
+    private boolean isSelf(String globalUserId, String otherProfileId) {
+        return globalUserId.equals(otherProfileId);
     }
 }

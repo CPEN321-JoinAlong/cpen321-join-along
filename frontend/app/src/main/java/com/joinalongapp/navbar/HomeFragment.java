@@ -1,6 +1,8 @@
 package com.joinalongapp.navbar;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -27,6 +30,7 @@ import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.SearchScreenActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.Event;
+import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,8 +58,11 @@ public class HomeFragment extends Fragment {
     private Spinner eventFilterSpinner;
     private List<String> eventFilterList = new ArrayList<>();
     private static EventViewAdapter viewStateAdapter;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     private ImageButton homepageSearchBar;
+    private ImageButton homepageDarkButton;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -77,6 +84,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getActivity().getSharedPreferences(getString(R.string.dark_mode_prefs), Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
     }
 
     @Override
@@ -87,6 +96,7 @@ public class HomeFragment extends Fragment {
 
         initElements(rootView);
         initSpinner();
+        initDarkMode();
 
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         viewStateAdapter = new EventViewAdapter(fragmentManager, getLifecycle());
@@ -162,15 +172,18 @@ public class HomeFragment extends Fragment {
         eventViewTabs = view.findViewById(R.id.homeEventDisplayTabLayout);
         eventFilterSpinner = view.findViewById(R.id.homepageEventsFilter);
         homepageSearchBar = view.findViewById(R.id.homeSearchButton);
+        homepageDarkButton = view.findViewById(R.id.darkModeButton);
     }
 
     private void initSpinner() {
         eventFilterList.add("Recommended");
         eventFilterList.add("My Events");
+        eventFilterList.add("All Events");
         eventFilterList.add("Joined Events");
 
         //TODO: change this to get user interests from global
-        List<String> userInterests = new ArrayList<>();
+        UserProfile userProfile = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
+        List<String> userInterests = userProfile.getStringListOfTags();
 
         eventFilterList.addAll(userInterests);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, eventFilterList);
@@ -183,12 +196,21 @@ public class HomeFragment extends Fragment {
         String path;
 
         switch (filter) {
-            case "My Events":
+            case "Recommended":
+                path = new PathBuilder().addUser().addNode(userId).addNode("recommendedEvents").build();
+                break;
+            case "Joined Events":
                 path = new PathBuilder().addUser().addNode(userId).addEvent().build();
                 break;
-            case "Recommended":
-            default:
+            case "All Events":
                 path = new PathBuilder().addEvent().build();
+                break;
+            case "My Events":
+                //TODO: change later when endpoint is made
+                path = new PathBuilder().addEvent().build();
+                break;
+            default:
+                path = new PathBuilder().addEvent().addNode("tag").addNode(filter).build();
                 break;
         }
 
@@ -210,6 +232,9 @@ public class HomeFragment extends Fragment {
                             FeedbackMessageBuilder.createParseError(e, operation, fragmentActivity);
                             //TODO: add no events found message
                         }
+                    } else if (response.code() == HttpStatusConstants.STATUS_HTTP_404) {
+                        List<Event> eventList = new ArrayList<>();
+                        updateEventLists(eventList, fragmentActivity, curr);
                     } else {
                         ResponseErrorHandler.createErrorMessage(response, operation, "Event", fragmentActivity);
                         //TODO: add no events found message
@@ -258,6 +283,29 @@ public class HomeFragment extends Fragment {
                 });
             }
         }, 0);
+    }
+
+    private void initDarkMode(){
+        boolean darkMode = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES;
+
+        homepageDarkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(darkMode){
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    editor.putBoolean(getString(R.string.dark_mode_prefs), false);
+
+                }
+                else{
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    editor.putBoolean(getString(R.string.dark_mode_prefs), true);
+
+                }
+
+                editor.apply();
+            }
+        });
+
     }
 
 }

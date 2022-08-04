@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
     tools:context="com.joinalongapp.navbar.HomeEventListFragment">
 
     <androidx.constraintlayout.widget.Guideline
@@ -56,9 +57,11 @@
 
     <ImageButton
         android:id="@+id/homeSearchButton"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="#0000"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/backgroundColor"
         android:contentDescription="@string/default_search"
         android:minHeight="48dp"
         android:outlineAmbientShadowColor="#0000"
@@ -66,11 +69,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.951"
         app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline3"
-        app:srcCompat="@android:drawable/ic_search_category_default" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="?android:attr/actionModeWebSearchDrawable" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardView2"
-        android:layout_width="310dp"
+        android:layout_width="350dp"
         android:layout_height="28dp"
         android:layout_margin="10dp"
         app:cardCornerRadius="8dp"
@@ -85,10 +89,10 @@
             android:id="@+id/homeEventDisplayTabLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:tabIndicatorColor="@color/orange"
+            app:tabIndicatorColor="?attr/tabColor"
             app:tabIndicatorHeight="50dp"
             app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/black">
+            app:tabTextColor="?attr/defaultTextColor">
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/eventListOption"
@@ -110,7 +114,9 @@
         android:id="@+id/eventViewSelectViewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteY="136dp" />
+        tools:layout_editor_absoluteY="136dp" >
+
+    </androidx.viewpager2.widget.ViewPager2>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/homepageRecycleView"
@@ -137,5 +143,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.064"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/darkModeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="60dp"
+        android:backgroundTint="#00FFFFFF"
+        android:src="@drawable/ic_toggle_dark_mode"
+        app:layout_constraintBottom_toTopOf="@+id/aboveTitleGuideline3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.951"
+        app:layout_constraintStart_toStartOf="@+id/leftMarginGuideline3"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

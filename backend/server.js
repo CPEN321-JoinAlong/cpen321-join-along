@@ -856,9 +856,9 @@ app.post("/user/:id/ban", async (req, res) => {
         
         for (let eventID of user.data.events)
             await userStore.leaveEvent(id, eventID, eventStore)
-            
+    
         for (let chatID of user.data.chats)
-            await userStore.leaveChat(id, chatID, chatStore)
+            await userStore.leaveChat(id, chatID, chatEngine)
 
         let response = await banService.banUser(id, userStore);
         res.status(response.status).send("Successful");

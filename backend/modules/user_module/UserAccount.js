@@ -9,7 +9,7 @@ class UserAccount {
         this.profilePicture = userInfo.profilePicture;
 
         //fields which will be created automatically
-        this.coordinates = userInfo.coordinates ? userInfo.coordinates : "Not available"
+        this.coordinates = userInfo.coordinates ? userInfo.coordinates : "0,0"
         this.eventInvites = userInfo.eventInvites ? userInfo.eventInvites : [];
         this.chatInvites = userInfo.chatInvites ? userInfo.chatInvites : [];
         this.friendRequest = userInfo.friendRequest

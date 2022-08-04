@@ -191,7 +191,7 @@ public class UserProfile implements Serializable, IDetailsModel {
 
         setCoordinates(LocationUtils.getLatLngFromString(coordinates));
 
-        // TODO: add parsing for admin
+        setAdmin(json.getBoolean("isAdmin"));
 
         return this;
     }

@@ -16,6 +16,7 @@ public class ChatDetails implements Serializable, IDetailsModel {
     private List<Tag> tags;
     private String description;
     private List<String> people;
+    private List<String> profileURLs;
     private int maxNumPeople = Integer.MAX_VALUE;
     //chat has at least one person, so that is the default
     private int numPeople = 1;
@@ -84,6 +85,14 @@ public class ChatDetails implements Serializable, IDetailsModel {
         return result;
     }
 
+    public List<String> getProfileURLs() {
+        return profileURLs;
+    }
+
+    public void setProfileURLs(List<String> profileURLs) {
+        this.profileURLs = profileURLs;
+    }
+
     @Override
     public String toJsonString() throws JSONException {
         JSONObject json = new JSONObject();
@@ -138,6 +147,11 @@ public class ChatDetails implements Serializable, IDetailsModel {
             addToFriends(friendsJson.getString(i));
         }
 
+        JSONArray urlJSON = jsonObject.getJSONArray("images");
+        for (int i = 0; i < urlJSON.length(); i++) {
+            addToProfileURLs(urlJSON.getString(i));
+        }
+
         return this;
     }
 
@@ -153,5 +167,12 @@ public class ChatDetails implements Serializable, IDetailsModel {
             tags = new ArrayList<>();
         }
         tags.add(tag);
+    }
+
+    private void addToProfileURLs(String URL) {
+        if(profileURLs == null){
+            profileURLs = new ArrayList<>();
+        }
+        profileURLs.add(URL);
     }
 }

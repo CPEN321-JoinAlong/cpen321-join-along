@@ -6,22 +6,55 @@
     android:layout_gravity="center_horizontal">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/individualCardView"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="15dp"
         android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dp"
         app:cardCornerRadius="250dp">
 
-    <ImageView
-        android:id="@+id/individualProfilePicture"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        app:srcCompat="@drawable/ic_baseline_person_24" />
+        <ImageView
+            android:id="@+id/individualProfilePicture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_baseline_person_24" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/groupCardViewFirst"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="15dp"
+        app:cardCornerRadius="250dp">
+
+        <ImageView
+            android:id="@+id/groupChatProfilePicturePart1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_baseline_person_24" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/groupCardViewSecond"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        app:cardCornerRadius="250dp">
+
+        <ImageView
+            android:id="@+id/groupChatProfilePicturePart2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_baseline_person_24" />
 
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/individualReportName"
+        android:id="@+id/individualListName"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"

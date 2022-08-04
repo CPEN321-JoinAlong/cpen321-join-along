@@ -54,8 +54,8 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 public class ManageEventActivity extends AppCompatActivity {
-    private int PRIVATE_VISIBILITY_INDEX = 0;
-    private int PUBLIC_VISIBILITY_INDEX = 1;
+    private int PRIVATE_VISIBILITY_INDEX = 1;
+    private int PUBLIC_VISIBILITY_INDEX = 0;
     private TextView manageEventTitle;
     private EditText title;
     private EditText location;

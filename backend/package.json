@@ -1,6 +1,6 @@
 {
-  "engines": {
-    "node": ">=8.6.0"
+  "engine": {
+    "node": ">=10.6.0"
   },
   "engineStrict": true,
   "dependencies": {

@@ -19,8 +19,8 @@ import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.controller.ResponseErrorHandler;
-import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.CreateReportActivity;
+import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.UserProfile;
 import com.squareup.picasso.Picasso;
@@ -30,6 +30,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -136,7 +138,18 @@ public class ViewProfileFragment extends Fragment {
                         @Override
                         public void onSuccess(Call call, Response response) {
                             if (response.isSuccessful()) {
-                                addFriend.setVisibility(View.INVISIBLE);
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                addFriend.setVisibility(View.INVISIBLE);
+                                            }
+                                        });
+                                    }
+                                }, 0);
+
                             } else {
                                 ResponseErrorHandler.createErrorMessage(response, operation, "User", getActivity());
                             }

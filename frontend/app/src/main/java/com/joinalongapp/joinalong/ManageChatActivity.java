@@ -59,6 +59,8 @@ public class ManageChatActivity extends AppCompatActivity {
     private Button submitButton;
     private NameIdPair[] friends;
     private List<String> friendIdsAdded;
+    private ChatDetails chatDetails;
+    private UserProfile user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +68,8 @@ public class ManageChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_chat);
 
         String token = ((UserApplicationInfo) getApplication()).getUserToken();
-        UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
+        user = ((UserApplicationInfo) getApplication()).getProfile();
 
-        //kfriends = new NameIdPair[user.getFriends().size()];
         friendIdsAdded = new ArrayList<>();
 
         initElement();
@@ -77,10 +78,11 @@ public class ManageChatActivity extends AppCompatActivity {
         Boolean manageOption = info.getBoolean("EDIT_OPTION");
 
         if (manageOption) {
-            ChatDetails chatDetails = (ChatDetails) info.getSerializable("CHAT_DETAILS");
+            chatDetails = (ChatDetails) info.getSerializable("CHAT_DETAILS");
             title.setText("Edit Chat");
             autofillChatDetails(chatDetails);
             submitButton.setText("Edit!");
+
         }
 
         String[] tags = getResources().getStringArray(R.array.sample_tags);
@@ -169,88 +171,147 @@ public class ManageChatActivity extends AppCompatActivity {
                 if(checkInvalidFields()){
                     ChatDetails resultChat = new ChatDetails();
 
-                    System.out.println(tagChipGroup.getChildCount());
-                    System.out.println(friendChipGroup.getChildCount());
-
+                    //TODO following two lines seem useless
                     List<String> participants = chipFriendsGroupToList(friendChipGroup, idToName);
                     participants.add(user.getId());
-
-                    friendIdsAdded.add(user.getId());
 
                     resultChat.setDescription(chatDescription.getText().toString());
                     resultChat.setTags(chipGroupToList(tagChipGroup));
                     resultChat.setTitle(chatTitle.getText().toString());
                     resultChat.setPeople(friendIdsAdded);
                     System.out.println(chipFriendsGroupToList(friendChipGroup, idToName).size());
-                    RequestManager submitManager = new RequestManager();
-                    try{
-                        JSONObject json = resultChat.toJson();
-                        json.put("token", token);
 
+                    PathBuilder path = new PathBuilder();
+                    String operation;
 
-                        PathBuilder path = new PathBuilder();
+                    //TODO fix duplicaiton
+                    if (manageOption) {
+                        path.addChat().addNode(chatDetails.getId()).addEdit();
+                        operation = "Edit Chat";
 
-                        if (manageOption) {
-                            path.addChat().addEdit();
-                        } else {
-                            path.addChat().addCreate();
-                        }
+                        try{
+                            JSONObject json = resultChat.toJson();
+                            json.put("token", token);
 
-                        System.out.println(json.toString());
-                        System.out.println(path.build().toString());
+                            System.out.println(json);
 
-                        submitManager.post(path.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
-                            @Override
-                            public void onSuccess(Call call, Response response) {
-                                switch (response.code()) {
-                                    case HttpStatusConstants.STATUS_HTTP_200:
-                                        Intent i = new Intent(ManageChatActivity.this, MainActivity.class);
+                            new RequestManager().put(path.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                                @Override
+                                public void onSuccess(Call call, Response response) {
+                                    switch (response.code()) {
+                                        case HttpStatusConstants.STATUS_HTTP_200:
+                                            Intent i = new Intent(ManageChatActivity.this, MainActivity.class);
 
-                                        if (manageOption) {
-                                            new FeedbackMessageBuilder()
-                                                    .setTitle("Chat Edited!")
-                                                    .setDescription("The " + chatTitle.getText().toString() + " has been successfully edited.")
-                                                    .withActivity(ManageChatActivity.this)
-                                                    .buildAsyncNeutralMessageAndStartActivity(i);
-                                        } else {
-                                            new FeedbackMessageBuilder()
-                                                    .setTitle("Chat Created!")
-                                                    .setDescription("The " + chatTitle.getText().toString() + " has been successfully created.")
-                                                    .withActivity(ManageChatActivity.this)
-                                                    .buildAsyncNeutralMessageAndStartActivity(i);
+                                            if (manageOption) {
+                                                new FeedbackMessageBuilder()
+                                                        .setTitle("Chat Edited!")
+                                                        .setDescription("The " + chatTitle.getText().toString() + " has been successfully edited.")
+                                                        .withActivity(ManageChatActivity.this)
+                                                        .buildAsyncNeutralMessageAndStartActivity(i);
+                                            } else {
+                                                new FeedbackMessageBuilder()
+                                                        .setTitle("Chat Created!")
+                                                        .setDescription("The " + chatTitle.getText().toString() + " has been successfully created.")
+                                                        .withActivity(ManageChatActivity.this)
+                                                        .buildAsyncNeutralMessageAndStartActivity(i);
 
-                                            new Timer().schedule(new TimerTask() {
-                                                @Override
-                                                public void run() {
-                                                    ManageChatActivity.this.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            submitButton.setEnabled(false);
-                                                            submitButton.setVisibility(View.GONE);
-                                                        }
-                                                    });
-                                                }
-                                            }, 0);
+                                                new Timer().schedule(new TimerTask() {
+                                                    @Override
+                                                    public void run() {
+                                                        ManageChatActivity.this.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                submitButton.setEnabled(false);
+                                                                submitButton.setVisibility(View.GONE);
+                                                            }
+                                                        });
+                                                    }
+                                                }, 0);
 
-                                        }
-                                        break;
+                                            }
+                                            break;
 
-                                    case HttpStatusConstants.STATUS_HTTP_500:
-                                    default:
-                                        FeedbackMessageBuilder.createServerInternalError(CREATE_TAG, ManageChatActivity.this);
-                                        break;
+                                        case HttpStatusConstants.STATUS_HTTP_500:
+                                        default:
+                                            FeedbackMessageBuilder.createServerInternalError(operation, ManageChatActivity.this);
+                                            break;
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onError(Call call, IOException e) {
-                                FeedbackMessageBuilder.createServerConnectionError(e, CREATE_TAG, ManageChatActivity.this);
-                            }
-                        });
-                    } catch(IOException e) {
-                        FeedbackMessageBuilder.createServerConnectionError(e, CREATE_TAG, ManageChatActivity.this);
-                    } catch (JSONException e){
-                        FeedbackMessageBuilder.createParseError(e, CREATE_TAG, ManageChatActivity.this);
+                                @Override
+                                public void onError(Call call, IOException e) {
+                                    FeedbackMessageBuilder.createServerConnectionError(e, operation, ManageChatActivity.this);
+                                }
+                            });
+                        } catch(IOException e) {
+                            FeedbackMessageBuilder.createServerConnectionError(e, operation, ManageChatActivity.this);
+                        } catch (JSONException e){
+                            FeedbackMessageBuilder.createParseError(e, operation, ManageChatActivity.this);
+                        }
+                    } else {
+                        friendIdsAdded.add(user.getId());
+
+                        path.addChat().addCreate();
+                        operation = "Create Chat";
+                        try{
+                            JSONObject json = resultChat.toJson();
+                            json.put("token", token);
+
+                            System.out.println(json);
+
+                            new RequestManager().post(path.build(), json.toString(), new RequestManager.OnRequestCompleteListener() {
+                                @Override
+                                public void onSuccess(Call call, Response response) {
+                                    switch (response.code()) {
+                                        case HttpStatusConstants.STATUS_HTTP_200:
+                                            Intent i = new Intent(ManageChatActivity.this, MainActivity.class);
+
+                                            if (manageOption) {
+                                                new FeedbackMessageBuilder()
+                                                        .setTitle("Chat Edited!")
+                                                        .setDescription("The " + chatTitle.getText().toString() + " has been successfully edited.")
+                                                        .withActivity(ManageChatActivity.this)
+                                                        .buildAsyncNeutralMessageAndStartActivity(i);
+                                            } else {
+                                                new FeedbackMessageBuilder()
+                                                        .setTitle("Chat Created!")
+                                                        .setDescription("The " + chatTitle.getText().toString() + " has been successfully created.")
+                                                        .withActivity(ManageChatActivity.this)
+                                                        .buildAsyncNeutralMessageAndStartActivity(i);
+
+                                                new Timer().schedule(new TimerTask() {
+                                                    @Override
+                                                    public void run() {
+                                                        ManageChatActivity.this.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                submitButton.setEnabled(false);
+                                                                submitButton.setVisibility(View.GONE);
+                                                            }
+                                                        });
+                                                    }
+                                                }, 0);
+
+                                            }
+                                            break;
+
+                                        case HttpStatusConstants.STATUS_HTTP_500:
+                                        default:
+                                            FeedbackMessageBuilder.createServerInternalError(operation, ManageChatActivity.this);
+                                            break;
+                                    }
+                                }
+
+                                @Override
+                                public void onError(Call call, IOException e) {
+                                    FeedbackMessageBuilder.createServerConnectionError(e, operation, ManageChatActivity.this);
+                                }
+                            });
+                        } catch(IOException e) {
+                            FeedbackMessageBuilder.createServerConnectionError(e, operation, ManageChatActivity.this);
+                        } catch (JSONException e){
+                            FeedbackMessageBuilder.createParseError(e, operation, ManageChatActivity.this);
+                        }
                     }
 
 
@@ -283,62 +344,73 @@ public class ManageChatActivity extends AppCompatActivity {
         String userToken = ((UserApplicationInfo) getApplication()).getUserToken();
         String operation = "Get Friends";
 
+        friendIdsAdded.addAll(peopleIds);
+
         //TODO FIXME hacky loop of GETs, maybe combine with the other get friends by extracting a method
         for (String friendId : peopleIds) {
-            try {
-                String path = new PathBuilder()
-                    .addUser()
-                    .addNode(friendId)
-                    .build();
 
-                new RequestManager().get(path, userToken, new RequestManager.OnRequestCompleteListener() {
-                    @Override
-                    public void onSuccess(Call call, Response response) {
-                        if (response.isSuccessful()) {
-                            try {
-                                JSONObject userJson = new JSONObject(response.body().string());
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        ManageChatActivity.this.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, friendChipGroup, false);
-                                                try {
-                                                    chip.setText(userJson.getString("name"));
+            // Cannot remove self from chat if you are the owner
+            if (friendId.equals(user.getId())) {
+                Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_choice_chip, friendChipGroup, false);
+                String displayName = user.getFullName() + " (Owner)";
+                chip.setText(displayName);
+                friendChipGroup.addView(chip);
+            } else {
+                try {
+                    String path = new PathBuilder()
+                            .addUser()
+                            .addNode(friendId)
+                            .build();
 
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-                                                chip.setOnCloseIconClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        friendChipGroup.removeView(chip);
+                    new RequestManager().get(path, userToken, new RequestManager.OnRequestCompleteListener() {
+                        @Override
+                        public void onSuccess(Call call, Response response) {
+                            if (response.isSuccessful()) {
+                                try {
+                                    JSONObject userJson = new JSONObject(response.body().string());
+                                    new Timer().schedule(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            ManageChatActivity.this.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, friendChipGroup, false);
+                                                    try {
+                                                        chip.setText(userJson.getString("name"));
+
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
                                                     }
-                                                });
-                                                friendChipGroup.addView(chip);
-                                            }
-                                        });
-                                    }
-                                }, 0);
-                                //todo remove this line?
-                                people.add(userJson.getString("name"));
+                                                    chip.setOnCloseIconClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            friendChipGroup.removeView(chip);
+                                                        }
+                                                    });
+                                                    friendChipGroup.addView(chip);
+                                                }
+                                            });
+                                        }
+                                    }, 0);
+                                    //todo remove this line?
+                                    people.add(userJson.getString("name"));
 
-                            } catch (IOException | JSONException e) {
-                                FeedbackMessageBuilder.createParseError(e, operation, ManageChatActivity.this);
+                                } catch (IOException | JSONException e) {
+                                    FeedbackMessageBuilder.createParseError(e, operation, ManageChatActivity.this);
+                                }
+                            } else {
+                                ResponseErrorHandler.createErrorMessage(response, operation, "user", ManageChatActivity.this);
                             }
-                        } else {
-                            ResponseErrorHandler.createErrorMessage(response, operation, "user", ManageChatActivity.this);
                         }
-                    }
 
-                    @Override
-                    public void onError(Call call, IOException e) {
-                        createServerConnectionError(e, operation, ManageChatActivity.this);
-                    }
-                });
-            } catch (IOException e) {
-                createServerConnectionError(e, operation, ManageChatActivity.this);
+                        @Override
+                        public void onError(Call call, IOException e) {
+                            createServerConnectionError(e, operation, ManageChatActivity.this);
+                        }
+                    });
+                } catch (IOException e) {
+                    createServerConnectionError(e, operation, ManageChatActivity.this);
+                }
             }
         }
 

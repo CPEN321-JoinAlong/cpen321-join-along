@@ -20,6 +20,7 @@ import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
 import com.joinalongapp.controller.ResponseErrorHandler;
 import com.joinalongapp.viewmodel.ChatDetails;
+import com.joinalongapp.viewmodel.UserProfile;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,11 +44,13 @@ public class ViewChatActivity extends AppCompatActivity {
     private ChipGroup friends;
     private ImageButton chatMenu;
     private PopupMenu menu;
+    private UserProfile user;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_chat);
+        user = ((UserApplicationInfo) getApplication()).getProfile();
         if (getIntent().getExtras() != null) {
             chatDetails = (ChatDetails) getIntent().getExtras().getSerializable("CHAT_INFO");
         }
@@ -146,6 +149,10 @@ public class ViewChatActivity extends AppCompatActivity {
             chip.setText(friend);
             friends.addView(chip);
         }
+    }
+
+    public boolean isOwner() {
+        return chatDetails.getPeople().get(0).equals(user.getId());
     }
 
     private void initChatMenu() {
@@ -252,10 +259,12 @@ public class ViewChatActivity extends AppCompatActivity {
         });
     }
 
+
     private void initMenuOptionsVisibility() {
-        UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getApplication());
-        //String userId = userApplicationInfo.getProfile().getId();
-
-
+        boolean isOwner = isOwner();
+        menu.getMenu().findItem(R.id.chatLeave).setVisible(!isOwner);
+        menu.getMenu().findItem(R.id.chatLeave).setVisible(!isOwner);
+        menu.getMenu().findItem(R.id.chatEdit).setVisible(isOwner);
+        menu.getMenu().findItem(R.id.chatEdit).setVisible(isOwner);
     }
 }

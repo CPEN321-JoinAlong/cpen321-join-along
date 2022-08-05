@@ -23,7 +23,7 @@ const distCalc = require("./DistanceCalc");
 const ERROR_CODES = require("./ErrorCodes");
 
 function logRequest(req, res, next) {
-    console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
+    // console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
     next();
 }
 
@@ -101,42 +101,20 @@ app.use(async (req, res, next) => {
     }
 });
 
-// //JUST FOR TESTING
-// app.get("/test", async (req, res) => {
-//     let a = {};
-//     try {
-//         // let impEvents = ["62e317ac77f7ad9a56ab886b", "62e48622b43f633a5a0e3860", "62e363a8e21c7698113dc974", "62db9dd9337ad5e08e29b562", "62dba10ae96413b41863b7c5", "62dba1bce96413b41863b7f2", "62d7ae2d010a82beb388b2ff", "62e8bd3d7080c5316bc7e32f", "62e8bd7d7080c5316bc7e33f", "62e98d597080c5316bc7e73e"]
-//         // let chatIds = ["62e317ad77f7ad9a56ab886d", "62e48622b43f633a5a0e3862", "62e363a8e21c7698113dc976", "62db9dd9337ad5e08e29b564", "62dba10ae96413b41863b7c7", "62dba1bce96413b41863b7f4", "62d7ae2d010a82beb388b301", "62e8bd3d7080c5316bc7e331", "62e8bd7d7080c5316bc7e341", "62e98d597080c5316bc7e740"]
-//         // // await Chat.deleteMany({title: "test"})
-//         // // await Event.deleteMany({_id: {$nin: impEvents}})
-//         // await User.updateMany({}, {$pull: {events: {$nin: impEvents}}})
-//         // // await Chat.deleteMany({_id: {$nin: chatIds}})
-//         // await User.updateMany({}, {$pull: {chats: {$nin: chatIds}}})
-
-//         a["user"] = await User.find({});
-//         a["chat"] = await Chat.find({});
-//         a["event"] = await Event.find({});
-//         a["report"] = await Report.find({});
-
-//         // a["user"].forEach(async (user) => {
-//         //     let coordinates = await distCalc(user.location);
-//         //     await User.findByIdAndUpdate(user._id, { coordinates });
-//         // });
-
-//         // a["event"].forEach(async (event) => {
-//         //     let coordinates = await distCalc(event.location);
-//         //     await Event.findByIdAndUpdate(event._id, { coordinates });
-//         // });
-
-//         // a["user"] = await User.find({});
-//         // a["event"] = await Event.find({});
-
-//         res.status(ERROR_CODES.SUCCESS).send(a);
-//     } catch (e) {
-//         console.log(e);
-//         res.status(ERROR_CODES.DBERROR).send(null);
-//     }
-// });
+//JUST FOR TESTING
+app.get("/test", async (req, res) => {
+    let a = {};
+    try {
+        a["user"] = await User.find({});
+        a["chat"] = await Chat.find({});
+        a["event"] = await Event.find({});
+        a["report"] = await Report.find({});
+        res.status(ERROR_CODES.SUCCESS).send(a);
+    } catch (e) {
+        console.log(e);
+        res.status(ERROR_CODES.DBERROR).send(null);
+    }
+});
 
 //login - post
 app.post("/login", async (req, res) => {
@@ -229,14 +207,11 @@ app.post("/event/create", async (req, res) => {
             eventResponse.data,
             userStore
         );
-        let user = await userStore.findUserForLogin(req.headers.token);
-        if (user.data) {
-            updatedEvent.data = { ...(updatedEvent.data.toJSON()), distance: distCalc(user.data.coordinates, updatedEvent.data.coordinates) }
-            res.status(updatedEvent.status).send(updatedEvent.data);
-        } else {
-            updatedEvent.data = { ...(updatedEvent.data.toJSON()), distance: -1 }
-            res.status(updatedEvent.status).send(updatedEvent.data);
-        }
+        let user = await userStore.findUserForLogin(req.body.token);
+        // console.log(user)
+        updatedEvent.data = { ...(updatedEvent.data.toJSON()), distance: distCalc(user.data.coordinates, updatedEvent.data.coordinates) }
+        res.status(updatedEvent.status).send(updatedEvent.data);
+
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -289,17 +264,17 @@ app.put("/event/:id/edit", async (req, res) => {
         console.log(req.body.token)
         let user = await userStore.findUserForLogin(req.body.token);
         console.log(user)
-        if (user.data) {
-            if (eventResponse.data) {
-                eventResponse.data = { ...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates) }
-            }
-            res.status(eventResponse.status).send(eventResponse.data);
-        } else {
-            if (eventResponse.data) {
-                eventResponse.data = { ...(eventResponse.data.toJSON()), distance: -1 }
-            }
-            res.status(eventResponse.status).send(eventResponse.data);
+        // if (user.data) {
+        if (eventResponse.data) {
+            eventResponse.data = { ...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates) }
         }
+        res.status(eventResponse.status).send(eventResponse.data);
+        // } else {
+        //     if (eventResponse.data) {
+        //         eventResponse.data = { ...(eventResponse.data.toJSON()), distance: -1 }
+        //     }
+        //     res.status(eventResponse.status).send(eventResponse.data);
+        // }
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -336,19 +311,11 @@ app.get("/event/title/:eventName", async (req, res) => {
     try {
         let eventListResponse = await eventStore.findEventsByName(eventName);
         let user = await userStore.findUserForLogin(req.headers.token);
-        if (user.data) {
-            eventListResponse.data = eventListResponse.data.map((event) => ({
-                ...(event.toJSON()),
-                distance: distCalc(user.data.coordinates, event.coordinates),
-            }));
-            res.status(eventListResponse.status).send(eventListResponse.data);
-        } else {
-            eventListResponse.data = eventListResponse.data.map((event) => ({
-                ...(event.toJSON()),
-                distance: -1,
-            }));
-            res.status(eventListResponse.status).send(eventListResponse.data);
-        }
+        eventListResponse.data = eventListResponse.data.map((event) => ({
+            ...(event.toJSON()),
+            distance: distCalc(user.data.coordinates, event.coordinates),
+        }));
+        res.status(eventListResponse.status).send(eventListResponse.data);
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -361,19 +328,11 @@ app.get("/event/tag/:eventTag", async (req, res) => {
         let eventListResponse = await eventStore.findAllEvents();
         eventListResponse.data = eventListResponse.data.filter(event => event.tags.includes(eventTag))
         let user = await userStore.findUserForLogin(req.headers.token);
-        if (user.data) {
-            eventListResponse.data = eventListResponse.data.map((event) => ({
-                ...(event.toJSON()),
-                distance: distCalc(user.data.coordinates, event.coordinates),
-            }));
-            res.status(eventListResponse.status).send(eventListResponse.data);
-        } else {
-            eventListResponse.data = eventListResponse.data.map((event) => ({
-                ...(event.toJSON()),
-                distance: -1,
-            }));
-            res.status(eventListResponse.status).send(eventListResponse.data);
-        }
+        eventListResponse.data = eventListResponse.data.map((event) => ({
+            ...(event.toJSON()),
+            distance: distCalc(user.data.coordinates, event.coordinates),
+        }));
+        res.status(eventListResponse.status).send(eventListResponse.data);
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -459,6 +418,7 @@ app.get("/user/:id/chatInvites", async (req, res) => {
         if (userResponse.status !== ERROR_CODES.SUCCESS)
             res.status(userResponse.status).send([]);
         else {
+            console.log("IAMHERE")
             let chatInvResponse = await userStore.findChatInvites(
                 userResponse.data.chatInvites,
                 chatEngine
@@ -484,35 +444,35 @@ app.get("/user/:id/chatInvites", async (req, res) => {
 });
 
 //Chat: send message to a single user
-app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
-    let userID = req.params.userID;
-    let chatID = req.params.chatID;
-    let timeStamp = req.body.timeStamp;
-    let text = req.body.text;
+// app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
+//     let userID = req.params.userID;
+//     let chatID = req.params.chatID;
+//     let timeStamp = req.body.timeStamp;
+//     let text = req.body.text;
 
-    try {
-        let updatedChatResponse = await chatEngine.sendChatMessage(
-            userID,
-            chatID,
-            text,
-            timeStamp,
-            userStore
-        );
+//     try {
+//         let updatedChatResponse = await chatEngine.sendChatMessage(
+//             userID,
+//             chatID,
+//             text,
+//             timeStamp,
+//             userStore
+//         );
 
-        // getMessaging().send({
-        //     data: {
-        //         name: fromUserName,
-        //         text: text
-        //     },
-        //     topic: fromUserID + "_" + toUserID
-        // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
+//         // getMessaging().send({
+//         //     data: {
+//         //         name: fromUserName,
+//         //         text: text
+//         //     },
+//         //     topic: fromUserID + "_" + toUserID
+//         // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
 
-        res.status(updatedChatResponse.status).send(updatedChatResponse.data);
-    } catch (e) {
-        console.log(e);
-        res.status(ERROR_CODES.DBERROR).send(null);
-    }
-});
+//         res.status(updatedChatResponse.status).send(updatedChatResponse.data);
+//     } catch (e) {
+//         console.log(e);
+//         res.status(ERROR_CODES.DBERROR).send(null);
+//     }
+// });
 
 //Chat: Sends the chat object (which includes all the messages) - get
 app.get("/chat/:id", async (req, res) => {
@@ -540,8 +500,7 @@ app.get("/user/:id/event", async (req, res) => {
         else {
             let eventListResponse = await eventStore.findEventByUser(id);
             let sortedList = eventListResponse.data.sort(
-                (a, b) =>
-                    Date.parse(a.beginningDate) - Date.parse(b.beginningDate)
+                (a, b) => Date.parse(a.beginningDate) - Date.parse(b.beginningDate)
             );
             sortedList = sortedList.map((event) => ({
                 ...(event.toJSON()),
@@ -863,6 +822,7 @@ app.post("/user/:id/ban", async (req, res) => {
         let user = await userStore.findUserByID(id)
         if (user.status !== ERROR_CODES.SUCCESS)
             return res.status(user.status).send("User not found")
+        // console.log(user)
 
         for (let eventID of user.data.events)
             await userStore.leaveEvent(id, eventID, eventStore)
@@ -900,7 +860,7 @@ app.post("/event/:id/ban", async (req, res) => {
 });
 
 app.get("/chat", async (req, res) => {
-    res.send(await Chat.find({}));
+    res.status(ERROR_CODES.SUCCESS).send(await Chat.find({}));
 });
 
 //*  Socket.io connection
@@ -958,6 +918,11 @@ io.on("connection", (socket) => {
 app.get("/user/:id/recommendedEvents", async (req, res) => {
     let id = req.params.id;
     try {
+        let user = await userStore.findUserByID(id);
+        if (user.status !== ERROR_CODES.SUCCESS) {
+            return res.status(user.status).send([]);
+        }
+
         let response = await recSystem.recommendEvents(
             id,
             userStore,
@@ -968,11 +933,6 @@ app.get("/user/:id/recommendedEvents", async (req, res) => {
         let sortedList = eventList.sort(
             (a, b) => Date.parse(a.beginningDate) - Date.parse(b.beginningDate)
         );
-
-        let user = await userStore.findUserByID(id);
-        if (!user.data) {
-            return res.status(response.status).send([]);
-        }
 
         sortedList = sortedList.map((event) => ({
             ...(event.toJSON()),

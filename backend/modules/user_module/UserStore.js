@@ -285,6 +285,7 @@ class UserStore {
             return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
     }
+    //test
 
     async acceptFriendRequest(userID, otherUserID) {
         if (
@@ -316,23 +317,6 @@ class UserStore {
         } else {
             return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
-    }
-
-    async findUnblockedUsers(userID) {
-        if (!mongoose.isObjectIdOrHexString(userID)) {
-            return new ResponseObject(ERROR_CODES.INVALID);
-        }
-        let user = await this.findUserByID(userID);
-        if (user.data) {
-            let unblockedUsers = await User.find({
-                _id: { $nin: user.blockedUsers },
-            });
-            if (unblockedUsers.length !== 0)
-                return new ResponseObject(ERROR_CODES.SUCCESS, unblockedUsers);
-            else
-                return new ResponseObject(ERROR_CODES.NOTFOUND);
-        }
-        return new ResponseObject(ERROR_CODES.NOTFOUND);
     }
 
     async addChat(chatID, chatInfo) {

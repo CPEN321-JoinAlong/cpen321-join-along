@@ -181,6 +181,16 @@ describe("User Case 6: Profile Management", () => {
             token,
         });
 
+        test("IDs of user is invalid", async () => {
+            let friendResponse = await request(app)
+                .get(`/user/fssx/friendRequest`)
+                .set({
+                    token
+                });
+            expect(friendResponse.status).toBe(ERROR_CODES.INVALID);
+            expect(JSON.stringify(friendResponse._body)).toBe(JSON.stringify([]));
+        });
+
         test("IDs of friend requests are invalid", async () => {
             userInfo.friendRequest = ["sdflkjsdf"]
 
@@ -275,6 +285,16 @@ describe("User Case 6: Profile Management", () => {
             description: "Test description",
             profilePicture: "picture",
             token,
+        });
+
+        test("IDs of user is invalid", async () => {
+            let friendResponse = await request(app)
+                .get(`/user/fssx/friends`)
+                .set({
+                    token
+                });
+            expect(friendResponse.status).toBe(ERROR_CODES.INVALID);
+            expect(JSON.stringify(friendResponse._body)).toBe(JSON.stringify([]));
         });
 
         test("IDs of friend are invalid", async () => {

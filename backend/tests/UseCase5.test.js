@@ -228,6 +228,14 @@ describe("User Case 5: Messaging", () => {
             profilePicture: "picture",
             token: "1234567880",
         });
+        let userInfo3 = new UserAccount({
+            name: "Cob Cobber",
+            interests: ["Frisbee"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token: "1234567880",
+        });
         let chatInfo = new ChatDetails({
             title: "tester chater",
             tags: ["Hiking"],
@@ -298,11 +306,17 @@ describe("User Case 5: Messaging", () => {
             ["_id", "__v"].forEach((key) => delete response2._body[key]);
             expect(response2._body).toMatchObject(userInfo2);
 
+            let response3 = await request(app).post("/user/create").send(userInfo3);
+            expect(response3.status).toBe(ERROR_CODES.SUCCESS);
+            let id3 = response3._body._id;
+            ["_id", "__v"].forEach((key) => delete response3._body[key]);
+            expect(response3._body).toMatchObject(userInfo3);
+
             let chatResponse = await request(app)
                 .post("/chat/create")
                 .send({
                     ...chatInfo,
-                    token: userInfo.token
+                    token: userInfo3.token
                 });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
@@ -313,15 +327,20 @@ describe("User Case 5: Messaging", () => {
                 $push: { participants: id2 }
             })
 
-            // let chatListResponse = await request(app)
-            //     .get(`/user/${id}/chatInvites`)
-            //     .set({
-            //         token
-            //     });
+            await User.findByIdAndUpdate(id, {
+                $push: {chatInvites: chatId}
+            })
+
+            let chatListResponse = await request(app)
+                .get(`/user/${id}/chatInvites`)
+                .set({
+                    token
+                });
             await User.findByIdAndDelete(id);
             await User.findByIdAndDelete(id2)
+            await User.findByIdAndDelete(id3)
             await Chat.findByIdAndDelete(chatId);
-            // expect(chatListResponse.status).toBe(ERROR_CODES.SUCCESS)
+            expect(chatListResponse.status).toBe(ERROR_CODES.SUCCESS)
 
         })
         test("Success: chatInvites viewed", async () => {
@@ -820,82 +839,82 @@ describe("User Case 5: Messaging", () => {
             expect(leaveResponse._body).toBe(undefined);
         })
     })
-    describe("send message", () => {
-        let userInfo = new UserAccount({
-            name: "Rob Robber",
-            interests: ["Swimming"],
-            location: "2423 Montreal Mall, Vancouver",
-            description: "Test description",
-            profilePicture: "picture",
-            token,
-        });
-        let chatInfo = new ChatDetails({
-            title: "tester chater",
-            tags: ["Hiking"],
-            numberOfPeople: 6,
-            description: "test description",
-            participants: ["62eae6dc6948e5255b2d2c43"],
-            currCapacity: 1,
-        });
-        test("IDs of user or chat are invalid", async () => {
-            let response = await request(app)
-                .put("/chat/sendChat/sdfsdf/64c50cfb436fbc75c654d9eb")
-                .send({
-                    token
-                });
-            expect(response.status).toBe(ERROR_CODES.INVALID);
-            expect(response._body).toBe(undefined);
+    // describe("send message", () => {
+    //     let userInfo = new UserAccount({
+    //         name: "Rob Robber",
+    //         interests: ["Swimming"],
+    //         location: "2423 Montreal Mall, Vancouver",
+    //         description: "Test description",
+    //         profilePicture: "picture",
+    //         token,
+    //     });
+    //     let chatInfo = new ChatDetails({
+    //         title: "tester chater",
+    //         tags: ["Hiking"],
+    //         numberOfPeople: 6,
+    //         description: "test description",
+    //         participants: ["62eae6dc6948e5255b2d2c43"],
+    //         currCapacity: 1,
+    //     });
+    //     test("IDs of user or chat are invalid", async () => {
+    //         let response = await request(app)
+    //             .put("/chat/sendChat/sdfsdf/64c50cfb436fbc75c654d9eb")
+    //             .send({
+    //                 token
+    //             });
+    //         expect(response.status).toBe(ERROR_CODES.INVALID);
+    //         expect(response._body).toBe(undefined);
 
-            let response2 = await request(app)
-                .put("/chat/sendChat/64c50cfb436fbc75c654d9eb/sdfsdf")
-                .send({
-                    token
-                });
-            expect(response2.status).toBe(ERROR_CODES.INVALID);
-            expect(response2._body).toBe(undefined);
-        })
-        test("Chat nor User found", async () => {
-            let response = await request(app)
-                .put("/chat/sendChat/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
-                .send({
-                    token
-                });
-            expect(response.status).toBe(ERROR_CODES.NOTFOUND);
-            expect(response._body).toBe(undefined);
-        })
-        test("Success: Message send", async () => {
-            let response = await request(app).post("/user/create").send(userInfo);
-            expect(response.status).toBe(ERROR_CODES.SUCCESS);
-            let id = response._body._id;
-            ["_id", "__v"].forEach((key) => delete response._body[key]);
-            expect(response._body).toMatchObject(userInfo);
+    //         let response2 = await request(app)
+    //             .put("/chat/sendChat/64c50cfb436fbc75c654d9eb/sdfsdf")
+    //             .send({
+    //                 token
+    //             });
+    //         expect(response2.status).toBe(ERROR_CODES.INVALID);
+    //         expect(response2._body).toBe(undefined);
+    //     })
+    //     test("Chat nor User found", async () => {
+    //         let response = await request(app)
+    //             .put("/chat/sendChat/64d31ae677f7ad9a56ab89c6/62d31ae677f7bc9a56ab49c6")
+    //             .send({
+    //                 token
+    //             });
+    //         expect(response.status).toBe(ERROR_CODES.NOTFOUND);
+    //         expect(response._body).toBe(undefined);
+    //     })
+    //     test("Success: Message send", async () => {
+    //         let response = await request(app).post("/user/create").send(userInfo);
+    //         expect(response.status).toBe(ERROR_CODES.SUCCESS);
+    //         let id = response._body._id;
+    //         ["_id", "__v"].forEach((key) => delete response._body[key]);
+    //         expect(response._body).toMatchObject(userInfo);
 
-            let chatResponse = await request(app)
-                .post("/chat/create")
-                .send({
-                    ...chatInfo,
-                    token
-                });
-            expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
-            let chatId = chatResponse._body._id;
-            await Chat.findByIdAndDelete(id);
-            ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
-            expect(chatResponse._body).toMatchObject(chatInfo);
+    //         let chatResponse = await request(app)
+    //             .post("/chat/create")
+    //             .send({
+    //                 ...chatInfo,
+    //                 token
+    //             });
+    //         expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
+    //         let chatId = chatResponse._body._id;
+    //         await Chat.findByIdAndDelete(id);
+    //         ["_id", "__v"].forEach((key) => delete chatResponse._body[key]);
+    //         expect(chatResponse._body).toMatchObject(chatInfo);
 
-            let timeStamp = "1659172077"
-            let text = "Hello"
-            let chatInvResponse = await request(app)
-                .put(`/chat/sendChat/${id}/${chatId}`)
-                .send({
-                    token,
-                    timeStamp,
-                    text
-                });
-            await User.findByIdAndDelete(id);
-            await Chat.findByIdAndDelete(chatId);
-            expect(chatInvResponse.status).toBe(ERROR_CODES.SUCCESS);
-        })
-    })
+    //         let timeStamp = "1659172077"
+    //         let text = "Hello"
+    //         let chatInvResponse = await request(app)
+    //             .put(`/chat/sendChat/${id}/${chatId}`)
+    //             .send({
+    //                 token,
+    //                 timeStamp,
+    //                 text
+    //             });
+    //         await User.findByIdAndDelete(id);
+    //         await Chat.findByIdAndDelete(chatId);
+    //         expect(chatInvResponse.status).toBe(ERROR_CODES.SUCCESS);
+    //     })
+    // })
     describe("get chat info", () => {
         let chatInfo = new ChatDetails({
             title: "tester chater",

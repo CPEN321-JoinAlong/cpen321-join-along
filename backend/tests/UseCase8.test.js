@@ -19,9 +19,9 @@ const token = "113803938110058454466";
 
 mongoose.connect(
     "mongodb://useradmin:MTnCBEI9nIx6L6F@54.200.52.211:34542/joinalong", {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    }
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}
 );
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -34,16 +34,16 @@ beforeAll((done) => {
 
 afterAll(async () => {
     // Closing the DB connection allows Jest to exit successfully.
-    await Chat.deleteMany({title: "tester event"})
-    await Event.deleteMany({title: "tester event"})
-    await User.deleteMany({name: "Rob Robber"})
-    await User.deleteMany({name: "Bob Bobber"})
+    await Chat.deleteMany({ title: "tester event" })
+    await Event.deleteMany({ title: "tester event" })
+    await User.deleteMany({ name: "Rob Robber" })
+    await User.deleteMany({ name: "Bob Bobber" })
     mongoose.connection.close();
     server.close();
     // done();
 });
 
-describe("User Case 8: Ban User/Event", () => {
+describe("Use Case 8: Ban User/Event", () => {
     describe("Ban User", () => {
         let userInfo = new UserAccount({
             name: "Rob Robber",
@@ -51,6 +51,7 @@ describe("User Case 8: Ban User/Event", () => {
             location: "2423 Montreal Mall, Vancouver",
             events: [],
             chats: [],
+            friends: ["62d63248860a82beb388af87"],
             description: "Test description",
             profilePicture: "picture",
             token,
@@ -76,15 +77,15 @@ describe("User Case 8: Ban User/Event", () => {
                 });
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toEqual(undefined);
-        }); 
+        });
 
         test("User not found", async () => {
             let response = await request(app)
                 .post("/user/64d31ae677f7ad9a56ab89c6/ban")
-                .send({token});
+                .send({ token });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
-        }); 
+        });
 
         test("Success: User is banned", async () => {
             let response = await request(app)
@@ -95,22 +96,31 @@ describe("User Case 8: Ban User/Event", () => {
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
 
-            let eventResponse = await request(app)
-                .post("/event/create").send(Object.assign({token}, eventInfo))
-            expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
-            let eventid = eventResponse._body._id;
-            let chatid = eventResponse._body.chat;
-            await Chat.findByIdAndDelete(eventResponse._body.chat)
-            await Event.findByIdAndDelete(id);
-            ["_id", "__v", "chat"].forEach((key) => delete eventResponse._body[key]);
-            ["chat"].forEach((key) => delete eventInfo[key]);
-            expect(eventResponse._body).toMatchObject(eventInfo);
+            await User.findByIdAndUpdate(id, {
+                $push: { chats: "sdfjsdfjsfs" }
+            })
 
-            let banResponse = await request(app).post(`/user/${id}/ban`).send({token})
+            await User.findByIdAndUpdate(id, {
+                $push: { events: "sdfjsdfjsfs" }
+            })
+
+
+            // let eventResponse = await request(app)
+            //     .post("/event/create").send(Object.assign({token}, eventInfo))
+            // expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
+            // let eventid = eventResponse._body._id;
+            // let chatid = eventResponse._body.chat;
+            // await Chat.findByIdAndDelete(eventResponse._body.chat)
+            // await Event.findByIdAndDelete(id);
+            // ["_id", "__v", "chat"].forEach((key) => delete eventResponse._body[key]);
+            // ["chat"].forEach((key) => delete eventInfo[key]);
+            // expect(eventResponse._body).toMatchObject(eventInfo);
+
+            let banResponse = await request(app).post(`/user/${id}/ban`).send({ token })
             await User.findByIdAndDelete(id);
-            await Chat.findByIdAndDelete(chatid);
-            await Event.findByIdAndDelete(eventid);
-            expect(banResponse.status).toBe(ERROR_CODES.SUCCESS)            
+            // await Chat.findByIdAndDelete(chatid);
+            // await Event.findByIdAndDelete(eventid);
+            expect(banResponse.status).toBe(ERROR_CODES.SUCCESS)
         });
     });
 
@@ -136,28 +146,28 @@ describe("User Case 8: Ban User/Event", () => {
                     token
                 });
             expect(response.status).toBe(ERROR_CODES.INVALID);
-            expect(response._body).toEqual(undefined);  
-        }); 
+            expect(response._body).toEqual(undefined);
+        });
 
         test("Event not found", async () => {
             let response = await request(app)
                 .post("/event/64d31ae677f7ad9a56ab89c6/ban")
-                .send({token});
+                .send({ token });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
-        }); 
+        });
 
         test("Success: Event is banned", async () => {
             let response = await request(app)
-                .post("/event/create").send(Object.assign({token, eventInfo}))
+                .post("/event/create").send(Object.assign({ token, eventInfo }))
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
             let id = response._body._id;
             let chat = response._body.chat
-           
-            let banResponse = await request(app).post(`/event/${id}/ban`).send({token})
+
+            let banResponse = await request(app).post(`/event/${id}/ban`).send({ token })
             await Chat.findByIdAndDelete(chat)
             await Event.findByIdAndDelete(id);
-            expect(banResponse.status).toBe(ERROR_CODES.SUCCESS)  
+            expect(banResponse.status).toBe(ERROR_CODES.SUCCESS)
 
         });
     });

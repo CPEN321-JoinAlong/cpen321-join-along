@@ -285,6 +285,7 @@ class UserStore {
             return new ResponseObject(ERROR_CODES.NOTFOUND);
         }
     }
+    //test
 
     async acceptFriendRequest(userID, otherUserID) {
         if (

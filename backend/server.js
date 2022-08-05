@@ -466,35 +466,35 @@ app.get("/user/:id/chatInvites", async (req, res) => {
 });
 
 //Chat: send message to a single user
-app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
-    let userID = req.params.userID;
-    let chatID = req.params.chatID;
-    let timeStamp = req.body.timeStamp;
-    let text = req.body.text;
+// app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
+//     let userID = req.params.userID;
+//     let chatID = req.params.chatID;
+//     let timeStamp = req.body.timeStamp;
+//     let text = req.body.text;
 
-    try {
-        let updatedChatResponse = await chatEngine.sendChatMessage(
-            userID,
-            chatID,
-            text,
-            timeStamp,
-            userStore
-        );
+//     try {
+//         let updatedChatResponse = await chatEngine.sendChatMessage(
+//             userID,
+//             chatID,
+//             text,
+//             timeStamp,
+//             userStore
+//         );
 
-        // getMessaging().send({
-        //     data: {
-        //         name: fromUserName,
-        //         text: text
-        //     },
-        //     topic: fromUserID + "_" + toUserID
-        // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
+//         // getMessaging().send({
+//         //     data: {
+//         //         name: fromUserName,
+//         //         text: text
+//         //     },
+//         //     topic: fromUserID + "_" + toUserID
+//         // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
 
-        res.status(updatedChatResponse.status).send(updatedChatResponse.data);
-    } catch (e) {
-        console.log(e);
-        res.status(ERROR_CODES.DBERROR).send(null);
-    }
-});
+//         res.status(updatedChatResponse.status).send(updatedChatResponse.data);
+//     } catch (e) {
+//         console.log(e);
+//         res.status(ERROR_CODES.DBERROR).send(null);
+//     }
+// });
 
 //Chat: Sends the chat object (which includes all the messages) - get
 app.get("/chat/:id", async (req, res) => {
@@ -522,8 +522,7 @@ app.get("/user/:id/event", async (req, res) => {
         else {
             let eventListResponse = await eventStore.findEventByUser(id);
             let sortedList = eventListResponse.data.sort(
-                (a, b) =>
-                    Date.parse(a.beginningDate) - Date.parse(b.beginningDate)
+                (a, b) => Date.parse(a.beginningDate) - Date.parse(b.beginningDate)
             );
             sortedList = sortedList.map((event) => ({
                 ...(event.toJSON()),
@@ -845,7 +844,8 @@ app.post("/user/:id/ban", async (req, res) => {
         let user = await userStore.findUserByID(id)
         if (user.status !== ERROR_CODES.SUCCESS)
             return res.status(user.status).send("User not found")
-
+        console.log(user)
+        
         for (let eventID of user.data.events)
             await userStore.leaveEvent(id, eventID, eventStore)
 

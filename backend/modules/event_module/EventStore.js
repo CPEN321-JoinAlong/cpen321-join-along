@@ -14,9 +14,6 @@ class EventStore {
         let eventResponse = await this.findEventByID(eventID);
         let userResponse = await userStore.findUserByID(userID);
         if (eventResponse.data && userResponse.data) {
-            if (userID == eventResponse.data.eventOwnerID) {
-                return this.deleteEvent(eventID, userStore)
-            }
             await this.updateEvent(
                 eventID,
                 {

@@ -14,6 +14,9 @@ class EventStore {
         let eventResponse = await this.findEventByID(eventID);
         let userResponse = await userStore.findUserByID(userID);
         if (eventResponse.data && userResponse.data) {
+            if (userID == eventResponse.data.eventOwnerID) {
+                return this.deleteEvent(eventID, userStore)
+            }
             await this.updateEvent(
                 eventID,
                 {
@@ -70,13 +73,13 @@ class EventStore {
     async createEvent(eventInfo, userStore) {
         let eventObject = await new Event(eventInfo).save();
         // console.log(eventObject)
-            eventObject.participants.forEach(async (participant) => {
-                if (mongoose.isObjectIdOrHexString(participant)) {
-                    await userStore.updateUserAccount(participant, {
-                        $push: { events: eventObject._id },
-                    });
-                }
-            });
+        eventObject.participants.forEach(async (participant) => {
+            if (mongoose.isObjectIdOrHexString(participant)) {
+                await userStore.updateUserAccount(participant, {
+                    $push: { events: eventObject._id },
+                });
+            }
+        });
         return new ResponseObject(ERROR_CODES.SUCCESS, eventObject);
     }
 

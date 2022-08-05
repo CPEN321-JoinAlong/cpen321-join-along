@@ -57,7 +57,8 @@ describe("User Case 9: Recommend Events", () => {
             location: "2205 Lower Mall Vancouver",
             description: "Test description",
             profilePicture: "picture",
-            token,
+            coordinates: "49.2622063,-123.2497726",
+            token: "1234567890",
         });
 
         let eventList = [
@@ -76,7 +77,7 @@ describe("User Case 9: Recommend Events", () => {
                 "coordinates": "49.2622063,-123.2497726",
                 "eventImage": null,
                 "description": "Help pls",
-                "distance": -1
+                "distance": 0
             },
             {
                 "title": "Test Event 2",
@@ -93,7 +94,7 @@ describe("User Case 9: Recommend Events", () => {
                 "coordinates": "49.2065541,-123.1024594",
                 "eventImage": null,
                 "description": "fun times",
-                "distance": -1
+                "distance": 7.390649510911769
             },
             {
                 "title": "Test Event 3",
@@ -110,9 +111,14 @@ describe("User Case 9: Recommend Events", () => {
                 "coordinates": "49.262206299999995,-123.2497726",
                 "eventImage": null,
                 "description": "IDK how I can do this myself but I will try",
-                "distance": -1
+                "distance": 9.434466916494478e-13
             }
         ]
+
+        test("Invalid user", async () => {
+            let recResponse = await request(app).get(`/user/hf3407/recommendedEvents`).send({token})
+            expect(recResponse.status).toBe(ERROR_CODES.INVALID)      
+        })
 
         test("Success: User is recommended events", async () => {
             let response = await request(app)
@@ -127,7 +133,7 @@ describe("User Case 9: Recommend Events", () => {
                 event.eventOwnerName = userInfo.name
             })
 
-            console.log(eventList)
+            // console.log(eventList)
 
             let eventResponse = await request(app)
                 .post("/event/create")
@@ -153,7 +159,7 @@ describe("User Case 9: Recommend Events", () => {
 
             let recResponse = await request(app).get(`/user/${id}/recommendedEvents`).send({token})
             expect(recResponse.status).toBe(ERROR_CODES.SUCCESS)      
-            console.log(recResponse._body)     
+            // console.log(recResponse._body)     
             recResponse._body.forEach(event => {
                 ["_id", "__v", "chat"].forEach((key) => delete event[key]);
             })

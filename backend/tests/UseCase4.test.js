@@ -76,4 +76,9 @@ describe("Use Case 4: Login", () => {
             expect(response._body).toMatchObject((await User.findById("62eae6dc6948e5255b2d2c43"))._doc)
         }
     })
+
+    test("Trying to access without logging in", async () => {
+        let response = await request(app).post("/event")
+        expect(response.status).toBe(ERROR_CODES.NOTFOUND)
+    })
 })

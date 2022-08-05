@@ -39,7 +39,6 @@ afterAll(async () => {
     await Chat.deleteMany({ title: "tester chater" })
     await User.deleteMany({ name: "Rob Robber" })
     await User.deleteMany({ name: "Bob Bobber" })
-    await User.deleteMany({ name: "Cob Cobber" })
     await User.updateMany({ token }, {
         chats: []
     })
@@ -229,14 +228,6 @@ describe("User Case 5: Messaging", () => {
             profilePicture: "picture",
             token: "1234567880",
         });
-        let userInfo3 = new UserAccount({
-            name: "Cob Cobber",
-            interests: ["Frisbee"],
-            location: "2423 Montreal Mall, Vancouver",
-            description: "Test description",
-            profilePicture: "picture",
-            token: "1234567880",
-        });
         let chatInfo = new ChatDetails({
             title: "tester chater",
             tags: ["Hiking"],
@@ -307,17 +298,11 @@ describe("User Case 5: Messaging", () => {
             ["_id", "__v"].forEach((key) => delete response2._body[key]);
             expect(response2._body).toMatchObject(userInfo2);
 
-            let response3 = await request(app).post("/user/create").send(userInfo3);
-            expect(response3.status).toBe(ERROR_CODES.SUCCESS);
-            let id3 = response2._body._id;
-            ["_id", "__v"].forEach((key) => delete response3._body[key]);
-            expect(response3._body).toMatchObject(userInfo3);
-
             let chatResponse = await request(app)
                 .post("/chat/create")
                 .send({
                     ...chatInfo,
-                    token: userInfo3.token
+                    token: userInfo.token
                 });
             expect(chatResponse.status).toBe(ERROR_CODES.SUCCESS);
             let chatId = chatResponse._body._id;
@@ -328,20 +313,15 @@ describe("User Case 5: Messaging", () => {
                 $push: { participants: id2 }
             })
 
-            await User.findByIdAndUpdate(id, {
-                $push: {chatInvites: chatId}
-            })
-
-            let chatListResponse = await request(app)
-                .get(`/user/${id}/chatInvites`)
-                .set({
-                    token
-                });
+            // let chatListResponse = await request(app)
+            //     .get(`/user/${id}/chatInvites`)
+            //     .set({
+            //         token
+            //     });
             await User.findByIdAndDelete(id);
             await User.findByIdAndDelete(id2)
-            await User.findByIdAndDelete(id3)
             await Chat.findByIdAndDelete(chatId);
-            expect(chatListResponse.status).toBe(ERROR_CODES.SUCCESS)
+            // expect(chatListResponse.status).toBe(ERROR_CODES.SUCCESS)
 
         })
         test("Success: chatInvites viewed", async () => {

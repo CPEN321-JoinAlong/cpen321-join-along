@@ -229,18 +229,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline11" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/profileManagementChipGroup"
-        android:layout_width="314dp"
-        android:layout_height="37dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline12"
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="317dp"
+        android:layout_height="38dp"
+        android:contentDescription="@string/default_empty_string"
+        app:layout_constraintBottom_toTopOf="@+id/profileManagementAutoComplete"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline11"
-        app:layout_constraintVertical_bias="0.364">
+        app:layout_constraintVertical_bias="1.0">
 
-    </com.google.android.material.chip.ChipGroup>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/profileManagementChipGroup"
+            android:layout_width="314dp"
+            android:layout_height="37dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.484"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline11"
+            app:layout_constraintVertical_bias="0.364">
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
 
     <TextView
         android:id="@+id/profileInterestsTitle"

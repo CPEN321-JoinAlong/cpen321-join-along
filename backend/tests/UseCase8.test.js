@@ -121,11 +121,11 @@ describe("User Case 8: Ban User/Event", () => {
 
         test("Success: Event is banned", async () => {
             let response = await request(app)
-                .post("/event/create")
-                .send({
-                    ...eventInfo,
-                    token
-                });
+                .post("/event/create").send(Object.assign({token, eventInfo}))
+                // .send({
+                //     ...eventInfo,
+                //     token
+                // });
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
             let id = response._body._id;
             let chat = response._body.chat

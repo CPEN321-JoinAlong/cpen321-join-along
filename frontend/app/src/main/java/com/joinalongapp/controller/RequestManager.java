@@ -171,6 +171,7 @@ public class RequestManager implements Callback {
     @Override
     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
         onRequestCompleteListener.onSuccess(call, response);
+        response.close();
     }
 
     public enum Range {

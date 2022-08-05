@@ -17,20 +17,20 @@ class RecSystem {
         freeEventList = freeEventList.filter(event => !event.participants.includes(userID) && !userInfo.data.blockedEvents.includes(event._id))
         // console.log(freeEventList.length)
         // console.log(cosSim)
-        freeEventList = freeEventList.sort((a, b) => this.#cosineSimilarity(userInfo.data.interests, b.tags) - this.#cosineSimilarity(userInfo.data.interests, a.tags))
-        let cosSim = freeEventList.map(event => this.#cosineSimilarity(userInfo.data.interests, event.tags))
+        freeEventList = freeEventList.sort((a, b) => this.cosineSimilarity(userInfo.data.interests, b.tags) - this.cosineSimilarity(userInfo.data.interests, a.tags))
+        let cosSim = freeEventList.map(event => this.cosineSimilarity(userInfo.data.interests, event.tags))
         console.log(cosSim)
         // console.log(freeEventList.slice(0, 11))
 
-        return new ResponseObject(ERROR_CODES.SUCCESS, freeEventList.slice(0, 11))
+        return new ResponseObject(ERROR_CODES.SUCCESS, freeEventList.slice(0, 3))
     }
 
-    #cosineSimilarity(userTags, eventTags) {
-        let userVector = this.#getVector(userTags, eventTags)
+    cosineSimilarity(userTags, eventTags) {
+        let userVector = this.getVector(userTags, eventTags)
         // console.log(userVector)
         userVector["Same"] = userVector["Same"] ? userVector["Same"] : 1
         // console.log(userVector)
-        let eventVector = this.#getVector(eventTags, userTags)
+        let eventVector = this.getVector(eventTags, userTags)
         // console.log(eventVector)
         eventVector["Same"] = eventVector["Same"] ? eventVector["Same"] : 0
         // console.log(eventVector)
@@ -47,10 +47,10 @@ class RecSystem {
                 return eventVector[key];
             });
         // console.log(eventArray)
-        return this.#dotProduct(userArray, eventArray) / (this.#magnitude(userArray) * this.#magnitude(eventArray))
+        return this.dotProduct(userArray, eventArray) / (this.magnitude(userArray) * this.magnitude(eventArray))
     }
 
-    #dotProduct(vecA, vecB) {
+    dotProduct(vecA, vecB) {
         let product = 0;
         for (let i = 0; i < vecA.length; i++) {
             product += vecA[i] * vecB[i];
@@ -58,7 +58,7 @@ class RecSystem {
         return product;
     }
 
-    #magnitude(vec) {
+    magnitude(vec) {
         let sum = 0;
         for (let i = 0; i < vec.length; i++) {
             sum += vec[i] * vec[i];
@@ -67,13 +67,13 @@ class RecSystem {
     }
 
     //Returns a list of catergories the tag is under
-    #getTagCategory(tag) {
+    getTagCategory(tag) {
         // console.log(tag)
         
         let categoryList = []
         for (let category in this.categories) {
             // console.log(category)
-            if (this.#categoryCheck(tag, this.categories[category])) {
+            if (this.categoryCheck(tag, this.categories[category])) {
                 categoryList.push(category)
             }
         }
@@ -82,12 +82,12 @@ class RecSystem {
     }
 
     //Returns a true if tag is in the category
-    #categoryCheck(tag, category) {
+    categoryCheck(tag, category) {
         // console.log(this.categories)
         return category.includes(tag)
     }
 
-    #getVector(tags, otherTags) {
+    getVector(tags, otherTags) {
 
         let vector = {
             Same: 0,
@@ -104,7 +104,7 @@ class RecSystem {
                 vector["Same"] += 2
             }
 
-            for (let category of this.#getTagCategory(tag)) {
+            for (let category of this.getTagCategory(tag)) {
                 vector[category]++
             }
         }

@@ -8,7 +8,7 @@ public class TextInputUtils {
      * @return
      */
     public static boolean isValidNameTitle(String input) {
-        String regex = "^[\\w\\-\\s]*$";
+        String regex = "^[\\w\\-.\\s]*$";
         return input.matches(regex);
     }
 }

@@ -6,6 +6,8 @@ import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.lyft.lyftbutton.LyftButton;
 import com.lyft.lyftbutton.LyftStyle;
 import com.lyft.networking.ApiConfig;
@@ -24,6 +26,8 @@ public class SelectRideshareActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("SelectRideshareActivityUIComponents");
+        myTrace.start();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_rideshare);
 
@@ -38,6 +42,7 @@ public class SelectRideshareActivity extends AppCompatActivity {
                 finish();
             }
         });
+        myTrace.stop();
     }
 
     private void initUberButton() {

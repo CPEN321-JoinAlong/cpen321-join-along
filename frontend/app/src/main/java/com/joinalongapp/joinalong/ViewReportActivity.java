@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.ReportsAdapter;
 import com.joinalongapp.controller.PathBuilder;
@@ -36,6 +38,8 @@ public class ViewReportActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("ViewReportActivityUIComponents");
+        myTrace.start();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_report);
         initElements();
@@ -58,7 +62,7 @@ public class ViewReportActivity extends AppCompatActivity {
                 finish();
             }
         });
-
+        myTrace.stop();
 
     }
 

@@ -21,6 +21,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
@@ -98,6 +100,8 @@ public class ViewEventFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("ViewEventFragmentUIComponents");
+        myTrace.start();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_event, container, false);
 
@@ -126,7 +130,7 @@ public class ViewEventFragment extends Fragment {
         initRideshareButton();
         initEventMenu();
         initBanButton();
-
+        myTrace.stop();
         return view;
     }
 

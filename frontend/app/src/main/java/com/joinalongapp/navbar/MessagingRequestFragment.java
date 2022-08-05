@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.adapter.MessagingRequestCustomAdapter;
@@ -81,6 +83,8 @@ public class MessagingRequestFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("MessagingRequestFragmentUIComponents");
+        myTrace.start();
         View rootView = inflater.inflate(R.layout.fragment_messaging_request, container, false);
 
         RecyclerView messagingRequestRecyclerView = (RecyclerView) rootView.findViewById(R.id.chatRequestRecyclerView);
@@ -110,7 +114,7 @@ public class MessagingRequestFragment extends Fragment {
                 }, 2000); //TODO: FIXME: a delay seems kinda hacky here
             }
         });
-
+        myTrace.stop();
         return rootView;
         }
 

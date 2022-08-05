@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "962297990133",
+    "project_id": "join-along-d0160",
+    "storage_bucket": "join-along-d0160.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:962297990133:android:5033c131133361f4176ebc",
+        "android_client_info": {
+          "package_name": "com.joinalongapp.joinalong"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "962297990133-3dntt7l9r7f6qunngs1qjuvdiq5st760.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7SP87MlluGsykbhyf3m9A0tJCq-oWwx0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "962297990133-3dntt7l9r7f6qunngs1qjuvdiq5st760.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.adapter.EventAdapter;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.Event;
@@ -59,6 +61,8 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("HomeEventListUIComponents");
+        myTrace.start();
 
         View view = inflater.inflate(R.layout.fragment_home_event_list, container, false);
 
@@ -82,7 +86,7 @@ public class HomeEventListFragment extends Fragment implements EventAdapter.Item
                 }, 2000); //TODO: FIXME: a delay seems kinda hacky here
             }
         });
-
+        myTrace.stop();
         return view;
     }
 

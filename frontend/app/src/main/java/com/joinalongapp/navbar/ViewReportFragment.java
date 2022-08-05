@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.viewmodel.ReportDetails;
 
@@ -59,6 +61,8 @@ public class ViewReportFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("ViewReportFragmentUIComponents");
+        myTrace.start();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_report, container, false);
         initElements(view);
@@ -80,6 +84,7 @@ public class ViewReportFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
+        myTrace.stop();
 
         return view;
     }

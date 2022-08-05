@@ -19,6 +19,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.RequestManager;
@@ -40,20 +42,14 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("LoginActivityUIComponents");
+        myTrace.start();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.dark_mode_prefs), Context.MODE_PRIVATE);
-        //SharedPreferences.Editor editor = sharedPreferences.edit();
         boolean darkMode = sharedPreferences.getBoolean(getString(R.string.dark_mode_prefs), false);
-        //boolean changedMode = sharedPreferences.getBoolean("changed", false);
 
-        System.out.println("!!!!!!!!!!!"+darkMode);
-
-        //if(changedMode){
-        //    editor.putBoolean("changed", false);
-        //    replaceFragment(new ProfileFragment());
-        //}
 
         if(darkMode){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -85,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                 signIn();
             }
         });
+        myTrace.stop();
 
     }
 

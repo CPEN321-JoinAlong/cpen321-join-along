@@ -1,5 +1,6 @@
 package com.joinalongapp.joinalong;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.joinalong.databinding.ActivityMainBinding;
 import com.joinalongapp.navbar.FriendsFragment;
 import com.joinalongapp.navbar.HomeFragment;
@@ -22,6 +26,8 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("MainActivityUIComponents");
+        myTrace.start();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -61,7 +67,7 @@ public class MainActivity extends AppCompatActivity{
 
             return true;
         });
-
+        myTrace.stop();
 
     }
 

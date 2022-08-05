@@ -154,14 +154,12 @@ public class SearchScreenActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Trace myTrace = FirebasePerformance.getInstance().newTrace("searchQuerySubmit");
-                myTrace.start();
+
                 if (getSearchMode() == SearchMode.USER_MODE) {
                     onSearchButtonPressedUser(activity, token, query);
                 } else {
                     onSearchButtonPressedEvent(activity, token, query);
                 }
-                myTrace.stop();
                 return false;
 
             }
@@ -385,6 +383,8 @@ public class SearchScreenActivity extends AppCompatActivity {
     private void onSearchButtonPressedUser(Activity activity, String token, String query){
         RequestManager requestManager = new RequestManager();
 
+
+
         try {
 
             requestManager.get(myUrlPath + query, token, new RequestManager.OnRequestCompleteListener() {
@@ -415,6 +415,8 @@ public class SearchScreenActivity extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             searchPeopleCustomAdapter.changeDataset(outputFriends);
+
+
                                         }
                                     });
                                 }
@@ -442,6 +444,8 @@ public class SearchScreenActivity extends AppCompatActivity {
 
     private void onSearchButtonPressedEvent(Activity activity, String token, String query) {
         RequestManager requestManager = new RequestManager();
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("QuerySearchSubmit");
+        myTrace.start();
 
         try {
 
@@ -474,6 +478,7 @@ public class SearchScreenActivity extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             searchEventCustomAdapter.changeDataset(events);
+                                            myTrace.stop();
                                         }
                                     });
                                 }

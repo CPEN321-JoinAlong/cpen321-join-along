@@ -123,7 +123,7 @@ describe("User Case 9: Recommend Events", () => {
             ["_id", "__v"].forEach((key) => delete response._body[key]);
             expect(response._body).toMatchObject(userInfo);
             eventList.forEach(event => {
-                event.eventOwnerID = id,
+                event.eventOwnerID = id
                 event.eventOwnerName = userInfo.name
             })
 

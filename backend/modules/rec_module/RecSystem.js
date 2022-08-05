@@ -22,7 +22,7 @@ class RecSystem {
         console.log(cosSim)
         // console.log(freeEventList.slice(0, 11))
 
-        return new ResponseObject(ERROR_CODES.SUCCESS, freeEventList.slice(0, 11))
+        return new ResponseObject(ERROR_CODES.SUCCESS, freeEventList.slice(0, 3))
     }
 
     #cosineSimilarity(userTags, eventTags) {

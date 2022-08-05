@@ -149,11 +149,11 @@ app.post("/login", async (req, res) => {
             let foundUserResponse = await userStore.findUserForLogin(
                 response.data.sub
             );
-            if (foundUserResponse.status !== ERROR_CODES.SUCCESS)
+            if (foundUserResponse.status !== ERROR_CODES.SUCCESS){
                 res.status(foundUserResponse.status).send({
                     token: response.data.sub,
                 });
-            else
+            } else
                 res.status(foundUserResponse.status).send(
                     foundUserResponse.data
                 );

@@ -33,4 +33,4 @@ jobs:
         cache: 'npm'
         cache-dependency-path: ./backend/package-lock.json
     - run: npm i jest
-    - run: npm test
+    - run: npx jest ./backend/tests/ --runInBand --silent

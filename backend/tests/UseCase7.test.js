@@ -84,6 +84,7 @@ describe("Use Case 7: Report/Block User/Event", () => {
                     token
                 });
             expect(response.status).toBe(ERROR_CODES.INVALID);
+            await User.findByIdAndDelete(id);
             expect(response._body).toBe(undefined);
         }); 
         

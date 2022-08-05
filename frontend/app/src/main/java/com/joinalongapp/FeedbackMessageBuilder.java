@@ -49,6 +49,7 @@ public class FeedbackMessageBuilder {
                                         dialog.dismiss();
                                     }
                                 })
+                                .setCancelable(false)
                                 .create()
                                 .show();
                     }
@@ -75,6 +76,7 @@ public class FeedbackMessageBuilder {
                                         activity.finish();
                                     }
                                 })
+                                .setCancelable(false)
                                 .create()
                                 .show();
                     }

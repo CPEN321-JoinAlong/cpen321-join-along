@@ -4,12 +4,12 @@ const axios = require("axios")
 const {
     app,
     server
-} = require("./../server");
+} = require("../server");
 
-const User = require("./../models/User");
-const Event = require("./../models/Event");
-const Chat = require("./../models/Chat");
-const ERROR_CODES = require("./../ErrorCodes.js");
+const User = require("../models/User");
+const Event = require("../models/Event");
+const Chat = require("../models/Chat");
+const ERROR_CODES = require("../ErrorCodes.js");
 
 mongoose.connect(
     "mongodb://useradmin:MTnCBEI9nIx6L6F@54.200.52.211:34542/joinalong", {

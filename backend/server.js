@@ -187,7 +187,7 @@ app.post("/chat/create", async (req, res) => {
 app.post("/event/create", async (req, res) => {
     let eventObject = req.body;
     let eventInfo = new EventDetails(eventObject);
-    // console.log(eventInfo);
+    console.log(eventInfo);
     try {
         let eventResponse = await eventStore.createEvent(eventInfo, userStore);
         let chatResponse = await chatEngine.createChat(

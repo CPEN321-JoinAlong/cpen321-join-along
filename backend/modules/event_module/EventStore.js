@@ -100,9 +100,7 @@ class EventStore {
             return new ResponseObject(ERROR_CODES.INVALID);
         let event = await Event.findById(eventID);
         if (event) {
-            let userList = event.participants.filter((id) =>
-                mongoose.isObjectIdOrHexString(id)
-            );
+            let userList = event.participants;
             console.log(userList)
             userList.forEach(async (userID) => {
                 await userStore.updateUserAccount(userID, {

@@ -155,16 +155,21 @@ describe("Use Case 8: Ban User/Event", () => {
 
         test("Success: Event is banned", async () => {
             let userResponse = await request(app)
-                .post("/user/create").send(Object.assign({ token, userInfo }))
+                .post("/user/create").send(userInfo)
             expect(userResponse.status).toBe(ERROR_CODES.SUCCESS);
             let uid = userResponse._body._id;
 
             eventInfo.participants.push(uid)
+
+            console.log(eventInfo)
+
             let response = await request(app)
-                .post("/event/create").send(Object.assign({ token, eventInfo }))
+                .post("/event/create").send(Object.assign({ token }, eventInfo))
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
             let id = response._body._id;
             let chat = response._body.chat
+
+            console.log(response._body);
 
             let banResponse = await request(app).post(`/event/${id}/ban`).send({ token })
             await User.findByIdAndDelete(uid);

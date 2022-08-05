@@ -75,10 +75,6 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
         test("Success: event and its chat created", async () => {
             let response = await request(app)
                 .post("/event/create").send(Object.assign({token}, eventInfo))
-                // .send({
-                //     ...eventInfo,
-                //     token
-                // });
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
             let id = response._body._id;
             await Chat.findByIdAndDelete(response._body.chat)

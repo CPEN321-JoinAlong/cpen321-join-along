@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
@@ -41,8 +43,11 @@ public class CreateReportActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("CreateReportActivityUIComponents");
+        myTrace.start();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_report);
+
 
         initElements();
 
@@ -138,6 +143,7 @@ public class CreateReportActivity extends AppCompatActivity {
                 CreateReportActivity.this.finish();
             }
         });
+        myTrace.stop();
     }
 
     private void initElements(){

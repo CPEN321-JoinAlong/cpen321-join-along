@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.MessageListCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
@@ -42,7 +43,11 @@ import io.socket.engineio.client.Transport;
 import okhttp3.Call;
 import okhttp3.Response;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
+
 public class MessageActivity extends AppCompatActivity {
+
     private RecyclerView messageRecycler;
     private MessageListCustomAdapter messageAdapter;
     private List<Message> messages;
@@ -55,8 +60,13 @@ public class MessageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("MessageActivityUIComponents");
+        myTrace.start();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+
+
+
         String token = ((UserApplicationInfo) getApplication()).getUserToken();
         UserProfile user = ((UserApplicationInfo) getApplication()).getProfile();
         Bundle info = getIntent().getExtras();
@@ -74,6 +84,7 @@ public class MessageActivity extends AppCompatActivity {
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String messageContent;
                 if (messageField.getText().toString().isEmpty()) {
                     messageField.setError("Empty message");
@@ -174,6 +185,7 @@ public class MessageActivity extends AppCompatActivity {
                 Log.e("socketio", "connectError" + args[0]);
             }
         });
+        myTrace.stop();
     }
 
 

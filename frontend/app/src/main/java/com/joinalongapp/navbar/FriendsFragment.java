@@ -15,6 +15,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.SearchScreenActivity;
 
@@ -63,6 +65,8 @@ public class FriendsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("FriendsFragmentUIComponents");
+        myTrace.start();
         View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
 
         fragmentManager = getActivity().getSupportFragmentManager();
@@ -107,6 +111,7 @@ public class FriendsFragment extends Fragment {
                 //super.onPageSelected(position);
             }
         });
+        myTrace.stop();
         return rootView;
     }
 

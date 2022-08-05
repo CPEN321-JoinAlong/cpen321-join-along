@@ -20,6 +20,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.SearchEventCustomAdapter;
 import com.joinalongapp.adapter.SearchPeopleCustomAdapter;
@@ -68,6 +70,8 @@ public class SearchScreenActivity extends AppCompatActivity {
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Trace myTrace = FirebasePerformance.getInstance().newTrace("SearchScreenActivityUIComponents");
+        //myTrace.start();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
 
@@ -150,12 +154,12 @@ public class SearchScreenActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 if (getSearchMode() == SearchMode.USER_MODE) {
                     onSearchButtonPressedUser(activity, token, query);
                 } else {
                     onSearchButtonPressedEvent(activity, token, query);
                 }
-
                 return false;
 
             }
@@ -194,6 +198,8 @@ public class SearchScreenActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        //myTrace.stop();
 
 
 
@@ -377,6 +383,8 @@ public class SearchScreenActivity extends AppCompatActivity {
     private void onSearchButtonPressedUser(Activity activity, String token, String query){
         RequestManager requestManager = new RequestManager();
 
+
+
         try {
 
             requestManager.get(myUrlPath + query, token, new RequestManager.OnRequestCompleteListener() {
@@ -407,6 +415,8 @@ public class SearchScreenActivity extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             searchPeopleCustomAdapter.changeDataset(outputFriends);
+
+
                                         }
                                     });
                                 }
@@ -434,6 +444,8 @@ public class SearchScreenActivity extends AppCompatActivity {
 
     private void onSearchButtonPressedEvent(Activity activity, String token, String query) {
         RequestManager requestManager = new RequestManager();
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("QuerySearchSubmit");
+        myTrace.start();
 
         try {
 
@@ -466,6 +478,7 @@ public class SearchScreenActivity extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             searchEventCustomAdapter.changeDataset(events);
+                                            myTrace.stop();
                                         }
                                     });
                                 }

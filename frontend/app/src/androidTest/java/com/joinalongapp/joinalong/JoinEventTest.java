@@ -48,7 +48,7 @@ public class JoinEventTest {
         // Given
         onView(withId(R.id.searchBar)).perform(click());
         // When
-        onView(isAssignableFrom(EditText.class)).perform(replaceText("Test"), pressKey(KeyEvent.KEYCODE_ENTER));
+        onView(isAssignableFrom(EditText.class)).perform(replaceText("Open "), pressKey(KeyEvent.KEYCODE_ENTER));
         // Then
         Thread.sleep(1000);
 

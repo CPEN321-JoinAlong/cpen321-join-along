@@ -26,6 +26,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
@@ -69,6 +71,8 @@ public class ManageProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("ManageProfileActivityUIComponents");
+        myTrace.start();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_profile);
 
@@ -112,7 +116,7 @@ public class ManageProfileActivity extends AppCompatActivity {
                 finish();
             }
         });
-
+        myTrace.stop();
     }
 
     private void editProfile(UserApplicationInfo userInput) {

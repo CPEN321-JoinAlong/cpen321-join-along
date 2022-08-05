@@ -21,6 +21,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.joinalong.LoginActivity;
 import com.joinalongapp.joinalong.ManageProfileActivity;
 import com.joinalongapp.joinalong.R;
@@ -74,6 +76,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("ProfileFragmentUIComponents");
+        myTrace.start();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         initElements(view);
@@ -114,7 +118,7 @@ public class ProfileFragment extends Fragment {
                 startActivity(viewReports);
             }
         });
-
+        myTrace.stop();
         return view;
     }
 

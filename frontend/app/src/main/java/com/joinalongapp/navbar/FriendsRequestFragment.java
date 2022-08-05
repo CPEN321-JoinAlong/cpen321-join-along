@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.adapter.FriendsRequestCustomAdapter;
@@ -82,6 +84,8 @@ public class FriendsRequestFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("FriendsRequestFragmentUIComponents");
+        myTrace.start();
         View rootView = inflater.inflate(R.layout.fragment_friends_request, container, false);
 
         initElements(rootView);
@@ -105,7 +109,7 @@ public class FriendsRequestFragment extends Fragment {
                 }, 2000); //TODO: FIXME: a delay seems kinda hacky here
             }
         });
-
+        myTrace.stop();
         return rootView;
     }
 

@@ -15,6 +15,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.joinalong.ManageChatActivity;
 import com.joinalongapp.joinalong.R;
 
@@ -61,6 +63,8 @@ public class MessagingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("MessagingFragmentUIComponents");
+        myTrace.start();
         View rootView = inflater.inflate(R.layout.fragment_messaging, container, false);
 
         fragmentManager = getActivity().getSupportFragmentManager();
@@ -107,7 +111,7 @@ public class MessagingFragment extends Fragment {
         });
 
 
-
+        myTrace.stop();
 
         return rootView;
     }

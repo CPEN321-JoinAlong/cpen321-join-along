@@ -91,16 +91,16 @@
         android:id="@+id/eventVisibilitySelection"
         android:layout_width="314dp"
         android:layout_height="51dp"
-        app:layout_constraintBottom_toTopOf="@+id/submitReportButton"
+        android:background="?attr/backgroundColor"
 
+        app:layout_constraintBottom_toTopOf="@+id/submitReportButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline7"
         app:layout_constraintVertical_bias="0.303"
-        app:tabIndicatorColor="@color/orange"
+        app:tabIndicatorColor="?attr/buttonColor"
         app:tabIndicatorHeight="50dp"
-        android:background="?attr/backgroundColor"
         app:tabSelectedTextColor="@color/white"
         app:tabTextColor="?attr/defaultTextColor">
 

@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
@@ -48,6 +50,8 @@ public class ViewChatActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("ViewChatActivityUIComponents");
+        myTrace.start();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_chat);
         user = ((UserApplicationInfo) getApplication()).getProfile();
@@ -68,6 +72,7 @@ public class ViewChatActivity extends AppCompatActivity {
                 ViewChatActivity.this.onBackPressed();
             }
         });
+        myTrace.stop();
     }
 
     private void initDataset(){

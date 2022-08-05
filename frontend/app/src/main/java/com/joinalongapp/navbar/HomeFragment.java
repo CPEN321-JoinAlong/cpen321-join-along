@@ -20,6 +20,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.adapter.EventViewAdapter;
@@ -91,7 +93,8 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("HomeFragmentUIComponents");
+        myTrace.start();
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
         initElements(rootView);
@@ -108,7 +111,7 @@ public class HomeFragment extends Fragment {
         initViewTabs();
         initFilters();
         initSearchbar();
-
+        myTrace.stop();
         return rootView;
     }
 

@@ -56,19 +56,6 @@ describe("Use Case 8: Ban User/Event", () => {
             profilePicture: "picture",
             token,
         });
-        let eventInfo = new EventDetails({
-            //id : 62d50cfb436fbc75c258d9eb
-            title: "tester event",
-            eventOwnerID: "62d63248860a82beb388af87",
-            tags: ["Hiking"],
-            beginningDate: "2022-08-08T00:00:00.000Z",
-            endDate: "2022-09-01T00:00:00.000Z",
-            location: "2205 West Mall Toronto",
-            description: "test description",
-            eventImage: "image",
-            numberOfPeople: 6,
-            currCapacity: 1,
-        });
         test("Invalid user ID", async () => {
             let response = await request(app)
                 .post("/user/dfjsdfks/ban")
@@ -125,6 +112,15 @@ describe("Use Case 8: Ban User/Event", () => {
     });
 
     describe("Ban Event", () => {
+        let userInfo = new UserAccount({
+            name: "Rob Robber",
+            interests: ["Swimming"],
+            location: "2423 Montreal Mall, Vancouver",
+            description: "Test description",
+            profilePicture: "picture",
+            token,
+        });
+ 
         let eventInfo = new EventDetails({
             //id : 62d50cfb436fbc75c258d9eb
             title: "tester event",
@@ -158,6 +154,12 @@ describe("Use Case 8: Ban User/Event", () => {
         });
 
         test("Success: Event is banned", async () => {
+            let userResponse = await request(app)
+                .post("/user/create").send(Object.assign({ token, userInfo }))
+            expect(userResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let uid = userResponse._body._id;
+
+            eventInfo.participants.push(uid)
             let response = await request(app)
                 .post("/event/create").send(Object.assign({ token, eventInfo }))
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
@@ -165,6 +167,7 @@ describe("Use Case 8: Ban User/Event", () => {
             let chat = response._body.chat
 
             let banResponse = await request(app).post(`/event/${id}/ban`).send({ token })
+            await User.findByIdAndDelete(uid);
             await Chat.findByIdAndDelete(chat)
             await Event.findByIdAndDelete(id);
             expect(banResponse.status).toBe(ERROR_CODES.SUCCESS)

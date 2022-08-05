@@ -103,6 +103,7 @@ class EventStore {
             let userList = event.participants.filter((id) =>
                 mongoose.isObjectIdOrHexString(id)
             );
+            console.log(userList)
             userList.forEach(async (userID) => {
                 await userStore.updateUserAccount(userID, {
                     $pull: { events: eventID },

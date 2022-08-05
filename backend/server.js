@@ -101,42 +101,20 @@ app.use(async (req, res, next) => {
     }
 });
 
-// //JUST FOR TESTING
-// app.get("/test", async (req, res) => {
-//     let a = {};
-//     try {
-//         // let impEvents = ["62e317ac77f7ad9a56ab886b", "62e48622b43f633a5a0e3860", "62e363a8e21c7698113dc974", "62db9dd9337ad5e08e29b562", "62dba10ae96413b41863b7c5", "62dba1bce96413b41863b7f2", "62d7ae2d010a82beb388b2ff", "62e8bd3d7080c5316bc7e32f", "62e8bd7d7080c5316bc7e33f", "62e98d597080c5316bc7e73e"]
-//         // let chatIds = ["62e317ad77f7ad9a56ab886d", "62e48622b43f633a5a0e3862", "62e363a8e21c7698113dc976", "62db9dd9337ad5e08e29b564", "62dba10ae96413b41863b7c7", "62dba1bce96413b41863b7f4", "62d7ae2d010a82beb388b301", "62e8bd3d7080c5316bc7e331", "62e8bd7d7080c5316bc7e341", "62e98d597080c5316bc7e740"]
-//         // // await Chat.deleteMany({title: "test"})
-//         // // await Event.deleteMany({_id: {$nin: impEvents}})
-//         // await User.updateMany({}, {$pull: {events: {$nin: impEvents}}})
-//         // // await Chat.deleteMany({_id: {$nin: chatIds}})
-//         // await User.updateMany({}, {$pull: {chats: {$nin: chatIds}}})
-
-//         a["user"] = await User.find({});
-//         a["chat"] = await Chat.find({});
-//         a["event"] = await Event.find({});
-//         a["report"] = await Report.find({});
-
-//         // a["user"].forEach(async (user) => {
-//         //     let coordinates = await distCalc(user.location);
-//         //     await User.findByIdAndUpdate(user._id, { coordinates });
-//         // });
-
-//         // a["event"].forEach(async (event) => {
-//         //     let coordinates = await distCalc(event.location);
-//         //     await Event.findByIdAndUpdate(event._id, { coordinates });
-//         // });
-
-//         // a["user"] = await User.find({});
-//         // a["event"] = await Event.find({});
-
-//         res.status(ERROR_CODES.SUCCESS).send(a);
-//     } catch (e) {
-//         console.log(e);
-//         res.status(ERROR_CODES.DBERROR).send(null);
-//     }
-// });
+//JUST FOR TESTING
+app.get("/test", async (req, res) => {
+    let a = {};
+    try {
+        a["user"] = await User.find({});
+        a["chat"] = await Chat.find({});
+        a["event"] = await Event.find({});
+        a["report"] = await Report.find({});
+        res.status(ERROR_CODES.SUCCESS).send(a);
+    } catch (e) {
+        console.log(e);
+        res.status(ERROR_CODES.DBERROR).send(null);
+    }
+});
 
 //login - post
 app.post("/login", async (req, res) => {
@@ -844,8 +822,8 @@ app.post("/user/:id/ban", async (req, res) => {
         let user = await userStore.findUserByID(id)
         if (user.status !== ERROR_CODES.SUCCESS)
             return res.status(user.status).send("User not found")
-        console.log(user)
-        
+        // console.log(user)
+
         for (let eventID of user.data.events)
             await userStore.leaveEvent(id, eventID, eventStore)
 

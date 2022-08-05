@@ -22,7 +22,7 @@ class UserAccount {
         this.blockedEvents = userInfo.blockedEvents
             ? userInfo.blockedEvents
             : [];
-        this.token = userInfo.token ? userInfo.token : null;
+        this.token = userInfo.token;
     }
 }
 

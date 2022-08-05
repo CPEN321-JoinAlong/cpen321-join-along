@@ -98,11 +98,11 @@ describe("Use Case 2: Join Event", () => {
             eventInfo.currCapacity = 6;
 
             let eventResponse = await request(app)
-                .post("/event/create")
-                .send({
-                    ...eventInfo,
-                    token
-                });
+                .post("/event/create").send(Object.assign({token}, eventInfo))
+                // .send({
+                //     ...eventInfo,
+                //     token
+                // });
             expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
             let eventId = eventResponse._body._id;
             let chat = eventResponse._body.chat;

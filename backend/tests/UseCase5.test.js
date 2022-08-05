@@ -58,6 +58,26 @@ describe("User Case 5: Messaging", () => {
             participants: ["62eae6dc6948e5255b2d2c43"],
             currCapacity: 1,
         });
+        let chatInfo2 = new ChatDetails({
+            title: "tester chater",
+            tags: ["Hiking"],
+            numberOfPeople: 6,
+            description: "test description",
+            currCapacity: 1,
+        });
+        test("Success: chat created without participants", async () => {
+            let response = await request(app)
+                .post("/chat/create")
+                .send({
+                    ...chatInfo2,
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            await Chat.findByIdAndDelete(id);
+            ["_id", "__v"].forEach((key) => delete response._body[key]);
+            expect(response._body).toMatchObject(chatInfo);
+        });
         test("Success: chat created", async () => {
             let response = await request(app)
                 .post("/chat/create")

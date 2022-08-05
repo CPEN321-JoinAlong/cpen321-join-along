@@ -21,7 +21,7 @@ jobs:
     
     strategy:
       matrix:
-        node-version: [12.x, 14.x]
+        node-version: [14.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -33,4 +33,4 @@ jobs:
         cache: 'npm'
         cache-dependency-path: ./backend/package-lock.json
     - run: npm i jest
-    - run: npm test
+    - run: npx jest ./backend/tests/ --runInBand --silent

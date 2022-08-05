@@ -17,7 +17,7 @@ class EventDetails {
             : (this.eventOwnerID ? [this.eventOwnerID] : []);
         this.currCapacity = eventInfo.currCapacity ? eventInfo.currCapacity : 1;
         this.eventImage = eventInfo.eventImage ? eventInfo.eventImage : null;
-        this.chat = eventInfo.chat ? eventInfo.chat : null;
+        this.chat = null;
     }
 }
 

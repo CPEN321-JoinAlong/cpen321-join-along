@@ -93,7 +93,7 @@ app.use(async (req, res, next) => {
         ) {
             next();
         } else {
-            res.status(ERROR_CODES.NOTFOUND).send("Unsuccessfull");
+            res.status(ERROR_CODES.NOTFOUND).send("Unsuccessful");
         }
     } catch (e) {
         console.log(e);
@@ -101,42 +101,42 @@ app.use(async (req, res, next) => {
     }
 });
 
-//JUST FOR TESTING
-app.get("/test", async (req, res) => {
-    let a = {};
-    try {
-        // let impEvents = ["62e317ac77f7ad9a56ab886b", "62e48622b43f633a5a0e3860", "62e363a8e21c7698113dc974", "62db9dd9337ad5e08e29b562", "62dba10ae96413b41863b7c5", "62dba1bce96413b41863b7f2", "62d7ae2d010a82beb388b2ff", "62e8bd3d7080c5316bc7e32f", "62e8bd7d7080c5316bc7e33f", "62e98d597080c5316bc7e73e"]
-        // let chatIds = ["62e317ad77f7ad9a56ab886d", "62e48622b43f633a5a0e3862", "62e363a8e21c7698113dc976", "62db9dd9337ad5e08e29b564", "62dba10ae96413b41863b7c7", "62dba1bce96413b41863b7f4", "62d7ae2d010a82beb388b301", "62e8bd3d7080c5316bc7e331", "62e8bd7d7080c5316bc7e341", "62e98d597080c5316bc7e740"]
-        // // await Chat.deleteMany({title: "test"})
-        // // await Event.deleteMany({_id: {$nin: impEvents}})
-        // await User.updateMany({}, {$pull: {events: {$nin: impEvents}}})
-        // // await Chat.deleteMany({_id: {$nin: chatIds}})
-        // await User.updateMany({}, {$pull: {chats: {$nin: chatIds}}})
+// //JUST FOR TESTING
+// app.get("/test", async (req, res) => {
+//     let a = {};
+//     try {
+//         // let impEvents = ["62e317ac77f7ad9a56ab886b", "62e48622b43f633a5a0e3860", "62e363a8e21c7698113dc974", "62db9dd9337ad5e08e29b562", "62dba10ae96413b41863b7c5", "62dba1bce96413b41863b7f2", "62d7ae2d010a82beb388b2ff", "62e8bd3d7080c5316bc7e32f", "62e8bd7d7080c5316bc7e33f", "62e98d597080c5316bc7e73e"]
+//         // let chatIds = ["62e317ad77f7ad9a56ab886d", "62e48622b43f633a5a0e3862", "62e363a8e21c7698113dc976", "62db9dd9337ad5e08e29b564", "62dba10ae96413b41863b7c7", "62dba1bce96413b41863b7f4", "62d7ae2d010a82beb388b301", "62e8bd3d7080c5316bc7e331", "62e8bd7d7080c5316bc7e341", "62e98d597080c5316bc7e740"]
+//         // // await Chat.deleteMany({title: "test"})
+//         // // await Event.deleteMany({_id: {$nin: impEvents}})
+//         // await User.updateMany({}, {$pull: {events: {$nin: impEvents}}})
+//         // // await Chat.deleteMany({_id: {$nin: chatIds}})
+//         // await User.updateMany({}, {$pull: {chats: {$nin: chatIds}}})
 
-        a["user"] = await User.find({});
-        a["chat"] = await Chat.find({});
-        a["event"] = await Event.find({});
-        a["report"] = await Report.find({});
+//         a["user"] = await User.find({});
+//         a["chat"] = await Chat.find({});
+//         a["event"] = await Event.find({});
+//         a["report"] = await Report.find({});
 
-        // a["user"].forEach(async (user) => {
-        //     let coordinates = await distCalc(user.location);
-        //     await User.findByIdAndUpdate(user._id, { coordinates });
-        // });
+//         // a["user"].forEach(async (user) => {
+//         //     let coordinates = await distCalc(user.location);
+//         //     await User.findByIdAndUpdate(user._id, { coordinates });
+//         // });
 
-        // a["event"].forEach(async (event) => {
-        //     let coordinates = await distCalc(event.location);
-        //     await Event.findByIdAndUpdate(event._id, { coordinates });
-        // });
+//         // a["event"].forEach(async (event) => {
+//         //     let coordinates = await distCalc(event.location);
+//         //     await Event.findByIdAndUpdate(event._id, { coordinates });
+//         // });
 
-        // a["user"] = await User.find({});
-        // a["event"] = await Event.find({});
+//         // a["user"] = await User.find({});
+//         // a["event"] = await Event.find({});
 
-        res.status(ERROR_CODES.SUCCESS).send(a);
-    } catch (e) {
-        console.log(e);
-        res.status(ERROR_CODES.DBERROR).send(null);
-    }
-});
+//         res.status(ERROR_CODES.SUCCESS).send(a);
+//     } catch (e) {
+//         console.log(e);
+//         res.status(ERROR_CODES.DBERROR).send(null);
+//     }
+// });
 
 //login - post
 app.post("/login", async (req, res) => {
@@ -149,11 +149,11 @@ app.post("/login", async (req, res) => {
             let foundUserResponse = await userStore.findUserForLogin(
                 response.data.sub
             );
-            if (foundUserResponse.status !== ERROR_CODES.SUCCESS)
+            if (foundUserResponse.status !== ERROR_CODES.SUCCESS) {
                 res.status(foundUserResponse.status).send({
                     token: response.data.sub,
                 });
-            else
+            } else
                 res.status(foundUserResponse.status).send(
                     foundUserResponse.data
                 );
@@ -195,7 +195,7 @@ app.post("/chat/create", async (req, res) => {
         chatInfo.participants = [user.data._id]
         chatInfo.currCapacity = 1
         let chatResponse = await chatEngine.createChat(chatInfo, userStore);
-        for(let userId of newList){
+        for (let userId of newList) {
             await userStore.sendChatInvite(userId, chatResponse.data._id, chatEngine)
         }
         res.status(chatResponse.status).send(chatResponse.data);
@@ -229,14 +229,14 @@ app.post("/event/create", async (req, res) => {
             eventResponse.data,
             userStore
         );
-		let user = await userStore.findUserForLogin(req.headers.token);
-		if (user.data) {
-			updatedEvent.data = {...(updatedEvent.data.toJSON()), distance: distCalc(user.data.coordinates, updatedEvent.data.coordinates)}
-			res.status(updatedEvent.status).send(updatedEvent.data);
-		} else {
-			updatedEvent.data = {...(updatedEvent.data.toJSON()), distance: -1}
-			res.status(updatedEvent.status).send(updatedEvent.data);
-		} 
+        let user = await userStore.findUserForLogin(req.headers.token);
+        if (user.data) {
+            updatedEvent.data = { ...(updatedEvent.data.toJSON()), distance: distCalc(user.data.coordinates, updatedEvent.data.coordinates) }
+            res.status(updatedEvent.status).send(updatedEvent.data);
+        } else {
+            updatedEvent.data = { ...(updatedEvent.data.toJSON()), distance: -1 }
+            res.status(updatedEvent.status).send(updatedEvent.data);
+        }
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -262,11 +262,11 @@ app.put("/chat/:id/edit", async (req, res) => {
     let id = req.params.id;
     try {
         let chat = await chatEngine.findChatByID(id);
-        if(chat.data == null) return res.status(chat.status).send(null)
+        if (chat.data == null) return res.status(chat.status).send(null)
         let newParticipants = req.body.participants.filter(userId => !chat.data.participants.includes(userId))
         req.body.participants = req.body.participants.filter(userId => chat.data.participants.includes(userId))
         let chatResponse = await chatEngine.editChat(id, req.body, userStore);
-        for(let userId of newParticipants){
+        for (let userId of newParticipants) {
             await userStore.sendChatInvite(userId, chatResponse.data._id, chatEngine)
         }
         res.status(chatResponse.status).send(chatResponse.data); //update the update function to send the new object
@@ -285,21 +285,21 @@ app.put("/event/:id/edit", async (req, res) => {
             req.body,
             userStore
         );
-		console.log(eventResponse)
-		console.log(req.body.token)
-		let user = await userStore.findUserForLogin(req.body.token);
-		console.log(user)
-		if (user.data) {
-            if(eventResponse.data){
-                eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
+        console.log(eventResponse)
+        console.log(req.body.token)
+        let user = await userStore.findUserForLogin(req.body.token);
+        console.log(user)
+        if (user.data) {
+            if (eventResponse.data) {
+                eventResponse.data = { ...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates) }
             }
-			res.status(eventResponse.status).send(eventResponse.data);
-		} else {
-            if(eventResponse.data){
-                eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
+            res.status(eventResponse.status).send(eventResponse.data);
+        } else {
+            if (eventResponse.data) {
+                eventResponse.data = { ...(eventResponse.data.toJSON()), distance: -1 }
             }
-			res.status(eventResponse.status).send(eventResponse.data);
-		} 
+            res.status(eventResponse.status).send(eventResponse.data);
+        }
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -335,20 +335,20 @@ app.get("/event/title/:eventName", async (req, res) => {
     let eventName = req.params.eventName;
     try {
         let eventListResponse = await eventStore.findEventsByName(eventName);
-		let user = await userStore.findUserForLogin(req.headers.token);
-		if(user.data) {
+        let user = await userStore.findUserForLogin(req.headers.token);
+        if (user.data) {
             eventListResponse.data = eventListResponse.data.map((event) => ({
                 ...(event.toJSON()),
                 distance: distCalc(user.data.coordinates, event.coordinates),
             }));
             res.status(eventListResponse.status).send(eventListResponse.data);
-		} else {
+        } else {
             eventListResponse.data = eventListResponse.data.map((event) => ({
                 ...(event.toJSON()),
                 distance: -1,
             }));
-			res.status(eventListResponse.status).send(eventListResponse.data);
-		}
+            res.status(eventListResponse.status).send(eventListResponse.data);
+        }
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -359,21 +359,21 @@ app.get("/event/tag/:eventTag", async (req, res) => {
     let eventTag = req.params.eventTag;
     try {
         let eventListResponse = await eventStore.findAllEvents();
-		eventListResponse.data = eventListResponse.data.filter(event => event.tags.includes(eventTag))
-		let user = await userStore.findUserForLogin(req.headers.token);
-		if(user.data) {
+        eventListResponse.data = eventListResponse.data.filter(event => event.tags.includes(eventTag))
+        let user = await userStore.findUserForLogin(req.headers.token);
+        if (user.data) {
             eventListResponse.data = eventListResponse.data.map((event) => ({
                 ...(event.toJSON()),
                 distance: distCalc(user.data.coordinates, event.coordinates),
             }));
             res.status(eventListResponse.status).send(eventListResponse.data);
-		} else {
+        } else {
             eventListResponse.data = eventListResponse.data.map((event) => ({
                 ...(event.toJSON()),
                 distance: -1,
             }));
-			res.status(eventListResponse.status).send(eventListResponse.data);
-		}
+            res.status(eventListResponse.status).send(eventListResponse.data);
+        }
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -424,25 +424,27 @@ app.get("/user/:id/friends", async (req, res) => {
 app.get("/user/:id/chat", async (req, res) => {
     let id = req.params.id;
     try {
-        let userResponse = await userStore.findUserByID(id);
-        if (userResponse.status !== ERROR_CODES.SUCCESS)
-            res.status(userResponse.status).send([]);
-        else {
-            let chatListResponse = await chatEngine.findChatByUser(id);
-            for(let chat of chatListResponse.data) {
-                let participants = []
-                if(chat.participants.length > 1){
-                    participants = chat.participants.filter(userId =>  userId != id);
-                } else {
-                    participants = chat.participants
-                }
-                let userList = await userStore.findFriendByIDList(participants);
-                if(userList.data) {
-                    chat._doc.images = userList.data.map(user => user.profilePicture)
-                }   
+        // let userResponse = await userStore.findUserByID(id);
+        // if (userResponse.status !== ERROR_CODES.SUCCESS)
+        //     res.status(userResponse.status).send([]);
+        // else {
+        let chatListResponse = await chatEngine.findChatByUser(id);
+        if (chatListResponse.status !== ERROR_CODES.SUCCESS)
+            return res.status(chatListResponse.status).send([])
+        for (let chat of chatListResponse.data) {
+            let participants = []
+            if (chat.participants.length > 1) {
+                participants = chat.participants.filter(userId => userId != id);
+            } else {
+                participants = chat.participants
             }
-            res.status(chatListResponse.status).send(chatListResponse.data);
+            let userList = await userStore.findFriendByIDList(participants);
+            if (userList.data) {
+                chat._doc.images = userList.data.map(user => user.profilePicture)
+            }
         }
+        res.status(chatListResponse.status).send(chatListResponse.data);
+        // }
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -461,17 +463,17 @@ app.get("/user/:id/chatInvites", async (req, res) => {
                 userResponse.data.chatInvites,
                 chatEngine
             );
-            for(let chat of chatInvResponse.data) {
+            for (let chat of chatInvResponse.data) {
                 let participants = []
-                if(chat.participants.length > 1){
-                    participants = chat.participants.filter(userId =>  userId != id);
+                if (chat.participants.length > 1) {
+                    participants = chat.participants.filter(userId => userId != id);
                 } else {
                     participants = chat.participants
                 }
                 let userList = await userStore.findFriendByIDList(participants);
-                if(userList.data) {
+                if (userList.data) {
                     chat._doc.images = userList.data.map(user => user.profilePicture)
-                }   
+                }
             }
             res.status(chatInvResponse.status).send(chatInvResponse.data);
         }
@@ -561,18 +563,11 @@ app.get("/event/:id", async (req, res) => {
     let id = req.params.id;
     try {
         let eventResponse = await eventStore.findEventByID(id);
-		let user = await userStore.findUserForLogin(req.headers.token);
-		if (user.data) {
-			if(eventResponse.data){
-                eventResponse.data = {...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates)}
-            }
-			res.status(eventResponse.status).send(eventResponse.data);
-		} else {
-            if(eventResponse.data){
-                eventResponse.data = {...(eventResponse.data.toJSON()), distance: -1}
-            }
-			res.status(eventResponse.status).send(eventResponse.data);
-		} 
+        let user = await userStore.findUserForLogin(req.headers.token);
+        if (eventResponse.data) {
+            eventResponse.data = { ...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates) }
+        }
+        res.status(eventResponse.status).send(eventResponse.data);
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -589,20 +584,11 @@ app.get("/event", async (req, res) => {
             .filter(a => a.currCapacity !== 0);
         // console.log(sortedList)
         let user = await userStore.findUserForLogin(token);
-        // console.log(user)
-        if (user.data) {
-			sortedList = sortedList.map((event) => ({
-				...(event.toJSON()),
-                distance: distCalc(user.data.coordinates, event.coordinates),
-            }));
-            res.status(eventListResponse.status).send(sortedList);
-        } else {
-            sortedList = sortedList.map((event) => ({
-                ...(event.toJSON()),
-                distance: -1,
-            }));
-            res.status(eventListResponse.status).send(sortedList);
-        }
+        sortedList = sortedList.map((event) => ({
+            ...(event.toJSON()),
+            distance: distCalc(user.data.coordinates, event.coordinates),
+        }));
+        res.status(eventListResponse.status).send(sortedList);
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -877,10 +863,10 @@ app.post("/user/:id/ban", async (req, res) => {
         let user = await userStore.findUserByID(id)
         if (user.status !== ERROR_CODES.SUCCESS)
             return res.status(user.status).send("User not found")
-        
+
         for (let eventID of user.data.events)
             await userStore.leaveEvent(id, eventID, eventStore)
-    
+
         for (let chatID of user.data.chats)
             await userStore.leaveChat(id, chatID, chatEngine)
 
@@ -954,7 +940,7 @@ io.on("connection", (socket) => {
             io.emit(
                 "message",
                 updatedChatResponse.data.messages[
-                    updatedChatResponse.data.messages.length - 1
+                updatedChatResponse.data.messages.length - 1
                 ]
             );
         } catch (e) {

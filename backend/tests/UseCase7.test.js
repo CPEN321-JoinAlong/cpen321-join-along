@@ -71,6 +71,21 @@ describe("Use Case 7: Report/Block User/Event", () => {
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         }); 
+
+        test("Invalid reported user ID", async () => {
+            let userResponse = await request(app).post("/user/create").send(userInfo);
+            expect(userResponse.status).toBe(ERROR_CODES.SUCCESS);
+            let id = userResponse._body._id;
+            ["_id", "__v"].forEach((key) => delete userResponse._body[key]);
+            expect(userResponse._body).toMatchObject(userInfo);
+            let response = await request(app)
+                .post("/user/${id}/reportUser/64d31ae677f7ad9a56ab89c6")
+                .send({
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.INVALID);
+            expect(response._body).toBe(undefined);
+        }); 
         
         test("User reporter or reported not found", async () => {
             let response = await request(app)
@@ -204,11 +219,7 @@ describe("Use Case 7: Report/Block User/Event", () => {
 
         test("Success: Event is reported", async () => {
             let eventResponse = await request(app)
-                .post("/event/create")
-                .send({
-                    ...eventInfo,
-                    token
-                });
+                .post("/event/create").send(Object.assign({token}, eventInfo))
             expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
             // console.log(eventResponse._body)
             let eventId = eventResponse._body._id;
@@ -273,11 +284,7 @@ describe("Use Case 7: Report/Block User/Event", () => {
 
         test("success: event is blocked", async () => {
             let eventResponse = await request(app)
-                .post("/event/create")
-                .send({
-                    ...eventInfo,
-                    token
-                });
+                .post("/event/create").send(Object.assign({token}, eventInfo))
             expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
             // console.log(eventResponse._body)
             let eventId = eventResponse._body._id;
@@ -308,7 +315,5 @@ describe("Use Case 7: Report/Block User/Event", () => {
             expect(response.status).toBe(ERROR_CODES.SUCCESS)
         })
     })
-
-    
 
 });

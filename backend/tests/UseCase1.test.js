@@ -52,20 +52,29 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
             tags: ["Hiking"],
             beginningDate: "2022-08-08T00:00:00.000Z",
             endDate: "2022-09-01T00:00:00.000Z",
-            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            eventImage: "image",
+            numberOfPeople: 6,
+            currCapacity: 1,
+        });
+        let eventInfo2 = new EventDetails({
+            //id : 62d50cfb436fbc75c258d9eb
+            title: "tester event",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
             location: "2205 West Mall Toronto",
             description: "test description",
             numberOfPeople: 6,
-            currCapacity: 1,
-            participants: ["62d63248860a82beb388af87"],
         });
         test("Success: event and its chat created", async () => {
             let response = await request(app)
-                .post("/event/create")
-                .send({
-                    ...eventInfo,
-                    token
-                });
+                .post("/event/create").send(Object.assign({token}, eventInfo))
+                // .send({
+                //     ...eventInfo,
+                //     token
+                // });
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
             let id = response._body._id;
             await Chat.findByIdAndDelete(response._body.chat)
@@ -73,6 +82,23 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
             ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
             ["chat"].forEach((key) => delete eventInfo[key]);
             expect(response._body).toMatchObject(eventInfo);
+        });
+        test("Success: event and its chat created without participants or owner", async () => {
+            let response = await request(app)
+                .post("/event/create")
+                .send({
+                    ...eventInfo2,
+                    token
+                });
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            await Chat.findByIdAndDelete(response._body.chat)
+            await Event.findByIdAndDelete(id);
+            ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
+            ["chat"].forEach((key) => delete eventInfo2[key]);
+            eventInfo2.eventOwnerName = "Rob"
+            delete eventInfo2.eventOwnerID
+            expect(response._body).toMatchObject(eventInfo2);
         });
     });
     describe("edit event", () => {
@@ -116,11 +142,11 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
         })
         test("Event with ID not found", async () => {
             let response = await request(app)
-                .put("/event/64d31ae677f7ad9a56ab89c6/edit")
-                .send({
-                    ...eventInfo,
-                    token
-                });
+                .put("/event/64d31ae677f7ad9a56ab89c6/edit").send(Object.assign({token}, eventInfo))
+                // .send({
+                //     ...eventInfo,
+                //     token
+                // });
             expect(response.status).toBe(ERROR_CODES.NOTFOUND);
             expect(response._body).toBe(undefined);
         })

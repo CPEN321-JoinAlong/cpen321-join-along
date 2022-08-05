@@ -132,6 +132,43 @@ describe("Use Case 3: Search Events/User", () => {
         })
 
     })
+    describe("List events with interest", () => {
+        let eventInfo = new EventDetails({
+            //id : 62d50cfb436fbc75c258d9eb
+            title: "tester event",
+            eventOwnerID: "62d63248860a82beb388af87",
+            tags: ["Hiking"],
+            beginningDate: "2022-08-08T00:00:00.000Z",
+            endDate: "2022-09-01T00:00:00.000Z",
+            publicVisibility: true,
+            location: "2205 West Mall Toronto",
+            description: "test description",
+            numberOfPeople: 6,
+            currCapacity: 1,
+            participants: ["62d63248860a82beb388af87"],
+        });
+        test("Success: endpoint returns list of events which include the interest tags", async () => {
+            let response = await request(app)
+                .post("/event/create")
+                .send({
+                    ...eventInfo,
+                    token
+                })
+            expect(response.status).toBe(ERROR_CODES.SUCCESS);
+            let id = response._body._id;
+            let chat = response._body.chat;
+            ["_id", "__v", "chat"].forEach((key) => delete response._body[key]);
+            ["chat"].forEach((key) => delete eventInfo[key]);
+            expect(response._body).toMatchObject(eventInfo);
+
+            let searchResponse = await request(app).get(`/event/tag/Hiking`).set({
+                token
+            })
+            await Chat.findByIdAndDelete(chat)
+            await Event.findByIdAndDelete(id);
+            expect(searchResponse.status).toBe(ERROR_CODES.SUCCESS)
+        })
+    })
     describe("List all user", () => {
         test("check if endpoint returns correct response", async () => {
             let response = await request(app).get("/user").set({

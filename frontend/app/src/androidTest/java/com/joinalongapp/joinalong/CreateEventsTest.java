@@ -332,7 +332,7 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
         fillBeginEndDatesTimes();
         setIsPublic(true);
         fillTags();
-        setNumberPeople(123);
+        setNumberPeople(1);
         fillDescription();
 
         //When

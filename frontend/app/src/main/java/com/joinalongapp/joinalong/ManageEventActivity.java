@@ -387,7 +387,7 @@ public class ManageEventActivity extends AppCompatActivity {
         endDate = findViewById(R.id.editTextEventManagementEndDate);
         endTime = findViewById(R.id.editTextEventManagementEndTime);
         eventVisibilityTab = findViewById(R.id.eventVisibilitySelection);
-        numberOfPeople = findViewById(R.id.eventManagementNumberOfPeopleSpinner);
+        numberOfPeople = findViewById(R.id.eventManagementNumberOfPeople);
         description = findViewById(R.id.eventManagementEditTextDescription);
         submitButton = findViewById(R.id.submitManageEventButton);
         cancelButton = findViewById(R.id.cancelButton);

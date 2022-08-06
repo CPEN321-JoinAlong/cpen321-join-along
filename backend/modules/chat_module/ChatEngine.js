@@ -38,41 +38,6 @@ class ChatEngine {
         else return new ResponseObject(ERROR_CODES.NOTFOUND, chatList);
     }
 
-    // //send Message to a chat object
-    // async sendChatMessage(userID, chatID, text, date, userStore) {
-    //     if (
-    //         !mongoose.isObjectIdOrHexString(userID) ||
-    //         !mongoose.isObjectIdOrHexString(chatID)
-    //     ) {
-    //         return new ResponseObject(ERROR_CODES.INVALID);
-    //     }
-    //     let chat = await Chat.findById(chatID);
-    //     let userResponse = await userStore.findUserByID(userID);
-    //     // console.log(chat)
-    //     // console.log(userResponse)
-    //     if (userResponse.data && chat) {
-    //         let response = await Chat.findByIdAndUpdate(
-    //             chatID,
-    //             {
-    //                 $push: {
-    //                     messages: {
-    //                         participantID: userID,
-    //                         participantName: userResponse.data.name,
-    //                         timeStamp: date,
-    //                         text,
-    //                     },
-    //                 },
-    //             },
-    //             {
-    //                 new: true,
-    //             }
-    //         );
-    //         return new ResponseObject(ERROR_CODES.SUCCESS, response);
-    //     } else {
-    //         return new ResponseObject(ERROR_CODES.NOTFOUND);
-    //     }
-    // }
-
     async createChat(chatInfo, userStore) {
         let chatObject = await new Chat(chatInfo).save();
         chatObject.participants.forEach(async (participant) => {

@@ -172,47 +172,59 @@ public class ViewEventFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ban.setVisibility(View.INVISIBLE);
-                RequestManager requestManager = new RequestManager();
-                JSONObject json = new JSONObject();
-                try {
-                    json.put("token", token);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    String path = new PathBuilder()
-                            .addEvent()
-                            .addNode(event.getEventId())
-                            .addNode("ban")
-                            .build();
-
-                    requestManager.post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
-                        @Override
-                        public void onSuccess(Call call, Response response) {
-                            if (response.isSuccessful()) {
-                                new FeedbackMessageBuilder()
-                                        .setTitle("Successful Ban")
-                                        .setDescription("Successfully banned event with title " + event.getTitle())
-                                        .withActivity(getActivity())
-                                        .buildAsyncNeutralMessage();
-
-                                Log.i("banEvent", globalUserProfile.getId() + " banned " + event.getTitle() + " at " + new Date());
-                                ban.setVisibility(View.INVISIBLE);
-                            } else {
-                                ResponseErrorHandler.createErrorMessage(response, "Ban Event", "Event", getActivity());
-                            }
-                        }
-
-                        @Override
-                        public void onError(Call call, IOException e) {
-                            FeedbackMessageBuilder.createServerConnectionError(e, "Ban Event", getActivity());
-                        }
-                    });
-                } catch (IOException e) {
-                    FeedbackMessageBuilder.createServerConnectionError(e, "Ban Event", getActivity());
-                }
+                banOrDeleteEvent(globalUserProfile, "banned");
             }
         });
+    }
+
+    private void banOrDeleteEvent(UserProfile globalUserProfile, String operation) {
+        String operationForErrorMsg;
+        if (operation.equals("deleted")) {
+            operationForErrorMsg = "Delete Event";
+        } else {
+            operationForErrorMsg = "Ban Event";
+        }
+
+        RequestManager requestManager = new RequestManager();
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            String path = new PathBuilder()
+                    .addEvent()
+                    .addNode(event.getEventId())
+                    .addNode("ban")
+                    .build();
+
+            requestManager.post(path, json.toString(), new RequestManager.OnRequestCompleteListener() {
+                @Override
+                public void onSuccess(Call call, Response response) {
+                    if (response.isSuccessful()) {
+                        new FeedbackMessageBuilder()
+                                .setTitle("Successfully " + operation)
+                                .setDescription("Successfully "+ operation +" event with title " + event.getTitle())
+                                .withActivity(getActivity())
+                                .buildAsyncNeutralMessage();
+
+                        Log.i("deleteEvent", globalUserProfile.getId() + operation + event.getTitle() + " at " + new Date());
+                        ban.setVisibility(View.INVISIBLE);
+                        shouldAllowMenuItem(R.id.eventDelete, false);
+                    } else {
+                        ResponseErrorHandler.createErrorMessage(response, operationForErrorMsg, "Event", getActivity());
+                    }
+                }
+
+                @Override
+                public void onError(Call call, IOException e) {
+                    FeedbackMessageBuilder.createServerConnectionError(e, operationForErrorMsg, getActivity());
+                }
+            });
+        } catch (IOException e) {
+            FeedbackMessageBuilder.createServerConnectionError(e, operationForErrorMsg, getActivity());
+        }
     }
 
     private void initEventMenu() {
@@ -316,6 +328,40 @@ public class ViewEventFragment extends Fragment {
                                 Intent editEvent = new Intent(getActivity(), ManageEventActivity.class);
                                 editEvent.putExtra("EVENT", event);
                                 startActivity(editEvent);
+                                return true;
+
+                            case R.id.eventDelete:
+                                UserProfile globalUserProfile = ((UserApplicationInfo) (getActivity().getApplication())).getProfile();
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                new AlertDialog.Builder(activity)
+                                                        .setTitle("Delete Event Confirmation")
+                                                        .setMessage("Are you sure you want to permanently delete this event?\nDeleting is not reversible.")
+                                                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                                banOrDeleteEvent(globalUserProfile, "deleted");
+                                                            }
+                                                        })
+                                                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        })
+                                                        .setCancelable(false)
+                                                        .create()
+                                                        .show();
+                                            }
+                                        });
+                                    }
+                                }, 0);
+
                                 return true;
 
                             default:
@@ -468,16 +514,19 @@ public class ViewEventFragment extends Fragment {
             shouldAllowMenuItem(R.id.eventLeave, false);
             shouldAllowMenuItem(R.id.eventEdit, true);
             shouldAllowMenuItem(R.id.eventReport, false);
+            shouldAllowMenuItem(R.id.eventDelete, true);
 
         } else if (isPartOfEvent(userId)){
             shouldAllowMenuItem(R.id.eventLeave, true);
             shouldAllowMenuItem(R.id.eventEdit, false);
             shouldAllowMenuItem(R.id.eventReport, true);
+            shouldAllowMenuItem(R.id.eventDelete, false);
 
         } else {
             shouldAllowMenuItem(R.id.eventLeave, false);
             shouldAllowMenuItem(R.id.eventEdit, false);
             shouldAllowMenuItem(R.id.eventReport, true);
+            shouldAllowMenuItem(R.id.eventDelete, false);
         }
     }
 

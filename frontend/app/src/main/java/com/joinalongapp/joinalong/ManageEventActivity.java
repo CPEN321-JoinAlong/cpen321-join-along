@@ -537,8 +537,16 @@ public class ManageEventActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 autoCompleteTextView.setText("");
 
+                String tagName = (String) parent.getItemAtPosition(position);
+
+                for (Tag tag : getTagsFromChipGroup()) {
+                    if (tag.getName().equals(tagName)) {
+                        return;
+                    }
+                }
+
                 Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, chipGroup, false);
-                chip.setText((String) parent.getItemAtPosition(position));
+                chip.setText(tagName);
                 chip.setOnCloseIconClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

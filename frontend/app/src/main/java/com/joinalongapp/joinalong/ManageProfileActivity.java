@@ -242,6 +242,12 @@ public class ManageProfileActivity extends AppCompatActivity {
     }
 
     public void initChipsForChipGroup(ChipGroup chipGroup, String chipText) {
+        for (Tag tags : getTagsFromChipGroup()) {
+            if (tags.getName().equals(chipText)) {
+                return;
+            }
+        }
+
         Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, chipGroup, false);
         chip.setText(chipText);
         chip.setOnCloseIconClickListener(new View.OnClickListener() {

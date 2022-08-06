@@ -389,7 +389,8 @@ public class SearchScreenActivity extends AppCompatActivity {
 
     private void onSearchButtonPressedUser(Activity activity, String token, String query){
         RequestManager requestManager = new RequestManager();
-
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("QuerySearchSubmitUser");
+        myTrace.start();
 
 
         try {
@@ -422,6 +423,7 @@ public class SearchScreenActivity extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             searchPeopleCustomAdapter.changeDataset(outputFriends);
+                                            myTrace.stop();
 
 
                                         }
@@ -451,7 +453,7 @@ public class SearchScreenActivity extends AppCompatActivity {
 
     private void onSearchButtonPressedEvent(Activity activity, String token, String query) {
         RequestManager requestManager = new RequestManager();
-        Trace myTrace = FirebasePerformance.getInstance().newTrace("QuerySearchSubmit");
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("QuerySearchSubmitEvent");
         myTrace.start();
 
         try {

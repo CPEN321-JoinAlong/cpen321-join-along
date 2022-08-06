@@ -269,13 +269,7 @@ app.put("/event/:id/edit", async (req, res) => {
             eventResponse.data = { ...(eventResponse.data.toJSON()), distance: distCalc(user.data.coordinates, eventResponse.data.coordinates) }
         }
         res.status(eventResponse.status).send(eventResponse.data);
-        // } else {
-        //     if (eventResponse.data) {
-        //         eventResponse.data = { ...(eventResponse.data.toJSON()), distance: -1 }
-        //     }
-        //     res.status(eventResponse.status).send(eventResponse.data);
-        // }
-    } catch (e) {
+   } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
     }
@@ -383,10 +377,6 @@ app.get("/user/:id/friends", async (req, res) => {
 app.get("/user/:id/chat", async (req, res) => {
     let id = req.params.id;
     try {
-        // let userResponse = await userStore.findUserByID(id);
-        // if (userResponse.status !== ERROR_CODES.SUCCESS)
-        //     res.status(userResponse.status).send([]);
-        // else {
         let chatListResponse = await chatEngine.findChatByUser(id);
         if (chatListResponse.status !== ERROR_CODES.SUCCESS)
             return res.status(chatListResponse.status).send([])
@@ -403,7 +393,6 @@ app.get("/user/:id/chat", async (req, res) => {
             }
         }
         res.status(chatListResponse.status).send(chatListResponse.data);
-        // }
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -443,36 +432,6 @@ app.get("/user/:id/chatInvites", async (req, res) => {
     }
 });
 
-//Chat: send message to a single user
-// app.put("/chat/sendChat/:userID/:chatID", async (req, res) => {
-//     let userID = req.params.userID;
-//     let chatID = req.params.chatID;
-//     let timeStamp = req.body.timeStamp;
-//     let text = req.body.text;
-
-//     try {
-//         let updatedChatResponse = await chatEngine.sendChatMessage(
-//             userID,
-//             chatID,
-//             text,
-//             timeStamp,
-//             userStore
-//         );
-
-//         // getMessaging().send({
-//         //     data: {
-//         //         name: fromUserName,
-//         //         text: text
-//         //     },
-//         //     topic: fromUserID + "_" + toUserID
-//         // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
-
-//         res.status(updatedChatResponse.status).send(updatedChatResponse.data);
-//     } catch (e) {
-//         console.log(e);
-//         res.status(ERROR_CODES.DBERROR).send(null);
-//     }
-// });
 
 //Chat: Sends the chat object (which includes all the messages) - get
 app.get("/chat/:id", async (req, res) => {
@@ -580,10 +539,7 @@ app.put("/user/sendFriendRequest/:userID/:otherUserID", async (req, res) => {
             userID,
             otherUserID
         );
-        // if (friendReqResponse === ERROR_CODES.SUCCESS)
         res.status(friendReqResponse.status).send(friendReqResponse.data);
-        // console.log(friendReqResponse);
-        // else res.status(friendReqResponse.status).send("Unsuccessful");
     } catch (e) {
         console.log(e);
         res.status(ERROR_CODES.DBERROR).send(null);
@@ -724,8 +680,6 @@ app.put("/user/leaveEvent/:userID/:eventID", async (req, res) => {
             eventID,
             eventStore
         );
-        // console.log("THIS IS EVENT RESPONSE");
-        // console.log(eventResponse);
         await userStore.leaveChat(userID, event.data.chat, chatEngine);
         if (eventResponse.status === ERROR_CODES.SUCCESS)
             res.status(eventResponse.status).send("Successful");
@@ -888,15 +842,6 @@ io.on("connection", (socket) => {
                 userStore
             );
 
-            // getMessaging().send({
-            //     data: {
-            //         name: fromUserName,
-            //         text: text
-            //     },
-            //     topic: fromUserID + "_" + toUserID
-            // }).then(((response) => console.log("Message sent: ", response))).catch((err) => console.log("Error: ", err))
-
-            // res.status(updatedChatResponse.status).send(updatedChatResponse.data);
             io.emit(
                 "message",
                 updatedChatResponse.data.messages[

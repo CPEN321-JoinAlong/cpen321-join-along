@@ -5,12 +5,15 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.pressKey;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+import static org.hamcrest.Matchers.not;
 
 import android.content.Intent;
 import android.view.KeyEvent;
@@ -82,6 +85,36 @@ public class JoinEventTest {
         onView(withId(R.id.viewEventConstraintLayout)).check(matches(isDisplayed()));
         onView(withId(R.id.viewEventTitle)).check(matches(withText("Full Event")));
         onView(withId(R.id.joinEventButton)).check(matches(withText("Event full!")));
+    }
+
+    @Test
+    public void testJoinEventIn() throws InterruptedException{
+        // Given
+        onView(withId(R.id.searchBar)).perform(click());
+        // When
+        onView(isAssignableFrom(EditText.class)).perform(replaceText("very paticular title"));
+        // Then
+        Thread.sleep(1000);
+
+        onView(withText("very paticular title")).inRoot(RootMatchers.isPlatformPopup()).perform(click());
+        onView(withId(R.id.viewEventTitle)).check(matches(withText("very paticular title")));
+        Thread.sleep(1000);
+        onView(withId(R.id.joinEventButton)).perform(click());
+        Thread.sleep(1000);
+        onView(withText("Event Successfully Joined!")).check(matches(isDisplayed()));
+        onView(withText("OK")).inRoot(isDialog()).check(matches(isDisplayed())).perform(click());
+        onView(withId(R.id.joinEventButton)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.viewEventBackButton)).perform(click());
+        onView(isAssignableFrom(EditText.class)).perform(replaceText(""));
+        onView(isAssignableFrom(EditText.class)).perform(typeText("very paticular title"));
+        Thread.sleep(1000);
+        // RESET FOR REPEATABILITY OF TEST
+        onView(withText("very paticular title")).inRoot(RootMatchers.isPlatformPopup()).perform(click());
+        onView(withId(R.id.joinEventButton)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.eventOptions)).perform(click());
+        onView(withText("Leave Event")).inRoot(RootMatchers.isPlatformPopup()).perform(click());
+        onView(withText("OK")).inRoot(isDialog()).check(matches(isDisplayed())).perform(click());
+
     }
 
 }

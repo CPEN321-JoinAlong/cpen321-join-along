@@ -18,9 +18,6 @@ public class ReportDetails implements Serializable, IDetailsModel {
     private String reportedId;
 
 
-    public ReportDetails() {
-    }
-
     public String getId() {
         return id;
     }

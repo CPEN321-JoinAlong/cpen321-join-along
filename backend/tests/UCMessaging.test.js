@@ -857,7 +857,7 @@ describe("User Case 5: Messaging", () => {
             expect(response.status).toBe(ERROR_CODES.INVALID);
             expect(response._body).toBe(undefined);
         })
-        test("Event with event ID not found", async () => {
+        test("Chat with chat ID not found", async () => {
             let response = await request(app)
                 .get("/chat/64d31ae677f7ad9a56ab89c6")
                 .set({

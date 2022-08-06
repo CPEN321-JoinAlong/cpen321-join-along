@@ -211,6 +211,7 @@ public class ViewEventFragment extends Fragment {
 
                         Log.i("deleteEvent", globalUserProfile.getId() + operation + event.getTitle() + " at " + new Date());
                         ban.setVisibility(View.INVISIBLE);
+                        shouldAllowMenuItem(R.id.eventDelete, false);
                     } else {
                         ResponseErrorHandler.createErrorMessage(response, operationForErrorMsg, "Event", getActivity());
                     }
@@ -513,16 +514,19 @@ public class ViewEventFragment extends Fragment {
             shouldAllowMenuItem(R.id.eventLeave, false);
             shouldAllowMenuItem(R.id.eventEdit, true);
             shouldAllowMenuItem(R.id.eventReport, false);
+            shouldAllowMenuItem(R.id.eventDelete, true);
 
         } else if (isPartOfEvent(userId)){
             shouldAllowMenuItem(R.id.eventLeave, true);
             shouldAllowMenuItem(R.id.eventEdit, false);
             shouldAllowMenuItem(R.id.eventReport, true);
+            shouldAllowMenuItem(R.id.eventDelete, false);
 
         } else {
             shouldAllowMenuItem(R.id.eventLeave, false);
             shouldAllowMenuItem(R.id.eventEdit, false);
             shouldAllowMenuItem(R.id.eventReport, true);
+            shouldAllowMenuItem(R.id.eventDelete, false);
         }
     }
 

@@ -1,1 +1,1 @@
-# cpen321-joinalong-project
+# cpen321-joinalongapp-project

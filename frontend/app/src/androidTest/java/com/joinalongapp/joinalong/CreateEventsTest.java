@@ -255,7 +255,7 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
         int year = today.get(Calendar.YEAR);
         int month = today.get(Calendar.MONTH) + 1;
         int day = today.get(Calendar.DAY_OF_MONTH);
-        int hour = today.get(Calendar.HOUR_OF_DAY); //FIXME
+        int hour = today.get(Calendar.HOUR_OF_DAY);
         int minute = today.get(Calendar.MINUTE);
 
         setBeginDate(year + 1, month, day);

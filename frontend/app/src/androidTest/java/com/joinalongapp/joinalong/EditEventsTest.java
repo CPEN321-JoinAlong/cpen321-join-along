@@ -276,7 +276,7 @@ public class EditEventsTest extends BaseManageEventActivityTest {
         //Given
         clearAllTextFields();
 
-        fillTitle();
+        setTitle("DO NOT DELETE");
         fillLocation();
         fillBeginEndDatesTimes();
         setIsPublic(true);
@@ -289,7 +289,7 @@ public class EditEventsTest extends BaseManageEventActivityTest {
 
         //Then
         onView(withText("Event Edited!")).check(matches(isDisplayed()));
-        onView(withText("The Test Event event has been successfully edited.")).check(matches(isDisplayed()));
+        onView(withText("The DO NOT DELETE event has been successfully edited.")).check(matches(isDisplayed()));
         onView(withText("OK")).perform(click());
     }
 
@@ -298,6 +298,8 @@ public class EditEventsTest extends BaseManageEventActivityTest {
         clearText(R.id.editTextEventManagementLocation);
         clearText(R.id.editTextEventManagementBeginningDate);
         clearText(R.id.editTextEventManagementEndDate);
+        clearText(R.id.editTextEventManagementBeginningTime);
+        clearText(R.id.editTextEventManagementEndTime);
 
         clearTagChipGroup();
 

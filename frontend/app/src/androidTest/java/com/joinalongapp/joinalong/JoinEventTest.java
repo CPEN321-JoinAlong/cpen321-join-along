@@ -4,8 +4,9 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.pressKey;
 import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -13,16 +14,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.content.Intent;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.EditText;
 
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-
-import com.joinalongapp.navbar.ViewEventFragment;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,16 +45,27 @@ public class JoinEventTest {
         // Given
         onView(withId(R.id.searchBar)).perform(click());
         // When
-        onView(isAssignableFrom(EditText.class)).perform(replaceText("Open "), pressKey(KeyEvent.KEYCODE_ENTER));
+        onView(isAssignableFrom(EditText.class)).perform(replaceText("very paticular title"));
         // Then
         Thread.sleep(1000);
 
-        onView(withId(R.id.searchPeopleRecyclerView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.viewEventConstraintLayout)).check(matches(isDisplayed()));
-        onView(withId(R.id.viewEventTitle)).check(matches(withText("Test")));
+        onView(withText("very paticular title")).inRoot(RootMatchers.isPlatformPopup()).perform(click());
+        onView(withId(R.id.viewEventTitle)).check(matches(withText("very paticular title")));
+        Thread.sleep(1000);
         onView(withId(R.id.joinEventButton)).perform(click());
-        Thread.sleep(3000);
+        Thread.sleep(1000);
         onView(withText("Event Successfully Joined!")).check(matches(isDisplayed()));
+        onView(withText("OK")).inRoot(isDialog()).check(matches(isDisplayed())).perform(click());
+        onView(withId(R.id.viewEventBackButton)).perform(click());
+        onView(isAssignableFrom(EditText.class)).perform(replaceText(""));
+        onView(isAssignableFrom(EditText.class)).perform(typeText("very paticular title"));
+        Thread.sleep(1000);
+        // RESET FOR REPEATABILITY OF TEST
+        onView(withText("very paticular title")).inRoot(RootMatchers.isPlatformPopup()).perform(click());
+
+        onView(withId(R.id.eventOptions)).perform(click());
+        onView(withText("Leave Event")).inRoot(RootMatchers.isPlatformPopup()).perform(click());
+        onView(withText("OK")).inRoot(isDialog()).check(matches(isDisplayed())).perform(click());
 
     }
 

@@ -13,7 +13,7 @@ import android.app.Activity;
 
 import okhttp3.Response;
 
-public class ResponseErrorHandler {
+public class ResponseErrorHandlerUtils {
 
     public static void createErrorMessage(Response response, String operation, String object, Activity activity){
         switch(response.code()) {

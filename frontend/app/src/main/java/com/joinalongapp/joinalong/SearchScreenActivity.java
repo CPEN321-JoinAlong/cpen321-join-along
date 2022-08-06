@@ -85,7 +85,6 @@ public class SearchScreenActivity extends AppCompatActivity {
             testingId = getIntent().getStringExtra("testingId");
         }
 
-
         Activity activity = this;
         initElements();
 
@@ -109,6 +108,67 @@ public class SearchScreenActivity extends AppCompatActivity {
 
         fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(token, activity, getSearchMode());
 
+        initSearchSuggestions(activity);
+
+        returnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        //myTrace.stop();
+    }
+
+    private void initSearchSuggestions(Activity activity) {
+        initSuggestionsForSearchView();
+        initQueryTextChangeForSuggestions(activity);
+    }
+
+    private void initQueryTextChangeForSuggestions(Activity activity) {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                if (getSearchMode() == SearchMode.USER_MODE) {
+                    onSearchButtonPressedUser(activity, token, query);
+                } else {
+                    onSearchButtonPressedEvent(activity, token, query);
+                }
+                return false;
+
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.length() >= SEARCH_QUERY_THRESHOLD) {
+
+                    if (getSearchMode() == SearchMode.USER_MODE) {
+                        searchPeopleCustomAdapter.changeDataset(new ArrayList<>());
+                    } else {
+                        searchEventCustomAdapter.changeDataset(new ArrayList<>());
+                    }
+
+                    if (fetchSearchTermSuggestionsTask.getStatus() != AsyncTask.Status.RUNNING) {
+                        if (fetchSearchTermSuggestionsTask.getStatus() == AsyncTask.Status.FINISHED) {
+                            fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(token, activity, getSearchMode());
+                            System.out.println("SUGGESTION reset");
+                        }
+                        fetchSearchTermSuggestionsTask.execute(newText);
+                        System.out.println("SUGGESTION search");
+                    }
+                    System.out.println("SUGGESTION changed");
+
+                } else {
+                    searchView.getSuggestionsAdapter().changeCursor(null);
+                }
+
+                return true;
+            }
+        });
+    }
+
+    private void initSuggestionsForSearchView() {
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
             public boolean onSuggestionSelect(int position) {
@@ -150,59 +210,6 @@ public class SearchScreenActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-
-                if (getSearchMode() == SearchMode.USER_MODE) {
-                    onSearchButtonPressedUser(activity, token, query);
-                } else {
-                    onSearchButtonPressedEvent(activity, token, query);
-                }
-                return false;
-
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (newText.length() >= SEARCH_QUERY_THRESHOLD) {
-
-                    if (getSearchMode() == SearchMode.USER_MODE) {
-                        searchPeopleCustomAdapter.changeDataset(new ArrayList<>());
-                    } else {
-                        searchEventCustomAdapter.changeDataset(new ArrayList<>());
-                    }
-
-                    if (fetchSearchTermSuggestionsTask.getStatus() != AsyncTask.Status.RUNNING) {
-                        if (fetchSearchTermSuggestionsTask.getStatus() == AsyncTask.Status.FINISHED) {
-                            fetchSearchTermSuggestionsTask = new FetchSearchTermSuggestionsTask(token, activity, getSearchMode());
-                            System.out.println("SUGGESTION reset");
-                        }
-                        fetchSearchTermSuggestionsTask.execute(newText);
-                        System.out.println("SUGGESTION search");
-                    }
-                    System.out.println("SUGGESTION changed");
-
-                } else {
-                    searchView.getSuggestionsAdapter().changeCursor(null);
-                }
-
-                return true;
-            }
-        });
-
-        returnButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        //myTrace.stop();
-
-
-
     }
 
 

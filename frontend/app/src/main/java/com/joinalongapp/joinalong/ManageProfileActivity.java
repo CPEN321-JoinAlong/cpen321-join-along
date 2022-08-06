@@ -31,7 +31,7 @@ import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.viewmodel.Tag;
 import com.joinalongapp.viewmodel.UserProfile;
 import com.squareup.picasso.Picasso;
@@ -145,19 +145,19 @@ public class ManageProfileActivity extends AppCompatActivity {
                                 .withActivity(ManageProfileActivity.this)
                                 .buildAsyncNeutralMessageAndStartActivity(i);
                     } else {
-                        ResponseErrorHandler.createErrorMessage(response, EDIT_TAG, "user", ManageProfileActivity.this);
+                        ResponseErrorHandlerUtils.createErrorMessage(response, EDIT_TAG, "user", ManageProfileActivity.this);
                     }
                 }
 
                 @Override
                 public void onError(Call call, IOException e) {
-                    FeedbackMessageBuilder.createServerConnectionError(e, EDIT_TAG, ManageProfileActivity.this);
+                    createServerConnectionError(e, EDIT_TAG, ManageProfileActivity.this);
                 }
             });
         } catch (JSONException e){
-            FeedbackMessageBuilder.createParseError(e, EDIT_TAG, ManageProfileActivity.this);
+            createParseError(e, EDIT_TAG, ManageProfileActivity.this);
         } catch (IOException e) {
-            FeedbackMessageBuilder.createServerConnectionError(e, EDIT_TAG, ManageProfileActivity.this);
+            createServerConnectionError(e, EDIT_TAG, ManageProfileActivity.this);
         }
     }
 
@@ -186,7 +186,7 @@ public class ManageProfileActivity extends AppCompatActivity {
                             createParseError(e, CREATE_TAG, ManageProfileActivity.this);
                         }
                     } else {
-                        ResponseErrorHandler.createErrorMessage(response, CREATE_TAG, "user", ManageProfileActivity.this);
+                        ResponseErrorHandlerUtils.createErrorMessage(response, CREATE_TAG, "user", ManageProfileActivity.this);
                     }
                 }
 

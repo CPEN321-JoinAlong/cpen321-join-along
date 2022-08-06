@@ -17,7 +17,7 @@ import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.ReportDetails;
 import com.joinalongapp.viewmodel.UserProfile;
@@ -127,7 +127,7 @@ public class CreateReportActivity extends AppCompatActivity {
                             if (response.isSuccessful()) {
                                 FeedbackMessageBuilder.createDefaultNeutralSuccessOnHttp200("Created Report", CreateReportActivity.this);
                             } else {
-                                ResponseErrorHandler.createErrorMessage(response, operation, "Report", CreateReportActivity.this);
+                                ResponseErrorHandlerUtils.createErrorMessage(response, operation, "Report", CreateReportActivity.this);
                             }
                         }
 

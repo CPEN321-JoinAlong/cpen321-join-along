@@ -15,7 +15,7 @@ import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.ReportsAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.viewmodel.ReportDetails;
 
 import org.json.JSONArray;
@@ -107,7 +107,7 @@ public class ViewReportActivity extends AppCompatActivity {
                         FeedbackMessageBuilder.createParseError(e, operation, activity);
                     }
                 } else {
-                    ResponseErrorHandler.createErrorMessage(response, operation, "report", activity);
+                    ResponseErrorHandlerUtils.createErrorMessage(response, operation, "report", activity);
                 }
             }
 

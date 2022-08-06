@@ -20,7 +20,7 @@ import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.joinalong.CreateReportActivity;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
@@ -155,7 +155,7 @@ public class ViewProfileFragment extends Fragment {
                                 }, 0);
 
                             } else {
-                                ResponseErrorHandler.createErrorMessage(response, operation, "User", getActivity());
+                                ResponseErrorHandlerUtils.createErrorMessage(response, operation, "User", getActivity());
                             }
                         }
 
@@ -208,7 +208,7 @@ public class ViewProfileFragment extends Fragment {
                                 Log.i("banEvent", globalUserProfile.getId() + " banned " + userProfile.getFullName() + " at " + new Date());
                                 ban.setVisibility(View.INVISIBLE);
                             } else {
-                                ResponseErrorHandler.createErrorMessage(response, operation, "Event", getActivity());
+                                ResponseErrorHandlerUtils.createErrorMessage(response, operation, "Event", getActivity());
                             }
                         }
 

@@ -51,11 +51,11 @@ public class LoginActivity extends AppCompatActivity {
         boolean darkMode = sharedPreferences.getBoolean(getString(R.string.dark_mode_prefs), false);
 
 
-        if(darkMode){
+        if (darkMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }
-        else{
-            //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

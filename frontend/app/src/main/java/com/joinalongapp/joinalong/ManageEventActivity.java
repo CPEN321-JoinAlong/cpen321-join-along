@@ -33,7 +33,7 @@ import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.viewmodel.Event;
 import com.joinalongapp.viewmodel.Tag;
 
@@ -72,7 +72,6 @@ public class ManageEventActivity extends AppCompatActivity {
     private ImageButton cancelButton;
     private ChipGroup chipGroupTags;
     private AutoCompleteTextView autoCompleteChipTags;
-    private String TAG = "ManageEventActivity";
     private int numPeopleInEventOnEdit = 0;
 
     @Override
@@ -85,8 +84,6 @@ public class ManageEventActivity extends AppCompatActivity {
         initElements();
 
         String[] numOfPeople = getResources().getStringArray(R.array.number_of_people_array);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, numOfPeople);
-
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +94,27 @@ public class ManageEventActivity extends AppCompatActivity {
             }
         });
 
+        setupDateElements();
+
+        String[] sampleTags = getResources().getStringArray(R.array.sample_tags);
+        initAutoCompleteChipGroup(autoCompleteChipTags, chipGroupTags, sampleTags);
+
+        Bundle info = getIntent().getExtras();
+
+        PathBuilder pathBuilder = new PathBuilder();
+        pathBuilder.addEvent();
+
+        if (info != null && info.getSerializable("EVENT") != null) {
+            setupPageForEdit(info, pathBuilder);
+        } else {
+            pathBuilder.addCreate();
+        }
+
+        initSubmitButton(info, pathBuilder);
+        myTrace.stop();
+    }
+
+    private void setupDateElements() {
         beginningDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,61 +142,53 @@ public class ManageEventActivity extends AppCompatActivity {
                 timeOperation(endTime);
             }
         });
+    }
 
-        String[] sampleTags = getResources().getStringArray(R.array.sample_tags);
-        initAutoCompleteChipGroup(autoCompleteChipTags, chipGroupTags, sampleTags);
+    private void setupPageForEdit(Bundle info, PathBuilder pathBuilder) {
+        // Must append pre-existing text due to editing of Event.
+        Event userEvent = (Event) info.getSerializable("EVENT");
+        manageEventTitle.setText("Edit Event");
+        submitButton.setText("Edit");
 
-        Bundle info = getIntent().getExtras();
+        pathBuilder.addNode(userEvent.getEventId());
+        pathBuilder.addEdit();
 
-        PathBuilder pathBuilder = new PathBuilder();
-        pathBuilder.addEvent();
+        title.setText(userEvent.getTitle());
+        location.setText(userEvent.getLocation());
 
-        if (info != null && info.getSerializable("EVENT") != null) {
-            // Must append pre-existing text due to editing of Event.
-            Event userEvent = (Event) info.getSerializable("EVENT");
-            manageEventTitle.setText("Edit Event");
-            submitButton.setText("Edit");
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+        SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
+        beginningDate.setText(sdfDate.format(userEvent.getBeginningDate()));
+        beginningTime.setText(sdfTime.format(userEvent.getBeginningDate()));
+        endDate.setText(sdfDate.format(userEvent.getEndDate()));
+        endTime.setText(sdfTime.format(userEvent.getEndDate()));
 
-            pathBuilder.addNode(userEvent.getEventId());
-            pathBuilder.addEdit();
-
-            title.setText(userEvent.getTitle());
-            location.setText(userEvent.getLocation());
-
-            SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
-            SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
-            beginningDate.setText(sdfDate.format(userEvent.getBeginningDate()));
-            beginningTime.setText(sdfTime.format(userEvent.getBeginningDate()));
-            endDate.setText(sdfDate.format(userEvent.getEndDate()));
-            endTime.setText(sdfTime.format(userEvent.getEndDate()));
-
-            boolean publicVisibility = userEvent.getPublicVisibility();
-            if(publicVisibility){
-                eventVisibilityTab.selectTab(eventVisibilityTab.getTabAt(PUBLIC_VISIBILITY_INDEX));
-            }
-            else {
-                eventVisibilityTab.selectTab(eventVisibilityTab.getTabAt(PRIVATE_VISIBILITY_INDEX));
-            }
-
-            int numPeopleAllowed = userEvent.getNumberOfPeopleAllowed();
-            if (numPeopleAllowed == Integer.MAX_VALUE) {
-                numberOfPeople.setText("");
-            } else {
-                numberOfPeople.setText(String.valueOf(numPeopleAllowed));
-            }
-
-            numPeopleInEventOnEdit = userEvent.getCurrentNumPeopleRegistered();
-
-            List<String> existingInterests = userEvent.getStringListOfTags();
-            for (String interest : existingInterests) {
-                initChipsForChipGroup(chipGroupTags, interest);
-            }
-
-            description.setText(userEvent.getDescription());
-        } else {
-            pathBuilder.addCreate();
+        boolean publicVisibility = userEvent.getPublicVisibility();
+        if(publicVisibility){
+            eventVisibilityTab.selectTab(eventVisibilityTab.getTabAt(PUBLIC_VISIBILITY_INDEX));
+        }
+        else {
+            eventVisibilityTab.selectTab(eventVisibilityTab.getTabAt(PRIVATE_VISIBILITY_INDEX));
         }
 
+        int numPeopleAllowed = userEvent.getNumberOfPeopleAllowed();
+        if (numPeopleAllowed == Integer.MAX_VALUE) {
+            numberOfPeople.setText("");
+        } else {
+            numberOfPeople.setText(String.valueOf(numPeopleAllowed));
+        }
+
+        numPeopleInEventOnEdit = userEvent.getCurrentNumPeopleRegistered();
+
+        List<String> existingInterests = userEvent.getStringListOfTags();
+        for (String interest : existingInterests) {
+            initChipsForChipGroup(chipGroupTags, interest);
+        }
+
+        description.setText(userEvent.getDescription());
+    }
+
+    private void initSubmitButton(Bundle info, PathBuilder pathBuilder) {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -261,7 +271,7 @@ public class ManageEventActivity extends AppCompatActivity {
                                                 .withActivity(ManageEventActivity.this)
                                                 .buildAsyncNeutralMessageAndStartActivity(i);
                                     } else {
-                                        ResponseErrorHandler.createErrorMessage(response, "Edit Event", "event", ManageEventActivity.this);
+                                        ResponseErrorHandlerUtils.createErrorMessage(response, "Edit Event", "event", ManageEventActivity.this);
                                     }
 
                                 }
@@ -301,7 +311,7 @@ public class ManageEventActivity extends AppCompatActivity {
                                         }, 0);
 
                                     } else {
-                                        ResponseErrorHandler.createErrorMessage(response, "Create Event", "event", ManageEventActivity.this);
+                                        ResponseErrorHandlerUtils.createErrorMessage(response, "Create Event", "event", ManageEventActivity.this);
                                     }
                                 }
 
@@ -319,7 +329,6 @@ public class ManageEventActivity extends AppCompatActivity {
                 }
             }
         });
-        myTrace.stop();
     }
 
     public void initChipsForChipGroup(ChipGroup chipGroup, String chipText) {
@@ -407,6 +416,48 @@ public class ManageEventActivity extends AppCompatActivity {
             title.setError("Title contains invalid character(s).");
             flag = false;
         }
+
+        flag = checkValidLocation(flag);
+        flag = checkValidDates(flag);
+        flag = checkValidNumberOfPeople(flag);
+
+        if(chipGroupTags.getChildCount() == 0){
+            flag = false;
+            autoCompleteChipTags.setError("No interest tags selected.");
+        }
+        if(editTextEmpty(description)){
+            flag = false;
+            description.setError("Empty Description field");
+        }
+
+        return flag;
+    }
+
+    private Boolean checkValidNumberOfPeople(Boolean flag) {
+        if (!editTextEmpty(numberOfPeople)) {
+            BigInteger bigInteger = new BigInteger(numberOfPeople.getText().toString());
+            if (bigInteger.compareTo(new BigInteger(String.valueOf(Integer.MAX_VALUE))) == 1) {
+                flag = false;
+                numberOfPeople.setText(String.valueOf(Integer.MAX_VALUE));
+                numberOfPeople.setError("Maximum number of people is " + Integer.MAX_VALUE);
+            }
+        }
+
+        if (!editTextEmpty(numberOfPeople)) {
+            String numPeopleString = numberOfPeople.getText().toString();
+            int numPeopleInt = Integer.parseInt(numPeopleString);
+            if (numPeopleInt < 1) {
+                flag = false;
+                numberOfPeople.setError("Number of people must be at least 1.");
+            } else if (numPeopleInt < numPeopleInEventOnEdit) {
+                flag = false;
+                numberOfPeople.setError("Number of people registered in event (" + numPeopleInEventOnEdit + ") exceeds new value.");
+            }
+        }
+        return flag;
+    }
+
+    private Boolean checkValidLocation(Boolean flag) {
         if(editTextEmpty(location)){
             flag = false;
             location.setError("Empty Location field");
@@ -417,6 +468,10 @@ public class ManageEventActivity extends AppCompatActivity {
                 location.setError("Invalid Address");
             }
         }
+        return flag;
+    }
+
+    private Boolean checkValidDates(Boolean flag) {
         if(editTextEmpty(beginningDate)){
             flag = false;
             //Due to limitations with EditText, these error messages have to be toast.
@@ -441,37 +496,6 @@ public class ManageEventActivity extends AppCompatActivity {
             Toast.makeText(this, "Empty End Time field", Toast.LENGTH_SHORT).show();
             endTime.setError("Empty End Time field");
         }
-
-        if (!editTextEmpty(numberOfPeople)) {
-            BigInteger bigInteger = new BigInteger(numberOfPeople.getText().toString());
-            if (bigInteger.compareTo(new BigInteger(String.valueOf(Integer.MAX_VALUE))) == 1) {
-                flag = false;
-                numberOfPeople.setText(String.valueOf(Integer.MAX_VALUE));
-                numberOfPeople.setError("Maximum number of people is " + Integer.MAX_VALUE);
-            }
-        }
-
-        if (!editTextEmpty(numberOfPeople)) {
-            String numPeopleString = numberOfPeople.getText().toString();
-            int numPeopleInt = Integer.parseInt(numPeopleString);
-            if (numPeopleInt < 1) {
-                flag = false;
-                numberOfPeople.setError("Number of people must be at least 1.");
-            } else if (numPeopleInt < numPeopleInEventOnEdit) {
-                flag = false;
-                numberOfPeople.setError("Number of people registered in event (" + numPeopleInEventOnEdit + ") exceeds new value.");
-            }
-
-        }
-        if(chipGroupTags.getChildCount() == 0){
-            flag = false;
-            autoCompleteChipTags.setError("No interest tags selected.");
-        }
-        if(editTextEmpty(description)){
-            flag = false;
-            description.setError("Empty Description field");
-        }
-
         return flag;
     }
 

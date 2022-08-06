@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.navbar.ViewProfileFragment;
@@ -134,7 +134,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                                     }
                                 }, 0);
                             } else {
-                                ResponseErrorHandler.createErrorMessage(response, operation, "user", activity);
+                                ResponseErrorHandlerUtils.createErrorMessage(response, operation, "user", activity);
                             }
                         }
 
@@ -190,7 +190,7 @@ public class FriendsRequestCustomAdapter extends RecyclerView.Adapter<FriendsReq
                                     }
                                 }, 0);
                             } else {
-                                ResponseErrorHandler.createErrorMessage(response, operation, "user", activity);
+                                ResponseErrorHandlerUtils.createErrorMessage(response, operation, "user", activity);
                             }
                         }
 

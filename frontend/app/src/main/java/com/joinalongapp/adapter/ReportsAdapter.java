@@ -1,6 +1,5 @@
 package com.joinalongapp.adapter;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.navbar.ViewReportFragment;
 import com.joinalongapp.viewmodel.ReportDetails;
-
 
 import org.json.JSONException;
 
@@ -88,7 +86,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
                         switch(item.getItemId()){
                             case R.id.menu1:
                                 try{
-                                    deleteReport(datasetOfReports.get(holder.getBindingAdapterPosition()).getId(), v.getContext());
+                                    deleteReport(datasetOfReports.get(holder.getBindingAdapterPosition()).getId());
                                 } catch (JSONException | IOException e) {
                                     e.printStackTrace();
                                 }
@@ -131,7 +129,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
         }
     }
 
-    private void deleteReport(String uuid, Context context) throws JSONException, IOException {
+    private void deleteReport(String uuid) throws JSONException, IOException {
         for (Iterator<ReportDetails> iterator = datasetOfReports.iterator(); iterator.hasNext(); ) {
             ReportDetails value = iterator.next();
             if (value.getId() == uuid) {

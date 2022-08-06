@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.joinalong.ViewChatActivity;
@@ -162,7 +162,7 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
                                     }
                                 }, 0);
                             } else {
-                                ResponseErrorHandler.createErrorMessage(response, operation, "chat", activity);
+                                ResponseErrorHandlerUtils.createErrorMessage(response, operation, "chat", activity);
                             }
 
                         }
@@ -207,7 +207,7 @@ public class MessagingRequestCustomAdapter extends RecyclerView.Adapter<Messagin
                             if (response.isSuccessful()) {
                                 deleteRequest(chatDetailsList.get(holder.getBindingAdapterPosition()).getId());
                             } else {
-                                ResponseErrorHandler.createErrorMessage(response, operation, "chat", activity);
+                                ResponseErrorHandlerUtils.createErrorMessage(response, operation, "chat", activity);
                             }
                         }
 

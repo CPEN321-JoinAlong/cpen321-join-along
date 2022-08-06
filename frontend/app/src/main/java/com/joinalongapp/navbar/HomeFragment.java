@@ -27,7 +27,7 @@ import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.adapter.EventViewAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.SearchScreenActivity;
 import com.joinalongapp.joinalong.UserApplicationInfo;
@@ -52,15 +52,12 @@ import okhttp3.Response;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
-    private static final String TAG = "HomeFragment";
-
     private TabLayout eventViewTabs;
     private ViewPager2 eventViewPager;
 
     private Spinner eventFilterSpinner;
     private List<String> eventFilterList = new ArrayList<>();
     private static EventViewAdapter viewStateAdapter;
-    private SharedPreferences sharedPreferences;
     private SharedPreferences prefForLastFilter;
     private SharedPreferences.Editor editor;
     private SharedPreferences.Editor editorForLastFilter;
@@ -88,7 +85,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getActivity().getSharedPreferences(getString(R.string.dark_mode_prefs), Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.dark_mode_prefs), Context.MODE_PRIVATE);
         prefForLastFilter = getActivity().getSharedPreferences(getString(R.string.selected_filter_on_home), Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editorForLastFilter = prefForLastFilter.edit();
@@ -252,7 +249,7 @@ public class HomeFragment extends Fragment {
                         List<Event> eventList = new ArrayList<>();
                         updateEventLists(eventList, fragmentActivity, curr);
                     } else {
-                        ResponseErrorHandler.createErrorMessage(response, operation, "Event", fragmentActivity);
+                        ResponseErrorHandlerUtils.createErrorMessage(response, operation, "Event", fragmentActivity);
                         //TODO: add no events found message
                     }
 

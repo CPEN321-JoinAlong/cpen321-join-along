@@ -28,7 +28,7 @@ import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.joinalong.CreateReportActivity;
 import com.joinalongapp.joinalong.ManageEventActivity;
 import com.joinalongapp.joinalong.R;
@@ -213,7 +213,7 @@ public class ViewEventFragment extends Fragment {
                         ban.setVisibility(View.INVISIBLE);
                         shouldAllowMenuItem(R.id.eventDelete, false);
                     } else {
-                        ResponseErrorHandler.createErrorMessage(response, operationForErrorMsg, "Event", getActivity());
+                        ResponseErrorHandlerUtils.createErrorMessage(response, operationForErrorMsg, "Event", getActivity());
                     }
                 }
 
@@ -291,7 +291,7 @@ public class ViewEventFragment extends Fragment {
                                                                 chip.setText(userName);
                                                                 members.removeView(chip);
 
-                                                                modifyViewOnLeaveEvent(userApplicationInfo, activity);
+                                                                modifyViewOnLeaveEvent(userApplicationInfo);
                                                             }
                                                         });
 
@@ -300,7 +300,7 @@ public class ViewEventFragment extends Fragment {
                                                     }
                                                 }, 0);
                                             } else {
-                                                ResponseErrorHandler.createErrorMessage(response, operation, "Event", getActivity());
+                                                ResponseErrorHandlerUtils.createErrorMessage(response, operation, "Event", getActivity());
                                             }
                                         }
 
@@ -375,7 +375,7 @@ public class ViewEventFragment extends Fragment {
         });
     }
 
-    private void modifyViewOnLeaveEvent(UserApplicationInfo userApplicationInfo, FragmentActivity activity) {
+    private void modifyViewOnLeaveEvent(UserApplicationInfo userApplicationInfo) {
         joinButton.setVisibility(View.VISIBLE);
         lyftButton.setVisibility(View.GONE);
         members.removeView(userChip);
@@ -421,7 +421,7 @@ public class ViewEventFragment extends Fragment {
                                             @Override
                                             public void run() {
                                                 createJoinEventSuccessMessage(activity);
-                                                modifyViewOnJoinEvent(userApplicationInfo, activity);
+                                                modifyViewOnJoinEvent(userApplicationInfo);
                                             }
                                         });
                                     }
@@ -433,7 +433,7 @@ public class ViewEventFragment extends Fragment {
                                         .withActivity(activity)
                                         .buildAsyncNeutralMessage();
                             } else {
-                                ResponseErrorHandler.createErrorMessage(response, operation, "Event", activity);
+                                ResponseErrorHandlerUtils.createErrorMessage(response, operation, "Event", activity);
                             }
                         }
 
@@ -452,7 +452,7 @@ public class ViewEventFragment extends Fragment {
         });
     }
 
-    private void modifyViewOnJoinEvent(UserApplicationInfo userApplicationInfo, FragmentActivity activity) {
+    private void modifyViewOnJoinEvent(UserApplicationInfo userApplicationInfo) {
         joinButton.setVisibility(View.GONE);
         lyftButton.setVisibility(View.VISIBLE);
         String userName = userApplicationInfo.getProfile().getFullName();

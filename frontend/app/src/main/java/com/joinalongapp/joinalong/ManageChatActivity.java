@@ -1,5 +1,6 @@
 package com.joinalongapp.joinalong;
 
+import static com.joinalongapp.FeedbackMessageBuilder.*;
 import static com.joinalongapp.FeedbackMessageBuilder.createServerConnectionError;
 
 import android.app.Activity;
@@ -25,7 +26,7 @@ import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.NameIdPair;
 import com.joinalongapp.viewmodel.Tag;
@@ -48,8 +49,6 @@ import okhttp3.Response;
 
 
 public class ManageChatActivity extends AppCompatActivity {
-
-    private static final String CREATE_TAG = "create chat";
     private TextView title;
     private EditText chatTitle;
     private AutoCompleteTextView tagAutoComplete;
@@ -105,6 +104,22 @@ public class ManageChatActivity extends AppCompatActivity {
         Activity activity = this;
 
 
+        initFriends(token, requestManager, activity);
+
+        initAutoCompleteChipGroup(tagAutoComplete, tagChipGroup, tags);
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        initSubmitButton(token, manageOption);
+        myTrace.stop();
+    }
+
+    private void initFriends(String token, RequestManager requestManager, Activity activity) {
         try {
             String path = new PathBuilder()
                     .addUser()
@@ -145,10 +160,10 @@ public class ManageChatActivity extends AppCompatActivity {
                             }, 0);
 
                         } catch(JSONException | IOException e){
-                            FeedbackMessageBuilder.createParseError(e, operation, activity);
+                            createParseError(e, operation, activity);
                         }
                     } else {
-                        ResponseErrorHandler.createErrorMessage(response, operation, "user", activity);
+                        ResponseErrorHandlerUtils.createErrorMessage(response, operation, "user", activity);
                     }
                 }
 
@@ -160,16 +175,9 @@ public class ManageChatActivity extends AppCompatActivity {
         } catch (IOException e) {
             createServerConnectionError(e, "Get Friends", activity);
         }
+    }
 
-        initAutoCompleteChipGroup(tagAutoComplete, tagChipGroup, tags);
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
+    private void initSubmitButton(String token, Boolean manageOption) {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -238,20 +246,20 @@ public class ManageChatActivity extends AppCompatActivity {
 
                                         case HttpStatusConstants.STATUS_HTTP_500:
                                         default:
-                                            FeedbackMessageBuilder.createServerInternalError(operation, ManageChatActivity.this);
+                                            createServerInternalError(operation, ManageChatActivity.this);
                                             break;
                                     }
                                 }
 
                                 @Override
                                 public void onError(Call call, IOException e) {
-                                    FeedbackMessageBuilder.createServerConnectionError(e, operation, ManageChatActivity.this);
+                                    createServerConnectionError(e, operation, ManageChatActivity.this);
                                 }
                             });
                         } catch(IOException e) {
-                            FeedbackMessageBuilder.createServerConnectionError(e, operation, ManageChatActivity.this);
+                            createServerConnectionError(e, operation, ManageChatActivity.this);
                         } catch (JSONException e){
-                            FeedbackMessageBuilder.createParseError(e, operation, ManageChatActivity.this);
+                            createParseError(e, operation, ManageChatActivity.this);
                         }
                     } else {
                         friendIdsAdded.add(user.getId());
@@ -302,20 +310,20 @@ public class ManageChatActivity extends AppCompatActivity {
 
                                         case HttpStatusConstants.STATUS_HTTP_500:
                                         default:
-                                            FeedbackMessageBuilder.createServerInternalError(operation, ManageChatActivity.this);
+                                            createServerInternalError(operation, ManageChatActivity.this);
                                             break;
                                     }
                                 }
 
                                 @Override
                                 public void onError(Call call, IOException e) {
-                                    FeedbackMessageBuilder.createServerConnectionError(e, operation, ManageChatActivity.this);
+                                    createServerConnectionError(e, operation, ManageChatActivity.this);
                                 }
                             });
                         } catch(IOException e) {
-                            FeedbackMessageBuilder.createServerConnectionError(e, operation, ManageChatActivity.this);
+                            createServerConnectionError(e, operation, ManageChatActivity.this);
                         } catch (JSONException e){
-                            FeedbackMessageBuilder.createParseError(e, operation, ManageChatActivity.this);
+                            createParseError(e, operation, ManageChatActivity.this);
                         }
                     }
 
@@ -323,7 +331,6 @@ public class ManageChatActivity extends AppCompatActivity {
                 }
             }
         });
-        myTrace.stop();
     }
 
 
@@ -402,10 +409,10 @@ public class ManageChatActivity extends AppCompatActivity {
                                     people.add(userJson.getString("name"));
 
                                 } catch (IOException | JSONException e) {
-                                    FeedbackMessageBuilder.createParseError(e, operation, ManageChatActivity.this);
+                                    createParseError(e, operation, ManageChatActivity.this);
                                 }
                             } else {
-                                ResponseErrorHandler.createErrorMessage(response, operation, "user", ManageChatActivity.this);
+                                ResponseErrorHandlerUtils.createErrorMessage(response, operation, "user", ManageChatActivity.this);
                             }
                         }
 

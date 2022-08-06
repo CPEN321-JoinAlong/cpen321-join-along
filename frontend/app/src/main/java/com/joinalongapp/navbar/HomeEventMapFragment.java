@@ -38,7 +38,6 @@ import java.util.Random;
  * create an instance of this fragment.
  */
 public class HomeEventMapFragment extends Fragment {
-    private static final String TAG = "HomeEventMapFragment";
     private MapView mapView;
     private GoogleMap map;
     private List<Event> eventList = new ArrayList<>();

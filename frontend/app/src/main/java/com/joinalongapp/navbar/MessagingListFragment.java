@@ -19,7 +19,7 @@ import com.joinalongapp.HttpStatusConstants;
 import com.joinalongapp.adapter.MessagingListCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.viewmodel.ChatDetails;
@@ -174,7 +174,7 @@ public class MessagingListFragment extends Fragment {
                 } else if (response.code() == HttpStatusConstants.STATUS_HTTP_404){
                     noResults.setVisibility(View.VISIBLE);
                 } else {
-                    ResponseErrorHandler.createErrorMessage(response, operation, "Chat", getActivity());
+                    ResponseErrorHandlerUtils.createErrorMessage(response, operation, "Chat", getActivity());
                 }
             }
 

@@ -18,7 +18,7 @@ import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.adapter.MessageListCustomAdapter;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.Message;
 import com.joinalongapp.viewmodel.UserProfile;
@@ -244,7 +244,7 @@ public class MessageActivity extends AppCompatActivity {
                         FeedbackMessageBuilder.createParseError(e, "Load Messages", MessageActivity.this);
                     }
                 } else {
-                    ResponseErrorHandler.createErrorMessage(response, "Load Messages", "Message", MessageActivity.this);
+                    ResponseErrorHandlerUtils.createErrorMessage(response, "Load Messages", "Message", MessageActivity.this);
                 }
 
             }

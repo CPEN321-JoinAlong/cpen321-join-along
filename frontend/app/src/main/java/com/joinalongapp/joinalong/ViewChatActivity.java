@@ -20,7 +20,7 @@ import com.google.firebase.perf.metrics.Trace;
 import com.joinalongapp.FeedbackMessageBuilder;
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.viewmodel.ChatDetails;
 import com.joinalongapp.viewmodel.UserProfile;
 
@@ -229,7 +229,7 @@ public class ViewChatActivity extends AppCompatActivity {
                                                     }
                                                 }, 0);
                                             } else {
-                                                ResponseErrorHandler.createErrorMessage(response, operation, "Event", activity);
+                                                ResponseErrorHandlerUtils.createErrorMessage(response, operation, "Event", activity);
                                             }
                                         }
 

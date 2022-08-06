@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.joinalongapp.controller.PathBuilder;
 import com.joinalongapp.controller.RequestManager;
-import com.joinalongapp.controller.ResponseErrorHandler;
+import com.joinalongapp.controller.ResponseErrorHandlerUtils;
 import com.joinalongapp.joinalong.R;
 import com.joinalongapp.joinalong.UserApplicationInfo;
 import com.joinalongapp.navbar.ViewProfileFragment;
@@ -172,7 +172,7 @@ public class FriendsListCustomAdapter extends RecyclerView.Adapter<FriendsListCu
                 if (response.isSuccessful()) {
                     removeFriendFromViewList(uuid, (Activity) context);
                 } else {
-                    ResponseErrorHandler.createErrorMessage(response, operation, "user", (Activity) context);
+                    ResponseErrorHandlerUtils.createErrorMessage(response, operation, "user", (Activity) context);
                 }
             }
 

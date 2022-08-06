@@ -224,6 +224,8 @@
     <string name="chat_leave_title">Leave Chat</string>
     <string name="chat_edit_title">Edit Chat</string>
 
+    <!-- Shared Prefs -->
+    <string name="selected_filter_on_home">filterKey</string>
 
     <!-- Dark mode -->
     <string name="dark_mode_prefs">darkModeKey</string>

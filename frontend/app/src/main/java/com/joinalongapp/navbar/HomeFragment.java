@@ -61,7 +61,9 @@ public class HomeFragment extends Fragment {
     private List<String> eventFilterList = new ArrayList<>();
     private static EventViewAdapter viewStateAdapter;
     private SharedPreferences sharedPreferences;
+    private SharedPreferences prefForLastFilter;
     private SharedPreferences.Editor editor;
+    private SharedPreferences.Editor editorForLastFilter;
 
     private ImageButton homepageSearchBar;
     private ImageButton homepageDarkButton;
@@ -87,7 +89,9 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = getActivity().getSharedPreferences(getString(R.string.dark_mode_prefs), Context.MODE_PRIVATE);
+        prefForLastFilter = getActivity().getSharedPreferences(getString(R.string.selected_filter_on_home), Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+        editorForLastFilter = prefForLastFilter.edit();
     }
 
     @Override
@@ -127,6 +131,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void initFilters() {
+        String lastPref = prefForLastFilter.getString(getString(R.string.selected_filter_on_home), null);
+
+        if (lastPref != null) {
+            eventFilterSpinner.setSelection(eventFilterList.indexOf(lastPref));
+        }
+
         eventFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -135,6 +145,8 @@ public class HomeFragment extends Fragment {
                 int curr = eventViewPager.getCurrentItem();
                 getEventsWithFilter(selectedFilter, curr);
                 viewStateAdapter.setFilter(selectedFilter);
+
+                editorForLastFilter.putString(getString(R.string.selected_filter_on_home), selectedFilter).apply();
             }
 
             @Override

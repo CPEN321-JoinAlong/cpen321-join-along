@@ -262,7 +262,7 @@ describe("remove user from event", () => {
         expect(foundEvent.status).toBe(ERROR_CODES.NOTFOUND);
     })
 
-    test("user not found", async () => {
+    test("Success: user deleted", async () => {
         const userStore = new UserStore();
         const eventStore = new EventStore();
         let eventInfo = new EventDetails({

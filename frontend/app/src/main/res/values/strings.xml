@@ -204,6 +204,7 @@
     <string name="book_rideshare">Book Rideshare</string>
     <string name="event_leave_title">Leave Event</string>
     <string name="event_report_title">Report Event</string>
+    <string name="event_delete_title">Delete Event</string>
     <string name="event_edit_title">Edit Event</string>
 
     <!--TODO: idk if this is best place for id-->

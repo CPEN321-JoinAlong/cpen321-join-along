@@ -91,18 +91,6 @@ describe("Use Case 8: Ban User/Event", () => {
                 $push: { events: "sdfjsdfjsfs" }
             })
 
-
-            // let eventResponse = await request(app)
-            //     .post("/event/create").send(Object.assign({token}, eventInfo))
-            // expect(eventResponse.status).toBe(ERROR_CODES.SUCCESS);
-            // let eventid = eventResponse._body._id;
-            // let chatid = eventResponse._body.chat;
-            // await Chat.findByIdAndDelete(eventResponse._body.chat)
-            // await Event.findByIdAndDelete(id);
-            // ["_id", "__v", "chat"].forEach((key) => delete eventResponse._body[key]);
-            // ["chat"].forEach((key) => delete eventInfo[key]);
-            // expect(eventResponse._body).toMatchObject(eventInfo);
-
             let banResponse = await request(app).post(`/user/${id}/ban`).send({ token })
             await User.findByIdAndDelete(id);
             // await Chat.findByIdAndDelete(chatid);

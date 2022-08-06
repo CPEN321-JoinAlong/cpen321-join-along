@@ -192,7 +192,6 @@ public class HomeFragment extends Fragment {
         eventFilterList.add("All Events");
         eventFilterList.add("Recommended");
         eventFilterList.add("Joined Events");
-        eventFilterList.add("My Events");
 
         //TODO: change this to get user interests from global
         UserProfile userProfile = ((UserApplicationInfo) getActivity().getApplication()).getProfile();
@@ -216,10 +215,6 @@ public class HomeFragment extends Fragment {
                 path = new PathBuilder().addUser().addNode(userId).addEvent().build();
                 break;
             case "All Events":
-                path = new PathBuilder().addEvent().build();
-                break;
-            case "My Events":
-                //TODO: change later when endpoint is made
                 path = new PathBuilder().addEvent().build();
                 break;
             default:

@@ -10,7 +10,6 @@ import java.util.List;
 
 public class ChatDetails implements Serializable, IDetailsModel {
 
-    //TODO: change to String (including for all other models)
     private String id;
     private String title;
     private List<Tag> tags;

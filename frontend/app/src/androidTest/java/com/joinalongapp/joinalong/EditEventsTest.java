@@ -26,40 +26,33 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EditEventsTest extends BaseManageEventActivityTest {
     private static Event event;
+    private static final long ONE_HOUR = 3600000;
 
     static {
         event = new Event();
         event.setTitle("Initial Title");
         event.setLocation(LocationUtils.standardizeAddress(LocationUtils.getAddressFromString("2336 Main Mall Vancouver", ApplicationProvider.getApplicationContext())));
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CANADA);
+        long now = new Date().getTime();
 
-        try {
-            Date bDate = sdf.parse(sdf.format(new Date()));
-            event.setBeginningDate(bDate);
-        } catch (ParseException e) {
-            System.out.println("fail begin date");
-        }
+        Date oneHourInFuture = new Date();
+        oneHourInFuture.setTime(now + ONE_HOUR);
 
-        try {
-            Date eDate = sdf.parse(sdf.format(new Date()));
-            event.setEndDate(eDate);
-        } catch (ParseException e) {
-            System.out.println("fail end date");
-        }
+        Date twoHoursInFuture = new Date();
+        twoHoursInFuture.setTime(now + (2 * ONE_HOUR));
+
+        event.setBeginningDate(oneHourInFuture);
+        event.setEndDate(twoHoursInFuture);
 
         List<Tag> tags = new ArrayList<>();
         tags.add(new Tag("Dancing"));
@@ -144,7 +137,7 @@ public class EditEventsTest extends BaseManageEventActivityTest {
     }
 
     @Test
-    public void testEditEvent_WithPastBeginningDate_ShowsInvalidDateError() {
+    public void testEditEvent_WithPastBeginningDateTime_ShowsInvalidDateError() {
         //Given
         setBeginDate(1999, 8, 1);
 
@@ -168,7 +161,19 @@ public class EditEventsTest extends BaseManageEventActivityTest {
     }
 
     @Test
-    public void testEditEvent_WithPastEndDate_ShowsInvalidDateError() {
+    public void testEditEvent_WithEmptyBeginningTime_ShowsEmptyTimeError() {
+        //Given
+        clearText(R.id.editTextEventManagementBeginningTime);
+
+        //When
+        onView(withId(R.id.submitManageEventButton)).perform(click());
+
+        //Then
+        onView(withId(R.id.editTextEventManagementBeginningTime)).check(matches(hasErrorText("Empty Beginning Time field")));
+    }
+
+    @Test
+    public void testEditEvent_WithPastEndDateTime_ShowsInvalidDateError() {
         //Given
         setEndDate(2020, 11, 28);
 
@@ -192,16 +197,33 @@ public class EditEventsTest extends BaseManageEventActivityTest {
     }
 
     @Test
-    public void testEditEvent_WithEndBeforeBeginDate_ShowsInvalidDateComboError() {
+    public void testEditEvent_WithEmptyEndTime_ShowsEmptyTimeError() {
+        //Given
+        clearText(R.id.editTextEventManagementEndTime);
+
+        //When
+        onView(withId(R.id.submitManageEventButton)).perform(click());
+
+        //Then
+        onView(withId(R.id.editTextEventManagementEndTime)).check(matches(hasErrorText("Empty End Time field")));
+    }
+
+    @Test
+    public void testEditEvent_WithEndBeforeBeginDateTime_ShowsInvalidDateComboError() {
         //Given
 
-        Calendar today = Calendar.getInstance();
+        Calendar today = getOneHourFromNow();
         int year = today.get(Calendar.YEAR);
+        // Add 1 because index starts at 0
         int month = today.get(Calendar.MONTH) + 1;
         int day = today.get(Calendar.DAY_OF_MONTH);
+        int hour = today.get(Calendar.HOUR_OF_DAY);
+        int minute = today.get(Calendar.MINUTE);
 
         setBeginDate(year + 1, month, day);
         setEndDate(year, month, day);
+        setBeginTime(hour, minute);
+        setEndTime(hour, minute);
 
         //When
         onView(withId(R.id.submitManageEventButton)).perform(click());
@@ -256,7 +278,7 @@ public class EditEventsTest extends BaseManageEventActivityTest {
 
         fillTitle();
         fillLocation();
-        fillBeginEndDates();
+        fillBeginEndDatesTimes();
         setIsPublic(true);
         fillTags();
         setNumberPeople(1);

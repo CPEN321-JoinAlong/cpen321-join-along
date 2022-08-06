@@ -63,6 +63,7 @@ public class ManageChatActivity extends AppCompatActivity {
     private List<String> friendIdsAdded;
     private ChatDetails chatDetails;
     private UserProfile user;
+    private Map<String, String> idToName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +93,7 @@ public class ManageChatActivity extends AppCompatActivity {
         String[] tags = getResources().getStringArray(R.array.sample_tags);
 
         RequestManager requestManager = new RequestManager();
-        Map<String, String> idToName = new HashMap<>();
+        idToName = new HashMap<>();
 
         JSONObject jsonObject = new JSONObject();
         try {
@@ -176,14 +177,14 @@ public class ManageChatActivity extends AppCompatActivity {
                     ChatDetails resultChat = new ChatDetails();
 
                     //TODO following two lines seem useless
-                    List<String> participants = chipFriendsGroupToList(friendChipGroup, idToName);
+                    List<String> participants = chipFriendsGroupToListForFriendIds(friendChipGroup, idToName);
                     participants.add(user.getId());
 
                     resultChat.setDescription(chatDescription.getText().toString());
                     resultChat.setTags(chipGroupToList(tagChipGroup));
                     resultChat.setTitle(chatTitle.getText().toString());
                     resultChat.setPeople(friendIdsAdded);
-                    System.out.println(chipFriendsGroupToList(friendChipGroup, idToName).size());
+                    System.out.println(chipFriendsGroupToListForFriendIds(friendChipGroup, idToName).size());
 
                     PathBuilder path = new PathBuilder();
                     String operation;
@@ -455,7 +456,7 @@ public class ManageChatActivity extends AppCompatActivity {
         return result;
     }
 
-    private List<String> chipFriendsGroupToList(ChipGroup chipGroup, Map idToName){
+    private List<String> chipFriendsGroupToListForFriendIds(ChipGroup chipGroup, Map idToName){
         List<String> result = new ArrayList<>();
 
         int numberOfFriends = chipGroup.getChildCount();
@@ -465,6 +466,17 @@ public class ManageChatActivity extends AppCompatActivity {
 
             String id = (String) idToName.get(name);
             result.add(id);
+        }
+        return result;
+    }
+
+    private List<String> chipGroupToListForFriendsNames(ChipGroup chipGroup){
+        List<String> result = new ArrayList<>();
+        int numberOfTags = chipGroup.getChildCount();
+        for(int i = 0; i < numberOfTags; i++){
+            Chip chip = (Chip) friendChipGroup.getChildAt(i);
+            System.out.println(chip.getText().toString());
+            result.add(chip.getText().toString());
         }
         return result;
     }
@@ -514,11 +526,17 @@ public class ManageChatActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 autoCompleteTextView.setText("");
+                String tagName = (String) parent.getItemAtPosition(position);
 
+                for (Tag tag : chipGroupToList(chipGroup)) {
+                    if (tag.getName().equals(tagName)) {
+                        return;
+                    }
+                }
 
                 Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, chipGroup, false);
 
-                chip.setText((String) parent.getItemAtPosition(position));
+                chip.setText(tagName);
                 chip.setOnCloseIconClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -539,12 +557,19 @@ public class ManageChatActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 autoCompleteTextView.setText("");
+                String personName = ((NameIdPair) parent.getItemAtPosition(position)).getName();
+
+                for (String name : chipGroupToListForFriendsNames(chipGroup)) {
+                    if (name.equals(personName)) {
+                        return;
+                    }
+                }
 
                 friendIdsAdded.add(((NameIdPair) parent.getItemAtPosition(position)).getId());
 
                 Chip chip = (Chip) getLayoutInflater().inflate(R.layout.individual_entry_chip, chipGroup, false);
 
-                chip.setText(((NameIdPair) parent.getItemAtPosition(position)).getName());
+                chip.setText(personName);
                 chip.setOnCloseIconClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

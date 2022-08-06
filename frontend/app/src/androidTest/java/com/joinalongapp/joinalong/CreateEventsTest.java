@@ -30,9 +30,9 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
     public void testCreateEvent_WithEmptyTitle_ShowsEmptyFieldError() {
         //Given
         fillLocation();
-        fillBeginEndDates();
+        fillBeginEndDatesTimes();
         setIsPublic(true);
-        setNumberPeople(6);
+        setNumberPeople(123);
         fillTags();
         fillDescription();
 
@@ -47,9 +47,9 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
     public void testCreateEvent_WithNonAlphaNumericTitle_ShowsEmptyFieldError() {
         //Given
         fillLocation();
-        fillBeginEndDates();
+        fillBeginEndDatesTimes();
         setIsPublic(true);
-        setNumberPeople(6);
+        setNumberPeople(123);
         fillTags();
         fillDescription();
 
@@ -66,9 +66,9 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
     public void testCreateEvent_WithEmptyLocation_ShowsEmptyFieldError() {
         //Given
         fillTitle();
-        fillBeginEndDates();
+        fillBeginEndDatesTimes();
         setIsPublic(true);
-        setNumberPeople(6);
+        setNumberPeople(123);
         fillTags();
         fillDescription();
 
@@ -83,9 +83,9 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
     public void testCreateEvent_WithInvalidLocation_ShowsInvalidAddressError() {
         //Given
         fillTitle();
-        fillBeginEndDates();
+        fillBeginEndDatesTimes();
         setIsPublic(true);
-        setNumberPeople(6);
+        setNumberPeople(123);
         fillTags();
         fillDescription();
 
@@ -102,9 +102,9 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
     public void testCreateEvent_WithNonSpecificLocation_ShowsInvalidAddressError() {
         //Given
         fillTitle();
-        fillBeginEndDates();
+        fillBeginEndDatesTimes();
         setIsPublic(true);
-        setNumberPeople(6);
+        setNumberPeople(123);
         fillTags();
         fillDescription();
 
@@ -118,13 +118,15 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
     }
 
     @Test
-    public void testCreateEvent_WithPastBeginningDate_ShowsInvalidDateError() {
+    public void testCreateEvent_WithPastBeginningDateTime_ShowsInvalidDateError() {
         //Given
         fillTitle();
         fillLocation();
+        fillBeginTime();
         fillEndDate();
+        fillEndTime();
         setIsPublic(true);
-        setNumberPeople(6);
+        setNumberPeople(123);
         fillTags();
         fillDescription();
 
@@ -142,9 +144,11 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
         //Given
         fillTitle();
         fillLocation();
+        fillBeginTime();
         fillEndDate();
+        fillEndTime();
         setIsPublic(true);
-        setNumberPeople(6);
+        setNumberPeople(123);
         fillTags();
         fillDescription();
 
@@ -156,13 +160,35 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
     }
 
     @Test
-    public void testCreateEvent_WithPastEndDate_ShowsInvalidDateError() {
+    public void testCreateEvent_WithEmptyBeginningTime_ShowsEmptyTimeError() {
         //Given
         fillTitle();
         fillLocation();
         fillBeginDate();
+        fillEndDate();
+        fillEndTime();
         setIsPublic(true);
-        setNumberPeople(6);
+        setNumberPeople(123);
+        fillTags();
+        fillDescription();
+
+        //When
+        onView(withId(R.id.submitManageEventButton)).perform(click());
+
+        //Then
+        onView(withId(R.id.editTextEventManagementBeginningTime)).check(matches(hasErrorText("Empty Beginning Time field")));
+    }
+
+    @Test
+    public void testCreateEvent_WithPastEndDateTime_ShowsInvalidDateError() {
+        //Given
+        fillTitle();
+        fillLocation();
+        fillBeginDate();
+        fillBeginTime();
+        fillEndTime();
+        setIsPublic(true);
+        setNumberPeople(123);
         fillTags();
         fillDescription();
 
@@ -181,8 +207,10 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
         fillTitle();
         fillLocation();
         fillBeginDate();
+        fillBeginTime();
+        fillEndTime();
         setIsPublic(true);
-        setNumberPeople(6);
+        setNumberPeople(123);
         fillTags();
         fillDescription();
 
@@ -194,22 +222,46 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
     }
 
     @Test
-    public void testCreateEvent_WithEndBeforeBeginDate_ShowsInvalidDateComboError() {
+    public void testCreateEvent_WithEmptyEndTime_ShowsEmptyTimeError() {
+        //Given
+        fillTitle();
+        fillLocation();
+        fillBeginDate();
+        fillBeginTime();
+        fillEndDate();
+        setIsPublic(true);
+        setNumberPeople(123);
+        fillTags();
+        fillDescription();
+
+        //When
+        onView(withId(R.id.submitManageEventButton)).perform(click());
+
+        //Then
+        onView(withId(R.id.editTextEventManagementEndTime)).check(matches(hasErrorText("Empty End Time field")));
+    }
+
+    @Test
+    public void testCreateEvent_WithEndBeforeBeginDateTime_ShowsInvalidDateComboError() {
         //Given
         fillTitle();
         fillLocation();
         setIsPublic(true);
-        setNumberPeople(6);
+        setNumberPeople(123);
         fillTags();
         fillDescription();
 
-        Calendar today = Calendar.getInstance();
+        Calendar today = getOneHourFromNow();
         int year = today.get(Calendar.YEAR);
         int month = today.get(Calendar.MONTH) + 1;
         int day = today.get(Calendar.DAY_OF_MONTH);
+        int hour = today.get(Calendar.HOUR_OF_DAY); //FIXME
+        int minute = today.get(Calendar.MINUTE);
 
         setBeginDate(year + 1, month, day);
+        setBeginTime(hour, minute);
         setEndDate(year, month, day);
+        setEndTime(hour, minute);
 
         //When
         onView(withId(R.id.submitManageEventButton)).perform(click());
@@ -224,9 +276,9 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
         //Given
         fillTitle();
         fillLocation();
-        fillBeginEndDates();
+        fillBeginEndDatesTimes();
         setIsPublic(true);
-        setNumberPeople(6);
+        setNumberPeople(123);
         fillDescription();
 
         //When
@@ -241,9 +293,9 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
         //Given
         fillTitle();
         fillLocation();
-        fillBeginEndDates();
+        fillBeginEndDatesTimes();
         setIsPublic(true);
-        setNumberPeople(6);
+        setNumberPeople(123);
         fillDescription();
 
         onView(withId(R.id.autoCompleteChipTextView)).perform(typeText("Hiking"), closeSoftKeyboard());
@@ -260,10 +312,10 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
         //Given
         fillTitle();
         fillLocation();
-        fillBeginEndDates();
+        fillBeginEndDatesTimes();
         setIsPublic(true);
         fillTags();
-        setNumberPeople(6);
+        setNumberPeople(123);
 
         //When
         onView(withId(R.id.submitManageEventButton)).perform(click());
@@ -277,10 +329,10 @@ public class CreateEventsTest extends BaseManageEventActivityTest {
         //Given
         fillTitle();
         fillLocation();
-        fillBeginEndDates();
+        fillBeginEndDatesTimes();
         setIsPublic(true);
         fillTags();
-        setNumberPeople(6);
+        setNumberPeople(1);
         fillDescription();
 
         //When

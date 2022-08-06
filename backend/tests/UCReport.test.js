@@ -3,18 +3,18 @@ const request = require("supertest");
 const {
     app,
     server
-} = require("./../server");
+} = require("../server");
 
-const UserAccount = require("./../modules/user_module/UserAccount");
-const User = require("./../models/User");
+const UserAccount = require("../modules/user_module/UserAccount");
+const User = require("../models/User");
 
-const EventDetails = require("./../modules/event_module/EventDetails");
-const Event = require("./../models/Event");
+const EventDetails = require("../modules/event_module/EventDetails");
+const Event = require("../models/Event");
 
-const Chat = require("./../models/Chat");
+const Chat = require("../models/Chat");
 
-const ERROR_CODES = require("./../ErrorCodes.js");
-const Report = require("./../models/Report")
+const ERROR_CODES = require("../ErrorCodes.js");
+const Report = require("../models/Report")
 
 const token = "113803938110058454466";
 
@@ -84,6 +84,7 @@ describe("Use Case 7: Report/Block User/Event", () => {
                     token
                 });
             expect(response.status).toBe(ERROR_CODES.INVALID);
+            await User.findByIdAndDelete(id);
             expect(response._body).toBe(undefined);
         }); 
         

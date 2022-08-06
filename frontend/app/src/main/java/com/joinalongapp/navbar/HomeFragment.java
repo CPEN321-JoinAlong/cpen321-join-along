@@ -139,7 +139,8 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                //default is already taken care of
+                // default is already taken care of
+                // it always takes the first item in the list
             }
         });
     }
@@ -179,10 +180,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void initSpinner() {
-        eventFilterList.add("Recommended");
-        eventFilterList.add("My Events");
         eventFilterList.add("All Events");
+        eventFilterList.add("Recommended");
         eventFilterList.add("Joined Events");
+        eventFilterList.add("My Events");
 
         //TODO: change this to get user interests from global
         UserProfile userProfile = ((UserApplicationInfo) getActivity().getApplication()).getProfile();

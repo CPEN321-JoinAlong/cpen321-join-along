@@ -507,8 +507,6 @@ public class ViewEventFragment extends Fragment {
     }
 
     private void initMenuOptionsVisibility() {
-        UserApplicationInfo userApplicationInfo = ((UserApplicationInfo) getActivity().getApplication());
-        //String userId = userApplicationInfo.getProfile().getId();
 
         if (isEventOwner(userId)) {
             shouldAllowMenuItem(R.id.eventLeave, false);

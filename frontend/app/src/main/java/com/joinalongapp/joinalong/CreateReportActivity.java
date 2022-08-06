@@ -139,8 +139,6 @@ public class CreateReportActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     createServerConnectionError(e, operation, CreateReportActivity.this);
                 }
-
-                CreateReportActivity.this.finish();
             }
         });
         myTrace.stop();

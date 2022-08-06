@@ -85,6 +85,32 @@ public class FeedbackMessageBuilder {
         }, 0);
     }
 
+    public void buildAsyncNeutralMessageAndFinishActivity() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(activity)
+                                .setTitle(title)
+                                .setMessage(description)
+                                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        activity.finish();
+                                    }
+                                })
+                                .setCancelable(false)
+                                .create()
+                                .show();
+                    }
+                });
+            }
+        }, 0);
+    }
+
     public static void createDefaultNeutralError(String description, Activity activity, String operation) {
         new FeedbackMessageBuilder()
                 .setTitle("Unable to " + operation)
@@ -113,7 +139,7 @@ public class FeedbackMessageBuilder {
                 .setTitle("Successfully " + operation)
                 .setDescription("Successfully " + operation)
                 .withActivity(activity)
-                .buildAsyncNeutralMessage();
+                .buildAsyncNeutralMessageAndFinishActivity();
         Log.i(operation, new Date().toString());
     }
 

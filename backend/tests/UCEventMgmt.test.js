@@ -3,17 +3,17 @@ const request = require("supertest");
 const {
     app,
     server
-} = require("./../server");
+} = require("../server");
 
-const UserAccount = require("./../modules/user_module/UserAccount");
-const User = require("./../models/User");
+const UserAccount = require("../modules/user_module/UserAccount");
+const User = require("../models/User");
 
-const EventDetails = require("./../modules/event_module/EventDetails");
-const Event = require("./../models/Event");
+const EventDetails = require("../modules/event_module/EventDetails");
+const Event = require("../models/Event");
 
-const Chat = require("./../models/Chat");
+const Chat = require("../models/Chat");
 
-const ERROR_CODES = require("./../ErrorCodes.js");
+const ERROR_CODES = require("../ErrorCodes.js");
 
 const token = "113803938110058454466";
 
@@ -75,10 +75,6 @@ describe("Use Case 1: Event Management (Create + Edit Events)", () => {
         test("Success: event and its chat created", async () => {
             let response = await request(app)
                 .post("/event/create").send(Object.assign({token}, eventInfo))
-                // .send({
-                //     ...eventInfo,
-                //     token
-                // });
             expect(response.status).toBe(ERROR_CODES.SUCCESS);
             let id = response._body._id;
             await Chat.findByIdAndDelete(response._body.chat)

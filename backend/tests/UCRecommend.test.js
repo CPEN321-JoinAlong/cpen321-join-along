@@ -3,16 +3,16 @@ const request = require("supertest");
 const {
     app,
     server
-} = require("./../server");
+} = require("../server");
 
-const UserAccount = require("./../modules/user_module/UserAccount");
-const User = require("./../models/User");
+const UserAccount = require("../modules/user_module/UserAccount");
+const User = require("../models/User");
 
-const Event = require("./../models/Event");
+const Event = require("../models/Event");
 
-const Chat = require("./../models/Chat");
+const Chat = require("../models/Chat");
 
-const ERROR_CODES = require("./../ErrorCodes.js");
+const ERROR_CODES = require("../ErrorCodes.js");
 
 const token = "113803938110058454466";
 
